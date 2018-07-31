@@ -48,36 +48,29 @@ $ rails server -p <your_port>
 
 
 ## :capital_abcd: Running the tests
----
 [WIP] Work in Progress. No tests yet, but [RSpec](https://github.com/rspec/rspec-rails) will be used.
 
 
 ## :whale: Deployment
----
 [WIP] Work in Progress. No Deployment yet, but [Docker](https://www.docker.com/) will be used.
 
 ## :train: Built With
----
 * [RailsComposer](https://github.com/RailsApps/rails-composer) - Application generation tool
 * [Bootstrap](https://getbootstrap.com/) - Web Framework
 * [postgreSQL](https://www.postgresql.org/) - Database
 * [Ruby on Rails](https://rubyonrails.org/) - Web server host
 
 ## :muscle: Contributing
----
 Please follow the [issue guides](https://github.com/rafaeelaudibert/PIUBS/issues/new/choose) to open any issue.
 Feel free to open any pull request, or contact the team here in Github.
 
 ## :1234: Versioning
----
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
 
 ## :construction_worker: Authors
----
 * **Felipe Comerlatto** - *Initial work* - [felipefcomerlatto](https://github.com/felipefcomerlato)
 * **Mario Figueiró** - *Initial work* - [mgfzemor](https://github.com/mgfzemor)
 * **Rafael Baldasso Audibert** - *Initial work* - [rafaeelaudibert](https://github.com/rafaeelaudibert)
 
 ## :page_facing_up: License
----
 This project is licensed under the GNU AGPL 3.0 License - see the [LICENSE.md](LICENSE.md) file for details
