@@ -74,4 +74,4 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 * **Rafael Baldasso Audibert** - *Initial work* - [rafaeelaudibert](https://github.com/rafaeelaudibert)
 
 ## :page_facing_up: License
-This project is licensed under the GNU AGPL 3.0 License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the GNU AGPL 3.0 License - see the [LICENSE.md](LICENSE) file for details
