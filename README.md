@@ -63,6 +63,7 @@ $ rails server -p <your_port>
 ## :muscle: Contributing
 Please follow the [issue guides](https://github.com/rafaeelaudibert/PIUBS/issues/new/choose) to open any issue.
 Feel free to open any pull request, or contact the team here in Github.
+We use [Gitmoji](https://gitmoji.carloscuesta.me/) :tada: in our commits, so please follow the guidelines of it.
 
 ## :1234: Versioning
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
