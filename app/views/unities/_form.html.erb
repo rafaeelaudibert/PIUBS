@@ -1,0 +1,32 @@
+<%= form_with(model: unity, local: true) do |form| %>
+  <% if unity.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(unity.errors.count, "error") %> prohibited this unity from being saved:</h2>
+
+      <ul>
+      <% unity.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :cnes %>
+    <%= form.number_field :cnes %>
+  </div>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :city_id %>
+    <%= form.text_field :city_id %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
