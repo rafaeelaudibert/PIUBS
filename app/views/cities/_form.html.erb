@@ -18,7 +18,8 @@
 
   <div class="field">
     <%= form.label :state_id %>
-    <%= form.text_field :state_id %>
+    <%= form.collection_select(:state_id, State.all, :id, :name, {include_blank: "Selecione um estado: "}) %>
+
   </div>
 
   <div class="actions">
