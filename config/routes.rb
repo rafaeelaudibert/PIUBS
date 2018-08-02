@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :companies, param: :sei
   resources :unities, param: :cnes
   resources :cities
   resources :states

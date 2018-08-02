@@ -23,6 +23,22 @@ ActiveRecord::Schema.define(version: 2018_07_31_155511) do
     t.index ["state_id"], name: "index_cities_on_state_id"
   end
 
+  create_table "companies", id: false, force: :cascade do |t|
+    t.integer "sei"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sei"], name: "index_companies_on_sei", unique: true
+  end
+
+  create_table "customers", force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.date "birthdate"
+    t.text "obs"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "states", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
