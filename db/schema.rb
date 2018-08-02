@@ -29,6 +29,16 @@ ActiveRecord::Schema.define(version: 2018_07_31_155511) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "unities", id: false, force: :cascade do |t|
+    t.integer "cnes", null: false
+    t.string "name"
+    t.bigint "city_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["city_id"], name: "index_unities_on_city_id"
+    t.index ["cnes"], name: "index_unities_on_cnes", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false

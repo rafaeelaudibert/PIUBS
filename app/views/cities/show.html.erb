@@ -10,6 +10,27 @@
   <%= @city.state.name %>
 </p>
 
+
 <%= link_to 'Edit', edit_city_path(@city) %>
 |
 <%= link_to 'Back', cities_path %>
+<hr/>
+<p>
+  <table>
+    <thead>
+      <tr>
+        <th>Cnes</th>
+        <th>Name</th>
+      </tr>
+    </thead>
+  <tbody>
+<% @city.unity_ids.each do |unity| %>
+  <tr>
+    <% dadosUnity = Unity.find(unity) %>
+    <td><%= dadosUnity.cnes %></td>
+    <td><%= dadosUnity.name %></td>
+  </tr>
+<% end %>
+</tbody>
+</table>
+</p>

@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :unities, param: :cnes
   resources :cities
   resources :states
   root to: 'visitors#index'
