@@ -30,15 +30,6 @@ ActiveRecord::Schema.define(version: 2018_08_02_165534) do
     t.index ["sei"], name: "index_companies_on_sei", unique: true
   end
 
-  create_table "customers", force: :cascade do |t|
-    t.string "name"
-    t.string "email"
-    t.date "birthdate"
-    t.text "obs"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "states", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
