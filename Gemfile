@@ -50,4 +50,4 @@ end
 # PIUBS used gems
 gem 'city-state'
 gem 'will_paginate', '~> 3.1.0'
-gem 'carrierwave', '~> 1.0'
+gem 'carrierwave', :git => 'https://github.com/carrierwaveuploader/carrierwave', :branch => 'master'
