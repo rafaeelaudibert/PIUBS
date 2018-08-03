@@ -5,8 +5,6 @@ gem 'rails', '~> 5.2.0'
 gem 'puma', '~> 3.11'
 gem 'json'
 gem 'sqlite3'
-gem 'city-state'
-gem 'will_paginate', '~> 3.1.0'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.2'
@@ -48,3 +46,8 @@ group :test do
   gem 'database_cleaner'
   gem 'launchy'
 end
+
+# PIUBS used gems
+gem 'city-state'
+gem 'will_paginate', '~> 3.1.0'
+gem 'carrierwave', '~> 1.0'
