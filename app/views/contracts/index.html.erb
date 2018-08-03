@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Contracts</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Files</th>
+      <th>Contract number</th>
+      <th>City</th>
+      <th>Sei</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @contracts.each do |contract| %>
+      <tr>
+        <td><%= contract.files %></td>
+        <td><%= contract.contract_number %></td>
+        <td><%= contract.city.name %></td>
+        <td><%= contract.sei %></td>
+        <td><%= link_to 'Show', contract %></td>
+        <td><%= link_to 'Edit', edit_contract_path(contract) %></td>
+        <td><%= link_to 'Destroy', contract, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+<%= will_paginate @contracts %>
+
+<%= link_to 'New Contract', new_contract_path %>
