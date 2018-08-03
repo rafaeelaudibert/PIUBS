@@ -48,6 +48,7 @@ group :test do
 end
 
 # PIUBS used gems
-gem 'city-state'
-gem 'will_paginate', '~> 3.1.0'
+gem 'city-state'                # City + states gem. # TODO: Modify the gem to retrieve data in portuguese
+gem 'will_paginate', '~> 3.1.0' # Pagination
 gem 'carrierwave', :git => 'https://github.com/carrierwaveuploader/carrierwave', :branch => 'master'
+gem 'mini_magick', '~> 4.3'     # Image uploaded by carrierwave manipulation
