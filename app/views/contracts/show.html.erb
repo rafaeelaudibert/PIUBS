@@ -1,0 +1,25 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Files:</strong>
+  <%= image_tag @contract.files.thumb_big.url %>
+</p>
+
+<p>
+  <strong>Contract number:</strong>
+  <%= @contract.contract_number %>
+</p>
+
+<p>
+  <strong>City:</strong>
+  <%= @contract.city.name %>
+</p>
+
+<p>
+  <strong>Sei:</strong>
+  <%= @contract.sei %>
+</p>
+
+<%= link_to 'Edit', edit_contract_path(@contract) %>
+|
+<%= link_to 'Back', contracts_path %>

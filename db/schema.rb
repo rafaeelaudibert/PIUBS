@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_02_165534) do
+ActiveRecord::Schema.define(version: 2018_08_03_132829) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,16 @@ ActiveRecord::Schema.define(version: 2018_08_02_165534) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["sei"], name: "index_companies_on_sei", unique: true
+  end
+
+  create_table "contracts", force: :cascade do |t|
+    t.json "files"
+    t.integer "contract_number"
+    t.bigint "city_id"
+    t.integer "sei"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["city_id"], name: "index_contracts_on_city_id"
   end
 
   create_table "states", force: :cascade do |t|
@@ -84,6 +94,8 @@ ActiveRecord::Schema.define(version: 2018_08_02_165534) do
   end
 
   add_foreign_key "cities", "states"
+  add_foreign_key "contracts", "cities"
+  add_foreign_key "contracts", "companies", column: "sei", primary_key: "sei"
   add_foreign_key "unities", "cities"
   add_foreign_key "users", "companies", column: "sei", primary_key: "sei"
 end

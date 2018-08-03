@@ -1,7 +1,6 @@
 class CompaniesController < ApplicationController
-  before_action :admin_only
-  before_action :set_company, only: [:show, :edit, :update, :destroy]
-
+  # before_action :admin_only
+  before_action :set_company, only: %i[show edit update destroy]
 
   # GET /companies
   # GET /companies.json
@@ -11,8 +10,7 @@ class CompaniesController < ApplicationController
 
   # GET /companies/1
   # GET /companies/1.json
-  def show
-  end
+  def show; end
 
   # GET /companies/new
   def new
@@ -20,8 +18,7 @@ class CompaniesController < ApplicationController
   end
 
   # GET /companies/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /companies
   # POST /companies.json
@@ -36,7 +33,7 @@ class CompaniesController < ApplicationController
         else
           handleError format, :new, ''
         end
-      rescue
+      rescue StandardError
         handleError format, :new, 'This sei already exists in the database.'
       end
     end
@@ -53,7 +50,7 @@ class CompaniesController < ApplicationController
         else
           handleError format, :edit, ''
         end
-      rescue
+      rescue StandardError
         handleError format, :edit, 'This SEI already exists in the database'
       end
     end
@@ -70,26 +67,27 @@ class CompaniesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_company
-        @company = Company.find(params[:sei])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def company_params
-      params.require(:company).permit(:sei)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_company
+    @company = Company.find(params[:sei])
+  end
 
-    # Handle repeated values errors
-    def handleError(format, method, message)
-      @company.errors.add(:sei, :blank, message: message)  unless message == ''
-      format.html { render method }
-      format.json { render json: @company.errors, status: :unprocessable_entity }
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def company_params
+    params.require(:company).permit(:sei)
+  end
 
-    def admin_only
-      unless current_user.try(:admin?)
-        redirect_to not_found_path, :alert => "Access denied."
-      end
+  # Handle repeated values errors
+  def handleError(format, method, message)
+    @company.errors.add(:sei, :blank, message: message) unless message == ''
+    format.html { render method }
+    format.json { render json: @company.errors, status: :unprocessable_entity }
+  end
+
+  def admin_only
+    unless current_user.try(:admin?)
+      redirect_to not_found_path, alert: 'Access denied.'
     end
+  end
 end
