@@ -4,7 +4,6 @@ class ContractsController < ApplicationController
   # GET /contracts
   # GET /contracts.json
   def index
-    @user_agent = UserAgent.parse(request.user_agent)
     @contracts = Contract.paginate(page: params[:page], per_page: 10)
   end
 
