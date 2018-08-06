@@ -1,10 +1,13 @@
 <%= content_for :body_title do%> Welcome<%end%>
 <div class="row">
-  <div class="col-7">
-    About the Website
-    Lorem ipsum dolor sit amet, wisi ornare montes quisque arcu non ipsum, ut nulla etiam augue quam aenean quam. Lorem elementum sodales in nullam, nisl venenatis blandit sollicitudin curabitur ornare, felis nibh turpis sed dictum. Enim aliquam adipiscing non, diam proin egestas. Lacinia velit commodo mauris animi id, lacus nibh rutrum quam blandit aliquet. Ut velit sed pellentesque eros, accumsan metus volutpat in mauris, curabitur egestas suscipit, vivamus amet et integer nullam nulla a. Mattis ultricies sodales massa facilisi, sit maecenas dui nec neque. Nunc tempus adipiscing eget eros, morbi vitae. Magna vitae proin nulla suspendisse suspendisse at. Ante dolor diam aptent et class, dui netus tellus ullamcorper ac mauris lorem. Sit odio orci nibh ante posuere ullamcorper, lobortis metus eget nec suspendisse. Pede pulvinar tempor tenetur, pellentesque adipiscing ac mattis nec consequat quis, odio dolor, sagittis non curabitur justo auctor. Rails Composer from the RailsApps project.
+  <div class="col-8">
+    <%= image_tag("piubs.jpg", :alt => "Apoio à empresa") %><br/>
+    <p class="home_text">
+      About the Website
+      Lorem ipsum dolor sit amet, wisi ornare montes quisque arcu non ipsum, ut nulla etiam augue quam aenean quam. Lorem elementum sodales in nullam, nisl venenatis blandit sollicitudin curabitur ornare, felis nibh turpis sed dictum. Enim aliquam adipiscing non, diam proin egestas. Lacinia velit commodo mauris animi id, lacus nibh rutrum quam blandit aliquet. Ut velit sed pellentesque eros, accumsan metus volutpat in mauris, curabitur egestas suscipit, vivamus amet et integer nullam nulla a. Mattis ultricies sodales massa facilisi, sit maecenas dui nec neque. Nunc tempus adipiscing eget eros, morbi vitae. Magna vitae proin nulla suspendisse suspendisse at. Ante dolor diam aptent et class, dui netus tellus ullamcorper ac mauris lorem. Sit odio orci nibh ante posuere ullamcorper, lobortis metus eget nec suspendisse. Pede pulvinar tempor tenetur, pellentesque adipiscing ac mattis nec consequat quis, odio dolor, sagittis non curabitur justo auctor. Rails Composer from the RailsApps project.
+    </p>
   </div>
   <% unless user_signed_in? %>
-    <div class="col-5"><%= render 'layouts/login_form' %></div>
+    <div class="col-4"><%= render 'layouts/login_form' %></div>
   <%end%>
 </div>
