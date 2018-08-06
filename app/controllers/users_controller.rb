@@ -32,8 +32,46 @@ class UsersController < ApplicationController
 
   private
 
+
+  ### Functions to restrict user content
   def admin_only
     unless current_user.admin?
+      redirect_to root_path, :alert => "Access denied."
+    end
+  end
+
+  def city_admin_only
+    unless current_user.city_admin?
+      redirect_to root_path, :alert => "Access denied."
+    end
+  end
+
+  def city_user_only
+    unless current_user.city_user?
+      redirect_to root_path, :alert => "Access denied."
+    end
+  end
+
+  def ubs_admin_only
+    unless current_user.ubs_admin?
+      redirect_to root_path, :alert => "Access denied."
+    end
+  end
+
+  def ubs_user_only
+    unless current_user.ubs_user?
+      redirect_to root_path, :alert => "Access denied."
+    end
+  end
+
+  def company_admin_only
+    unless current_user.company_admin?
+      redirect_to root_path, :alert => "Access denied."
+    end
+  end
+
+  def company_user_only
+    unless current_user.company_user?
       redirect_to root_path, :alert => "Access denied."
     end
   end
