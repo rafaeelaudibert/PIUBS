@@ -1,8 +1,19 @@
 <p id="notice"><%= notice %></p>
-
-<h1>Companies</h1>
-
-<table>
+<%= content_for :body_title do%> Companies <%end%>
+<form class="form-inline">
+  <%= link_to 'New Company', new_company_path, class: 'btn btn-success' %>
+  <input class="form-control mr-sm-2 ml-3" type="search" placeholder="SEI number" aria-label="Search">
+  <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
+</form>
+<hr/>
+<div class="digg_pagination">
+  <div class="page_info">
+    <%= page_entries_info @companies %>
+  </div>
+  <%= will_paginate @companies, :previous_label => '<<', :next_label => '>>' %>
+</div>
+<hr/>
+<table class="table table-striped">
   <thead>
     <tr>
       <th>Sei</th>
@@ -14,14 +25,18 @@
     <% @companies.each do |company| %>
       <tr>
         <td><%= company.sei %></td>
-        <td><%= link_to 'Show', company %></td>
-        <td><%= link_to 'Edit', edit_company_path(company) %></td>
-        <td><%= link_to 'Destroy', company, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Show', company , class: 'btn btn-primary btn-sm' %>
+            <%= link_to 'Edit', edit_company_path(company) , class: 'btn btn-primary btn-sm' %>
+            <%= link_to 'Destroy', company, method: :delete, data: { confirm: 'Are you sure?' } , class: 'btn btn-danger btn-sm' %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
-
-<br>
-
-<%= link_to 'New Company', new_company_path %>
+<hr/>
+<div class="digg_pagination">
+  <div class="page_info">
+    <%= page_entries_info @companies %>
+  </div>
+  <%= will_paginate @companies, :previous_label => '<<', :next_label => '>>' %>
+</div>
+<hr/>
