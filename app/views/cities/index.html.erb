@@ -1,17 +1,15 @@
 <p id="notice"><%= notice %></p>
-<%= content_for :body_title do%> Cities <%end%>
+<%= content_for :body_title do%>
+Cities
+<%end%>
 <form class="form-inline">
-  <!-- <%= link_to 'Create new city', new_city_path , class: 'btn btn-success' %> -->
-  <input class="form-control mr-sm-2" type="search" placeholder="City name" aria-label="Search">
-  <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
+<!-- <%= link_to 'Create new city', new_city_path , class: 'btn btn-success' %> -->
+<input class="form-control mr-sm-2" type="search" placeholder="City name" aria-label="Search">
+<button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
 </form>
 <hr/>
-<div class="digg_pagination">
-  <div class="page_info">
-    <%= page_entries_info @cities %>
-  </div>
-  <%= will_paginate @cities, :previous_label => '<<', :next_label => '>>' %>
-</div>
+<%= render './pagination', value: @cities %>
+<% if @cities.length > 0 %>
 <hr/>
 <table class="table table-striped">
   <thead>
@@ -28,18 +26,14 @@
         <td><%= city.name %></td>
         <td><%= city.state.name %></td>
         <td><%= link_to 'Show', city , class: 'btn btn-primary btn-sm' %>
-            <!-- <%= link_to 'Edit', edit_city_path(city), class: 'btn btn-success btn-sm' %>
-            <%= link_to 'Destroy', city, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>--> </td>
+          <!-- <%= link_to 'Edit', edit_city_path(city), class: 'btn btn-success btn-sm' %> <%= link_to 'Destroy', city, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>-->
+        </td>
       </tr>
     <% end %>
 
   </tbody>
 </table>
 <hr/>
-<div class="digg_pagination">
-  <div class="page_info">
-    <%= page_entries_info @cities %>
-  </div>
-  <%= will_paginate @cities, :previous_label => '<<', :next_label => '>>' %>
-</div>
+<%= render './pagination', value: @cities %>
+<% end %>
 <hr/>
