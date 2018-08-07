@@ -28,16 +28,6 @@ class ContractUploader < CarrierWave::Uploader::Base
   #   # do something
   # end
 
-  version :thumb_small do
-    process convert: :png
-    process resize_to_limit: [50, 50]
-  end
-
-  version :thumb_big do
-    process convert: :png
-    process resize_to_limit: [400, 400]
-  end
-
   # Add a white list of extensions which are allowed to be uploaded.
   # For images you might use something like this:
   def extension_whitelist
