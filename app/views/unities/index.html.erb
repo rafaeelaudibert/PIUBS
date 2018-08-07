@@ -1,8 +1,19 @@
 <p id="notice"><%= notice %></p>
-
-<h1>Unities</h1>
-
-<table>
+<%= content_for :body_title do%> Unities <%end%>
+<form class="form-inline">
+  <%= link_to 'Create new Unity', new_unity_path, class: 'btn btn-success' %>
+  <input class="form-control mr-sm-2 ml-3" type="search" placeholder="CNES number" aria-label="Search">
+  <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
+</form>
+<hr/>
+<div class="digg_pagination">
+  <div class="page_info">
+    <%= page_entries_info @unities %>
+  </div>
+  <%= will_paginate @unities, :previous_label => '<<', :next_label => '>>' %>
+</div>
+<hr/>
+<table class="table table-striped">
   <thead>
     <tr>
       <th>Cnes</th>
@@ -18,14 +29,20 @@
         <td><%= unity.cnes %></td>
         <td><%= unity.name %></td>
         <td><%= unity.city.name %></td>
-        <td><%= link_to 'Show', unity %></td>
-        <td><%= link_to 'Edit', edit_unity_path(unity) %></td>
-        <td><%= link_to 'Destroy', unity, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td>
+            <%= link_to 'Show', unity , class: 'btn btn-primary btn-sm'%>
+            <%= link_to 'Edit', edit_unity_path(unity) , class: 'btn btn-primary btn-sm' %>
+            <%= link_to 'Destroy', unity, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+        </td>
       </tr>
     <% end %>
   </tbody>
 </table>
-
-<br>
-
-<%= link_to 'New Unity', new_unity_path %>
+<hr/>
+<div class="digg_pagination">
+  <div class="page_info">
+    <%= page_entries_info @unities %>
+  </div>
+  <%= will_paginate @unities, :previous_label => '<<', :next_label => '>>' %>
+</div>
+<hr/>
