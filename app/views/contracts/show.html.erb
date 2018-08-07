@@ -1,11 +1,6 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <strong>Files:</strong>
-  <%= image_tag @contract.files.thumb_big.url %>
-</p>
-
-<p>
   <strong>Contract number:</strong>
   <%= @contract.contract_number %>
 </p>
@@ -18,6 +13,10 @@
 <p>
   <strong>Sei:</strong>
   <%= @contract.sei %>
+</p>
+
+<p>
+  <strong><%= link_to "Link para contrato", @contract.files.to_s %></strong>
 </p>
 
 <%= link_to 'Edit', edit_contract_path(@contract) %>
