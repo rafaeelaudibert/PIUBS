@@ -5,7 +5,6 @@
 <table>
   <thead>
     <tr>
-      <th>Files</th>
       <th>Contract number</th>
       <th>City</th>
       <th>Sei</th>
@@ -16,7 +15,6 @@
   <tbody>
     <% @contracts.each do |contract| %>
       <tr>
-        <td><%= contract.files %></td>
         <td><%= contract.contract_number %></td>
         <td><%= contract.city.name %></td>
         <td><%= contract.sei %></td>
