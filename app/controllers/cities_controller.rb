@@ -9,7 +9,9 @@ class CitiesController < ApplicationController
 
   # GET /cities/1
   # GET /cities/1.json
-  def show; end
+  def show
+    @ubs = @city.unity_ids
+  end
 
   # GET /cities/new
   def new

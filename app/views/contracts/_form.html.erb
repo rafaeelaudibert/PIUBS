@@ -11,28 +11,27 @@
     </ul>
   </div>
 <% end %>
+<div class="col-4">
+  <div class="form-group">
+    <%= form.label :files %>
+    <%= form.file_field :files, class: 'form-control'%>
+  </div>
 
-<div class="field">
-  <%= form.label :files %>
-  <%= form.file_field :files%>
-</div>
+  <div class="form-group">
+    <%= form.label :contract_number %>
+    <%= form.text_field :contract_number , class: 'form-control'%>
+  </div>
 
-<div class="field">
-  <%= form.label :contract_number %>
-  <%= form.text_field :contract_number %>
-</div>
+  <div class="form-group">
+    <%= form.label :city_id %>
+    <%= form.text_field :city_id, class: 'form-control' %>
+  </div>
 
-<div class="field">
-  <%= form.label :city_id %>
-  <%= form.text_field :city_id %>
-</div>
-
-<div class="field">
-  <%= form.label :sei %>
-  <%= form.text_field :sei %>
-</div>
-
-<div class="actions">
-  <%= form.submit %>
+  <div class="form-group">
+    <%= form.label :sei %>
+    <%= form.text_field :sei, class: 'form-control' %>
+  </div>
+  <%= form.submit 'Save', :class => 'btn btn-success btn-sm' %>
+  <%= link_to 'Cancel', contracts_path, :class => 'btn btn-danger btn-sm' %>
 </div>
 <% end %>

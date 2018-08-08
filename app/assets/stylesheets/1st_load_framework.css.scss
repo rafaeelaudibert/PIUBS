@@ -2,6 +2,62 @@
 // Do not use *= require in Sass or your other stylesheets will not be able to access the Bootstrap mixins and variables.
 @import "bootstrap";
 
+.digg_pagination {
+  background: white;
+  cursor: default;
+  display: inline-block;
+  /* self-clearing method: */ }
+  .pagination {
+    display: inline-block;
+    margin-left: 10px;
+  }
+  .digg_pagination a, .digg_pagination span, .digg_pagination em {
+    padding: 0.2em 0.5em !important;
+    display: inline-block !important;
+    float: left !important;
+    margin-right: 1px !important; }
+  .digg_pagination .disabled {
+    color: #999999 !important;
+    border: 1px solid #999999 !important;
+    border-radius: 2px;}
+  .digg_pagination .current {
+    font-style: normal !important;
+    font-weight: bold !important;
+    background: #2e6ab1 !important;
+    color: white !important;
+    border: 1px solid #2e6ab1 !important; border-radius: 2px; }
+  .digg_pagination a {
+    text-decoration: none !important;
+    color: #105cb6 !important;
+    border: 1px solid #9aafe5 !important;
+    border-radius: 2px}
+    .digg_pagination a:hover, .digg_pagination a:focus {
+      color: black !important;
+      border-color: white !important;
+      background-color: white;
+      border: 1px solid #9aafe5 !important;}
+  .digg_pagination .page_info {
+    border-radius: 2px;
+    float: left;
+    display: inline-block !important;
+    background: #2e6ab1 !important;
+    color: white !important;
+    padding: 0.4em 0.6em !important;
+    width: 22em !important;
+    margin-bottom: 0.3em !important;
+    text-align: center !important; }
+    .digg_pagination .page_info b {
+      color: white !important;
+      background: #2e6ab1 !important;
+      padding: 0.1em 0.25em !important; }
+  .digg_pagination:after {
+    height: 0 !important;
+    visibility: hidden !important; }
+  * html .digg_pagination {
+    height: 1% !important; }
+  *:first-child + html .digg_pagination {
+    overflow: hidden !important; }
+
 // make all images responsive by default
 img {
   @extend .img-fluid;

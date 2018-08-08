@@ -1,8 +1,17 @@
 <p id="notice"><%= notice %></p>
-
-<h1>States</h1>
-
-<table>
+<%= content_for :body_title do%>
+States
+<%end%>
+<form class="form-inline">
+<!-- <%= link_to 'Create new State', new_state_path , class: 'btn btn-success' %> -->
+<input class="form-control mr-sm-2" type="search" placeholder="State name" aria-label="Search">
+<button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
+</form>
+<hr/>
+<%= render './pagination', value: @states %>
+<% if @states.length > 0 %>
+<hr/>
+<table class="table table-striped">
   <thead>
     <tr>
       <th>Name</th>
@@ -14,14 +23,14 @@
     <% @states.each do |state| %>
       <tr>
         <td><%= state.name %></td>
-        <td><%= link_to 'Show', state %></td>
-        <td><%= link_to 'Edit', edit_state_path(state) %></td>
-        <td><%= link_to 'Destroy', state, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Show', state , class: 'btn btn-primary btn-sm' %>
+          <!-- <%= link_to 'Edit', edit_state_path(state) , class: 'btn btn-success btn-sm' %> <%= link_to 'Destroy', state, method: :delete, data: { confirm: 'Are you sure?' } , class: 'btn btn-danger btn-sm' %>-->
+        </td>
       </tr>
     <% end %>
   </tbody>
 </table>
-
-<br>
-
-<%= link_to 'New State', new_state_path %>
+<hr/>
+<%= render './pagination', value: @states %>
+<% end %>
+<hr/>

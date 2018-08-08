@@ -10,13 +10,14 @@
       </ul>
     </div>
   <% end %>
-
-  <div class="field">
+<div class="col-4">
+  <div class="form-group">
     <%= form.label :sei %>
-    <%= form.number_field :sei %>
+    <%= form.number_field :sei, class: 'form-control' %>
   </div>
 
-  <div class="actions">
-    <%= form.submit %>
-  </div>
+  <%= form.submit 'Save', :class => 'btn btn-success btn-sm' %>
+  <%= link_to 'Cancel', companies_path, :class => 'btn btn-danger btn-sm' %>
+
+</div>
 <% end %>

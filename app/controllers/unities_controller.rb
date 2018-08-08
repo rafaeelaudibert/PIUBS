@@ -4,7 +4,7 @@ class UnitiesController < ApplicationController
   # GET /unities
   # GET /unities.json
   def index
-    @unities = Unity.all
+    @unities = Unity.paginate(:page => params[:page], :per_page => 25)
   end
 
   # GET /unities/1
