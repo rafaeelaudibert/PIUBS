@@ -46,6 +46,7 @@ group :test do
   gem 'database_cleaner'
   gem 'launchy'
 end
+gem 'binding_of_caller'
 
 # PIUBS used gems
 gem 'city-state'                # City + states gem. # TODO: Modify the gem to retrieve data in portuguese
