@@ -1,2 +1,5 @@
-<%= content_for :body_title do%> New Contract <%end%>
+<%= content_for :body_title do%>
+New Contract
+<%end%>
 <%= render 'form', contract: @contract %>
+<%= link_to 'Back', contracts_path %>

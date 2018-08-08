@@ -1,5 +1,5 @@
 class ContractsController < ApplicationController
-  before_action :set_contract, only: %i[show edit update destroy]
+  before_action :set_contract, only: %i[show edit update destroy download]
 
   # GET /contracts
   # GET /contracts.json
@@ -67,6 +67,11 @@ class ContractsController < ApplicationController
     end
   end
 
+  # GET /contract/:id/download
+  def download
+    send_data(@contract.file_contents, type: @contract.content_type, filename: @contract.filename)
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.
@@ -74,9 +79,21 @@ class ContractsController < ApplicationController
     @contract = Contract.find(params[:id])
   end
 
+  def sanitize_filename(filename)
+    File.basename(filename)
+  end
+
   # Never trust parameters from the scary internet, only allow the white list through.
+  # Also optimize the file data, separating it in filename, content_type & file_contents
   def contract_params
-    params.require(:contract).permit(:files, :contract_number, :city_id, :sei)
+    parameters = params.require(:contract).permit(:file, :contract_number, :city_id, :sei)
+    file = parameters.delete(:file) if parameters
+    if file
+      parameters[:filename] = sanitize_filename(file.original_filename)
+      parameters[:content_type] = file.content_type
+      parameters[:file_contents] = file.read
+    end
+    parameters
   end
 
   # Try to see if the city already have a contract

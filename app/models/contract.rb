@@ -1,6 +1,4 @@
-class Contract < ApplicationRecord
+class Contract < ActiveRecord::Base
   belongs_to :city
   has_one :company
-
-  mount_uploader :files, ContractUploader
 end
