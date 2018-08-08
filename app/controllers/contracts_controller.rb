@@ -29,6 +29,10 @@ class ContractsController < ApplicationController
         @contract.errors.add(:city_id, :blank, message: 'This city already have a contract linked to it')
         format.html { render :new }
         format.json { render json: @contract.errors, status: :unprocessable_entity }
+      elsif !checkPDF
+        @contract.errors.add(:filename, :blank, message: 'You must insert a file and it MUST be in the PDF format')
+        format.html { render :edit }
+        format.json { render json: @contract.errors, status: :unprocessable_entity }
       elsif @contract.save
         format.html { redirect_to @contract, notice: 'Contract was successfully created.' }
         format.json { render :show, status: :created, location: @contract }
@@ -45,6 +49,10 @@ class ContractsController < ApplicationController
     respond_to do |format|
       if hasOneCityEdit(@contract.city_id) # If there already is a city with this ID in the database
         @contract.errors.add(:city_id, :blank, message: 'This city already have a contract linked to it')
+        format.html { render :edit }
+        format.json { render json: @contract.errors, status: :unprocessable_entity }
+      elsif !checkPDF
+        @contract.errors.add(:filename, :blank, message: 'You must insert a file and it MUST be in the PDF format')
         format.html { render :edit }
         format.json { render json: @contract.errors, status: :unprocessable_entity }
       elsif @contract.update(contract_params)
@@ -107,5 +115,12 @@ class ContractsController < ApplicationController
     city_id = params.require(:contract).require(:city_id)
     ans = Contract.where('city_id = ?', city_id).first
     !(ans.nil? || city_id == _id.to_s) # If this city doesn't have a contract or is the same city that we have in the contract now
+  end
+
+  # Checks if the file is a PDF
+  def checkPDF
+    file = params.require(:contract).require(:file)
+    return file.content_type.split('/')[1].to_s == 'pdf' if file
+    false
   end
 end
