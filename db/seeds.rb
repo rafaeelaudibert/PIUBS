@@ -6,8 +6,7 @@
 #Options for logger.level DEBUG < INFO < WARN < ERROR < FATAL < UNKNOWN
 require 'logger'
 Rails.logger = Logger.new(STDOUT)
-Rails.logger.level = Logger::INFO
-Rails.logger.error("alive")
+Rails.logger.level = Logger::WARN
 
 def seed_users()
   User.roles.each do |_role|
@@ -18,6 +17,16 @@ def seed_users()
     else
       Rails.logger.error("Error creating user #{_email}!")
     end
+  end
+end
+
+def seed_user(company)
+  _role_name, _email, _passwd = "company_admin", "company_admin_#{company.sei}@piubs.com", 'changeme'
+  new_user = User.new(:name => _role_name, :email => _email, :password => _passwd, :password_confirmation => _passwd, :role => _role_name)
+  if new_user.save
+    Rails.logger.info("Company USER ADMIN #{_email} was created successfuly!")
+  else
+    Rails.logger.error("Error creating Company USER ADMIN #{_email}!")
   end
 end
 
@@ -37,8 +46,8 @@ def seed_city(city_name, state)
     (1..10).each do |_num|
       _cnes, _ubs_name = "#{city.id}#{_num}", "Unidade Básica de Saúde #{city_name} - #{_num}"
       seed_unity(_cnes,_ubs_name, city)
-      seed_contract(city)
     end
+    seed_contract(city)
   else
     Rails.logger.error("ERROR inserting CITY in #{state.name}: #{city_name}")
   end
@@ -59,7 +68,7 @@ def seed_states()
 end
 
 def seed_contract(city)
-  sei = rand(100)+1
+  sei = rand(20)+1
   contract = Contract.new('sei' => sei , 'city' => city, 'contract_number' => "#{sei}#{city.id}")
   if contract.save
     Rails.logger.info("INSERTED a CONTRACT in the database: #{sei}#{city.id}")
@@ -69,10 +78,11 @@ def seed_contract(city)
 end
 
 def seed_companies()
-  (1..100).each do |_sei|
+  (1..20).each do |_sei|
     company = Company.new('sei' => _sei)
     if company.save
       Rails.logger.info("INSERTED a COMPANY in the database: #{_sei}")
+      seed_user(company)
     else
       Rails.logger.error("ERROR inserting COMPANY #{_sei}")
     end
@@ -80,9 +90,11 @@ def seed_companies()
 end
 
 def main()
+  Rails.logger.warn("Seed started")
   seed_users
   seed_companies
   seed_states
+  Rails.logger.warn("Seed Finished")
 end
 
 main
