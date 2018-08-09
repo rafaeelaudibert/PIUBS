@@ -1,23 +1,27 @@
-<p id="notice"><%= notice %></p>
-<%= content_for :body_title do%> <%= @city.name %> <small> - <%= @city.state.name %></small><%end%>
+<%= <p id="notice"> notice="notice" %="%"></p> <%= content_for :body_title do%>
+<%= @city.name %>
+<small class="text-muted">
+  <%= @city.state.name %></small>
+<%end%>
 
-<table class="table table-striped">
-  <thead>
+<table class="table table-bordered table-striped table-hover">
+<thead class="thead-dark">
+  <tr>
+    <th>CNES</th>
+    <th>Name</th>
+    <th colspan="3"></th>
+  </tr>
+</thead>
+<tbody>
+  <% @ubs.each do |_ubs| %>
     <tr>
-      <th>Cnes</th>
-      <th>Name</th>
-    </tr>
-  </thead>
-  <tbody>
-  <% @ubs.each do |unity| %>
-    <tr>
-      <% dadosUnity = Unity.find(unity) %>
-      <td><%= dadosUnity.cnes %></td>
-      <td><%= dadosUnity.name %></td>
-    </tr>
-  <% end %>
+      <% unity = Unity.find(_ubs) %>
+        <td><%= unity.cnes %></td>
+        <td><%= unity.name %></td>
+        <td><%= link_to 'Show', unity , class: 'btn btn-success btn-sm' %></td>
+      </tr>
+    <% end %>
   </tbody>
 </table>
 
-<!-- <%= link_to 'Edit', edit_city_path(@city) %>
-<%= link_to 'Back', cities_path %> -->
+<!-- <%= link_to 'Edit', edit_city_path(@city) %> <%= link_to 'Back', cities_path %> -->

@@ -1,11 +1,6 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <strong>Cnes:</strong>
-  <%= @unity.cnes %>
-</p>
-
-<p>
   <strong>Name:</strong>
   <%= @unity.name %>
 </p>
@@ -15,5 +10,11 @@
   <%= @unity.city.name %>
 </p>
 
-<%= link_to 'Edit', edit_unity_path(@unity) %> |
+<p>
+  <strong>CNES:</strong>
+  <%= @unity.cnes %>
+</p>
+
+<%= link_to 'Edit', edit_unity_path(@unity) %>
+|
 <%= link_to 'Back', unities_path %>
