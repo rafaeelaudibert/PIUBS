@@ -102,20 +102,19 @@ body {
   border-color: transparent;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
 }
-@keyframes beatheart {
-  from {
-    transform: scale(1);
-  }
-
-  to {
-    transform: scale(1.2);
-  }
-}
 
 .navbar-brand {
   img {
-    animation-duration: 1s;
-    animation-name: beatheart;
+    @keyframes heartbeat {
+      from {
+        transform: scale(1);
+      }
+
+      to {
+        transform: scale(1.2);
+      }
+    }
+    animation: 1s ease-in-out heartbeat;
     animation-iteration-count: infinite;
     animation-direction: alternate;
     height: 2rem;
