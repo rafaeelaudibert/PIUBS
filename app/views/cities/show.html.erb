@@ -27,12 +27,13 @@
   </table>
 <% else %>
   <h1 class="h6">
-    This city has no UBS in the database. You can insert one clicking in the button below
+    This city has no UBS in the database.
+    <%= "You can insert one clicking in the button below" if current_user.try(:admin?) %>
   </h1>
 <% end %>
 
 <br>
-<%= link_to 'New UBS', new_unity_path(city: @city.id), class: 'btn btn-success btn-sm' %>
+<%= link_to 'New UBS', new_unity_path(city: @city.id), class: 'btn btn-success btn-sm' if current_user.try(:admin?) %>
 <%= link_to 'Edit', edit_city_path(@city), class: 'btn btn-success btn-sm' if current_user.try(:admin?) %>
 <%= link_to 'Back', cities_path, class: 'btn btn-primary btn-sm' %>
 <br/><br/>

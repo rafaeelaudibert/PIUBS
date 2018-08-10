@@ -10,6 +10,8 @@ class UnitiesController < ApplicationController
   # GET /unities/1
   # GET /unities/1.json
   def show
+    @contracts = Contract.where('city_id = ?', @unity.city_id)
+  rescue StandardError
   end
 
   # GET /unities/new
