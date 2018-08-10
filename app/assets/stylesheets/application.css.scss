@@ -15,6 +15,7 @@
  */
 .btn {
   color: white !important;
+  margin-left: 0;
 }
 
 .btn-primary {
@@ -133,4 +134,17 @@ body {
 
 .border-bottom {
   border-bottom: 1px solid #e5e5e5;
+}
+/*
+  * Bootstrap overrides
+  */
+h1 {
+  &.h1,
+  &.h2,
+  &.h3,
+  &.h4,
+  &.h5,
+  &.h6 {
+    display: inline-block;
+  }
 }
