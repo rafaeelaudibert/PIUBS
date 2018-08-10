@@ -1,27 +1,38 @@
-<%= <p id="notice"> notice="notice" %="%"></p> <%= content_for :body_title do%>
+<p id="notice"><%= notice %></p>
+<%= content_for :body_title do%>
 <%= @city.name %>
 <small class="text-muted">
   <%= @city.state.name %></small>
 <%end%>
 
+<% if @ubs.length > 0 %>
 <table class="table table-bordered table-striped table-hover">
-<thead class="thead-dark">
-  <tr>
-    <th>CNES</th>
-    <th>Name</th>
-    <th colspan="3"></th>
-  </tr>
-</thead>
-<tbody>
-  <% @ubs.each do |_ubs| %>
+  <thead class="thead-dark">
     <tr>
-      <% unity = Unity.find(_ubs) %>
-        <td><%= unity.cnes %></td>
-        <td><%= unity.name %></td>
-        <td><%= link_to 'Show', unity , class: 'btn btn-success btn-sm' %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+      <th>CNES</th>
+      <th>Name</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @ubs.each do |_ubs| %>
+      <tr>
+        <% unity = Unity.find(_ubs) %>
+          <td><%= unity.cnes %></td>
+          <td><%= unity.name %></td>
+          <td><%= link_to 'Show', unity , class: 'btn btn-success btn-sm' %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <h1 class="h6">
+    This city has no UBS in the database. You can insert one clicking in the button below
+  </h1>
+<% end %>
 
-<!-- <%= link_to 'Edit', edit_city_path(@city) %> <%= link_to 'Back', cities_path %> -->
+<br>
+<%= link_to 'New UBS', new_unity_path(city: @city.id), class: 'btn btn-success btn-sm' %>
+<%= link_to 'Edit', edit_city_path(@city), class: 'btn btn-success btn-sm' if current_user.try(:admin?) %>
+<%= link_to 'Back', cities_path, class: 'btn btn-primary btn-sm' %>
+<br/><br/>

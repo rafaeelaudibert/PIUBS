@@ -15,6 +15,7 @@ class UnitiesController < ApplicationController
   # GET /unities/new
   def new
     @unity = Unity.new
+    @city = City.find(params[:city]) if params[:city]
   end
 
   # GET /unities/1/edit
