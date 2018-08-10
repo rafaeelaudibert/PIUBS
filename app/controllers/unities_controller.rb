@@ -1,10 +1,10 @@
 class UnitiesController < ApplicationController
-  before_action :set_unity, only: [:show, :edit, :update, :destroy]
+  before_action :set_unity, only: %i[show edit update destroy]
 
   # GET /unities
   # GET /unities.json
   def index
-    @unities = Unity.paginate(:page => params[:page], :per_page => 25)
+    @unities = Unity.paginate(page: params[:page], per_page: 25)
   end
 
   # GET /unities/1
@@ -19,8 +19,7 @@ class UnitiesController < ApplicationController
   end
 
   # GET /unities/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /unities
   # POST /unities.json
@@ -35,7 +34,7 @@ class UnitiesController < ApplicationController
         else
           handleError format, :new, ''
         end
-      rescue => e
+      rescue StandardError => e
         puts e
         handleError format, :new, 'This CNES already exists in the database'
       end
@@ -53,7 +52,7 @@ class UnitiesController < ApplicationController
         else
           handleError format, :edit, ''
         end
-      rescue
+      rescue StandardError
         handleError format, :edit, 'This CNES already exists in the database'
       end
     end
@@ -70,20 +69,21 @@ class UnitiesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_unity
-      @unity = Unity.find(params[:cnes])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def unity_params
-      params.require(:unity).permit(:cnes, :name, :city_id)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_unity
+    @unity = Unity.find(params[:cnes])
+  end
 
-    # Handle repeated values errors
-    def handleError(format, method, message)
-      @unity.errors.add(:cnes, :blank, message: message) unless message == ''
-      format.html { render method }
-      format.json { render json: @unity.errors, status: :unprocessable_entity }
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def unity_params
+    params.require(:unity).permit(:cnes, :name, :city_id)
+  end
+
+  # Handle repeated values errors
+  def handleError(format, method, message)
+    @unity.errors.add(:cnes, :blank, message: message) unless message == ''
+    format.html { render method }
+    format.json { render json: @unity.errors, status: :unprocessable_entity }
+  end
 end
