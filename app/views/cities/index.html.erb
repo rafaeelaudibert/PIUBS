@@ -1,13 +1,14 @@
 <p id="notice"><%= notice %></p>
-<%= content_for :body_title do%>
-Cities
-<%end%>
+<%= content_for :body_title do%>Cities<%end%>
+
+<div class="float-right" style="display: block !important">
 <form class="form-inline">
-<!-- <%= link_to 'Create new city', new_city_path , class: 'btn btn-success' %> -->
-<input class="form-control mr-sm-2" type="search" placeholder="City name" aria-label="Search">
-<button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
+  <input class="form-control mr-sm-2" type="search" placeholder="City name" aria-label="Search">
+  <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
 </form>
-<hr/>
+</div>
+<hr style="margin-top: 4.4rem"/>
+
 <%= render './pagination', value: @cities %>
 <% if @cities.length > 0 %>
 <hr/>

@@ -1,20 +1,47 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Name:</strong>
+<div>
+  <h1 class="h5">Name:</h1>
   <%= @unity.name %>
-</p>
+</div>
 
-<p>
-  <strong>City:</strong>
+<div>
+  <h1 class="h5">City:</h1>
   <%= @unity.city.name %>
-</p>
+</div>
 
-<p>
-  <strong>CNES:</strong>
+<div>
+  <h1 class="h5">CNES:</h1>
   <%= @unity.cnes %>
-</p>
+</div>
 
-<%= link_to 'Edit', edit_unity_path(@unity) %>
-|
-<%= link_to 'Back', unities_path %>
+<hr/>
+<h1 class="h3">Contracts:</h1>
+<br/><br/>
+
+<% if @contracts %>
+  <table class="table table-bordered table-striped table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th>Contract Number</th>
+        <th>Company SEI</th>
+        <th colspan="3"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @contracts.each do |_contract| %>
+        <tr>
+          <% contract = Contract.find(_contract.id) %>
+            <td><%= contract.contract_number %></td>
+            <td><%= contract.sei %></td>
+            <td><%= link_to 'Show', contract , class: 'btn btn-success btn-sm' %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <hr/>
+  <% end %>
+
+  <%= link_to 'Edit', edit_unity_path(@unity), class: 'btn btn-success btn-sm' %>
+  <%= link_to 'Back', unities_path, class: 'btn btn-primary btn-sm' %>
+  <br/><br/>

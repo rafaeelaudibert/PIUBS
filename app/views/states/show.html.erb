@@ -43,4 +43,9 @@
 <%= will_paginate @cities, :previous_label => '<<', :next_label => '>>' %>
 </div>
 <hr/><br/>
-<!-- <%= link_to 'Edit', edit_state_path(@state) %> <%= link_to 'Back', states_path %> -->
+
+<%= link_to 'New City', new_city_path, class: 'btn btn-success btn-sm' if current_user.try(:admin?) %>
+<%= link_to 'Edit', edit_state_path(@state), class: 'btn btn-success btn-sm' if current_user.try(:admin?) %>
+<%= link_to 'Back', states_path, class: 'btn btn-primary btn-sm' %>
+<br/><br/>
+<!-- <%= link_to 'Edit', edit_state_path(@state) %> -->
