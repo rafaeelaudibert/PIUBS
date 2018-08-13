@@ -5,6 +5,9 @@
   <%= @city.state.name %></small>
 <%end%>
 
+<h1 class="h3">Unidades Básicas de Saúde:</h1>
+<br/><br/>
+
 <% if @ubs.length > 0 %>
 <table class="table table-bordered table-striped table-hover">
   <thead class="thead-dark">
@@ -34,6 +37,7 @@
 
 <br>
 <%= link_to 'New UBS', new_unity_path(city: @city.id), class: 'btn btn-success btn-sm' if current_user.try(:admin?) %>
+<%= link_to 'New Contract', new_contract_path(city: @city.id), class: 'btn btn-success btn-sm' if current_user.try(:admin?) %>
 <%= link_to 'Edit', edit_city_path(@city), class: 'btn btn-success btn-sm' if current_user.try(:admin?) %>
 <%= link_to 'Back', cities_path, class: 'btn btn-primary btn-sm' %>
 <br/><br/>

@@ -14,6 +14,8 @@ class ContractsController < ApplicationController
   # GET /contracts/new
   def new
     @contract = Contract.new
+    @city = City.find(params[:city]) if params[:city]
+    @company = Company.find(params[:company]) if params[:company]
   end
 
   # GET /contracts/1/edit

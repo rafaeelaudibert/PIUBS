@@ -5,8 +5,11 @@
   <%= @company.sei %>
 </div>
 
+<hr/>
+<h1 class="h3">Contracts:</h1>
+<br/><br/>
+
 <% if @contracts %>
-  <br/><br/>
   <%= render './pagination', value: @contracts %>
   <hr/>
   <table class="table table-bordered table-striped table-hover">
@@ -33,8 +36,14 @@
           </tbody>
         </table>
         <hr/>
+      <% else %>
+        <h1 class="h6">
+          This Company has no Contracts.
+          <%= "You can insert one clicking in the button below" if current_user.try(:admin?) %>
+        </h1>
       <% end %>
 
+      <%= link_to 'New Contract', new_contract_path(company: @company.sei), class: 'btn btn-success btn-sm' if current_user.try(:admin?) %>
       <%= link_to 'Edit', edit_company_path(@company), class: 'btn btn-success btn-sm' %>
       <%= link_to 'Back', companies_path, class: 'btn btn-primary btn-sm' %>
       <br/><br/>

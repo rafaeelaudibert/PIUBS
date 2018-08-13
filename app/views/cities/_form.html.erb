@@ -23,15 +23,20 @@
       Selecione um Estado
     </option>
     <% State.all.each do |_state| %>
-      <option value="<%= _state.id %>">
-        <%= _state.name %>
-      </a>
-    <% end %>
-  </select>
-</div>
+      <% if @city.state_id == _state.id %>
+        <option selected="selected" value="<%= _state.id %>">
+        <% else %>
+          <option value="<%= _state.id %>">
+          <% end %>
 
-<div class="actions">
-  <%= form.submit 'Save', :class => 'btn btn-success btn-sm' %>
-  <%= link_to 'Cancel', @city, :class => 'btn btn-danger btn-sm' %>
-</div>
+          <%= _state.name %>
+        </option>
+      <% end %>
+    </select>
+  </div>
+
+  <div class="actions">
+    <%= form.submit 'Save', :class => 'btn btn-success btn-sm' %>
+    <%= link_to 'Cancel', @city, :class => 'btn btn-danger btn-sm' %>
+  </div>
 <% end %>
