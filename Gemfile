@@ -52,3 +52,4 @@ gem 'city-state'                # City + states gem. # TODO: Modify the gem to r
 gem 'will_paginate', '~> 3.1.0' # Pagination
 gem 'carrierwave'
 gem 'mini_magick', '~> 4.3'     # Image uploaded by carrierwave manipulation
+gem 'protected_attributes_continued'
