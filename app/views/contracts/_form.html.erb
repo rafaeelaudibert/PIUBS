@@ -23,16 +23,28 @@
 </div>
 
 <div class="form-group">
+  <%= form.label :state_id %>
+  <select skip_default_ids="false" allow_method_names_outside_object="true" name="contract[state_id]" id="contract_state_id" class="form-control">
+    <option value="0">
+      Selecione um Estado
+    </option>
+    <% State.all.each do |_state| %>
+          <option value="<%= _state.id %>">
+          <%= _state.name %>
+        </option>
+      <% end %>
+    </select>
+  </div>
+
+<div class="form-group">
   <%= form.label :city_id %>
-  <% if @city %>
-    <%= form.text_field :city_id, class: 'form-control', value: @city.id, disabled: true %>
-  <% else %>
-    <%= form.text_field :city_id, class: 'form-control' %>
-  <% end %>
+  <select skip_default_ids="false" allow_method_names_outside_object="true" name="contract[city_id]" id="contract_city_id" class="form-control">
+  <option value="0"> Selecione um Estado primeiro </option>
+  </select>
 </div>
 
 <div class="form-group">
-  <%= form.label :sei %>
+  <%= form.label :sei, 'Company SEI' %>
   <% if @company %>
     <%= form.text_field :sei, class: 'form-control', value: @company.sei, disabled: true %>
   <% else %>
@@ -42,4 +54,23 @@
 
 <%= form.submit 'Save', :class => 'btn btn-success btn-sm' %>
 <%= link_to 'Cancel', contracts_path, :class => 'btn btn-danger btn-sm' %>
+<% end %>
+
+<%= javascript_tag do %>
+  
+  let stateSelect = document.getElementById('contract_state_id');
+  let citySelect = document.getElementById('contract_city_id');
+  
+  stateSelect.addEventListener('change', e => {
+    
+    let cities = <%= raw(City.all.as_json.to_json) %>.filter( obj => obj.state_id == stateSelect.value)
+    console.log(cities);
+    
+    let innerHTML = '';
+    for (city of cities) {
+      innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
+    }
+    citySelect.innerHTML = innerHTML || '<option value="0"> Selecione um Estado primeiro </option>';
+  })
+  
 <% end %>
