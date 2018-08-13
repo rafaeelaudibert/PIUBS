@@ -28,7 +28,10 @@ class CallsController < ApplicationController
     #status, severity, protocol, company_id
     user = current_user
     @call.sei = user.sei
-
+    @call.status = 0
+    @call.protocol = get_protocol
+    @call.severity = 'Normal'
+    @call.user_id = user.id
     respond_to do |format|
       if @call.save
         format.html { redirect_to @call, notice: 'Call was successfully created.' }
@@ -68,6 +71,21 @@ class CallsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_call
       @call = Call.find(params[:id])
+    end
+
+    def get_current_time
+      Time.zone.now.strftime('%H%M%S')
+    end
+
+    def get_current_date
+      Date.today.strftime("%d%m%Y")
+    end
+
+    def get_protocol
+      user = format('%05d', current_user.id.to_i) # Leading zeros, allowing to have 99999 users
+      time = get_current_time
+      date = get_current_date
+      protocol = "#{date}#{time}#{user}"
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

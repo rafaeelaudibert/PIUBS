@@ -1,74 +1,64 @@
-<p id="notice"><%= notice %></p>
+<%= content_for :body_title do%>
+Atendimento
+<%end%>
+<ul class="nav nav-pills" role="tablist">
+<li role="presentation" class="active">
+  <h5>Nº do protocolo
+    <span class="badge badge-pill badge-primary"><%= @call.protocol %></span>
+  </h5>
+</li>
+</ul>
+<br/>
+<div class="card border-secondary">
+<!-- Default panel contents -->
+<div class="card-header bg-secondary text-white">
+  <%= t :requirer %>
+  :
+  <span class="badge badge-pill badge-light">
+    <%= User.find(@call.user_id).email %></a>
+</span>
+|
+<%= t :creation_date %>
+:
+<span class="badge badge-pill badge-light">
+  <%= @call.created_at %>
+</span>
 
+| Sei :
+<span class="badge badge-pill badge-light">
+  <%= link_to "Empresa #{@call.sei}", company_path(@call.sei)%>
+</span>
+</div>
+
+<div class="card-body">
+<h4><%= @call.title %></h4>
+<hr/>
 <p>
-  <strong>Title:</strong>
-  <%= @call.title %>
-</p>
-
+  <strong><%= t :call %>:</strong>
+  <%= @call.description %></p>
 <p>
-  <strong>Description:</strong>
-  <%= @call.description %>
-</p>
+  <strong><%= t :acess_profile_label %>:
+  </strong><%= @call.access_profile %>
+  <p>
+    <strong><%= t :version %>:
+    </strong><%= @call.version %>
+    <% if @call.feature_detail != '' %>
+      <p>
+        <strong><%= t :functional_detail %>:
+        </strong><%= @call.feature_detail %></p>
+    <% end %>
+    <hr/>
 
-<p>
-  <strong>Finished at:</strong>
-  <%= @call.finished_at %>
-</p>
-
-<p>
-  <strong>Status:</strong>
-  <%= @call.status %>
-</p>
-
-<p>
-  <strong>Version:</strong>
-  <%= @call.version %>
-</p>
-
-<p>
-  <strong>Access profile:</strong>
-  <%= @call.access_profile %>
-</p>
-
-<p>
-  <strong>Feature detail:</strong>
-  <%= @call.feature_detail %>
-</p>
-
-<p>
-  <strong>Answer summary:</strong>
-  <%= @call.answer_summary %>
-</p>
-
-<p>
-  <strong>Severity:</strong>
-  <%= @call.severity %>
-</p>
-
-<p>
-  <strong>Protocol:</strong>
-  <%= @call.protocol %>
-</p>
-
-<p>
-  <strong>City:</strong>
-  <%= @call.city.name %>
-</p>
-
-<p>
-  <strong>Category:</strong>
-  <%= @call.category.name %>
-</p>
-
-<p>
-  <strong>State:</strong>
-  <%= @call.state.name %>
-</p>
-
-<p>
-  <strong>Company:</strong>
-  <%= @call.company.sei %>
-</p>
-
-<%= link_to 'Edit', edit_call_path(@call) %> |
-<%= link_to 'Back', calls_path %>
+    <%= t :city %>:
+    <span class="badge badge-pill badge-primary"><%= @call.city.name %></span>
+    <%= t :uf %>
+    <span class="badge badge-pill badge-primary"><%= @call.state.name %></span>
+    <%= t :status %>
+    <span class="badge badge-pill badge-primary"><%= @call.status %></span>
+    <%= t :severity %>
+    <span class="badge badge-pill badge-primary"><%= @call.severity %></span>
+    <%= t :category %>
+    <span class="badge badge-pill badge-primary"><%= @call.category.name %></span>
+    <hr/>
+  </div>
+</div>
