@@ -12,27 +12,34 @@
   </div>
 <% end %>
 
-<div class="col-4">
-  <div class="form-group">
-    <%= form.label :file %>
-    <%= form.file_field :file%>
-  </div>
-
-  <div class="form-group">
-    <%= form.label :contract_number %>
-    <%= form.text_field :contract_number , class: 'form-control'%>
-  </div>
-
-  <div class="form-group">
-    <%= form.label :city_id %>
-    <%= form.text_field :city_id, class: 'form-control' %>
-  </div>
-
-  <div class="form-group">
-    <%= form.label :sei %>
-    <%= form.text_field :sei, class: 'form-control' %>
-  </div>
-  <%= form.submit 'Save', :class => 'btn btn-success btn-sm' %>
-  <%= link_to 'Cancel', contracts_path, :class => 'btn btn-danger btn-sm' %>
+<div class="form-group">
+  <%= form.label :file %>
+  <%= form.file_field :file, class: 'form-control-file'%>
 </div>
+
+<div class="form-group">
+  <%= form.label :contract_number %>
+  <%= form.text_field :contract_number , class: 'form-control'%>
+</div>
+
+<div class="form-group">
+  <%= form.label :city_id %>
+  <% if @city %>
+    <%= form.text_field :city_id, class: 'form-control', value: @city.id, disabled: true %>
+  <% else %>
+    <%= form.text_field :city_id, class: 'form-control' %>
+  <% end %>
+</div>
+
+<div class="form-group">
+  <%= form.label :sei %>
+  <% if @company %>
+    <%= form.text_field :sei, class: 'form-control', value: @company.sei, disabled: true %>
+  <% else %>
+    <%= form.text_field :sei, class: 'form-control' %>
+  <% end %>
+</div>
+
+<%= form.submit 'Save', :class => 'btn btn-success btn-sm' %>
+<%= link_to 'Cancel', contracts_path, :class => 'btn btn-danger btn-sm' %>
 <% end %>
