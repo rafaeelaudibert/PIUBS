@@ -1,0 +1,74 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @call.title %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @call.description %>
+</p>
+
+<p>
+  <strong>Finished at:</strong>
+  <%= @call.finished_at %>
+</p>
+
+<p>
+  <strong>Status:</strong>
+  <%= @call.status %>
+</p>
+
+<p>
+  <strong>Version:</strong>
+  <%= @call.version %>
+</p>
+
+<p>
+  <strong>Access profile:</strong>
+  <%= @call.access_profile %>
+</p>
+
+<p>
+  <strong>Feature detail:</strong>
+  <%= @call.feature_detail %>
+</p>
+
+<p>
+  <strong>Answer summary:</strong>
+  <%= @call.answer_summary %>
+</p>
+
+<p>
+  <strong>Severity:</strong>
+  <%= @call.severity %>
+</p>
+
+<p>
+  <strong>Protocol:</strong>
+  <%= @call.protocol %>
+</p>
+
+<p>
+  <strong>City:</strong>
+  <%= @call.city.name %>
+</p>
+
+<p>
+  <strong>Category:</strong>
+  <%= @call.category.name %>
+</p>
+
+<p>
+  <strong>State:</strong>
+  <%= @call.state.name %>
+</p>
+
+<p>
+  <strong>Company:</strong>
+  <%= @call.company.sei %>
+</p>
+
+<%= link_to 'Edit', edit_call_path(@call) %> |
+<%= link_to 'Back', calls_path %>

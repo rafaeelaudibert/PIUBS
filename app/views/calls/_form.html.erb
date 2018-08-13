@@ -1,0 +1,62 @@
+<%= form_with(model: call, local: true) do |form| %>
+  <% if call.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(call.errors.count, "error") %> prohibited this call from being saved:</h2>
+
+      <ul>
+      <% call.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+<div class="col-4 mb-4">
+  <div class="field">
+    <%= form.label :title %>
+    <%= form.text_field :title, class: 'form-control' %>
+  </div>
+
+  <div class="field">
+    <%= form.label :description %>
+    <%= form.text_area :description, class: 'form-control', rows: '8' %>
+  </div>
+
+  <div class="field">
+    <%= form.label :version %>
+    <%= form.text_field :version, class: 'form-control' %>
+  </div>
+
+  <div class="field">
+    <%= form.label :access_profile %>
+    <%= form.text_field :access_profile, class: 'form-control' %>
+  </div>
+
+  <div class="field">
+    <%= form.label :feature_detail %>
+    <%= form.text_field :feature_detail, class: 'form-control' %>
+  </div>
+
+  <div class="field">
+    <%= form.label :answer_summary %>
+    <%= form.text_field :answer_summary, class: 'form-control' %>
+  </div>
+
+  <div class="field">
+    <%= form.label :city_id %>
+    <%= form.collection_select(:city_id, City.all, :id, :name, {include_blank: "Selecione uma cidade: "}, class: 'form-control') %>
+  </div>
+
+  <div class="field">
+    <%= form.label :state_id %>
+    <%= form.collection_select(:state_id, get_all_states, :id, :name, {include_blank: "Selecione um Estado: "}, class: 'form-control') %>
+  </div>
+
+  <div class="field">
+    <%= form.label :category_id %>
+    <%= form.collection_select(:category_id, Category.all, :id, :name, {include_blank: "Selecione uma Categoria: "}, class: 'form-control') %>
+  </div>
+
+  <%= form.submit 'Create Call', :class => 'btn btn-success btn-sm' %>
+  <%= link_to 'Cancel', calls_path, :class => 'btn btn-danger btn-sm' %>
+</div>
+<% end %>
