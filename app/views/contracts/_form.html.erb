@@ -80,8 +80,8 @@
 
 <%= javascript_tag do %>
   
-  const stateSelect = document.getElementById('contract_state_id');
-  const citySelect = document.getElementById('contract_city_id');
+  let stateSelect = document.getElementById('contract_state_id');
+  let citySelect = document.getElementById('contract_city_id');
   
   stateSelect.addEventListener('change', () =>
     jQuery.ajax({
