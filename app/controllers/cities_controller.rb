@@ -60,6 +60,13 @@ class CitiesController < ApplicationController
     end
   end
 
+  # GET /cities/states
+  def states
+    respond_to do |format|
+      format.js { render json: City.where('state_id = ?', params[:id]).order('id ASC') }
+    end
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.
