@@ -1,3 +1,6 @@
+<%= tinymce_assets %>
+<%= tinymce %>
+
 <%= content_for :body_title do%>
 Atendimento
 <%end%>
@@ -79,7 +82,10 @@ Atendimento
 
 <div class="card border-secondary mt-4">
   <div class="card-header bg-secondary text-white">
-    Histórico de Atendimento
+    <h5>
+      <img src="/assets/svg/chat.svg" height="32" width="32">
+      Histórico de Atendimento
+    </h5>
   </div>
   <div class="card-body">
     <table class="table">
@@ -92,6 +98,7 @@ Atendimento
             <% if reply.category == 'reply' %>
               <div class="card bg-white mb-3 ">
                 <div class="card-header">
+                  <img src="/assets/svg/comment-square.svg" height="16" width="16">
                   <span class="badge badge-pill badge-dark">
                     <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
                   </span>
@@ -104,9 +111,11 @@ Atendimento
               <%end%>
 
               <% if reply.category == 'support' %>
-                <div class="card bg-light mb-3 ">
-                  <div class="card-header bg-secondary text-white">
-                    <span class="badge badge-pill badge-light">
+                <div class="card bg-white mb-3" style="border-left: 5px solid gray">
+                  <div class="card-header">
+                    <img src="/assets/svg/comment-square.svg" height="16" width="16">
+                    <span class="badge badge-pill badge-dark">support</span>
+                    <span class="badge badge-pill badge-dark">
                       <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
                     </span>
                     -
@@ -114,7 +123,7 @@ Atendimento
                       <%= User.find(reply.user_id).name %>
                     </strong>
                     added a support.
-                    <span class="badge badge-pill badge-light" style="float: right">
+                    <span class="badge badge-pill badge-dark" style="float: right">
                       <%= reply.status %>
                     </span>
                   </div>
@@ -122,7 +131,7 @@ Atendimento
 
                 <div class="card-body">
                   <p class="card-text">
-                    <%= reply.description %>
+                    <%= reply.description.html_safe %>
                     <hr/>
                     <%= link_to 'Show', reply %>
                     <%= link_to 'Edit', edit_reply_path(reply) %>
@@ -141,4 +150,17 @@ Atendimento
     $("#reply").click(function () {
       $("#reply_box").toggle(200);
     });
+
+    $("#cancel").click(function () {
+      $("#reply_box").toggle(200);
+    });
   </script>
+
+  <style>
+    #reply_description_ifr {
+      height: 250px !important;
+    }
+    #mceu_30 {
+      display: none;
+    }
+  </style>

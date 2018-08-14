@@ -11,13 +11,13 @@
     </ul>
   </div>
 <% end %>
-<div class="col-6">
+<div style="max-width: 800px">
 
   <%= form.text_field :protocol, class: 'form-control hidden' %>
 
   <div class="field">
     <%= form.label :description %>
-    <%= form.text_area :description, class: 'form-control', rows: '8' %>
+    <%= form.text_area :description, class: 'tinymce', :rows => 40, :cols => 120 %>
   </div>
 
   <% if is_support_user %>
@@ -26,8 +26,8 @@
     </div>
   <%end%>
 
-  <%= form.submit 'Send reply', class: 'btn btn-primary btn-sm' %>
-  <%= submit_tag("Reset", { :name => 'reset', :id => 'reset', :type => 'reset', :class => 'btn btn-danger btn-sm'}) %>
+  <%= form.submit 'Send reply', class: 'btn btn-success btn-sm' %>
+  <button id="cancel" type="button" class="btn btn-danger btn-sm">Cancel</button>
 </div>
 
 <script>
@@ -37,4 +37,5 @@
     $("#reply_protocol").hide();
   });
 </script>
+
 <% end %>

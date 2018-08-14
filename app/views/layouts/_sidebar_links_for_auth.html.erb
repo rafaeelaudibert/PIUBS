@@ -1,4 +1,3 @@
-
 <hr/>
 <!-- Admin Sidebar-->
 <% if current_user.try(:admin?) %>
@@ -20,37 +19,37 @@
 <!-- UBS Admin Sidebar-->
 <% if current_user.try(:ubs_admin?) %>
   <%= link_to 'Usuários', root_path, class: 'nav-item nav-link' %>
-  <%= link_to 'Atendimentos', root_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Atendimentos', calls_path, class: 'nav-item nav-link' %>
 <% end %>
 
 <!-- UBS User Sidebar-->
 <% if current_user.try(:ubs_user?) %>
-  <%= link_to 'Atendimentos', root_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Atendimentos', calls_path, class: 'nav-item nav-link' %>
 <% end %>
 
 <!-- Company Admin Sidebar-->
 <% if current_user.try(:company_admin?) %>
   <%= link_to 'Empresa', root_path, class: 'nav-item nav-link' %>
   <%= link_to 'Contratos', root_path, class: 'nav-item nav-link' %>
-  <%= link_to 'Atendimentos', root_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Atendimentos', calls_path, class: 'nav-item nav-link' %>
   <%= link_to 'Usuários', root_path, class: 'nav-item nav-link' %>
 <% end %>
 
 <!-- Company User Sidebar-->
 <% if current_user.try(:company_user?) %>
-  <%= link_to 'Atendimentos', root_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Atendimentos', call_path, class: 'nav-item nav-link' %>
 <% end %>
 
 <!-- Call Center Admin Sidebar-->
 <% if current_user.try(:call_center_admin?) %>
   <%= link_to 'Estatísticas', root_path, class: 'nav-item nav-link' %>
-  <%= link_to 'Atendimentos', root_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Atendimentos', calls_path, class: 'nav-item nav-link' %>
   <%= link_to 'Usuários', root_path, class: 'nav-item nav-link' %>
 <% end %>
 
 <!-- Call Center User Sidebar-->
 <% if current_user.try(:call_center_user?) %>
-  <%= link_to 'Atendimentos', root_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Atendimentos', calls_path, class: 'nav-item nav-link' %>
 <% end %>
 
 <!-- City user Sidebar-->
