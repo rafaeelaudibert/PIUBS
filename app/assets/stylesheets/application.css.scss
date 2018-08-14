@@ -15,6 +15,7 @@
  */
 .btn {
   color: white !important;
+  margin-left: 0;
 }
 
 .btn-primary {
@@ -55,13 +56,14 @@ body {
 }
 
 .sidebar .nav-link {
-  font-weight: 500;
   color: #333;
+  line-height: 1.5rem;
+  border-color: black black black black;
 }
 
-.sidebar .nav-item:hover {
-  color: #333 !important;
-  background-color: rgba(255, 255, 255, .7) !important;
+.sidebar a:hover {
+  color: #444;
+  background-color: #eef;
 }
 
 .sidebar .nav-link .feather {
@@ -101,6 +103,28 @@ body {
   border-color: transparent;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
 }
+
+.navbar-brand {
+  img {
+    @keyframes heartbeat {
+      from {
+        transform: scale(1);
+      }
+
+      to {
+        transform: scale(1.2);
+      }
+    }
+    animation: 1s ease-in-out heartbeat;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    height: 2rem;
+  }
+
+  span {
+    margin-left: 0.4rem;
+  }
+}
 /*
   * Utilities
   */
@@ -110,4 +134,25 @@ body {
 
 .border-bottom {
   border-bottom: 1px solid #e5e5e5;
+}
+
+.border-left {
+  border-left: 1px solid #e5e5e5;
+}
+
+.border-right {
+  border-right: 1px solid #e5e5e5;
+}
+/*
+  * Bootstrap overrides
+  */
+h1 {
+  &.h1,
+  &.h2,
+  &.h3,
+  &.h4,
+  &.h5,
+  &.h6 {
+    display: inline-block;
+  }
 }

@@ -48,9 +48,8 @@ end
 gem 'binding_of_caller'
 
 # PIUBS used gems
-gem 'city-state'                # City + states gem. # TODO: Modify the gem to retrieve data in portuguese
 gem 'will_paginate', '~> 3.1.0' # Pagination
 gem 'carrierwave'
 gem 'mini_magick', '~> 4.3'     # Image uploaded by carrierwave manipulation
-
 gem 'tinymce-rails' # text editor
+gem 'shog'                      # Colorized console logging

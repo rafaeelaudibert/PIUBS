@@ -1,16 +1,30 @@
 <div class="container">
+
+  <h3>Users</h3>
   <div class="row">
-    <h3>Users</h3>
-    <div class="column">
-      <table class="table">
-        <tbody>
-          <% @users.each do |user| %>
-            <tr>
-              <%= render user %>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+    <div class="col">
+      <table class="table table-bordered table-striped table-hover">
+        <thead class="thead-dark">
+          <tr>
+            <th>
+              Nome
+            </th>
+            <th>
+              E-mail
+            </th>
+            <th>
+              Role
+            </th>
+            <th colspan="2"></th>
+          </thead>
+          <tbody>
+            <% @users.sort.each do |user| %>
+              <tr>
+                <%= render user %>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-</div>

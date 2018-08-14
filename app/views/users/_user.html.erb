@@ -1,12 +1,28 @@
 <td>
-  <%= link_to user.email, user %>
+  <span class='user-name'><%= user.name %></span>
 </td>
 <td>
-  <%= form_for(user) do |f| %>
-    <%= f.select(:role, User.roles.keys.map {|role| [role.titleize,role]}) %>
-    <%= f.submit 'Change Role', :class => 'button-xs' %>
-  <% end %>
-</td>
-<td>
-  <%= link_to("Delete user", user_path(user), :data => { :confirm => "Are you sure?" }, :method => :delete, :class => 'button-xs') unless user == current_user %>
-</td>
+  <% pp(user) %>
+    <span class='user-email'><%= link_to user.email, user, class: 'amail' %></span>
+  </td>
+  <td class='user-role'>
+    <%= form_for(user) do |f| %>
+    <div class="form-group">
+      <select name="user[role]" id="user_role" class="form-control">
+        <% User.roles.keys.map {|role| [role.titleize,role]}.each do |_role| %>
+          <% if user.role == _role[1] %>
+            <option value="<%= _role[1] %>" selected="selected">
+            <% else %>
+              <option value="<%= _role[1] %>">
+              <% end %>
+              <%= _role[0] %>
+            </option>
+          <% end %>
+        </select>
+      </div>
+      <%= f.submit 'Change Role', class: 'button-xs' %>
+    <% end %>
+  </td>
+  <td class='user-role'>
+    <%= link_to("Delete user", user_path(user), :data => { :confirm => "Tem certeza?" }, :method => :delete, :class => 'button-xs') unless user == current_user || user.role == "admin" %>
+  </td>

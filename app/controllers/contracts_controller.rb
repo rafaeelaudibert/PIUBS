@@ -14,6 +14,8 @@ class ContractsController < ApplicationController
   # GET /contracts/new
   def new
     @contract = Contract.new
+    @city = City.find(params[:city]) if params[:city]
+    @company = Company.find(params[:company]) if params[:company]
   end
 
   # GET /contracts/1/edit
@@ -77,7 +79,9 @@ class ContractsController < ApplicationController
 
   # GET /contract/:id/download
   def download
-    send_data(@contract.file_contents, type: @contract.content_type, filename: @contract.filename)
+    send_data(@contract.file_contents, type: @contract.content_type, filename: @contract.filename) if @contract.content_type.split('/')[1].to_s == 'pdf'
+  rescue StandardError
+    redirect_to not_found_path
   end
 
   private
