@@ -60,5 +60,85 @@ Atendimento
     <%= t :category %>
     <span class="badge badge-pill badge-primary"><%= @call.category.name %></span>
     <hr/>
+    <%= link_to 'Edit', edit_call_path(@call), class: 'btn btn-secondary btn-sm' %>
+    <button id="reply" type="button" class="btn btn-secondary btn-sm">Reply</button>
   </div>
 </div>
+
+<div class="card border-secondary mt-4" style="display: none" id="reply_box">
+  <div class="card-header bg-secondary text-white">
+    Reply call:
+    <span class="badge badge-pill badge-light">
+      <%= @call.protocol %>
+    </span>
+  </div>
+  <div class="card-body">
+    <%= render 'reply', reply: @reply %>
+  </div>
+</div>
+
+<div class="card border-secondary mt-4">
+  <div class="card-header bg-secondary text-white">
+    Histórico de Atendimento
+  </div>
+  <div class="card-body">
+    <table class="table">
+      <thead>
+        <tr></tr>
+      </thead>
+      <tbody>
+        <% @call.replies.each do |reply| %>
+          <tr>
+            <% if reply.category == 'reply' %>
+              <div class="card bg-white mb-3 ">
+                <div class="card-header">
+                  <span class="badge badge-pill badge-dark">
+                    <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+                  </span>
+                  -
+                  <strong>
+                    <%= User.find(reply.user_id).name %>
+                  </strong>
+                  added a reply.
+                </div>
+              <%end%>
+
+              <% if reply.category == 'support' %>
+                <div class="card bg-light mb-3 ">
+                  <div class="card-header bg-secondary text-white">
+                    <span class="badge badge-pill badge-light">
+                      <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+                    </span>
+                    -
+                    <strong>
+                      <%= User.find(reply.user_id).name %>
+                    </strong>
+                    added a support.
+                    <span class="badge badge-pill badge-light" style="float: right">
+                      <%= reply.status %>
+                    </span>
+                  </div>
+                <%end%>
+
+                <div class="card-body">
+                  <p class="card-text">
+                    <%= reply.description %>
+                    <hr/>
+                    <%= link_to 'Show', reply %>
+                    <%= link_to 'Edit', edit_reply_path(reply) %>
+                    <%= link_to 'Destroy', reply, method: :delete, data: { confirm: 'Are you sure?' } %>
+                  </p>
+                </div>
+              </div>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    $("#reply").click(function () {
+      $("#reply_box").toggle(200);
+    });
+  </script>

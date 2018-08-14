@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_13_205703) do
+ActiveRecord::Schema.define(version: 2018_08_14_125211) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,6 +70,17 @@ ActiveRecord::Schema.define(version: 2018_08_13_205703) do
     t.string "content_type"
     t.binary "file_contents"
     t.index ["city_id"], name: "index_contracts_on_city_id"
+  end
+
+  create_table "replies", force: :cascade do |t|
+    t.string "protocol"
+    t.text "description"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "status"
+    t.string "category"
+    t.index ["user_id"], name: "index_replies_on_user_id"
   end
 
   create_table "states", force: :cascade do |t|
@@ -133,6 +144,7 @@ ActiveRecord::Schema.define(version: 2018_08_13_205703) do
   add_foreign_key "cities", "states"
   add_foreign_key "contracts", "cities"
   add_foreign_key "contracts", "companies", column: "sei", primary_key: "sei"
+  add_foreign_key "replies", "users"
   add_foreign_key "unities", "cities"
   add_foreign_key "users", "companies", column: "sei", primary_key: "sei"
 end
