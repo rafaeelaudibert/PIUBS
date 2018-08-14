@@ -35,29 +35,29 @@
         Selecione um Estado
       </option>
       <% State.all.each do |_state| %>
-            <option value="<%= _state.id %>">
-            <%= _state.name %>
-          </option>
-        <% end %>
-      </select>
-    </div>
+        <option value="<%= _state.id %>">
+          <%= _state.name %>
+        </option>
+      <% end %>
+    </select>
+  </div>
 
   <div class="form-group">
     <%= form.label :city_id %>
     <select skip_default_ids="false" allow_method_names_outside_object="true" name="contract[city_id]" id="contract_city_id" class="form-control">
-    <option value="0"> Selecione um Estado primeiro </option>
+      <option value="0">
+        Selecione um Estado primeiro
+      </option>
     </select>
   </div>
 <% end %>
 
-
-
-  <% if @company %>
+<% if @company %>
   <div class="form-group" style="display:none">
-    <%= form.label :sei, 'Company SEI' %>  
+    <%= form.label :sei, 'Company SEI' %>
     <%= form.text_field :sei, class: 'form-control', value: @company.sei%>
   </div>
-  <% else %>
+<% else %>
   <div class="form-group">
     <%= form.label :sei, 'Company SEI' %>
     <select skip_default_ids="false" allow_method_names_outside_object="true" name="contract[sei]" id="contract_sei" class="form-control">
@@ -65,39 +65,35 @@
         Selecione uma empresa
       </option>
       <% Company.all.each do |_company| %>
-            <option value="<%= _company.id %>">
-            <%= _company.sei %>
-          </option>
-        <% end %>
-      </select>
-    </div>
-  <% end %>
-
+        <option value="<%= _company.id %>">
+          <%= _company.sei %>
+        </option>
+      <% end %>
+    </select>
+  </div>
+<% end %>
 
 <%= form.submit 'Save', :class => 'btn btn-success btn-sm' %>
 <%= link_to 'Cancel', contracts_path, :class => 'btn btn-danger btn-sm' %>
 <% end %>
 
-<%= javascript_tag do %>
-  
-  let stateSelect = document.getElementById('contract_state_id');
-  let citySelect = document.getElementById('contract_city_id');
-  
-  stateSelect.addEventListener('change', () =>
-    jQuery.ajax({
-      url: '/cities/states/' + stateSelect.value,
-      type: "GET",
-      dataType: "json",
-      success: insertData
-    }));  
-  
-  function insertData(cities) {    
-    let innerHTML = '';
-    for (city of cities) {
-      innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
-    }
-    citySelect.innerHTML = innerHTML || '<option value="0"> Selecione um Estado primeiro </option>';
+<script>
+
+let stateSelect = document.getElementById('contract_state_id');
+let citySelect = document.getElementById('contract_city_id');
+
+stateSelect.addEventListener('change', () => jQuery.ajax({
+  url: '/cities/states/' + stateSelect.value,
+  type: "GET",
+  dataType: "json",
+  success: insertData
+}));
+
+function insertData(cities) {
+  let innerHTML = '';
+  for (city of cities) {
+    innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
   }
-  
-  
-<% end %>
+  citySelect.innerHTML = innerHTML || '<option value="0"> Selecione um Estado primeiro </option>';
+}
+</script>
