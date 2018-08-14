@@ -10,6 +10,11 @@
     flex: 3;
     font-size: 2rem;
 
+    &:hover {
+      color: black;
+      cursor: auto;
+    }
+
     h1 {
       display: inline-block;
       margin-left: 0.3rem;
@@ -17,6 +22,7 @@
 
       &:hover {
         color: #2e6ab1;
+        cursor: pointer;
       }
     }
 
@@ -40,6 +46,12 @@
         width: minwidth(10rem, 20%);
         margin-left: 2rem;
         font-size: 1.2rem;
+        transition: transform ease-in 100ms;
+
+        &:hover {
+          transform: scale(1.05);
+          transition: transform ease-in 100ms;
+        }
       }
 
       a {
