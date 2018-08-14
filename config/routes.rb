@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  resources :replies
+  resources :calls
+  resources :categories
   resources :contracts
   get 'contracts/:id/download', to: 'contracts#download', as: 'download_contract'
 

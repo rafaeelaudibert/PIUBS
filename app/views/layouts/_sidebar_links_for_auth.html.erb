@@ -1,61 +1,61 @@
 <hr/>
-<%# Admin Sidebar %>
-  <% if current_user.try(:admin?) %>
-    <%= link_to 'Estados', states_path, class: 'nav-item nav-link' %>
-    <%= link_to 'Cidades', cities_path, class: 'nav-item nav-link' %>
-    <%= link_to 'UBS', unities_path, class: 'nav-item nav-link' %>
-    <%= link_to 'Contratos', contracts_path, class: 'nav-item nav-link' %>
-    <%= link_to 'Empresas', companies_path, class: 'nav-item nav-link' %>
-    <%= link_to 'Usuários', new_user_registration_path, class: 'nav-item nav-link' %>
-  <% end %>
+<!-- Admin Sidebar-->
+<% if current_user.try(:admin?) %>
+  <%= link_to 'Estados', states_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Cidades', cities_path, class: 'nav-item nav-link' %>
+  <%= link_to 'UBS', unities_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Contratos', contracts_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Empresas', companies_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Usuários', new_user_registration_path, class: 'nav-item nav-link' %>
+<% end %>
 
-  <%# City Admin Sidebar %>
-    <% if current_user.try(:city_admin?) %>
-      <%= link_to 'UBS', root_path, class: 'nav-item nav-link' %>
-      <%= link_to 'Contrato', root_path, class: 'nav-item nav-link' %>
-      <%= link_to 'Usuários', root_path, class: 'nav-item nav-link' %>
-    <% end %>
+<!-- City Admin Sidebar-->
+<% if current_user.try(:city_admin?) %>
+  <%= link_to 'UBS', root_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Contrato', root_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Usuários', root_path, class: 'nav-item nav-link' %>
+<% end %>
 
-    <%# UBS Admin Sidebar %>
-      <% if current_user.try(:ubs_admin?) %>
-        <%= link_to 'Usuários', root_path, class: 'nav-item nav-link' %>
-        <%= link_to 'Atendimentos', root_path, class: 'nav-item nav-link' %>
-      <% end %>
+<!-- UBS Admin Sidebar-->
+<% if current_user.try(:ubs_admin?) %>
+  <%= link_to 'Usuários', root_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Atendimentos', calls_path, class: 'nav-item nav-link' %>
+<% end %>
 
-      <%# UBS User Sidebar %>
-        <% if current_user.try(:ubs_user?) %>
-          <%= link_to 'Atendimentos', root_path, class: 'nav-item nav-link' %>
-        <% end %>
+<!-- UBS User Sidebar-->
+<% if current_user.try(:ubs_user?) %>
+  <%= link_to 'Atendimentos', calls_path, class: 'nav-item nav-link' %>
+<% end %>
 
-        <%# Company Admin Sidebar %>
-          <% if current_user.try(:company_admin?) %>
-            <%= link_to 'Empresa', root_path, class: 'nav-item nav-link' %>
-            <%= link_to 'Contratos', root_path, class: 'nav-item nav-link' %>
-            <%= link_to 'Atendimentos', root_path, class: 'nav-item nav-link' %>
-            <%= link_to 'Usuários', root_path, class: 'nav-item nav-link' %>
-          <% end %>
+<!-- Company Admin Sidebar-->
+<% if current_user.try(:company_admin?) %>
+  <%= link_to 'Empresa', root_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Contratos', root_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Atendimentos', calls_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Usuários', root_path, class: 'nav-item nav-link' %>
+<% end %>
 
-          <%# Company User Sidebar %>
-            <% if current_user.try(:company_user?) %>
-              <%= link_to 'Atendimentos', root_path, class: 'nav-item nav-link' %>
-            <% end %>
+<!-- Company User Sidebar-->
+<% if current_user.try(:company_user?) %>
+  <%= link_to 'Atendimentos', call_path, class: 'nav-item nav-link' %>
+<% end %>
 
-            <%# Call Center Admin Sidebar %>
-              <% if current_user.try(:call_center_admin?) %>
-                <%= link_to 'Estatísticas', root_path, class: 'nav-item nav-link' %>
-                <%= link_to 'Atendimentos', root_path, class: 'nav-item nav-link' %>
-                <%= link_to 'Usuários', root_path, class: 'nav-item nav-link' %>
-              <% end %>
+<!-- Call Center Admin Sidebar-->
+<% if current_user.try(:call_center_admin?) %>
+  <%= link_to 'Estatísticas', root_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Atendimentos', calls_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Usuários', root_path, class: 'nav-item nav-link' %>
+<% end %>
 
-              <%# Call Center User Sidebar %>
-                <% if current_user.try(:call_center_user?) %>
-                  <%= link_to 'Atendimentos', root_path, class: 'nav-item nav-link' %>
-                <% end %>
+<!-- Call Center User Sidebar-->
+<% if current_user.try(:call_center_user?) %>
+  <%= link_to 'Atendimentos', calls_path, class: 'nav-item nav-link' %>
+<% end %>
 
-                <%# City user Sidebar %>
-                  <% if current_user.try(:city_user?) %><% end %>
-                  <%# They have no acess at all to the Company support system %>
-                    <hr/>
+<!-- City user Sidebar-->
+<% if current_user.try(:city_user?) %><% end %>
+<!-- They have no acess at all to the Company support system -->
+<hr/>
 
-                    <!-- TODO: Remove sidebar heading example -->
-                    <!-- <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted"> <span>Saved reports</span> </h6> -->
+<!-- Sidebar heading example -->
+<!-- <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted"> <span>Saved reports</span> </h6> -->

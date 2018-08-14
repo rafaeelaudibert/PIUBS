@@ -1,0 +1,41 @@
+<%= form_with(model: reply, local: true) do |form| %>
+<% if reply.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(reply.errors.count, "error") %>
+      prohibited this reply from being saved:</h2>
+
+    <ul>
+      <% reply.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+<div style="max-width: 800px">
+
+  <%= form.text_field :protocol, class: 'form-control hidden' %>
+
+  <div class="field">
+    <%= form.label :description %>
+    <%= form.text_area :description, class: 'tinymce', :rows => 40, :cols => 120 %>
+  </div>
+
+  <% if is_support_user %>
+    <div class="field">
+      <%= select("reply", "status", options_for_select([["aberto", 0],["em andamento",1],["fechado",2]], @reply.status), {include_blank: true}, class: 'form-control') %>
+    </div>
+  <%end%>
+
+  <%= form.submit 'Send reply', class: 'btn btn-success btn-sm' %>
+  <button id="cancel" type="button" class="btn btn-danger btn-sm">Cancel</button>
+</div>
+
+<script>
+  $(document).ready(function () {
+    var protocol = "<%= escape_javascript @call.protocol %>";
+    $("#reply_protocol").val(protocol);
+    $("#reply_protocol").hide();
+  });
+</script>
+
+<% end %>

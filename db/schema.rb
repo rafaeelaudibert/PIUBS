@@ -10,10 +10,40 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_08_164902) do
+ActiveRecord::Schema.define(version: 2018_08_14_125211) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "calls", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.datetime "finished_at"
+    t.integer "status"
+    t.string "version"
+    t.string "access_profile"
+    t.string "feature_detail"
+    t.string "answer_summary"
+    t.string "severity"
+    t.string "protocol"
+    t.bigint "city_id"
+    t.bigint "category_id"
+    t.bigint "state_id"
+    t.integer "sei"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["category_id"], name: "index_calls_on_category_id"
+    t.index ["city_id"], name: "index_calls_on_city_id"
+    t.index ["state_id"], name: "index_calls_on_state_id"
+    t.index ["user_id"], name: "index_calls_on_user_id"
+  end
+
+  create_table "categories", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "cities", force: :cascade do |t|
     t.string "name"
@@ -40,6 +70,17 @@ ActiveRecord::Schema.define(version: 2018_08_08_164902) do
     t.string "content_type"
     t.binary "file_contents"
     t.index ["city_id"], name: "index_contracts_on_city_id"
+  end
+
+  create_table "replies", force: :cascade do |t|
+    t.string "protocol"
+    t.text "description"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "status"
+    t.string "category"
+    t.index ["user_id"], name: "index_replies_on_user_id"
   end
 
   create_table "states", force: :cascade do |t|
@@ -95,9 +136,15 @@ ActiveRecord::Schema.define(version: 2018_08_08_164902) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "calls", "categories"
+  add_foreign_key "calls", "cities"
+  add_foreign_key "calls", "companies", column: "sei", primary_key: "sei"
+  add_foreign_key "calls", "states"
+  add_foreign_key "calls", "users"
   add_foreign_key "cities", "states"
   add_foreign_key "contracts", "cities"
   add_foreign_key "contracts", "companies", column: "sei", primary_key: "sei"
+  add_foreign_key "replies", "users"
   add_foreign_key "unities", "cities"
   add_foreign_key "users", "companies", column: "sei", primary_key: "sei"
 end
