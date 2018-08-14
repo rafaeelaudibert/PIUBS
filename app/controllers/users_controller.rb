@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
-  before_action :authenticate_user!, :global_user
+  before_action :authenticate_user!
+  before_action :global_user  
   before_action :admin_only, :except => :show
 
   def index
@@ -34,9 +35,6 @@ class UsersController < ApplicationController
 
   def global_user
     $current_user_role = current_user.role
-    puts "______>>>>>>>__user_logged__"
-    puts $current_user_role
-    puts "______<<<<<<<____"
   end
 
   ### Functions to restrict user content
