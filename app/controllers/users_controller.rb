@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_action :authenticate_user!
-  before_action :global_user  
+  before_action :global_user
   before_action :admin_only, :except => :show
 
   def index
@@ -29,6 +29,14 @@ class UsersController < ApplicationController
     user = User.find(params[:id])
     user.destroy
     redirect_to users_path, :notice => "User deleted."
+  end
+
+  def pre_new
+  end
+
+  def get_invitation_role
+    $selected_role = params.require(:user).require(:role)
+    redirect_to new_user_invitation_path
   end
 
   private
