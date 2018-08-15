@@ -31,7 +31,7 @@ class UsersController < ApplicationController
     redirect_to users_path, :notice => "User deleted."
   end
 
-  def pre_new
+  def pre_new_user_invitation
   end
 
   def get_invitation_role
