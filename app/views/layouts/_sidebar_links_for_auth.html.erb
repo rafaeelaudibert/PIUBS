@@ -5,6 +5,7 @@
   <%= link_to 'Contratos', contracts_path, class: 'nav-item nav-link' %>
   <%= link_to 'Empresas', companies_path, class: 'nav-item nav-link' %>
   <%= link_to 'Usuários', new_user_registration_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Criar Usuários', new_user_level_path, class: 'nav-item nav-link' %>
 
 <% end %>
 
@@ -12,6 +13,7 @@
   <%= link_to 'UBS', root_path, class: 'nav-item nav-link' %>
   <%= link_to 'Contrato', root_path, class: 'nav-item nav-link' %>
   <%= link_to 'Usuários', root_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Criar Usuários', new_user_level_path, class: 'nav-item nav-link' %>
 <% end %>
 
 <% if current_user.try(:city_user?) %>
@@ -20,6 +22,7 @@
 <% if current_user.try(:ubs_admin?) %>
   <%= link_to 'Usuários', root_path, class: 'nav-item nav-link' %>
   <%= link_to 'Atendimentos', root_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Criar Usuários', new_user_level_path, class: 'nav-item nav-link' %>
 <% end %>
 
 <% if current_user.try(:ubs_user?) %>
@@ -31,6 +34,7 @@
   <%= link_to 'Contratos', root_path, class: 'nav-item nav-link' %>
   <%= link_to 'Atendimentos', root_path, class: 'nav-item nav-link' %>
   <%= link_to 'Usuários', root_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Criar Usuários', new_user_level_path, class: 'nav-item nav-link' %>
 <% end %>
 
 <% if current_user.try(:company_user?) %>
@@ -41,6 +45,7 @@
   <%= link_to 'Estatísticas', root_path, class: 'nav-item nav-link' %>
   <%= link_to 'Atendimentos', root_path, class: 'nav-item nav-link' %>
   <%= link_to 'Usuários', root_path, class: 'nav-item nav-link' %>
+  <%= link_to 'Criar Usuários', new_user_level_path, class: 'nav-item nav-link' %>
 <% end %>
 
 <% if current_user.try(:call_center_user?) %>
