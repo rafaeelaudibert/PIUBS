@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   resources :attachments
   get 'attachments/:id/download', to: 'attachments#download', as: 'download_attachment'
 
-  get 'answers/byCategory/:id', to: 'answers#byCategory', as: 'answers_by_category'
+  get 'answers/query/:search', to: 'answers#search', as: 'answers_search'
   resources :answers
   resources :replies
   resources :calls

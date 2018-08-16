@@ -59,10 +59,11 @@ class AnswersController < ApplicationController
     end
   end
 
-  # GET /answers/byCategory/:id
-  def byCategory
+  # GET /answers/query/:search
+  def search
     respond_to do |format|
-      format.js { render json: Answer.where('category_id = ?', params[:id]).order('id ASC') }
+      format.js { render json: Answer.search_for(params[:search]).with_pg_search_rank }
+      # Query for category -> Answer.where('category_id = ?', params[:id]).order('id ASC')
     end
   end
 
