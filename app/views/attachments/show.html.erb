@@ -1,0 +1,21 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Answer:</strong>
+  <%= @attachment.answer %>
+</p>
+
+<p>
+  <strong>Filename:</strong>
+  <% if @attachment.filename %>
+    <%= @attachment.filename %>
+    <br/><br/>
+    <strong><%= link_to "Link para download", download_attachment_path, class: 'btn btn-primary btn-sm' %></strong>
+  <% else %>
+    No file attached
+  <% end %>
+</p>
+
+<%= link_to 'Edit', edit_attachment_path(@attachment) %>
+|
+<%= link_to 'Back', attachments_path %>
