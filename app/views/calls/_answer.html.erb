@@ -1,61 +1,56 @@
 <%= form_tag do %>
 <div style="max-width: 850px">
-  <%= label_tag :category_select %>
-  <%= select_tag :category_select %>
-  <div class="" id="category_table"></div>
+  <%= label_tag :search_field %>
+  <%= text_field_tag :search_field %>
+  <%= submit_tag 'Search', type: 'button', id: 'search_button', class: "btn btn-secondary btn-sm"%>
+
+  <div class="" id="table"></div>
 </div>
 
 <script>
-  let categorySelect = document.getElementById('category_select');
-  let tableDiv = document.getElementById('category_table');
+  let textField = document.getElementById('search_field');
+  let button = document.getElementById('search_button');
+  let tableDiv = document.getElementById('table');
 
-  jQuery.ajax({
-    url: '/categories/all/',
-    type: "GET",
-    dataType: "json",
-    success: categories => {
-      let innerHTML = '<option value="0"> Selecione uma categoria </option>';
-      for (category of categories) {
-        innerHTML += '<option value=' + category.id + '>' + category.name + '</option>'
-      }
-      categorySelect.innerHTML = innerHTML;
-    }
-  })
+  button.addEventListener('click', () => {
+    console.log(textField.value.length)
+    if (textField.value.length > 3) {
+      jQuery.ajax({
+        url: '/answers/query/' + textField.value,
+        type: "GET",
+        dataType: "json",
+        success: data => {
+          console.log(data);
+          if (data.length > 0) {
 
-  categorySelect.addEventListener('change', () => jQuery.ajax({
-    url: '/answers/byCategory/' + categorySelect.value,
-    type: "GET",
-    dataType: "json",
-    success: data => {
-      if (data.length > 0) {
+            //Create a HTML Table element.
+            const table = document.createElement("table");
+            table.border = "1";
 
-        //Create a HTML Table element.
-        const table = document.createElement("table");
-        table.border = "1";
+            //Add the header row.
+            let row = table.insertRow(-1);
+            for (let header of["Question", "Answer"]) 
+              row.appendChild(document.createElement("TH")).innerHTML = header;
+            
+            //Add the data rows.
+            for (let entry of data) {
+              let row = table.insertRow(-1);
+              row.insertCell(-1).innerHTML = entry.question;
+              row.insertCell(-1).innerHTML = entry.answer;
+            }
 
-        //Add the header row.
-        let row = table.insertRow(-1);
-        for (let header of["Question", "Answer"]) 
-          row.appendChild(document.createElement("TH")).innerHTML = header;
-        
-        //Add the data rows.
-        for (let entry of data) {
-          let row = table.insertRow(-1);
-          row.insertCell(-1).innerHTML = entry.question;
-          row.insertCell(-1).innerHTML = entry.answer;
+            //Add the table in the DOM
+            tableDiv.innerHTML = "";
+            tableDiv.appendChild(table);
+
+          } else if (textField != 0) {
+            tableDiv.innerHTML = "Não há questões no FAQ sobre essa pergunta"
+          }
         }
-
-        //Add the table in the DOM
-        tableDiv.innerHTML = "";
-        tableDiv.appendChild(table);
-
-      } else if (categorySelect.value != 0) {
-        tableDiv.innerHTML = "Não há questões no FAQ sobre essa pergunta"
-      } else {
-        tableDiv.innerHTML = "";
-      }
-
+      })
+    } else {
+      tableDiv.innerHTML = "Você precisa fazer uma pesquisa com no mínimo 4 letras";
     }
-  }));
+  });
 </script>
 <% end %>
