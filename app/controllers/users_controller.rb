@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :global_user
-  before_action :admin_only, :except => :show
+  before_action :admin_only, :except => [:show, :pre_new_user_invitation]
 
   def index
     @users = User.all
@@ -32,6 +32,9 @@ class UsersController < ApplicationController
   end
 
   def pre_new_user_invitation
+    unless current_user.admin?
+      redirect_to new_user_invitation_path
+    end
   end
 
   def get_invitation_role
@@ -39,12 +42,11 @@ class UsersController < ApplicationController
     redirect_to new_user_invitation_path
   end
 
-  private
-
   def global_user
     $current_user_role = current_user.role
   end
 
+  private
   ### Functions to restrict user content
   def admin_only
     unless current_user.admin?
