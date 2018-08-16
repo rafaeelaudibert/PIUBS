@@ -1,0 +1,61 @@
+<%= form_tag do %>
+<div style="max-width: 850px">
+  <%= label_tag :category_select %>
+  <%= select_tag :category_select %>
+  <div class="" id="category_table"></div>
+</div>
+
+<script>
+  let categorySelect = document.getElementById('category_select');
+  let tableDiv = document.getElementById('category_table');
+
+  jQuery.ajax({
+    url: '/categories/all/',
+    type: "GET",
+    dataType: "json",
+    success: categories => {
+      let innerHTML = '<option value="0"> Selecione uma categoria </option>';
+      for (category of categories) {
+        innerHTML += '<option value=' + category.id + '>' + category.name + '</option>'
+      }
+      categorySelect.innerHTML = innerHTML;
+    }
+  })
+
+  categorySelect.addEventListener('change', () => jQuery.ajax({
+    url: '/answers/byCategory/' + categorySelect.value,
+    type: "GET",
+    dataType: "json",
+    success: data => {
+      if (data.length > 0) {
+
+        //Create a HTML Table element.
+        const table = document.createElement("table");
+        table.border = "1";
+
+        //Add the header row.
+        let row = table.insertRow(-1);
+        for (let header of["Question", "Answer"]) 
+          row.appendChild(document.createElement("TH")).innerHTML = header;
+        
+        //Add the data rows.
+        for (let entry of data) {
+          let row = table.insertRow(-1);
+          row.insertCell(-1).innerHTML = entry.question;
+          row.insertCell(-1).innerHTML = entry.answer;
+        }
+
+        //Add the table in the DOM
+        tableDiv.innerHTML = "";
+        tableDiv.appendChild(table);
+
+      } else if (categorySelect.value != 0) {
+        tableDiv.innerHTML = "Não há questões no FAQ sobre essa pergunta"
+      } else {
+        tableDiv.innerHTML = "";
+      }
+
+    }
+  }));
+</script>
+<% end %>

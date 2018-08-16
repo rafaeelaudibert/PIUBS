@@ -64,7 +64,16 @@ Atendimento
     <span class="badge badge-pill badge-primary"><%= @call.category.name %></span>
     <hr/>
     <%= link_to 'Edit', edit_call_path(@call), class: 'btn btn-secondary btn-sm' %>
-    <button id="reply" type="button" class="btn btn-secondary btn-sm">Reply</button>
+    <div class="btn-group">
+      <button type="button" id="reply" class="btn btn-secondary btn-sm">Reply</button>
+      <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <div class="dropdown-menu">
+        <a id="new-reply" class="dropdown-item">New Reply</a>
+        <a id="faq-reply" class="dropdown-item">Reply from FAQ</a>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -77,6 +86,15 @@ Atendimento
   </div>
   <div class="card-body">
     <%= render 'reply', reply: @reply %>
+  </div>
+</div>
+
+<div class="card border-secondary mt-4" style="display: none" id="faq_box">
+  <div class="card-header bg-secondary text-white">
+    FAQ List:
+  </div>
+  <div class="card-body">
+    <%= render 'answer', categories: @categories %>
   </div>
 </div>
 
@@ -149,6 +167,17 @@ Atendimento
   <script>
     $("#reply").click(function () {
       $("#reply_box").toggle(200);
+      $("#faq_box").hide(200);
+    });
+
+    $("#new-reply").click(function () {
+      $("#reply_box").toggle(200);
+      $("#faq_box").hide(200);
+    });
+
+    $("#faq-reply").click(function () {
+      $("#reply_box").hide(200);
+      $("#faq_box").toggle(200);
     });
 
     $("#cancel").click(function () {
@@ -160,6 +189,7 @@ Atendimento
     #reply_description_ifr {
       height: 250px !important;
     }
+
     #mceu_30 {
       display: none;
     }

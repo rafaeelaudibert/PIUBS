@@ -1,8 +1,15 @@
 Rails.application.routes.draw do
+  resources :attachments
+  get 'attachments/:id/download', to: 'attachments#download', as: 'download_attachment'
+
+  get 'answers/byCategory/:id', to: 'answers#byCategory', as: 'answers_by_category'
   resources :answers
   resources :replies
   resources :calls
+
+  get 'categories/all', to: 'categories#all', as: 'all_categories'
   resources :categories
+
   resources :contracts
   get 'contracts/:id/download', to: 'contracts#download', as: 'download_contract'
 
