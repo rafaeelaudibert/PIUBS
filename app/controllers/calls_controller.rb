@@ -1,5 +1,5 @@
 class CallsController < ApplicationController
-  before_action :set_call, only: [:show, :edit, :update, :destroy]
+  before_action :set_call, only: %i[show edit update destroy]
 
   # GET /calls
   # GET /calls.json
@@ -11,6 +11,7 @@ class CallsController < ApplicationController
   # GET /calls/1.json
   def show
     @reply = Reply.new
+    @categories = Category.all
   end
 
   # GET /calls/new
@@ -19,14 +20,13 @@ class CallsController < ApplicationController
   end
 
   # GET /calls/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /calls
   # POST /calls.json
   def create
     @call = Call.new(call_params)
-    #status, severity, protocol, company_id
+    # status, severity, protocol, company_id
     user = current_user
     @call.sei = user.sei
     @call.status = 0
@@ -71,28 +71,29 @@ class CallsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_call
-      @call = Call.find(params[:id])
-    end
 
-    def get_current_time
-      Time.zone.now.strftime('%H%M%S')
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_call
+    @call = Call.find(params[:id])
+  end
 
-    def get_current_date
-      Date.today.strftime("%d%m%Y")
-    end
+  def get_current_time
+    Time.zone.now.strftime('%H%M%S')
+  end
 
-    def get_protocol
-      user = format('%05d', current_user.id.to_i) # Leading zeros, allowing to have 99999 users
-      time = get_current_time
-      date = get_current_date
-      protocol = "#{date}#{time}#{user}"
-    end
+  def get_current_date
+    Date.today.strftime('%d%m%Y')
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def call_params
-      params.require(:call).permit(:title, :description, :finished_at, :status, :version, :access_profile, :feature_detail, :answer_summary, :severity, :protocol, :city_id, :category_id, :state_id, :company_id)
-    end
+  def get_protocol
+    user = format('%05d', current_user.id.to_i) # Leading zeros, allowing to have 99999 users
+    time = get_current_time
+    date = get_current_date
+    protocol = "#{date}#{time}#{user}"
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def call_params
+    params.require(:call).permit(:title, :description, :finished_at, :status, :version, :access_profile, :feature_detail, :answer_summary, :severity, :protocol, :city_id, :category_id, :state_id, :company_id)
+  end
 end

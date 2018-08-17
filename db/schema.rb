@@ -10,10 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_14_125211) do
+ActiveRecord::Schema.define(version: 2018_08_17_111704) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "answers", force: :cascade do |t|
+    t.text "question"
+    t.text "answer"
+    t.bigint "category_id"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "faq", default: false
+    t.index ["category_id"], name: "index_answers_on_category_id"
+    t.index ["user_id"], name: "index_answers_on_user_id"
+  end
+
+  create_table "attachments", force: :cascade do |t|
+    t.string "filename"
+    t.string "content_type"
+    t.binary "file_contents"
+    t.bigint "answer_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["answer_id"], name: "index_attachments_on_answer_id"
+  end
 
   create_table "calls", force: :cascade do |t|
     t.string "title"
@@ -33,6 +55,8 @@ ActiveRecord::Schema.define(version: 2018_08_14_125211) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.bigint "answer_id"
+    t.index ["answer_id"], name: "index_calls_on_answer_id"
     t.index ["category_id"], name: "index_calls_on_category_id"
     t.index ["city_id"], name: "index_calls_on_city_id"
     t.index ["state_id"], name: "index_calls_on_state_id"
@@ -80,6 +104,7 @@ ActiveRecord::Schema.define(version: 2018_08_14_125211) do
     t.datetime "updated_at", null: false
     t.integer "status"
     t.string "category"
+    t.boolean "faq", default: false
     t.index ["user_id"], name: "index_replies_on_user_id"
   end
 
@@ -136,6 +161,10 @@ ActiveRecord::Schema.define(version: 2018_08_14_125211) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "answers", "categories"
+  add_foreign_key "answers", "users"
+  add_foreign_key "attachments", "answers"
+  add_foreign_key "calls", "answers"
   add_foreign_key "calls", "categories"
   add_foreign_key "calls", "cities"
   add_foreign_key "calls", "companies", column: "sei", primary_key: "sei"
