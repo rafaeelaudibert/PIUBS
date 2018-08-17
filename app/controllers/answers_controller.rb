@@ -14,6 +14,8 @@ class AnswersController < ApplicationController
   # GET /answers/new
   def new
     @answer = Answer.new
+    @reply = Reply.find(params[:reply]) if params[:reply]
+    @question = Call.find(params[:question]) if params[:question]
   end
 
   # GET /answers/1/edit
@@ -26,6 +28,9 @@ class AnswersController < ApplicationController
 
     respond_to do |format|
       if @answer.save
+        @call = Call.find(params[:question_id])
+        @call.answer_id = @answer.id
+        raise 'We could not set the call answer_id properly. Please check it' unless @call.save
         format.html { redirect_to @answer, notice: 'Answer was successfully created.' }
         format.json { render :show, status: :created, location: @answer }
       else
@@ -62,8 +67,7 @@ class AnswersController < ApplicationController
   # GET /answers/query/:search
   def search
     respond_to do |format|
-      format.js { render json: Answer.search_for(params[:search]).with_pg_search_rank }
-      # Query for category -> Answer.where('category_id = ?', params[:id]).order('id ASC')
+      format.js { render json: Answer.where('faq = true').search_for(params[:search]).with_pg_search_rank }
     end
   end
 
@@ -76,6 +80,6 @@ class AnswersController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def answer_params
-    params.require(:answer).permit(:question, :answer, :category_id, :user_id)
+    params.require(:answer).permit(:question, :answer, :category_id, :user_id, :faq, :question_id)
   end
 end

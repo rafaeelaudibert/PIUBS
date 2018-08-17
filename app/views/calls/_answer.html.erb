@@ -29,7 +29,7 @@
 
             //Add the header row.
             let row = table.insertRow(-1);
-            for (let header of["Question", "Answer"]) 
+            for (let header of["Question", "Answer", "Actions"]) 
               row.appendChild(document.createElement("TH")).innerHTML = header;
             
             //Add the data rows.
@@ -37,6 +37,7 @@
               let row = table.insertRow(-1);
               row.insertCell(-1).innerHTML = entry.question;
               row.insertCell(-1).innerHTML = entry.answer;
+              row.insertCell(-1).innerHTML = '<button onclick="faq_click(this)" type="button" class="btn btn-primary btn-sm">Select</button>'
             }
 
             //Add the table in the DOM
@@ -52,5 +53,13 @@
       tableDiv.innerHTML = "Você precisa fazer uma pesquisa com no mínimo 4 letras";
     }
   });
+
+  const faq_click = button => {
+    const answer = button.parentNode.parentNode.children[1].innerHTML;
+    $("#reply_box").show(200);
+    $("#faq_box").hide(200);
+    tinyMCE.get(0).setContent(answer);
+    //$("#tinymce").innerHTML = answer;
+  }
 </script>
 <% end %>
