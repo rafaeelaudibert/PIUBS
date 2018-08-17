@@ -19,7 +19,10 @@ class ContractsController < ApplicationController
   end
 
   # GET /contracts/1/edit
-  def edit; end
+  def edit
+    @city = City.find(@contract.city_id)
+    @company = Company.find(@contract.sei)
+  end
 
   # POST /contracts
   # POST /contracts.json
