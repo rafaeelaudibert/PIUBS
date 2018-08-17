@@ -94,17 +94,13 @@ class ContractsController < ApplicationController
     @contract = Contract.find(params[:id])
   end
 
-  def sanitize_filename(filename)
-    File.basename(filename)
-  end
-
   # Never trust parameters from the scary internet, only allow the white list through.
   # Also optimize the file data, separating it in filename, content_type & file_contents
   def contract_params
     parameters = params.require(:contract).permit(:file, :contract_number, :city_id, :sei)
     file = parameters.delete(:file) if parameters
     if file
-      parameters[:filename] = sanitize_filename(file.original_filename)
+      parameters[:filename] = File.basename(file.original_filename)
       parameters[:content_type] = file.content_type
       parameters[:file_contents] = file.read
     end
