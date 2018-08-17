@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  root to: 'visitors#index'
+
   resources :attachments
   get 'attachments/:id/download', to: 'attachments#download', as: 'download_attachment'
 
@@ -12,12 +14,14 @@ Rails.application.routes.draw do
 
   resources :contracts
   get 'contracts/:id/download', to: 'contracts#download', as: 'download_contract'
+  resources :contracts
 
   resources :companies, param: :sei
   resources :unities, param: :cnes
+
+  get 'cities/states/:id', to: 'cities#states'
   resources :cities
   resources :states
-  root to: 'visitors#index'
   devise_for :users, controllers: { registrations: 'registrations' }
   resources :users
   get '404', to: 'application#page_not_found', as: 'not_found'

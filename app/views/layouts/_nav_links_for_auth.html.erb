@@ -1,7 +1,9 @@
 <% if user_signed_in? %>
-  <%= link_to 'Edit account', edit_user_registration_path, class: 'nav-item nav-link' %>
-  <%= link_to 'Logout', destroy_user_session_path, :method=>'delete', class: 'nav-item nav-link' %>
-  <% if current_user.try(:admin?) %>
-    <%= link_to 'Users', users_path, class: 'nav-item nav-link' %>
-  <% end %>
+  <ul class="navbar-nav">
+    <% if current_user.try(:admin?) %>
+      <li class="nav-item"><%= link_to 'Usuários', users_path, class: 'nav-item nav-link' %></li>
+    <% end %>
+    <li class="nav-item"><%= link_to 'Editar conta', edit_user_registration_path, class: 'nav-item nav-link' %></li>
+    <li class="nav-item"><%= link_to 'Logout', destroy_user_session_path, :method=>'delete', class: 'nav-item nav-link btn btn-primary' %></li>
+  </ul>
 <% end %>

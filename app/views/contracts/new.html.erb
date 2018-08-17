@@ -1,4 +1,6 @@
 <%= content_for :body_title do%>
-New Contract
-<%end%>
-<%= render 'form', contract: @contract %>
+<% city = ' for ' << @city.name if @city %>
+  <% company = ' for ' << @company.sei.to_s if @company %>
+    <%= 'New Contract' << (city || ' ') << (company || ' ')%>
+  <%end%>
+  <%= render 'form', contract: @contract %>
