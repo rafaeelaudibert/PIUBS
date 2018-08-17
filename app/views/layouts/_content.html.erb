@@ -1,7 +1,4 @@
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-1 pb-1 mb-3 border-bottom">
-    <h1 class="h2"><%= content_for?(:body_title) ? yield(:body_title) : ""%></h1>
-  </div>
   <%= render 'layouts/messages' %>
   <%= yield %>
 </main>

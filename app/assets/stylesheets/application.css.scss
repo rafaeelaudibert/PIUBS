@@ -129,19 +129,21 @@ body {
   * Utilities
   */
 .border-top {
-  border-top: 1px solid #e5e5e5;
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .border-bottom {
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .border-left {
-  border-left: 1px solid #e5e5e5;
+  border-left: 1px solid rgba(255, 255, 255, 0.5) !important;
+  margin: 0 0.3rem;
 }
 
 .border-right {
-  border-right: 1px solid #e5e5e5;
+  border-right: 1px solid rgba(255, 255, 255, 0.5) !important;
+  margin: 0 0.3rem;
 }
 /*
   * Bootstrap overrides

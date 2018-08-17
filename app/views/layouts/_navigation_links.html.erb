@@ -1,2 +1,8 @@
-<%# add navigation links to this file %>
-<%= link_to 'Sobre', page_path('about'), class: 'nav-item nav-link' %>
+<% unless user_signed_in? %>
+  <ul class="navbar-nav">
+    <li class="nav-item"><%= link_to 'Sobre', page_path('about'), class: 'nav-item nav-link' %></li>
+    <li class="nav-item"><%= link_to 'Ministério da Saúde', 'http://portalms.saude.gov.br/', class: 'nav-item nav-link' %></li>
+    <li class="nav-item"><%= link_to 'CNES', 'http://cnes.datasus.gov.br/', class: 'nav-item nav-link' %></li>
+    <li class="nav-item"><%= link_to 'Login', user_session_path, class: 'nav-item nav-link btn btn-primary' %></li>
+  </ul>
+<% end %>
