@@ -98,6 +98,17 @@ def seed_companies
   end
 end
 
+def seed_categories
+    ["Hardware", "Software", "Outro"].each do |_category|
+      category = Category.new("name": _category)
+      if category.save
+        Rails.logger.info("Inserted a new category: #{_category}")
+      else
+        Rails.logger.error("ERROR creating a CATEGORY")
+      end
+    end
+end
+
 def seed_faq
   quantity = 10_000
   Rails.logger.info("Starting to insert #{quantity} answers...")
@@ -105,8 +116,13 @@ def seed_faq
     q = Answer.new('question': Faker::Lorem.sentence(50, true, 6),
                    'answer': Faker::Lorem.sentence(50, true, 6),
                    'category_id': 1,
-                   'user': User.find(1))
-    q.save
+                   'user': User.find(1),
+                   'faq': false)
+    if q.save
+      Rails.logger.debug("Inserted a new answer")
+    else
+      Rails.logger.error("ERROR creating an ANSWER")
+    end
   end
   Rails.logger.info('Finished')
 end
@@ -116,6 +132,7 @@ def main
   seed_users
   seed_companies
   seed_states
+  seed_categories
   seed_faq
   Rails.logger.warn('SEED FINISHED')
 end
