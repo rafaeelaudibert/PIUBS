@@ -117,7 +117,7 @@ def seed_faq
                    'answer': Faker::Lorem.sentence(50, true, 6),
                    'category_id': 1,
                    'user': User.find(1),
-                   'faq': false)
+                   'faq': true)
     if q.save
       Rails.logger.debug("Inserted a new answer")
     else
