@@ -55,4 +55,4 @@ gem 'protected_attributes_continued'
 gem 'tinymce-rails' # text editor
 gem 'shog'                      # Colorized console logging
 gem 'pg_search'
-
+gem "font-awesome-rails"

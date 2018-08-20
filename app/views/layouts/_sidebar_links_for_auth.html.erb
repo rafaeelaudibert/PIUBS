@@ -23,26 +23,25 @@
   <%= link_to 'Usuários', root_path, class: 'nav-item nav-link' %>
   <%= link_to 'Atendimentos', root_path, class: 'nav-item nav-link' %>
   <%= link_to 'Criar Usuários', new_user_level_path, class: 'nav-item nav-link' %>
-
 <% end %>
 
 <!-- UBS User Sidebar-->
 <% if current_user.try(:ubs_user?) %>
-  <%= link_to 'Atendimentos', calls_path, class: 'nav-item nav-link' %>
+  <li><%= link_to 'Atendimentos', calls_path, class: 'nav-item nav-link' %></li>
 <% end %>
 
 <!-- Company Admin Sidebar-->
 <% if current_user.try(:company_admin?) %>
-  <%= link_to 'Empresa', root_path, class: 'nav-item nav-link' %>
-  <%= link_to 'Contratos', root_path, class: 'nav-item nav-link' %>
-  <%= link_to 'Atendimentos', calls_path, class: 'nav-item nav-link' %>
-  <%= link_to 'Usuários', root_path, class: 'nav-item nav-link' %>
+  <li><%= link_to(root_path, class: 'nav-item nav-link') do %> <i class="fa fa-building-o"></i> Empresa<%end%></li>
+  <li><%= link_to(root_path, class: 'nav-item nav-link') do %> <i class="fa fa-book"></i> Contratos<%end%></li>
+  <li><%= link_to(calls_path, class: 'nav-item nav-link') do %> <i class="fa fa-bullhorn"></i>  Atendimentos<%end%></li>
+  <li><%= link_to(root_path, class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Colaboradores<%end%></li>
   <%= link_to 'Criar Usuários', new_user_level_path, class: 'nav-item nav-link' %>
 <% end %>
 
 <!-- Company User Sidebar-->
 <% if current_user.try(:company_user?) %>
-  <%= link_to 'Atendimentos', call_path, class: 'nav-item nav-link' %>
+  <li><%= link_to 'Atendimentos', call_path, class: 'nav-item nav-link' %></li>
 <% end %>
 
 <!-- Call Center Admin Sidebar-->
@@ -55,7 +54,7 @@
 
 <!-- Call Center User Sidebar-->
 <% if current_user.try(:call_center_user?) %>
-  <%= link_to 'Atendimentos', calls_path, class: 'nav-item nav-link' %>
+  <li><%= link_to 'Atendimentos', calls_path, class: 'nav-item nav-link' %></li>
 <% end %>
 
 <!-- City user Sidebar-->
