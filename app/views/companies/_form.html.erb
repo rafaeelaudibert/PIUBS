@@ -1,22 +1,24 @@
 <%= form_with(model: company, local: true) do |form| %>
-  <% if company.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(company.errors.count, "error") %> prohibited this company from being saved:</h2>
+<% if company.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(company.errors.count, "error") %>
+      prohibited this company from being saved:</h2>
 
-      <ul>
+    <ul>
       <% company.errors.full_messages.each do |message| %>
         <li><%= message %></li>
       <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <div class="field">
+    </ul>
+  </div>
+<% end %>
+<div class="col-4">
+  <div class="form-group">
     <%= form.label :sei %>
-    <%= form.number_field :sei %>
+    <%= form.number_field :sei, class: 'form-control' %>
   </div>
 
-  <div class="actions">
-    <%= form.submit %>
-  </div>
+  <%= form.submit 'Save', :class => 'btn btn-success btn-sm' %>
+  <%= link_to 'Cancel', @company, :class => 'btn btn-danger btn-sm' %>
+  <br>
+</div>
 <% end %>

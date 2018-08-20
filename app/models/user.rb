@@ -1,5 +1,8 @@
 class User < ApplicationRecord
+
   belongs_to :company, class_name: "Company", foreign_key: :sei, optional: true
+  has_many :calls
+  has_many :answer
   enum role: [:admin, :city_admin, :city_user, :ubs_admin, :ubs_user, :company_admin, :company_user, :call_center_admin, :call_center_user]
   after_initialize :set_levels_allowed, :set_default_role, :if => :new_record?
 
@@ -34,6 +37,6 @@ class User < ApplicationRecord
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :invitable, :database_authenticatable, :registerable, :confirmable,
+  devise :invitable, :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 end

@@ -8,7 +8,6 @@ gem 'sqlite3'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.2'
-gem 'turbolinks', '~> 5'
 gem 'jbuilder', '~> 2.5'
 gem 'bootsnap', '>= 1.1.0', require: false
 group :development, :test do
@@ -46,10 +45,14 @@ group :test do
   gem 'database_cleaner'
   gem 'launchy'
 end
+gem 'binding_of_caller'
 
 # PIUBS used gems
-gem 'city-state'                # City + states gem. # TODO: Modify the gem to retrieve data in portuguese
 gem 'will_paginate', '~> 3.1.0' # Pagination
 gem 'carrierwave'
 gem 'mini_magick', '~> 4.3'     # Image uploaded by carrierwave manipulation
 gem 'protected_attributes_continued'
+gem 'tinymce-rails' # text editor
+gem 'shog'                      # Colorized console logging
+gem 'pg_search'
+

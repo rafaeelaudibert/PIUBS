@@ -1,0 +1,27 @@
+<%= form_with(model: attachment, local: true) do |form| %>
+<% if attachment.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(attachment.errors.count, "error") %>
+      prohibited this attachment from being saved:</h2>
+
+    <ul>
+      <% attachment.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<div class="form-group">
+  <%= form.label :file %>
+  <%= form.file_field :file, class: 'form-control-file' %>
+</div>
+
+<div class="form-group">
+  <%= form.label :answer_id %>
+  <%= form.text_field :answer_id, class: 'form-control' %>
+</div>
+
+<%= form.submit 'Save', :class => 'btn btn-success btn-sm' %>
+<%= link_to 'Cancel', attachments_path, :class => 'btn btn-danger btn-sm' %>
+<% end %>

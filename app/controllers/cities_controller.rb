@@ -4,12 +4,14 @@ class CitiesController < ApplicationController
   # GET /cities
   # GET /cities.json
   def index
-    @cities = City.paginate(:page => params[:page], :per_page => 25)
+    @cities = City.paginate(page: params[:page], per_page: 25)
   end
 
   # GET /cities/1
   # GET /cities/1.json
-  def show; end
+  def show
+    @ubs = @city.unity_ids
+  end
 
   # GET /cities/new
   def new
@@ -55,6 +57,13 @@ class CitiesController < ApplicationController
     respond_to do |format|
       format.html { redirect_to cities_url, notice: 'City was successfully destroyed.' }
       format.json { head :no_content }
+    end
+  end
+
+  # GET /cities/states
+  def states
+    respond_to do |format|
+      format.js { render json: City.where('state_id = ?', params[:id]).order('id ASC') }
     end
   end
 

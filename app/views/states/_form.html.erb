@@ -1,22 +1,24 @@
 <%= form_with(model: state, local: true) do |form| %>
-  <% if state.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(state.errors.count, "error") %> prohibited this state from being saved:</h2>
+<% if state.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(state.errors.count, "error") %>
+      prohibited this state from being saved:</h2>
 
-      <ul>
+    <ul>
       <% state.errors.full_messages.each do |message| %>
         <li><%= message %></li>
       <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
+    </ul>
   </div>
+<% end %>
 
-  <div class="actions">
-    <%= form.submit %>
-  </div>
+<div class="form-group">
+  <%= form.label :name %>
+  <%= form.text_field :name, class: 'form-control' %>
+</div>
+
+<div class="actions">
+  <%= form.submit 'Save', :class => 'btn btn-success btn-sm' %>
+  <%= link_to 'Cancel', @state, :class => 'btn btn-danger btn-sm' %>
+</div>
 <% end %>

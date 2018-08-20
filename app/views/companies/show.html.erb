@@ -1,9 +1,49 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Sei:</strong>
+<div>
+  <h1 class="h5">Company SEI:</h1>
   <%= @company.sei %>
-</p>
+</div>
 
-<%= link_to 'Edit', edit_company_path(@company) %> |
-<%= link_to 'Back', companies_path %>
+<hr/>
+<h1 class="h3">Contracts:</h1>
+<br/><br/>
+
+<% if @contracts %>
+  <%= render './pagination', value: @contracts %>
+  <hr/>
+  <table class="table table-bordered table-striped table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th>Contract Number</th>
+        <th>City Name</th>
+        <th>State</th>
+        <th colspan="3"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @contracts.each do |_contract| %>
+        <tr>
+          <% contract = Contract.find(_contract.id) %>
+            <% city = City.find(contract.city_id) %>
+              <% state = State.find(city.state_id) %>
+                <td><%= contract.contract_number %></td>
+                <td><%= city.name %></td>
+                <td><%= state.name %></td>
+                <td><%= link_to 'Show', contract , class: 'btn btn-success btn-sm' %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+        <hr/>
+      <% else %>
+        <h1 class="h6">
+          This Company has no Contracts.
+          <%= "You can insert one clicking in the button below" if current_user.try(:admin?) %>
+        </h1>
+      <% end %>
+
+      <%= link_to 'New Contract', new_contract_path(company: @company.sei), class: 'btn btn-success btn-sm' if current_user.try(:admin?) %>
+      <%= link_to 'Edit', edit_company_path(@company), class: 'btn btn-success btn-sm' %>
+      <%= link_to 'Back', companies_path, class: 'btn btn-primary btn-sm' %>
+      <br/><br/>

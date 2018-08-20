@@ -1,9 +1,19 @@
 <p id="notice"><%= notice %></p>
+<%= content_for :body_title do%>Cities<%end%>
 
-<h1>Cities</h1>
+<div class="float-right" style="display: block !important">
+<form class="form-inline">
+  <input class="form-control mr-sm-2" type="search" placeholder="City name" aria-label="Search">
+  <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
+</form>
+</div>
+<hr style="margin-top: 4.4rem"/>
 
-<table>
-  <thead>
+<%= render './pagination', value: @cities %>
+<% if @cities.length > 0 %>
+<hr/>
+<table class="table table-bordered table-striped table-hover">
+  <thead class="thead-dark">
     <tr>
       <th>Name</th>
       <th>State</th>
@@ -16,16 +26,15 @@
       <tr>
         <td><%= city.name %></td>
         <td><%= city.state.name %></td>
-        <td><%= link_to 'Show', city %></td>
-        <td><%= link_to 'Edit', edit_city_path(city) %></td>
-        <td><%= link_to 'Destroy', city, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Show', city , class: 'btn btn-success btn-sm' %>
+          <!-- <%= link_to 'Edit', edit_city_path(city), class: 'btn btn-success btn-sm' %> <%= link_to 'Destroy', city, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>-->
+        </td>
       </tr>
     <% end %>
 
   </tbody>
 </table>
-<br>
-<%= will_paginate @cities %>
-
-<br>
-<%= link_to 'New City', new_city_path %>
+<hr/>
+<%= render './pagination', value: @cities %>
+<% end %>
+<hr/>

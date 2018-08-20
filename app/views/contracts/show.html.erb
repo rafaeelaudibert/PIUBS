@@ -16,9 +16,16 @@
 </p>
 
 <p>
-  <strong><%= link_to "Link para contrato", @contract.files.to_s %></strong>
+  <strong>Filename:</strong>
+  <% if @contract.filename %>
+    <%= @contract.filename %>
+    <br/><br/>
+    <strong><%= link_to "Link para download", download_contract_path, class: 'btn btn-primary btn-sm' %></strong>
+  <% else %>
+    No file attached
+  <% end %>
 </p>
 
-<%= link_to 'Edit', edit_contract_path(@contract) %>
-|
-<%= link_to 'Back', contracts_path %>
+<%= link_to 'Edit', edit_contract_path(@contract), class: 'btn btn-success btn-sm' %>
+<%= link_to 'Back', contracts_path, class: 'btn btn-primary btn-sm' %>
+<br/><br/>

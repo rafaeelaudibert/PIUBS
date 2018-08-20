@@ -1,5 +1,6 @@
-<h1>New Contract</h1>
-
-<%= render 'form', contract: @contract %>
-
-<%= link_to 'Back', contracts_path %>
+<%= content_for :body_title do%>
+<% city = ' for ' << @city.name if @city %>
+  <% company = ' for ' << @company.sei.to_s if @company %>
+    <%= 'New Contract' << (city || ' ') << (company || ' ')%>
+  <%end%>
+  <%= render 'form', contract: @contract %>

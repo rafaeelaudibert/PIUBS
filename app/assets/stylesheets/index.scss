@@ -1,0 +1,68 @@
+.navbar {
+  padding: 0.2rem 8rem 0;
+  display: flex;
+  min-width: 100%;
+  max-width: 100%;
+  justify-content: flex-end;
+
+  .navbar-brand {
+    display: inline-block;
+    flex: 3;
+    font-size: 2rem;
+
+    &:hover {
+      color: black;
+      cursor: auto;
+    }
+
+    h1 {
+      display: inline-block;
+      margin-left: 0.3rem;
+      margin-bottom: 0;
+
+      &:hover {
+        color: #2e6ab1;
+        cursor: pointer;
+      }
+    }
+
+    img {
+      position: relative;
+      height: 2rem;
+      top: -0.25rem;
+    }
+  }
+
+  .navbar-collapse {
+    justify-content: flex-end;
+    flex: 9;
+
+    ul li {
+      align-self: center;
+      font-size: 1rem;
+      font-weight: regular;
+
+      &:last-child {
+        width: minwidth(10rem, 20%);
+        margin-left: 2rem;
+        font-size: 1.2rem;
+        transition: transform ease-in 100ms;
+
+        &:hover {
+          transform: scale(1.05);
+          transition: transform ease-in 100ms;
+        }
+      }
+
+      a {
+        color: black;
+        padding: 0.1rem;
+        font-size: inherit;
+
+        &:hover {
+          color: #2e6ab1;
+        }
+      }
+    }
+  }
+}

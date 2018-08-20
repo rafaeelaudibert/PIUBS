@@ -5,12 +5,15 @@ class CompaniesController < ApplicationController
   # GET /companies
   # GET /companies.json
   def index
-    @companies = Company.all
+    @companies = Company.paginate(page: params[:page], per_page: 25)
   end
 
   # GET /companies/1
   # GET /companies/1.json
-  def show; end
+  def show
+    @contracts = Contract.where('sei = ?', @company.sei)
+    @contracts = @contracts.paginate(page: params[:page], per_page: 25)
+  end
 
   # GET /companies/new
   def new
