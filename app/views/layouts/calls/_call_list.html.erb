@@ -1,0 +1,41 @@
+<%= content_for :body_title do%> Atendimentos<%end%>
+<div class="card">
+<div class="card-block">
+<div class="card-title-block"> Call List
+</div>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Protocol</th>
+      <th>Title</th>
+      <th>Status</th>
+      <th>Version</th>
+      <th>Severity</th>
+      <th>City</th>
+      <th>Category</th>
+      <th>State</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @calls.each do |call| %>
+      <tr>
+        <td><%= link_to "#{call.protocol}", call %></td>
+        <td><%= call.title %></td>
+        <td><%= call.status %></td>
+        <td><%= call.version %></td>
+        <td><%= call.severity %></td>
+        <td><%= call.city.name %></td>
+        <td><%= call.category.name %></td>
+        <td><%= call.state.name %></td>
+        <td>
+            <%= link_to(call, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm') do %> <i class="fa fa-trash-o"></i> <%end%></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+</div>
+<%= link_to 'New Call', new_call_path, class: 'btn btn-primary' %>

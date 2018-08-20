@@ -2,43 +2,30 @@
 <%= tinymce %>
 
 <%= content_for :body_title do%>
-Atendimento
-<%end%>
-
-<!-- Top pills -->
-<div>
-<ul class="nav nav-pills" role="tablist">
-  <li role="presentation" class="active">
-    <h5>Nº do protocolo
-      <span class="badge badge-pill badge-primary"><%= @call.protocol %></span>
+<h5> Atendimento | Nº do protocolo:
+      <span class="badge badge-dark"><%= @call.protocol %></span>
     </h5>
-  </li>
-</ul>
-<br/>
-</div>
-
-<div class="card border-secondary">
+<%end%>
+<div class="card card-primary">
 <!-- Default panel contents -->
-<div class="card-header bg-secondary text-white">
-  <%= t :requirer %>
-  :
-  <span class="badge badge-pill badge-light">
+<div class="card-header " style="color: white; font-weight: bold;">
+  <em class="fa fa-bullhorn m-2"></em>
+  Requirer :
+  <span class="badge badge-pill badge-dark m-2">
     <a><%= User.find(@call.user_id).email %></a>
   </span>
-  |
-  <%= t :creation_date %>
-  :
-  <span class="badge badge-pill badge-light">
+  Creation Date :
+  <span class="badge badge-pill badge-dark m-2">
     <%= @call.created_at %>
   </span>
 
-  | Sei :
-  <span class="badge badge-pill badge-light">
+  Sei :
+  <span class="badge badge-pill badge-dark m-2">
     <%= link_to "Empresa #{@call.sei}", company_path(@call.sei)%>
   </span>
 </div>
 
-<div class="card-body">
+<div class="card-block">
   <h4><%= @call.title %></h4>
   <hr/>
   <p>
@@ -62,15 +49,15 @@ Atendimento
 
   <hr/>
   <%= t :city %>:
-  <span class="badge badge-pill badge-primary"><%= @call.city.name %></span>
+  <span class="badge badge-pill badge-light m-2"><%= @call.city.name %></span>
   <%= t :uf %>
-  <span class="badge badge-pill badge-primary"><%= @call.state.name %></span>
+  <span class="badge badge-pill badge-light m-2"><%= @call.state.name %></span>
   <%= t :status %>
-  <span class="badge badge-pill badge-primary"><%= @call.status %></span>
+  <span class="badge badge-pill badge-light m-2"><%= @call.status %></span>
   <%= t :severity %>
-  <span class="badge badge-pill badge-primary"><%= @call.severity %></span>
+  <span class="badge badge-pill badge-light m-2"><%= @call.severity %></span>
   <%= t :category %>
-  <span class="badge badge-pill badge-primary"><%= @call.category.name %></span>
+  <span class="badge badge-pill badge-light m-2"><%= @call.category.name %></span>
   <hr/>
 
   <%= link_to 'Edit', edit_call_path(@call), class: 'btn btn-secondary btn-sm' %>
@@ -108,33 +95,23 @@ Atendimento
 </div>
 </div>
 
-<div id="accordion">
-<div class="card">
-  <div class="card-header" id="headingOne">
-    <h5 class="mb-0">
-      <button class="btn btn-link bg-primary" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-        <img src="/assets/svg/chat.svg" height="32" width="32">
-        Histórico de Atendimentos
-      </button>
-    </h5>
-  </div>
-  <% collapse = @call.answer_id ? "collapse" : "collapse show" %>
-    <div id="collapseOne" class="<%= collapse %>" aria-labelledby="headingOne" data-parent="#accordion">
-      <div class="card-body">
+
+
         <% @call.replies.each do |reply| %>
 
           <% if reply.category == 'reply' %>
-            <div class="card bg-white mb-3 ">
+            <div class="card card-default mb-3 ">
               <div class="card-header">
-                <img src="/assets/svg/comment-square.svg" height="16" width="16">
-                <span class="badge badge-pill badge-dark">
+                <em class="fa fa-comment-o m-2"></em>
+                <span class="badge badge-pill badge-dark m-2">
                   <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
                 </span>
                 -
-                <strong>
+                <strong class="m-2">
                   <%= User.find(reply.user_id).name %>
                 </strong>
                 added a reply.
+
               </div>
               <div class="card-body">
                 <p class="card-text">
@@ -149,15 +126,15 @@ Atendimento
           <%end%>
 
           <% if reply.category == 'support' %>
-            <div class="card bg-white mb-3" style="border-left: 5px solid gray">
+            <div class="card card-default mb-3" style="border-left: 5px solid #85CE36">
               <div class="card-header">
-                <img src="/assets/svg/comment-square.svg" height="16" width="16">
-                <span class="badge badge-pill badge-dark">support</span>
-                <span class="badge badge-pill badge-dark">
+                <em class="fa fa-comment-o m-2"></em>
+                <span class="badge badge-pill badge-dark m-1">
                   <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
                 </span>
+                <span class="badge badge-pill badge-dark m-1">support</span>
                 -
-                <strong>
+                <strong class="m-2">
                   <%= User.find(reply.user_id).name %>
                 </strong>
                 added a support.
@@ -172,8 +149,8 @@ Atendimento
                   </span>
                 </div>
               </div>
-              <div class="card-body">
-                <p class="card-text">
+              <div class="card-block">
+
                   <%= reply.description.html_safe %>
                   <hr/>
                   <%= link_to 'Show', reply %>
@@ -183,14 +160,13 @@ Atendimento
                   <%= link_to 'Mark as Final Answer', {controller: 'answers', action: 'new', question: @call, reply: reply} %>
                   |
                   <%= link_to 'Destroy', reply, method: :delete, data: { confirm: 'Are you sure?' } %>
-                </p>
+
               </div>
             </div>
           <%end%>
         <% end %>
-      </div>
-    </div>
-  </div>
+
+
   <% if @call.answer_id %>
     <div class="card">
       <div class="card-header" id="headingTwo">
@@ -218,7 +194,7 @@ Atendimento
         </div>
       </div>
     <% end %>
-  </div>
+
 
   <script>
     $("#reply").click(function () {
