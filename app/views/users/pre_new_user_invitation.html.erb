@@ -1,0 +1,14 @@
+<h2>Convidar novo usuário</h2>
+
+<div class="authform" style="float:left; width:50%;">
+  <%= form_for resource, :url => new_user_level_selected_path, :html => {:method => :post} do |f| %>
+    <%= devise_error_messages! %>
+
+  <div class="form-group">
+      <%= f.label "Escolha o tipo de usuário" %>
+      <%= f.select(:role, $levels_allowed, {:include_blank => "Selecione", :selected => nil}, {:class => "form-control"})%>
+  </div>
+
+  <p><%= f.submit "Continuar", :class => 'button left' %></p>
+  <% end %>
+</div>
