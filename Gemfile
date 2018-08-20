@@ -51,6 +51,8 @@ gem 'binding_of_caller'
 gem 'will_paginate', '~> 3.1.0' # Pagination
 gem 'carrierwave'
 gem 'mini_magick', '~> 4.3'     # Image uploaded by carrierwave manipulation
+gem 'protected_attributes_continued'
 gem 'tinymce-rails' # text editor
 gem 'shog'                      # Colorized console logging
 gem 'pg_search'
+
