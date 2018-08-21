@@ -14,7 +14,7 @@
 
 <div class="form-group">
   <%= form.label :file %>
-  <%= form.file_field :file, class: 'form-control-file', multiple: true%>
+  <%= form.file_field :file, class: 'form-control-file', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 2.megabytes}%>
 </div>
 
 <div class="form-group">
@@ -25,3 +25,28 @@
 <%= form.submit 'Save', :class => 'btn btn-success btn-sm' %>
 <%= link_to 'Cancel', attachments_path, :class => 'btn btn-danger btn-sm' %>
 <% end %>
+
+<script>
+function validateFiles(inputFile) {
+
+  var size = 0;
+  var maxFileSize = $(inputFile).data('max-file-size');
+
+  $.each(inputFile.files, function () {
+    if (this.size) {
+      size += this.size;
+    }
+  });
+
+  console.log(size)
+  if (size && maxFileSize && size > parseInt(maxFileSize)) {
+    const animation = {
+      "in": "bounceIn",
+      "out": "fadeOutUpBig"
+    };
+    const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
+    Notification.create("<%= 'Warning' %>", '<%= "This file exceeds the maximum allowed file size (2 MB)" %>', heart, animation, 2, 5);
+    $(inputFile).val('');
+  };
+}
+</script>

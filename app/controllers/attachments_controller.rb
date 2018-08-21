@@ -91,7 +91,6 @@ class AttachmentsController < ApplicationController
         parameters[:file_contents].append(_file.read)
       end
     end
-    puts parameters[:filenameail]
     parameters
   end
 
