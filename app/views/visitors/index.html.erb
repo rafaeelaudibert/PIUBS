@@ -1,6 +1,5 @@
-<%= content_for :body_content do%> <%= render 'layouts/login_form' %> <%end%>
-
-
 <% if user_signed_in? %>
   <%= render 'layouts/calls/call_list' %>
+<% else%>
+  <%= render 'layouts/login_form' %>
 <%end%>

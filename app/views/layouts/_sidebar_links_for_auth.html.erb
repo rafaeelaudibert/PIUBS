@@ -36,12 +36,12 @@
   <li><%= link_to(root_path, class: 'nav-item nav-link') do %> <i class="fa fa-book"></i> Contratos<%end%></li>
   <li><%= link_to(calls_path, class: 'nav-item nav-link') do %> <i class="fa fa-bullhorn"></i>  Atendimentos<%end%></li>
   <li><%= link_to(root_path, class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Colaboradores<%end%></li>
-  <%= link_to 'Criar Usuários', new_user_level_path, class: 'nav-item nav-link' %>
+  <li><%= link_to(new_user_level_path, class: 'nav-item nav-link') do %> <i class="fa fa-user"></i> Criar Usuários <%end%></li>
 <% end %>
 
 <!-- Company User Sidebar-->
 <% if current_user.try(:company_user?) %>
-  <li><%= link_to 'Atendimentos', call_path, class: 'nav-item nav-link' %></li>
+  <li><%= link_to 'Atendimentos', root_path, class: 'nav-item nav-link' %></li>
 <% end %>
 
 <!-- Call Center Admin Sidebar-->
