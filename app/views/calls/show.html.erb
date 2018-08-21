@@ -74,21 +74,23 @@
 </div>
 </div>
 
-<div class="card border-secondary mt-4" style="display: none" id="reply_box">
-<div class="card-header bg-secondary text-white">
-  Reply call:
-  <span class="badge badge-pill badge-light">
-    <%= @call.protocol %>
-  </span>
+<div class="card card-primary" style="display: none" id="reply_box">
+<div class="card-header pl-2">
+  <div class="header-block" >
+      <p class="title" style="color: white;"><i class="fa fa-mail-forward mr-2"></i>Reply Call</p>
+  </div>
 </div>
 <div class="card-body">
   <%= render 'reply', reply: @reply %>
 </div>
 </div>
 
-<div class="card border-secondary mt-4" style="display: none" id="faq_box">
-<div class="card-header bg-secondary text-white">
-  FAQ List:
+<div class="card card-primary" style="display: none" id="faq_box">
+<div class="card-header pl-2" >
+  <div class="header-block" >
+      <p class="title" style="color: white;"><i class="fa fa-mail-forward mr-2"></i>FAQ List:</p>
+  </div>
+
 </div>
 <div class="card-body">
   <%= render 'answer', categories: @categories %>
@@ -168,30 +170,18 @@
 
 
   <% if @call.answer_id %>
-    <div class="card">
+    <div class="card card-primary">
       <div class="card-header" id="headingTwo">
-        <h5 class="mb-0">
-          <button class="btn btn-link bg-primary" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseOne">
-            <img src="/assets/svg/chat.svg" height="32" width="32">
-            Final Answer
-          </button>
-        </h5>
-      </div>
-      <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordion">
-        <div class="card-body">
-          <% answer = Answer.find(@call.answer_id) %>
-            <div class="card border-success mt-4" style="border-left: 5px solid green; min-height: 100px; margin-bottom: 2rem" id="answer_box">
-              <div class="card-header bg-success text-white">
-                Final Answer:
-              </div>
-              <div class="card-body">
-                <p class="card-text">
-                  <%= answer.answer.html_safe %>
-                </p>
-              </div>
-            </div>
-          </div>
+        <div class="header-block" >
+            <p class="title" style="color: white"><i class="fa fa-envelope mr-2"></i> Final Answer</p>
         </div>
+      </div>
+        <div class="card-block">
+          <% answer = Answer.find(@call.answer_id) %>
+           <span class="badge badge-pill badge-dark m-1"> <%= answer.created_at %></span>
+           <span class="badge badge-pill badge-dark m-1">support</span><hr/>
+            <%= answer.answer.html_safe %>
+          </div>
       </div>
     <% end %>
 

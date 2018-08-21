@@ -1,7 +1,7 @@
-<%= form_tag do %>
-<div style="max-width: 850px">
+<%= form_tag({:class => 'form-inline'}) do %>
+<div class="form-group" style="max-width: 850px">
   <%= label_tag :search_field %>
-  <%= text_field_tag :search_field %>
+  <%= text_field_tag :search_field, "", class: 'form-control boxed'%>
   <%= submit_tag 'Search', type: 'button', id: 'search_button', class: "btn btn-secondary btn-sm"%>
 
   <div class="" id="table"></div>
@@ -29,9 +29,9 @@
 
             //Add the header row.
             let row = table.insertRow(-1);
-            for (let header of["Question", "Answer", "Actions"]) 
+            for (let header of["Question", "Answer", "Actions"])
               row.appendChild(document.createElement("TH")).innerHTML = header;
-            
+
             //Add the data rows.
             for (let entry of data) {
               let row = table.insertRow(-1);
