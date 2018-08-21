@@ -54,3 +54,4 @@ gem 'mini_magick', '~> 4.3'     # Image uploaded by carrierwave manipulation
 gem 'tinymce-rails' # text editor
 gem 'shog'                      # Colorized console logging
 gem 'pg_search'
+gem "font-awesome-rails"

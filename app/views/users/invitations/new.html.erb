@@ -1,0 +1,24 @@
+<% if $selected_role != '' %>
+  <h2>Convidar novo usuário</h2>
+    <div class="authform" style="float:left; width:50%;">
+      <%= form_for resource, :as => resource_name, :url => invitation_path(resource_name), :html => {:method => :post} do |f| %>
+        <%= devise_error_messages! %>
+            <h6>O usuário convidado será <%= $selected_role %>.</h6>
+            <div class="form-group">
+              <% resource.class.invite_key_fields.each do |field| -%>
+                <p><%= f.label field %>
+                <%= f.text_field field, :autofocus => true, class: 'form-control' %></p>
+              <% end -%>
+            </div>
+              <p><%= f.submit "Enviar convite", :class => 'button left' %></p>
+              <% if current_user.admin? %>
+                <p><%= link_to 'Voltar', new_user_level_path %></p>
+              <% end %>
+      <% end %>
+    </div>
+<% else %>
+  <script type="text/javascript">
+    window.location.href="<%= new_user_level_path %>"
+  </script>
+  <h4><%= link_to 'Clique aqui para selecionar o nível de usuário.', new_user_level_path %></h4>
+<% end %>
