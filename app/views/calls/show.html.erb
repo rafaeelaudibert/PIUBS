@@ -2,9 +2,10 @@
 <%= tinymce %>
 
 <%= content_for :body_title do%>
-<h5> Atendimento | Nº do protocolo:
-      <span class="badge badge-dark"><%= @call.protocol %></span>
-    </h5>
+<h5>
+  Atendimento | Nº do protocolo:
+  <span class="badge badge-dark"><%= @call.protocol %></span>
+</h5>
 <%end%>
 <div class="card card-primary">
 <!-- Default panel contents -->
@@ -76,8 +77,9 @@
 
 <div class="card card-primary" style="display: none" id="reply_box">
 <div class="card-header pl-2">
-  <div class="header-block" >
-      <p class="title" style="color: white;"><i class="fa fa-mail-forward mr-2"></i>Reply Call</p>
+  <div class="header-block">
+    <p class="title" style="color: white;">
+      <i class="fa fa-mail-forward mr-2"></i>Reply Call</p>
   </div>
 </div>
 <div class="card-body">
@@ -86,9 +88,10 @@
 </div>
 
 <div class="card card-primary" style="display: none" id="faq_box">
-<div class="card-header pl-2" >
-  <div class="header-block" >
-      <p class="title" style="color: white;"><i class="fa fa-mail-forward mr-2"></i>FAQ List:</p>
+<div class="card-header pl-2">
+  <div class="header-block">
+    <p class="title" style="color: white;">
+      <i class="fa fa-mail-forward mr-2"></i>FAQ List:</p>
   </div>
 
 </div>
@@ -96,123 +99,158 @@
   <%= render 'answer', categories: @categories %>
 </div>
 </div>
+<br/><br/><br/>
+<div class="card card-primary">
+<div class="card-header" id="headingTwo">
+  <div class="header-block">
+    <p class="title" style="color: white">
+      <i class="fa fa-comment-o mr-2"></i>
+      Replies</p>
+  </div>
+</div>
+<div class="card-block">
+  <% @call.replies.each do |reply| %>
 
+    <% if reply.category == 'reply' %>
+      <div class="card card-default mb-3" style="box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
+        <div class="card-header">
+          <em class="fa fa-comment-o m-2"></em>
+          <span class="badge badge-pill badge-dark m-2">
+            <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+          </span>
+          -
+          <strong class="m-2">
+            <%= User.find(reply.user_id).name %>
+          </strong>
+          added a reply.
 
-
-        <% @call.replies.each do |reply| %>
-
-          <% if reply.category == 'reply' %>
-            <div class="card card-default mb-3 ">
-              <div class="card-header">
-                <em class="fa fa-comment-o m-2"></em>
-                <span class="badge badge-pill badge-dark m-2">
-                  <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
-                </span>
-                -
-                <strong class="m-2">
-                  <%= User.find(reply.user_id).name %>
-                </strong>
-                added a reply.
-
-              </div>
-              <div class="card-body">
-                <p class="card-text">
-                  <%= reply.description.html_safe %>
-                  <hr/>
-                  <%= link_to 'Show', reply %>
-                  <%= link_to 'Edit', edit_reply_path(reply) %>
-                  <%= link_to 'Destroy', reply, method: :delete, data: { confirm: 'Are you sure?' } %>
-                </p>
-              </div>
-            </div>
-          <%end%>
-
-          <% if reply.category == 'support' %>
-            <div class="card card-default mb-3" style="border-left: 5px solid #85CE36">
-              <div class="card-header">
-                <em class="fa fa-comment-o m-2"></em>
-                <span class="badge badge-pill badge-dark m-1">
-                  <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
-                </span>
-                <span class="badge badge-pill badge-dark m-1">support</span>
-                -
-                <strong class="m-2">
-                  <%= User.find(reply.user_id).name %>
-                </strong>
-                added a support.
-                <div style="float: right">
-                  <% if reply.faq == true %>
-                    <span class="badge badge-pill badge-dark">
-                      ON FAQ
-                    </span>
-                  <% end %>
-                  <span class="badge badge-pill badge-dark">
-                    <%= reply.status %>
-                  </span>
-                </div>
-              </div>
-              <div class="card-block">
-
-                  <%= reply.description.html_safe %>
-                  <hr/>
-                  <%= link_to 'Show', reply %>
-                  |
-                  <%= link_to 'Edit', edit_reply_path(reply) %>
-                  |
-                  <%= link_to 'Mark as Final Answer', {controller: 'answers', action: 'new', question: @call, reply: reply} %>
-                  |
-                  <%= link_to 'Destroy', reply, method: :delete, data: { confirm: 'Are you sure?' } %>
-
-              </div>
-            </div>
-          <%end%>
-        <% end %>
-
-
-  <% if @call.answer_id %>
-    <div class="card card-primary">
-      <div class="card-header" id="headingTwo">
-        <div class="header-block" >
-            <p class="title" style="color: white"><i class="fa fa-envelope mr-2"></i> Final Answer</p>
+        </div>
+        <div class="card-body" style="padding: 5px 30px 15px">
+          <p class="card-text">
+            <%= reply.description.html_safe %>
+          </p>
         </div>
       </div>
+    <%end%>
+
+    <% if reply.category == 'support' %>
+      <div class="card card-default mb-3" style="border-left: 5px solid #85CE36; box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
+        <div class="card-header">
+          <em class="fa fa-comment-o m-2"></em>
+          <span class="badge badge-pill badge-dark m-1">
+            <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+          </span>
+          <span class="badge badge-pill badge-dark m-1">support</span>
+          -
+          <strong class="m-2">
+            <%= User.find(reply.user_id).name %>
+          </strong>
+          added a support.
+        </div>
         <div class="card-block">
-          <% answer = Answer.find(@call.answer_id) %>
-           <span class="badge badge-pill badge-dark m-1"> <%= answer.created_at %></span>
-           <span class="badge badge-pill badge-dark m-1">support</span><hr/>
-            <%= answer.answer.html_safe %>
+
+          <%= reply.description.html_safe %>
+          <hr/>
+          <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
+            <%= link_to 'Mark as Final Answer', '#', onclick: 'toggleFinalAnswer(this)' %>
+          <% end %>
+          <div style="float: right">
+            <% if reply.faq == true %>
+              <span class="badge badge-pill badge-dark">
+                ON FAQ
+              </span>
+            <% end %>
+            <span class="badge badge-pill badge-dark">
+              <%= reply.status %>
+            </span>
           </div>
+        </div>
       </div>
-    <% end %>
+    <%end%>
+  <% end %>
+</div>
+</div>
 
+<% if @call.answer_id %>
+<div class="card card-primary">
+  <div class="card-header" id="headingTwo">
+    <div class="header-block">
+      <p class="title" style="color: white">
+        <i class="fa fa-envelope mr-2"></i>
+        Final Answer</p>
+    </div>
+  </div>
+  <div class="card-block">
+    <% answer = Answer.find(@call.answer_id) %>
+      <span class="badge badge-pill badge-dark m-1">
+        <%= answer.created_at %></span>
+      <span class="badge badge-pill badge-dark m-1">support</span><hr/>
+      <%= answer.answer.html_safe %>
+    </div>
+  </div>
+<% end %>
 
+<div id="final-answer" style="display: none">
+  <%= render 'finalAnswer', answer: @answer %>
+</div>
+
+<script>
+  $("#reply").click(function () {
+    $("#reply_box").toggle(200);
+    $("#faq_box").hide(200);
+  });
+
+  $("#new-reply").click(function () {
+    $("#reply_box").toggle(200);
+    $("#faq_box").hide(200);
+  });
+
+  $("#faq-reply").click(function () {
+    $("#reply_box").hide(200);
+    $("#faq_box").toggle(200);
+  });
+
+  $("#cancel").click(function () {
+    $("#reply_box").toggle(200);
+  });
+</script>
+
+<% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
   <script>
-    $("#reply").click(function () {
-      $("#reply_box").toggle(200);
-      $("#faq_box").hide(200);
-    });
+    function toggleFinalAnswer(button) {
 
-    $("#new-reply").click(function () {
-      $("#reply_box").toggle(200);
-      $("#faq_box").hide(200);
-    });
+      const finalAnswer = $('#final-answer')[0];
+      const parent = button.parentNode;
 
-    $("#faq-reply").click(function () {
-      $("#reply_box").hide(200);
-      $("#faq_box").toggle(200);
-    });
+      if (parent.lastChild == finalAnswer) {
+        $('#final-answer').toggle(200);
+      } else {
+        $('#final-answer').hide();
+        parent.appendChild(finalAnswer);
+        $('#final-answer').show(200);
+      }
 
-    $("#cancel").click(function () {
-      $("#reply_box").toggle(200);
-    });
+      const formChildren = finalAnswer.children[1].children;
+      const answerField = formChildren[3].children[1];
+      answerField.value = parent.children[0].innerHTML;
+
+      const floatRight = parent.children[3].children
+      const faqField = formChildren[8];
+      console.log(faqField.style.display);
+      faqField.style.display = floatRight.length == 2
+        ? 'none'
+        : 'inline-flex';
+      console.log(floatRight);
+    }
   </script>
+<% end %>
 
-  <style>
-    #reply_description_ifr {
-      height: 250px !important;
-    }
+<style>
+  #reply_description_ifr {
+    height: 250px !important;
+  }
 
-    #mceu_30 {
-      display: none;
-    }
-  </style>
+  #mceu_30 {
+    display: none;
+  }
+</style>

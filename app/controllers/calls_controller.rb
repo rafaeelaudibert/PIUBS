@@ -10,6 +10,7 @@ class CallsController < ApplicationController
   # GET /calls/1
   # GET /calls/1.json
   def show
+    @answer = Answer.new
     @reply = Reply.new
     @categories = Category.all
   end
@@ -34,7 +35,7 @@ class CallsController < ApplicationController
     @call.severity = 'Normal'
     @call.user_id = user.id
     @call.id = @call.protocol
-    
+
     respond_to do |format|
       if @call.save
         format.html { redirect_to @call, notice: 'Call was successfully created.' }

@@ -22,7 +22,11 @@ class AttachmentsController < ApplicationController
   # POST /attachments
   # POST /attachments.json
   def create
-    @attachment = Attachment.new(attachment_params)
+    parsed_params = attachment_params
+    parsed_params[:filename].each_with_index do |_filename, _index|
+      @attachment = Attachment.new(eachAttachment(parsed_params, _index))
+      raise 'Não consegui anexar o arquivo. Por favor tente mais tarde' unless @attachment.save
+    end
 
     respond_to do |format|
       if @attachment.save
@@ -75,13 +79,28 @@ class AttachmentsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def attachment_params
-    parameters = params.require(:attachment).permit(:file, :answer_id)
+    parameters = params.require(:attachment).permit(:answer_id, file: [])
     file = parameters.delete(:file) if parameters
     if file
-      parameters[:filename] = File.basename(file.original_filename)
-      parameters[:content_type] = file.content_type
-      parameters[:file_contents] = file.read
+      parameters[:filename] = []
+      parameters[:content_type] = []
+      parameters[:file_contents] = []
+      file.each do |_file|
+        parameters[:filename].append(File.basename(_file.original_filename))
+        parameters[:content_type].append(_file.content_type)
+        parameters[:file_contents].append(_file.read)
+      end
     end
     parameters
+  end
+
+  def eachAttachment(_parsed_params, _index)
+    new_params = {}
+    new_params[:filename] = _parsed_params[:filename][_index]
+    new_params[:content_type] = _parsed_params[:content_type][_index]
+    new_params[:file_contents] = _parsed_params[:file_contents][_index]
+    new_params[:answer_id] = _parsed_params[:answer_id]
+    pp new_params
+    new_params
   end
 end
