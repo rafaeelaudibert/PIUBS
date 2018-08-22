@@ -18,9 +18,10 @@ class ReplyMailer < ApplicationMailer
   #
   def notification(reply)
     @reply = reply
-    @greeting = "Olá,"
+    @call = Call.find(@reply.protocol)
+    @call_user = User.find(@call.user_id)
+    @link = "localhost:3000/calls/#{@call.protocol}"
 
-    # mail to: @reply.email
-    mail to: "mario.figueiro@ufrgs.br"
+    mail to: @call_user.email
   end
 end
