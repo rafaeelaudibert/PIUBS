@@ -1,3 +1,4 @@
+<hr/>
 <%= form_with(model: answer, local: true) do |form| %>
 <% if answer.errors.any? %>
   <div id="error_explanation">
@@ -46,7 +47,7 @@
   <br/><br/>
 
   <div class="actions">
-    <%= form.submit %>
+    <%= form.submit 'Done' %>
   </div>
 <% end %>
 

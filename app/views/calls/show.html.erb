@@ -192,54 +192,65 @@
 
 <div id="final-answer" style="display: none">
   <%= render 'finalAnswer', answer: @answer %>
-  <%# TODO: INSERT THE JAVASCRIPT STUFF SO THAT IT CAN FILL THE DATA INSIDE IT %>
-  </div>
+</div>
 
+<script>
+  $("#reply").click(function () {
+    $("#reply_box").toggle(200);
+    $("#faq_box").hide(200);
+  });
+
+  $("#new-reply").click(function () {
+    $("#reply_box").toggle(200);
+    $("#faq_box").hide(200);
+  });
+
+  $("#faq-reply").click(function () {
+    $("#reply_box").hide(200);
+    $("#faq_box").toggle(200);
+  });
+
+  $("#cancel").click(function () {
+    $("#reply_box").toggle(200);
+  });
+</script>
+
+<% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
   <script>
-    $("#reply").click(function () {
-      $("#reply_box").toggle(200);
-      $("#faq_box").hide(200);
-    });
+    function toggleFinalAnswer(button) {
 
-    $("#new-reply").click(function () {
-      $("#reply_box").toggle(200);
-      $("#faq_box").hide(200);
-    });
+      const finalAnswer = $('#final-answer')[0];
+      const parent = button.parentNode;
 
-    $("#faq-reply").click(function () {
-      $("#reply_box").hide(200);
-      $("#faq_box").toggle(200);
-    });
-
-    $("#cancel").click(function () {
-      $("#reply_box").toggle(200);
-    });
-  </script>
-
-  <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-    <script>
-      function toggleFinalAnswer(button) {
-
-        const finalAnswer = document.getElementById('final-answer');
-        const parent = button.parentNode;
-
-        // TODO: Insert the javascript stuff to add the content inside it
-        if (finalAnswer.style.display == 'none') {
-          finalAnswer.style.display = "block";
-          parent.appendChild(finalAnswer);
-        } else {
-          finalAnswer.style.display = 'none';
-        }
+      if (parent.lastChild == finalAnswer) {
+        $('#final-answer').toggle(200);
+      } else {
+        $('#final-answer').hide();
+        parent.appendChild(finalAnswer);
+        $('#final-answer').show(200);
       }
-    </script>
-  <% end %>
 
-  <style>
-    #reply_description_ifr {
-      height: 250px !important;
-    }
+      const formChildren = finalAnswer.children[1].children;
+      const answerField = formChildren[3].children[1];
+      answerField.value = parent.children[0].innerHTML;
 
-    #mceu_30 {
-      display: none;
+      const floatRight = parent.children[3].children
+      const faqField = formChildren[8];
+      console.log(faqField.style.display);
+      faqField.style.display = floatRight.length == 2
+        ? 'none'
+        : 'inline-flex';
+      console.log(floatRight);
     }
-  </style>
+  </script>
+<% end %>
+
+<style>
+  #reply_description_ifr {
+    height: 250px !important;
+  }
+
+  #mceu_30 {
+    display: none;
+  }
+</style>
