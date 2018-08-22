@@ -152,7 +152,7 @@
           <%= reply.description.html_safe %>
           <hr/>
           <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-            <%= link_to 'Mark as Final Answer', {controller: 'answers', action: 'new', question: @call, reply: reply} %>
+            <%= link_to 'Mark as Final Answer', '#', onclick: 'toggleFinalAnswer(this)' %>
           <% end %>
           <div style="float: right">
             <% if reply.faq == true %>
@@ -190,33 +190,56 @@
   </div>
 <% end %>
 
-<script>
-  $("#reply").click(function () {
-    $("#reply_box").toggle(200);
-    $("#faq_box").hide(200);
-  });
+<div id="final-answer" style="display: none">
+  <%= render 'finalAnswer', answer: @answer %>
+  <%# TODO: INSERT THE JAVASCRIPT STUFF SO THAT IT CAN FILL THE DATA INSIDE IT %>
+  </div>
 
-  $("#new-reply").click(function () {
-    $("#reply_box").toggle(200);
-    $("#faq_box").hide(200);
-  });
+  <script>
+    $("#reply").click(function () {
+      $("#reply_box").toggle(200);
+      $("#faq_box").hide(200);
+    });
 
-  $("#faq-reply").click(function () {
-    $("#reply_box").hide(200);
-    $("#faq_box").toggle(200);
-  });
+    $("#new-reply").click(function () {
+      $("#reply_box").toggle(200);
+      $("#faq_box").hide(200);
+    });
 
-  $("#cancel").click(function () {
-    $("#reply_box").toggle(200);
-  });
-</script>
+    $("#faq-reply").click(function () {
+      $("#reply_box").hide(200);
+      $("#faq_box").toggle(200);
+    });
 
-<style>
-  #reply_description_ifr {
-    height: 250px !important;
-  }
+    $("#cancel").click(function () {
+      $("#reply_box").toggle(200);
+    });
+  </script>
 
-  #mceu_30 {
-    display: none;
-  }
-</style>
+  <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
+    <script>
+      function toggleFinalAnswer(button) {
+
+        const finalAnswer = document.getElementById('final-answer');
+        const parent = button.parentNode;
+
+        // TODO: Insert the javascript stuff to add the content inside it
+        if (finalAnswer.style.display == 'none') {
+          finalAnswer.style.display = "block";
+          parent.appendChild(finalAnswer);
+        } else {
+          finalAnswer.style.display = 'none';
+        }
+      }
+    </script>
+  <% end %>
+
+  <style>
+    #reply_description_ifr {
+      height: 250px !important;
+    }
+
+    #mceu_30 {
+      display: none;
+    }
+  </style>
