@@ -1,40 +1,62 @@
-<p id="notice"><%= notice %></p>
-<%= content_for :body_title do%>Cities<%end%>
+<%= content_for :body_title do%>Cidades<%end%>
 
-<div class="float-right" style="display: block !important">
-<form class="form-inline">
-  <input class="form-control mr-sm-2" type="search" placeholder="City name" aria-label="Search">
-  <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
+<div class="float-right" style="display: inline-block !important">
+<form role="search">
+  <div class="input-group" style="margin: 0">
+    <input id="city-form" class="form-control mr-sm-2" type="search" aria-label="Search">
+    <label>
+      <i class="fa fa-search"></i>
+      &nbsp;Cidade
+    </label>
+    <button class="btn btn-success my-2 my-sm-0" type="submit">Pesquisar</button>
+  </div>
 </form>
 </div>
-<hr style="margin-top: 4.4rem"/>
-
+<div class="float-left" style="display: inline-block !important">
 <%= render './pagination', value: @cities %>
+</div>
+<hr style="margin-top: 4em"/>
+
 <% if @cities.length > 0 %>
-<hr/>
-<table class="table table-bordered table-striped table-hover">
+<table class="table table-striped table-hover">
   <thead class="thead-dark">
     <tr>
-      <th>Name</th>
-      <th>State</th>
-      <th colspan="3"></th>
+      <th>Nome</th>
+      <th>Estado</th>
+      <th colspan="3">Ações</th>
     </tr>
   </thead>
-
   <tbody>
     <% @cities.each do |city| %>
       <tr>
         <td><%= city.name %></td>
         <td><%= city.state.name %></td>
-        <td><%= link_to 'Show', city , class: 'btn btn-success btn-sm' %>
+        <td><%= link_to 'Mostrar', city , class: 'btn btn-success btn-sm' %>
           <!-- <%= link_to 'Edit', edit_city_path(city), class: 'btn btn-success btn-sm' %> <%= link_to 'Destroy', city, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>-->
         </td>
       </tr>
     <% end %>
-
   </tbody>
 </table>
 <hr/>
-<%= render './pagination', value: @cities %>
+<div class="float-left" style="display: inline-block !important">
+  <%= render './pagination', value: @cities %>
+</div>
 <% end %>
-<hr/>
+
+<script>
+$('document').ready(function () {
+
+  $('#city-form').on('focusout', function () {
+    changeState($(this));
+  });
+
+  function changeState(form) {
+    if (form.val().length > 0) {
+      form.addClass('has-value');
+    } else {
+      form.removeClass('has-value');
+    }
+  }
+});
+</script>

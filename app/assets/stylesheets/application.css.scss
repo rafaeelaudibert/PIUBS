@@ -4279,7 +4279,63 @@ span a {
     font-size: 12px;
   }
 
+  &.has-value {
+    background-color: white !important;
+  }
+
   &.has-value:not(:focus) + label {
     color: lighten(black, 60%);
+  }
+}
+// Tables
+
+.table {
+  margin-top: 2rem;
+  font-size: 22px;
+
+  td {
+    font-size: 18px;
+  }
+}
+
+.table .thead-dark th {
+  background-color: darken(#4f5f6f, 10%) !important;
+  border: 0;
+}
+
+.table-hover tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.025);
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+// Will_paginate
+
+.page_info {
+  display: inline-block;
+  margin-right: 2rem;
+}
+
+.pagination {
+  padding-top: 0.4rem;
+  text-align: center;
+  transition: min-width 0.1s ease-in;
+
+  a {
+    text-decoration: none;
+    min-width: 1.3rem;
+
+    &:hover {
+      text-decoration: none;
+      color: #000;
+    }
+  }
+
+  .current {
+    text-align: center;
+    min-width: 1.3rem;
+    color: white;
+    background-color: #3a4651 !important;
   }
 }
