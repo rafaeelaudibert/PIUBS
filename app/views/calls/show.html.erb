@@ -186,6 +186,19 @@
         <%= answer.created_at %></span>
       <span class="badge badge-pill badge-dark m-1">support</span><hr/>
       <%= answer.answer.html_safe %>
+      <% if answer.attachment.length > 0 %>
+        <hr/>
+        <strong>
+          Attachments:
+        </strong>
+        <br/>
+        <% answer.attachment.each do |_attachment| %>
+          <div class='file_div'>
+            <%= link_to (image_tag "icons/document-file.png", class: "file_icon"), download_attachment_path(_attachment.id), class: 'file_subtitle' %>
+            <%= link_to _attachment.filename, download_attachment_path(_attachment.id), class: 'file_subtitle' %>
+          </div>
+        <% end %>
+      <% end %>
     </div>
   </div>
 <% end %>

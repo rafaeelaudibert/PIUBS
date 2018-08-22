@@ -1,3 +1,26 @@
 // Place all the styles related to the Answers controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.file_div {
+  display: inline-block;
+  max-width: 75px;
+  text-align: center;
+}
+
+.file_icon {
+  height: 55px;
+  width: 55px;
+  margin: 10px;
+  transform: scale(1);
+  transition: transform 0.075s ease-in-out;
+
+  &:hover {
+    transform: scale(1.1);
+    transition: transform 0.075s ease-in-out;
+  }
+}
+
+.file_subtitle {
+  text-decoration: none !important;
+}
