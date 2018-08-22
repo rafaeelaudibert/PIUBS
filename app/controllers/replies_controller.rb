@@ -34,6 +34,8 @@ class RepliesController < ApplicationController
 
     respond_to do |format|
       if @reply.save
+        ### Send email notification
+        ReplyMailer.notification(@reply).deliver
         format.html { redirect_to call_path(@reply.protocol), notice: 'Reply was successfully created.' }
         format.json { render :show, status: :created, location: @reply }
       else
