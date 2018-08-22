@@ -2,21 +2,23 @@
   <div class="sidebar-header">
     <div class="brand">
       <h2 class="auth-title mt-2">
-      <%= image_tag("icons/logo.png", :alt => "Apoio à empresa") %>
-        PIUBS </h2>
-  </div>
+        <%= link_to image_tag("icons/logo.png", :alt => "Apoio à empresa") << ' Piubs', root_path, class: 'nav-item nav-link mylogo'%>
+      </h2>
+    </div>
 
-  <nav class="menu">
-    <ul class="sidebar-menu metismenu" id="sidebar-menu">
-      <%= render 'layouts/sidebar_links_for_auth' %>
-    </ul>
-  </nav>
-</div>
-<footer class="sidebar-footer">
-  <ul class="sidebar-menu metismenu" id="customize-menu">
-    <li>
-      <a href="#">
-        <i class="fa fa-cog"></i> Write something here </a>
+    <nav class="menu">
+      <ul class="sidebar-menu metismenu" id="sidebar-menu">
+        <%= render 'layouts/sidebar_links_for_auth' %>
+      </ul>
+    </nav>
+  </div>
+  <footer class="sidebar-footer">
+    <ul class="sidebar-menu metismenu" id="customize-menu">
+      <li>
+        <%= link_to destroy_user_session_path, :method=>'delete' do %>
+        <i class="fa fa-power-off icon"></i>
+        Logout
+      <% end %>
     </li>
   </ul>
 </footer>
