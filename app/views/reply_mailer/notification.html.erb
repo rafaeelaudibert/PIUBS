@@ -1,9 +1,21 @@
-<h1>NEW REPLY</h1>
+<h1>PIUBS</h1>
 
 <p>
-  <%= @greeting %>, um novo reply foi criado.
+  Olá, <%= @call_user.name %>, seu atendimento tem uma nova resposta.
 </p>
 
 <p>
-  [E-mail de teste]
+  Protocolo de atendimento: <%= @call.protocol %>
+</p>
+
+<p>
+  Nova resposta: <br> <%= @reply.description.html_safe %>
+</p>
+
+<p>
+  <%= @reply.created_at %>
+</p>
+
+<p>
+  <a href="http://<%= @link %>">Clique aqui para acessar o PIUBS e ver o atendimento completo</a>
 </p>

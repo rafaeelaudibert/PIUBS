@@ -1,5 +1,14 @@
-NEW REPLY
+PIUBS
 
-<%= @greeting %>, um novo reply foi criado.
+Olá, <%= @call_user.name %>, seu atendimento tem uma nova resposta.
 
-[E-mail de teste]
+Protocolo de atendimento: <%= @call.protocol %>
+
+Nova resposta:
+<%= @reply.description.html_safe %>
+
+<%= @reply.created_at %>
+
+Clique aqui para acessar o PIUBS e ver o atendimento completo.
+
+<%= @link %>
