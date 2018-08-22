@@ -2,5 +2,5 @@
   <div class="page_info">
     <%= page_entries_info value %>
   </div>
-  <%= will_paginate value, :previous_label => '<<', :next_label => '>>' %>
+  <%= will_paginate value, :previous_label => '<<', :next_label => '>>', inner_window: 2, outer_window: 0 %>
 </div>
