@@ -44,6 +44,7 @@ class UsersController < ApplicationController
 
   def global_user
     $current_user_role = current_user.role
+    $current_user_sei = current_user.sei
   end
 
   private
@@ -88,6 +89,7 @@ class UsersController < ApplicationController
   end
 
   def secure_params
-    params.require(:user).permit(:role)
+    params.require(:user).permit(:role, :name, :cpf)
   end
+
 end
