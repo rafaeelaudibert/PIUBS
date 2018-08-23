@@ -9,6 +9,11 @@
       <%= f.select(:role, $levels_allowed, {:include_blank => "Selecione", :selected => nil}, {:class => "form-control"})%>
   </div>
 
-  <p><%= f.submit "Continuar", :class => 'button left' %></p>
+  <div class="form-group">
+      <p><%= f.label :name %>
+      <%= f.text_field :name, class: 'form-control' %></p>
+  </div>
+
+  <p><%= f.submit "Continuar", :class => 'btn btn-success' %></p>
   <% end %>
 </div>
