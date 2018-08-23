@@ -2,18 +2,18 @@
 <!-- Admin Sidebar-->
 <% if current_user.try(:admin?) %>
   <li><%= link_to(root_path, class: 'nav-item nav-link') do %> <i class="fa fa-bar-chart-o"></i> Estatísticas <%end%></li>
-  <li><%= link_to(states_path, class: 'nav-item nav-link') do %> <i class="fa fa-globe"></i> Estados<%end%></li>
-  <li><%= link_to(cities_path, class: 'nav-item nav-link') do %> <i class="fa fa-map-marker"></i> Cidades<%end%></li>
-  <li><%= link_to(unities_path, class: 'nav-item nav-link') do %> <i class="fa fa-medkit"></i> UBS <%end%></li>
-  <li><%= link_to(contracts_path, class: 'nav-item nav-link') do %> <i class="fa fa-clipboard"></i> Contratos<%end%></li>
-  <li><%= link_to(companies_path, class: 'nav-item nav-link') do %> <i class="fa fa-building-o"></i> Empresas <%end%></li>
-  <li><%= link_to(attachments_path, class: 'nav-item nav-link') do %> <i class="fa fa-files-o"></i> Anexos <%end%></li>
-  <li><%= link_to(calls_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Atendimentos <%end%></li>
-  <li><%= link_to(replies_path, class: 'nav-item nav-link') do %> <i class="fa fa-pencil"></i> Respostas <%end%></li>
-  <li><%= link_to(answers_path, class: 'nav-item nav-link') do %> <i class="fa fa-th-list"></i> Respostas Finais <%end%></li>
-  <li><%= link_to(categories_path, class: 'nav-item nav-link') do %> <i class="fa fa-link"></i> Categorias <%end%></li>
-  <li><%= link_to(users_path, class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Usuários <%end%></li>
-  <li><%= link_to(new_user_level_path, class: 'nav-item nav-link') do %> <i class="fa fa-user"></i> Adicionar Usuários <%end%></li>
+  <li <%= "class=active" if current_page?(states_path) %> > <%= link_to(states_path, class: 'nav-item nav-link') do %> <i class="fa fa-globe"></i> Estados<%end%></li>
+  <li <%= "class=active" if current_page?(cities_path) %> > <%= link_to(cities_path, class: 'nav-item nav-link') do %> <i class="fa fa-map-marker"></i> Cidades<%end%></li>
+  <li <%= "class=active" if current_page?(unities_path) %> > <%= link_to(unities_path, class: 'nav-item nav-link') do %> <i class="fa fa-medkit"></i> UBS <%end%></li>
+  <li <%= "class=active" if current_page?(contracts_path) %> > <%= link_to(contracts_path, class: 'nav-item nav-link') do %> <i class="fa fa-clipboard"></i> Contratos<%end%></li>
+  <li <%= "class=active" if current_page?(companies_path) %> > <%= link_to(companies_path, class: 'nav-item nav-link') do %> <i class="fa fa-building-o"></i> Empresas <%end%></li>
+  <li <%= "class=active" if current_page?(attachments_path) %> > <%= link_to(attachments_path, class: 'nav-item nav-link') do %> <i class="fa fa-files-o"></i> Anexos <%end%></li>
+  <li <%= "class=active" if current_page?(calls_path) %> > <%= link_to(calls_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Atendimentos <%end%></li>
+  <li <%= "class=active" if current_page?(replies_path) %> > <%= link_to(replies_path, class: 'nav-item nav-link') do %> <i class="fa fa-pencil"></i> Respostas <%end%></li>
+  <li <%= "class=active" if current_page?(answers_path) %> > <%= link_to(answers_path, class: 'nav-item nav-link') do %> <i class="fa fa-th-list"></i> Respostas Finais <%end%></li>
+  <li <%= "class=active" if current_page?(categories_path) %> > <%= link_to(categories_path, class: 'nav-item nav-link') do %> <i class="fa fa-link"></i> Categorias <%end%></li>
+  <li <%= "class=active" if current_page?(users_path) %> > <%= link_to(users_path, class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Usuários <%end%></li>
+  <li <%= "class=active" if current_page?(new_user_level_path) %> > <%= link_to(new_user_level_path, class: 'nav-item nav-link') do %> <i class="fa fa-user"></i> Adicionar Usuários <%end%></li>
 <% end %>
 
 <!-- City Admin Sidebar-->
