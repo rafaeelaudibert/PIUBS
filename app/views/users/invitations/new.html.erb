@@ -10,7 +10,7 @@
                 <%= f.text_field field, :autofocus => true, class: 'form-control' %></p>
               <% end -%>
             </div>
-              <p><%= f.submit "Enviar convite", :class => 'button left' %></p>
+              <p><%= f.submit "Enviar convite", :class => 'btn btn-success' %></p>
               <% if current_user.admin? %>
                 <p><%= link_to 'Voltar', new_user_level_path %></p>
               <% end %>
