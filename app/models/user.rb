@@ -33,7 +33,7 @@ class User < ApplicationRecord
 
   def set_default_role
     self.role ||= $selected_role
-    self.name ||= $invite_name
+    self.sei ||= $current_user_sei
   end
 
   # Include default devise modules. Others available are:
