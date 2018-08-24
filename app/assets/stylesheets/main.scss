@@ -8,22 +8,29 @@ td.user {
   text-align: center;
 }
 
-.form-control {
-  background-color: white !important;
-}
+tr {
+  // EVEN
+  &:nth-of-type(even) {
+    td.user-role {
+      .form-control {
+        background-color: rgba(0, 0, 0, 0.025) !important;
+      }
+    }
 
-tr:nth-of-type(even) {
-  td.user-role {
-    .form-control {
-      background-color: rgba(0, 0, 0, 0.025) !important;
+    &:hover {
+      td.user-role {
+        .form-control {
+          background-color: white !important;
+          transition: background-color 0s;
+        }
+      }
     }
   }
-
-  &:hover {
+  // ODD
+  &:nth-of-type(odd) {
     td.user-role {
       .form-control {
         background-color: white !important;
-        transition: background-color 0s;
       }
     }
   }
