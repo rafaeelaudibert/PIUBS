@@ -20,7 +20,7 @@ class ReplyMailer < ApplicationMailer
     @reply = reply
     @call = Call.find(@reply.protocol)
     @call_user = User.find(@call.user_id)
-    @link = "/calls/#{@call.protocol}"
+    @link = "#{root_url}calls/#{@call.protocol}"
 
     mail to: @call_user.email
   end
