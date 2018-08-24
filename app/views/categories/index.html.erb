@@ -1,12 +1,31 @@
-<p id="notice"><%= notice %></p>
+<%= content_for :body_title do%>
+<h4 class="display-5">Categorias</h4>
+<%end%>
 
-<h1>Categories</h1>
+<div class="float-right" style="display: inline-block !important">
+<form role="search">
+  <div class="input-group" style="margin: 0">
+    <input id="category-form" class="form-control mr-sm-2" type="search" aria-label="Search">
+    <label>
+      <i class="fa fa-search"></i>
+      &nbsp;Categoria
+    </label>
+    <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
+  </div>
+</form>
+</div>
+<div class="float-left create-new">
+<%= link_to 'Criar nova categoria', new_category_path, class: 'btn btn-primary' %>
+</div>
+<hr class="under-header"/>
 
-<table>
-  <thead>
+<% if @categories.length > 0 %>
+<%= render './pagination', value: @categories %>
+<table class="table table-striped table-hover">
+  <thead class="thead-dark">
     <tr>
-      <th>Name</th>
-      <th colspan="3"></th>
+      <th>Nome</th>
+      <th colspan="3">Ações</th>
     </tr>
   </thead>
 
@@ -14,14 +33,32 @@
     <% @categories.each do |category| %>
       <tr>
         <td><%= category.name %></td>
-        <td><%= link_to 'Show', category %></td>
-        <td><%= link_to 'Edit', edit_category_path(category) %></td>
-        <td><%= link_to 'Destroy', category, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td>
+          <%= link_to 'Mostrar', category , class: 'btn btn-primary btn-sm'%>
+          <%= link_to 'Editar', edit_category_path(category) , class: 'btn btn-primary btn-sm' %>
+          <%= link_to 'Excluir', category, method: :delete, data: { confirm: 'Tens certeza?' }, class: 'btn btn-danger btn-sm' %>
+        </td>
       </tr>
     <% end %>
   </tbody>
 </table>
+<%= render './pagination', value: @unities %>
+<% end %>
+<hr/>
 
-<br>
+<script>
+$('document').ready(function () {
 
-<%= link_to 'New Category', new_category_path %>
+  $('#category-form').on('focusout', function () {
+    changeState($(this));
+  });
+
+  function changeState(form) {
+    if (form.val().length > 0) {
+      form.addClass('has-value');
+    } else {
+      form.removeClass('has-value');
+    }
+  }
+});
+</script>

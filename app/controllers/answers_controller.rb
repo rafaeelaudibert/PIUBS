@@ -4,7 +4,7 @@ class AnswersController < ApplicationController
   # GET /answers
   # GET /answers.json
   def index
-    @answers = Answer.where('faq = true')
+    @answers = Answer.where('faq = true').paginate(page: params[:page], per_page: 25)
   end
 
   # GET /answers/1

@@ -35,3 +35,93 @@ tr {
     }
   }
 }
+
+.title-block {
+  padding-bottom: 0;
+  margin-bottom: 0.8rem;
+}
+
+.create-new {
+  display: inline-block;
+  padding-top: 1rem;
+}
+
+hr.under-header {
+  margin-top: 5em;
+}
+// PAGINATION \\
+
+.digg_pagination {
+  margin-top: 1rem;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.pagination {
+  min-width: 1.5rem;
+
+  a {
+    color: gray;
+    text-decoration: none;
+  }
+
+  .current {
+    text-align: center;
+    color: white;
+    background-color: #3a4651 !important;
+  }
+
+  span {
+    min-width: inherit;
+    color: #ddd !important;
+    border: 1px solid #ddd;
+  }
+}
+
+.pagination a,
+em {
+  padding: 0 0.1rem;
+  font-style: normal;
+  margin: 1px;
+}
+
+.pagination a,
+em ~ a {
+  border: 1px solid gray;
+}
+
+.next_page,
+.next_page_disabled,
+.previous_page,
+.previous_page_disabled {
+  border: 1px solid gray;
+}
+//TABLES
+
+table.table {
+  margin-top: 1rem;
+}
+//DISPLAY
+
+.display-4 {
+  font-size: 3.5rem;
+  font-weight: 300;
+  line-height: 1.2;
+}
+
+.display-5 {
+  font-size: 3rem;
+  font-weight: 300;
+  line-height: 1.1;
+}
+//FORM
+
+.modal-body {
+  .form-control {
+    box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.2);
+
+    &:active {
+      box-shadow: inherit !important;
+    }
+  }
+}
