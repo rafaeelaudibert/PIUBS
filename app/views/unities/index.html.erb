@@ -40,11 +40,13 @@
         <td>
           <%= link_to 'Mostrar', unity , class: 'btn btn-primary btn-sm'%>
           <%= link_to 'Editar', edit_unity_path(unity) , class: 'btn btn-primary btn-sm' %>
-          <%= link_to 'Excluir', unity, method: :delete, data: { confirm: 'Tens certeza?' }, class: 'btn btn-danger btn-sm' %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
+          <%= link_to(unity, method: :delete, data: { confirm: 'Tens certeza?', verify: unity.cnes, verify_text: 'Caso tenha, por favor digite o número do CNES dessa UBS para continuar' }, class: 'btn btn-danger btn-sm') do %>
+          <i class="fa fa-trash-o"></i>
+        <%end%>
+      </td>
+    </tr>
+  <% end %>
+</tbody>
 </table>
 <%= render './pagination', value: @unities %>
 <% end %>
@@ -53,16 +55,16 @@
 <script>
 $('document').ready(function () {
 
-  $('#unity-form').on('focusout', function () {
-    changeState($(this));
-  });
+$('#unity-form').on('focusout', function () {
+  changeState($(this));
+});
 
-  function changeState(form) {
-    if (form.val().length > 0) {
-      form.addClass('has-value');
-    } else {
-      form.removeClass('has-value');
-    }
+function changeState(form) {
+  if (form.val().length > 0) {
+    form.addClass('has-value');
+  } else {
+    form.removeClass('has-value');
   }
+}
 });
 </script>

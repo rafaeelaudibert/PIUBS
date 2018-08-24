@@ -36,11 +36,13 @@
         <td>
           <%= link_to 'Mostrar', category , class: 'btn btn-primary btn-sm'%>
           <%= link_to 'Editar', edit_category_path(category) , class: 'btn btn-primary btn-sm' %>
-          <%= link_to 'Excluir', category, method: :delete, data: { confirm: 'Tens certeza?' }, class: 'btn btn-danger btn-sm' %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
+          <%= link_to(category, method: :delete, data: { confirm: 'Tens certeza?'}, class: 'btn btn-danger btn-sm') do %>
+          <i class="fa fa-trash-o"></i>
+        <%end%>
+      </td>
+    </tr>
+  <% end %>
+</tbody>
 </table>
 <%= render './pagination', value: @unities %>
 <% end %>
@@ -49,16 +51,16 @@
 <script>
 $('document').ready(function () {
 
-  $('#category-form').on('focusout', function () {
-    changeState($(this));
-  });
+$('#category-form').on('focusout', function () {
+  changeState($(this));
+});
 
-  function changeState(form) {
-    if (form.val().length > 0) {
-      form.addClass('has-value');
-    } else {
-      form.removeClass('has-value');
-    }
+function changeState(form) {
+  if (form.val().length > 0) {
+    form.addClass('has-value');
+  } else {
+    form.removeClass('has-value');
   }
+}
 });
 </script>

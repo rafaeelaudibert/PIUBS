@@ -37,30 +37,30 @@
         <td><%= contract.contract_number %></td>
         <td><%= contract.city.name %></td>
         <td><%= contract.sei %></td>
-        <td><%= link_to 'Show', contract , class: 'btn btn-primary btn-sm' %>
-          <%= link_to 'Edit', edit_contract_path(contract), class: 'btn btn-primary btn-sm'%>
-          <%= link_to 'Destroy', contract, method: :delete, data: { confirm: 'Are you sure?' } , class: 'btn btn-danger btn-sm'%></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-<%= render './pagination', value: @contracts %>
+        <td><%= link_to 'Mostrar', contract , class: 'btn btn-primary btn-sm' %>
+          <%= link_to(contract, method: :delete, data: { confirm: 'Tens certeza?', verify: contract.contract_number, verify_text: 'Caso tenha, por favor digite o número do contrato para continuar' }, class: 'btn btn-danger btn-sm') do %>
+          <i class="fa fa-trash-o"></i>
+        <%end%>
+      <% end %>
+    </tbody>
+  </table>
+  <%= render './pagination', value: @contracts %>
 <% end %>
 <hr/>
 
 <script>
-$('document').ready(function () {
+  $('document').ready(function () {
 
-  $('#contract-form').on('focusout', function () {
-    changeState($(this));
-  });
+    $('#contract-form').on('focusout', function () {
+      changeState($(this));
+    });
 
-  function changeState(form) {
-    if (form.val().length > 0) {
-      form.addClass('has-value');
-    } else {
-      form.removeClass('has-value');
+    function changeState(form) {
+      if (form.val().length > 0) {
+        form.addClass('has-value');
+      } else {
+        form.removeClass('has-value');
+      }
     }
-  }
-});
+  });
 </script>
