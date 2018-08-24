@@ -1,3 +1,34 @@
 li.active > a {
-  color: #3a46a0 !important;
+  color: darken(#4f5f6f, 20%) !important;
+}
+// FORM FOR USERS
+
+td.user {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.table td {
+  padding: 0.4rem;
+}
+
+.form-control {
+  background-color: white !important;
+}
+
+tr:nth-of-type(even) {
+  td.user-role {
+    .form-control {
+      background-color: rgba(0, 0, 0, 0.025) !important;
+    }
+  }
+
+  &:hover {
+    td.user-role {
+      .form-control {
+        background-color: white !important;
+        transition: background-color 0s;
+      }
+    }
+  }
 }

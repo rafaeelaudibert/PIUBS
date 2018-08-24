@@ -1,11 +1,8 @@
-<td>
-  <span class='user-name'><%= user.name %></span>
+<td class="user">
+  <span class='user-name'><%= link_to user.name, user%></span>
+  <span><%= mail_to user.email, 'Send e-mail', class: 'btn btn-primary' %></span>  
 </td>
-<td>
-  <% pp(user) %>
-    <span class='user-email'><%= link_to user.email, user, class: 'amail' %></span>
-  </td>
-  <td class='user-role'>
+  <td class='user user-role'>
     <%= form_for(user) do |f| %>
     <div class="form-group">
       <select name="user[role]" id="user_role" class="form-control">
@@ -20,9 +17,9 @@
           <% end %>
         </select>
       </div>
-      <%= f.submit 'Change Role', class: 'button-xs' %>
+      <%= f.submit 'Alterar Permissão', class: 'btn btn-primary' %>
     <% end %>
   </td>
-  <td class='user-role'>
-    <%= link_to("Delete user", user_path(user), :data => { :confirm => "Tem certeza?" }, :method => :delete, :class => 'button-xs') unless user == current_user || user.role == "admin" %>
+  <td class='user user-role'>
+    <%= link_to "Apagar usuário", user_path(user), :data => { :confirm => "Tem certeza?" }, :method => :delete, :class => 'btn btn-danger button-xs' unless user == current_user || user.role == "admin" %>
   </td>
