@@ -1,24 +1,44 @@
-<% if $selected_role != '' %>
-  <h2>Convidar novo usuário</h2>
-    <div class="authform" style="float:left; width:50%;">
-      <%= form_for resource, :as => resource_name, :url => invitation_path(resource_name), :html => {:method => :post} do |f| %>
-        <%= devise_error_messages! %>
-            <h6>O usuário convidado será <%= $selected_role %>.</h6>
+<h2>Convidar novo usuário</h2>
+  <div class="authform" style="float:left; width:50%;">
+    <%= form_for resource, :as => resource_name, :url => invitation_path(resource_name), :html => {:method => :post} do |f| %>
+      <%= devise_error_messages! %>
+          <div class="form-group">
+            <% resource.class.invite_key_fields.each do |field| -%>
+              <p><%= f.label field %>
+              <%= f.text_field field, :autofocus => true, class: 'form-control' %></p>
+            <% end -%>
+          </div>
+          <div class="form-group">
+            <% unless current_user.admin? %>
+              <%= f.hidden_field :role, :value => $roles_allowed[0] %>
+            <% else %>
+              <%= f.label "Escolha o tipo de usuário" %>
+              <%= f.select(:role, $roles_allowed, {:include_blank => "Selecione", :selected => nil}, {:class => "form-control"})%>
+            <% end %>
+          </div>
+          <% if current_user.admin? %>
             <div class="form-group">
-              <% resource.class.invite_key_fields.each do |field| -%>
-                <p><%= f.label field %>
-                <%= f.text_field field, :autofocus => true, class: 'form-control' %></p>
-              <% end -%>
+                <%= f.label "Escolha a Cidade" %>
+                <%= f.select(:city_id, $cities, {:include_blank => "Selecione", :selected => nil}, {:class => "form-control"})%>
             </div>
-              <p><%= f.submit "Enviar convite", :class => 'btn btn-success' %></p>
-              <% if current_user.admin? %>
-                <p><%= link_to 'Voltar', new_user_level_path %></p>
-              <% end %>
-      <% end %>
-    </div>
-<% else %>
-  <script type="text/javascript">
-    window.location.href="<%= new_user_level_path %>"
-  </script>
-  <h4><%= link_to 'Clique aqui para selecionar o nível de usuário.', new_user_level_path %></h4>
-<% end %>
+            <div class="form-group">
+                <%= f.label "Escolha a empresa (sei)" %>
+                <%= f.select(:sei, $companies, {:include_blank => "Selecione", :selected => nil}, {:class => "form-control"})%>
+            </div>
+          <% end %>
+          <% if current_user.city_admin? %>
+            <div class="form-group">
+                <%= f.label "Escolha a UBS" %>
+                <%= f.select(:cnes, $unities_allowed, {:include_blank => "Selecione", :selected => nil}, {:class => "form-control"})%>
+                <%= f.hidden_field :city_id, :value => $current_user_city %>
+            </div>
+          <% end %>
+          <% if current_user.company_admin? %>
+            <%= f.hidden_field :sei, :value => $current_user_sei %>
+          <% end %>
+          <% if current_user.ubs_admin? %>
+            <%= f.hidden_field :cnes, :value => $current_user_cnes %>
+          <% end %>
+            <p><%= f.submit "Enviar convite", :class => 'btn btn-success' %></p>
+    <% end %>
+  </div>
