@@ -6,10 +6,10 @@ Companies
 
 <form class="form-inline">
   <input class="form-control mr-sm-2 ml-3" type="search" placeholder="SEI number" aria-label="Search">
-  <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
+  <button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
 </form>
 </div>
-<%= link_to 'New Company', new_company_path, class: 'btn btn-success' %>
+<%= link_to 'New Company', new_company_path, class: 'btn btn-primary' %>
 <hr/>
 <%= render './pagination', value: @companies %>
 <% if @companies.length > 0 %>
@@ -26,8 +26,8 @@ Companies
     <% @companies.each do |company| %>
       <tr>
         <td><%= company.sei %></td>
-        <td><%= link_to 'Show', company , class: 'btn btn-success btn-sm' %>
-          <%= link_to 'Edit', edit_company_path(company) , class: 'btn btn-success btn-sm' %>
+        <td><%= link_to 'Show', company , class: 'btn btn-primary btn-sm' %>
+          <%= link_to 'Edit', edit_company_path(company) , class: 'btn btn-primary btn-sm' %>
           <%= link_to 'Destroy', company, method: :delete, data: { confirm: 'Are you sure?' } , class: 'btn btn-danger btn-sm' %></td>
       </tr>
     <% end %>

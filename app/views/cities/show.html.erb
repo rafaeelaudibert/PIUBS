@@ -23,7 +23,7 @@
         <% unity = Unity.find(_ubs) %>
           <td><%= unity.cnes %></td>
           <td><%= unity.name %></td>
-          <td><%= link_to 'Show', unity , class: 'btn btn-success btn-sm' %></td>
+          <td><%= link_to 'Show', unity , class: 'btn btn-primary btn-sm' %></td>
         </tr>
       <% end %>
     </tbody>
@@ -36,8 +36,8 @@
 <% end %>
 
 <br>
-<%= link_to 'New UBS', new_unity_path(city: @city.id), class: 'btn btn-success btn-sm' if current_user.try(:admin?) %>
-<%= link_to 'New Contract', new_contract_path(city: @city.id), class: 'btn btn-success btn-sm' if current_user.try(:admin?) %>
-<%= link_to 'Edit', edit_city_path(@city), class: 'btn btn-success btn-sm' if current_user.try(:admin?) %>
+<%= link_to 'New UBS', new_unity_path(city: @city.id), class: 'btn btn-primary btn-sm' if current_user.try(:admin?) %>
+<%= link_to 'New Contract', new_contract_path(city: @city.id), class: 'btn btn-primary btn-sm' if current_user.try(:admin?) %>
+<%= link_to 'Edit', edit_city_path(@city), class: 'btn btn-primary btn-sm' if current_user.try(:admin?) %>
 <%= link_to 'Back', cities_path, class: 'btn btn-primary btn-sm' %>
 <br/><br/>

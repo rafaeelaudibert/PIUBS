@@ -2,11 +2,11 @@
 <%= content_for :body_title do%>
 Contracts
 <%end%>
-<%= link_to 'New Contract', new_contract_path, class: 'btn btn-success' %>
+<%= link_to 'New Contract', new_contract_path, class: 'btn btn-primary' %>
 <div class="float-right">
 <form class="form-inline">
   <input class="form-control mr-sm-2 ml-3" type="search" placeholder="Contract number" aria-label="Search">
-  <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
+  <button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
 </form>
 </div>
 <hr/>
@@ -29,8 +29,8 @@ Contracts
         <td><%= contract.contract_number %></td>
         <td><%= contract.city.name %></td>
         <td><%= contract.sei %></td>
-        <td><%= link_to 'Show', contract , class: 'btn btn-success btn-sm' %>
-          <%= link_to 'Edit', edit_contract_path(contract), class: 'btn btn-success btn-sm'%>
+        <td><%= link_to 'Show', contract , class: 'btn btn-primary btn-sm' %>
+          <%= link_to 'Edit', edit_contract_path(contract), class: 'btn btn-primary btn-sm'%>
           <%= link_to 'Destroy', contract, method: :delete, data: { confirm: 'Are you sure?' } , class: 'btn btn-danger btn-sm'%></td>
       </tr>
     <% end %>
