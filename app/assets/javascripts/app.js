@@ -13,7 +13,10 @@ config.ResponsiveBootstrapToolkitVisibilityDivs = {
   'xl': $('<div class="device-xl hidden-lg-down			  "></div>'),
 };
 
-ResponsiveBootstrapToolkit.use('Custom', config.ResponsiveBootstrapToolkitVisibilityDivs);
+// RafaAudibert - Trying to solve errors
+if (typeof ResponsiveBootstrapToolkit !== 'undefined') {
+  ResponsiveBootstrapToolkit.use('Custom', config.ResponsiveBootstrapToolkitVisibilityDivs);
+}
 
 //validation configuration
 config.validations = {
@@ -50,10 +53,13 @@ config.delayTime = 50;
 // chart configurations
 config.chart = {};
 
-config.chart.colorPrimary = tinycolor($ref.find(".chart .color-primary")
-  .css("color"));
-config.chart.colorSecondary = tinycolor($ref.find(".chart .color-secondary")
-  .css("color"));
+// RafaAudibert - Trying to solve errors
+if (typeof tinycolor !== 'undefined') {
+  config.chart.colorPrimary = tinycolor($ref.find(".chart .color-primary")
+    .css("color"));
+  config.chart.colorSecondary = tinycolor($ref.find(".chart .color-secondary")
+    .css("color"));
+}
 /***********************************************
  *        Animation Settings
  ***********************************************/
@@ -99,12 +105,15 @@ $(function() {
 /***********************************************
  *        NProgress Settings
  ***********************************************/
-var npSettings = {
-  easing: 'ease',
-  speed: 500
+if (typeof NProgress !== 'undefined') {
+  var npSettings = {
+    easing: 'ease',
+    speed: 500
+  }
+
+  NProgress.configure(npSettings);
 }
 
-NProgress.configure(npSettings);
 $(function() {
   setSameHeights();
 
@@ -653,8 +662,11 @@ $(function() {
  *        NProgress Settings
  ***********************************************/
 
-// start load bar
-NProgress.start();
+//RafaAudibert - Trying to solve errors
+if (typeof NProgress !== 'undefined') {
+  // start load bar
+  NProgress.start();
 
-// end loading bar
-NProgress.done();
+  // end loading bar
+  NProgress.done();
+}
