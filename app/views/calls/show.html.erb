@@ -179,15 +179,13 @@
       <%= answer.answer.html_safe %>
       <% if answer.attachment.length > 0 %>
         <hr/>
-        <strong>
-          Attachments:
+        <strong class='m-2'>
+          Attachments
         </strong>
         <br/>
+        <br/>
         <% answer.attachment.each do |_attachment| %>
-          <div class='file_div'>
-            <%= link_to (image_tag "icons/document-file.png", class: "file_icon"), download_attachment_path(_attachment.id), class: 'file_subtitle' %>
-            <%= link_to _attachment.filename, download_attachment_path(_attachment.id), class: 'file_subtitle' %>
-          </div>
+            <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %> <i class="fa fa-file-text mr-1"></i> <%= truncate(_attachment.filename, length: 10, omission: '...')%> <%end%>
         <% end %>
       <% end %>
     </div>
@@ -248,7 +246,6 @@
     }
   </script>
 <% end %>
-
 <style>
   #reply_description_ifr {
     height: 250px !important;
@@ -256,5 +253,8 @@
 
   #mceu_30 {
     display: none;
+  }
+  .btn.btn-oval {
+    border-radius: 25px !important;
   }
 </style>
