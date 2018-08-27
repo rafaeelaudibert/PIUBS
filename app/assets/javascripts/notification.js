@@ -48,7 +48,6 @@ Notification = function() {
 
   const create = function(title, text, image, animation, position, delay) {
     const notification = template(title, text, image, position);
-    console.log(notification.content);
 
     $(notification.content)
       .addClass('animated ' + animation.in)
