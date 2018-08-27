@@ -1,0 +1,12 @@
+PIUBS
+
+Olá, <%= @call_user.name %>, seu atendimento tem uma nova resposta.
+
+Protocolo de atendimento: <%= @call.protocol %>
+
+Nova resposta:
+<%= @reply.description.html_safe %>
+
+<%= @reply.created_at %>
+
+<%= link_to "Clique aqui para acessar o PIUBS e ver o atendimento completo", @link %>
