@@ -11,53 +11,48 @@
     </ul>
   </div>
 <% end %>
-<div class="col-4 mb-4">
+<div class="col-8 mb-8">
   <div class="field">
-    <%= form.label :title %>
-    <%= form.text_field :title, class: 'form-control boxed' %>
+    <%= form.label :title, 'Título' %>
+    <%= form.text_field :title, class: 'form-control boxed', autocomplete: :off %>
   </div>
 
   <div class="field">
-    <%= form.label :description %>
-    <%= form.text_area :description, class: 'form-control boxed', rows: '8' %>
+    <%= form.label :description, 'Descrição' %>
+    <%= form.text_area :description, class: 'form-control boxed', rows: '8', autocomplete: :off %>
   </div>
 
   <div class="field">
-    <%= form.label :version %>
+    <%= form.label :version, 'Versão' %>
     <%= form.text_field :version, class: 'form-control boxed' %>
   </div>
 
   <div class="field">
-    <%= form.label :access_profile %>
+    <%= form.label :access_profile, 'Perfil de Acesso' %>
     <%= form.text_field :access_profile, class: 'form-control boxed' %>
   </div>
 
   <div class="field">
-    <%= form.label :feature_detail %>
+    <%= form.label :feature_detail, 'Detalhe da Funcionalidade' %>
     <%= form.text_field :feature_detail, class: 'form-control boxed' %>
   </div>
 
   <div class="field">
-    <%= form.label :answer_summary %>
-    <%= form.text_field :answer_summary, class: 'form-control boxed' %>
-  </div>
-
-  <div class="field">
-    <%= form.label :city_id %>
+    <%= form.label :city_id, 'Cidade' %>
     <%= form.collection_select(:city_id, City.all, :id, :name, {include_blank: "Selecione uma cidade: "}, class: 'form-control boxed') %>
   </div>
 
   <div class="field">
-    <%= form.label :state_id %>
+    <%= form.label :state_id, 'Estado' %>
     <%= form.collection_select(:state_id, get_all_states, :id, :name, {include_blank: "Selecione um Estado: "}, class: 'form-control boxed') %>
   </div>
 
   <div class="field">
-    <%= form.label :category_id %>
+    <%= form.label :category_id, 'Categoria' %>
     <%= form.collection_select(:category_id, Category.all, :id, :name, {include_blank: "Selecione uma Categoria: "}, class: 'form-control boxed') %>
   </div>
 
-  <%= form.submit 'Create Call', :class => 'btn btn-primary btn-sm' %>
-  <%= link_to 'Cancel', calls_path, :class => 'btn btn-danger btn-sm' %>
+  <%= form.submit 'Criar atendimento', :class => 'btn btn-primary btn-sm' %>
+  <%= link_to 'Cancelar', calls_path, :class => 'btn btn-danger btn-sm' %>
 </div>
 <% end %>
