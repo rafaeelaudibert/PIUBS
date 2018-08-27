@@ -4,13 +4,13 @@ class StatesController < ApplicationController
   # GET /states
   # GET /states.json
   def index
-    @states = State.paginate(:page => params[:page], :per_page => 27)
+    @states = State.paginate(page: params[:page], per_page: 27)
   end
 
   # GET /states/1
   # GET /states/1.json
   def show
-    @cities = @state.city.paginate(:page => params[:page], :per_page => 25)
+    @cities = @state.city.order(id: 'ASC').paginate(page: params[:page], per_page: 25)
   end
 
   # GET /states/new

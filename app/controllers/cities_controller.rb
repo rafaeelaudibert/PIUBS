@@ -10,12 +10,13 @@ class CitiesController < ApplicationController
   # GET /cities/1
   # GET /cities/1.json
   def show
-    @ubs = @city.unity_ids
+    @ubs = @city.unity_ids.sort
   end
 
   # GET /cities/new
   def new
     @city = City.new
+    @state = State.find(params[:state]) if params[:state]
   end
 
   # GET /cities/1/edit
