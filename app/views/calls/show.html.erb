@@ -143,7 +143,7 @@
           <%= reply.description.html_safe %>
           <hr/>
           <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-            <%= link_to 'Mark as Final Answer', '#', onclick: 'toggleFinalAnswer(this)' %>
+            <%= link_to 'Mark as Final Answer', '#', onclick: 'toggleFinalAnswer(this)', class: 'btn btn-primary btn-sm' %>
           <% end %>
           <div style="float: right">
             <% if reply.faq == true %>
