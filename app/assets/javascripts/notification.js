@@ -4,12 +4,12 @@ Notification = function() {
   let incPosition = 0;
 
   const template = function(title, text, image, position) {
-    incPosition = number * 120;
+    incPosition = number * 90;
     number++;
 
     const textHtml = '<div class="text">' + text + '</div>';
     const titleHtml = (!title ? '' : '<div class="title">' + title + '</div>');
-    const imageHtml = (!image ? '' : '<div class="illustration"><img src="' + image + '" width="70" height="70" /></div>');
+    const imageHtml = (!image ? '' : '<div class="illustration"><img src="' + image + '" width="40" height="40" /></div>');
     let style;
 
     switch (parseInt(position, 10)) {

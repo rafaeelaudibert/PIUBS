@@ -1,49 +1,52 @@
+<%= render 'layouts/messages' %>
 <div class="auth">
   <div class="auth-container">
     <div class="card">
       <header class="auth-header">
         <h1 class="auth-title">
-        <%= image_tag("icons/logo.png", :alt => "Apoio à empresa") %>
-          PIUBS </h1>
+          <%= image_tag("icons/logo.png", :alt => "Apoio à empresa") %>
+          PIUBS
+        </h1>
       </header>
       <div class="auth-content">
         <p class="text-center">LOGIN TO CONTINUE</p>
-          <%= form_for(resource, :as => resource_name, :url => session_path(resource_name), :html => { :role => 'form'}) do |f| %>
-          <p id="notice"><%= notice %></p>
-          <div class="form-group">
-            <%= devise_error_messages! %>
-            <%= f.label :email %>
-            <%= f.email_field :email, :autofocus => true, placeholder: 'Your email', class: 'form-control underlined' %>
-          </div>
+        <%= form_for(resource, :as => resource_name, :url => session_path(resource_name), :html => { :role => 'form'}) do |f| %>
+        <%= devise_error_messages! %>
+        <div class="form-group">
+          <%= f.label :email %>
+          <%= f.email_field :email, :autofocus => true, placeholder: 'Your email', class: 'form-control underlined' %>
+        </div>
 
-          <div class="form-group">
-            <%= f.label :password %>
-            <%= f.password_field :password, placeholder: 'Your password' , class: 'form-control underlined' %>
-          </div>
+        <div class="form-group">
+          <%= f.label :password %>
+          <%= f.password_field :password, placeholder: 'Your password' , class: 'form-control underlined' %>
+        </div>
 
-          <div class="form-group">
-            <label for="remember">
-                                  <input class="checkbox" id="remember" type="checkbox">
-                                  <span>Remember me</span>
-                              </label>
-                              <%= link_to "Forgot password?", new_password_path(resource_name), class: 'forgot-btn pull-right' %>
-          </div>
+        <div class="form-group">
+          <label for="remember">
+            <input class="checkbox" id="remember" type="checkbox">
+            <span>Remember me</span>
+          </label>
+          <%= link_to "Forgot password?", new_password_path(resource_name), class: 'forgot-btn pull-right' %>
+        </div>
 
+        <div class="form-group">
+          <%= f.submit 'Login', :class => 'btn btn-block btn-primary' %>
+        </div>
 
-          <div class="form-group">
-            <%= f.submit 'Login', :class => 'btn btn-block btn-primary' %>
-          </div>
-
-          <div class="form-group">
-            <p class="text-muted text-center"> PIUBS - Apoio à empresas
-            </p>
-          </div>
-        <% end %>
-      </div>
-    </div>
-    <div class="text-center">
-      <p class="btn btn-secondary btn-sm">
-                      <i class="fa fa-plus-square"></i> Copyright &copy; PIUBS AE - Version 0.1.0 </p>
+        <div class="form-group">
+          <p class="text-muted text-center">
+            PIUBS - Apoio à empresas
+          </p>
+        </div>
+      <% end %>
     </div>
   </div>
+  <div class="text-center">
+    <p class="btn btn-secondary btn-sm">
+      <i class="fa fa-plus-square"></i>
+      Copyright &copy; PIUBS AE - Version 0.1.0
+    </p>
+  </div>
+</div>
 </div>
