@@ -29,9 +29,9 @@
 
             //Add the header row.
             let row = table.insertRow(-1);
-            for (let header of["Question", "Answer", "Actions"])
+            for (let header of["Question", "Answer", "Actions"]) 
               row.appendChild(document.createElement("TH")).innerHTML = header;
-
+            
             //Add the data rows.
             for (let entry of data) {
               let row = table.insertRow(-1);
@@ -59,7 +59,6 @@
     $("#reply_box").show(200);
     $("#faq_box").hide(200);
     tinyMCE.get(0).setContent(answer);
-    //$("#tinymce").innerHTML = answer;
   }
 </script>
 <% end %>
