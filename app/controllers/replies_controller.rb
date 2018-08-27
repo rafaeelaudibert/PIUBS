@@ -1,16 +1,15 @@
 class RepliesController < ApplicationController
-  before_action :set_reply, only: [:show, :edit, :update, :destroy]
+  before_action :set_reply, only: %i[show edit update destroy]
 
   # GET /replies
   # GET /replies.json
   def index
-    @replies = Reply.all
+    @replies = Reply.paginate(page: params[:page], per_page: 25)
   end
 
   # GET /replies/1
   # GET /replies/1.json
-  def show
-  end
+  def show; end
 
   # GET /replies/new
   def new
@@ -18,19 +17,18 @@ class RepliesController < ApplicationController
   end
 
   # GET /replies/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /replies
   # POST /replies.json
   def create
     @reply = Reply.new(reply_params)
     @reply.user_id = current_user.id
-    if is_support_user
-      @reply.category = "support"
-    else
-      @reply.category = "reply"
-    end
+    @reply.category = if is_support_user
+                        'support'
+                      else
+                        'reply'
+                      end
 
     respond_to do |format|
       if @reply.save
@@ -69,21 +67,22 @@ class RepliesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_reply
-      @reply = Reply.find(params[:id])
-    end
 
-    def is_company_user
-       current_user.try(:company_user?) or current_user.try(:company_admin?)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_reply
+    @reply = Reply.find(params[:id])
+  end
 
-    def is_support_user
-      current_user.try(:call_center_user?) or current_user.try(:call_center_admin?)
-    end
+  def is_company_user
+    current_user.try(:company_user?) || current_user.try(:company_admin?)
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def reply_params
-      params.require(:reply).permit(:protocol, :description, :user_id, :status)
-    end
+  def is_support_user
+    current_user.try(:call_center_user?) || current_user.try(:call_center_admin?)
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def reply_params
+    params.require(:reply).permit(:protocol, :description, :user_id, :status)
+  end
 end

@@ -30,4 +30,73 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  activerecord:
+    models:
+      city:
+        zero: "cidades"
+        one: "cidade"
+        few: "as cidades"
+        other: "cidades"
+      answer:
+        zero: "respostas finais"
+        one: "resposta final"
+        few: "as respostas finais"
+        other: "respostas finais"
+      attachment:
+        zero: "anexos"
+        one: "anexo"
+        few: "os anexos"
+        other: "anexos"
+      call:
+        zero: "atendimentos"
+        one: "atendimento"
+        few: "os atendimentos"
+        other: "atendimentos"
+      category:
+        zero: "categorias"
+        one: "categoria"
+        few: "as categorias"
+        other: "categorias"
+      company:
+        zero: "empresas"
+        one: "empresa"
+        few: "as empresas"
+        other: "empresas"
+      contract:
+        zero: "contratos"
+        one: "contrato"
+        few: "os contratos"
+        other: "contratos"
+      reply:
+        zero: "respostas"
+        one: "resposta"
+        few: "as respostas"
+        other: "respostas"
+      state:
+        zero: "estados"
+        one: "estado"
+        few: "os estados"
+        other: "estados"
+      unity:
+        zero: "UBS"
+        one: "UBS"
+        few: "as UBS"
+        other: "UBS"
+      user:
+        zero: "usuários"
+        one: "usuário"
+        few: "os usuários"
+        other: "usuários"
+  will_paginate:
+    page_entries_info:
+      single_page:
+        zero:  "%{model} não encontrado"
+        one:   "Mostrando 1 %{model}"
+        other: "Mostrando %{count} %{model}"
+      single_page_html:
+        zero:  "Modelo %{model} não encontrado"
+        one:   "Mostrando <b>1</b> %{model}"
+        other: "Mostrando <b>%{count}</b> %{model}"
+
+      multi_page: "Mostrando %{model} %{from} até %{to} de %{count} no total"
+      multi_page_html: "Mostrando %{model} <b>%{from}&nbsp;até&nbsp;%{to}</b> de <b>%{count}</b> no total"

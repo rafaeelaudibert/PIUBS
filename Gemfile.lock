@@ -92,6 +92,8 @@ GEM
     colorize (0.8.1)
     concurrent-ruby (1.0.5)
     crass (1.0.4)
+    data-confirm-modal (1.6.2)
+      railties (>= 3.0)
     database_cleaner (1.7.0)
     debug_inspector (0.0.3)
     devise (4.4.3)
@@ -291,6 +293,7 @@ DEPENDENCIES
   carrierwave
   chromedriver-helper
   coffee-rails (~> 4.2)
+  data-confirm-modal
   database_cleaner
   devise
   devise_invitable

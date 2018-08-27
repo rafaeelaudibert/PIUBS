@@ -1,11 +1,26 @@
-.user-email,
 .user-name {
   font-size: 1rem;
   color: black;
+  display: block;
+  line-height: 2rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  a:visited {
-    color: black;
+  a {
+    color: #333 !important;
+    text-decoration: none !important;
+
+    &:hover {
+      color: #000 !important;
+    }
   }
+}
+
+.user-name {
+  font-size: 1.2rem;
+  text-transform: capitalize;
 }
 
 .user-role {

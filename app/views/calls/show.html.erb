@@ -61,17 +61,8 @@
   <span class="badge badge-pill badge-light m-2"><%= @call.category.name %></span>
   <hr/>
 
-  <%= link_to 'Edit', edit_call_path(@call), class: 'btn btn-secondary btn-sm' %>
-  <div class="btn-group">
-    <button type="button" id="reply" class="btn btn-secondary btn-sm">Reply</button>
-    <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      <span class="sr-only">Toggle Dropdown</span>
-    </button>
-    <div class="dropdown-menu">
-      <a id="new-reply" class="dropdown-item">New Reply</a>
-      <a id="faq-reply" class="dropdown-item">Reply from FAQ</a>
-    </div>
-  </div>
+  <button type="button" id="reply" class="btn btn-primary">New Reply</button>
+  <button type="button" id="faq-reply" class="btn btn-primary">Reply from FAQ</button>
 </div>
 </div>
 

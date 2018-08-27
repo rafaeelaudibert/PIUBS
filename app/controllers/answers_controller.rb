@@ -4,7 +4,7 @@ class AnswersController < ApplicationController
   # GET /answers
   # GET /answers.json
   def index
-    @answers = Answer.where('faq = true')
+    @answers = Answer.where('faq = true').paginate(page: params[:page], per_page: 25)
   end
 
   # GET /answers/1
@@ -41,7 +41,7 @@ class AnswersController < ApplicationController
             raise 'Não consegui anexar o arquivo. Por favor tente mais tarde' unless @attachment.save
           end
         end
-        format.html { redirect_to @answer, notice: 'Answer was successfully created.' }
+        format.html { redirect_to @call, notice: 'Final answer was successfully marked.' }
         format.json { render :show, status: :created, location: @answer }
       else
         format.html { render :new }

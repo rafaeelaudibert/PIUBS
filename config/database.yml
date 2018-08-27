@@ -18,8 +18,8 @@ development:
   encoding: unicode
   database: piubs_development
   pool:     5
-  username: admin
-  password: calc@2018
+  username: postgres
+  password: 19550410
   template: template0
 
   # Connect on a TCP socket. Omitted by default since the client uses a
@@ -46,8 +46,8 @@ test:
   encoding: unicode
   database: piubs_test
   pool:     5
-  username: admin
-  password: calc@2018
+  username: postgres
+  password: 19550410
   template: template0
 
 production:
@@ -56,6 +56,6 @@ production:
   encoding: unicode
   database: piubs_production
   pool:     5
-  username: admin
-  password: calc@2018
+  username: postgres
+  password: 19550410
   template: template0

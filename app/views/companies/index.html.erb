@@ -1,24 +1,30 @@
-<p id="notice"><%= notice %></p>
 <%= content_for :body_title do%>
-Companies
+<h4 class="display-5">Empresas</h4>
 <%end%>
-<div class="float-right">
-
-<form class="form-inline">
-  <input class="form-control mr-sm-2 ml-3" type="search" placeholder="SEI number" aria-label="Search">
-  <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
+<div class="float-right" style="display: inline-block !important">
+<form role="search">
+  <div class="input-group" style="margin: 0">
+    <input id="company-form" class="form-control mr-sm-2" type="search" aria-label="Search">
+    <label>
+      <i class="fa fa-search"></i>
+      &nbsp;Empresa
+    </label>
+    <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
+  </div>
 </form>
 </div>
-<%= link_to 'New Company', new_company_path, class: 'btn btn-success' %>
-<hr/>
-<%= render './pagination', value: @companies %>
+<div class="float-left create-new">
+<%= link_to 'Criar nova empresa', new_company_path, class: 'btn btn-primary' %>
+</div>
+<hr class="under-header"/>
+
 <% if @companies.length > 0 %>
-<hr/>
-<table class="table table-bordered table-striped table-hover">
+<%= render './pagination', value: @companies %>
+<table class="table table-striped table-hover">
   <thead class="thead-dark">
     <tr>
       <th>Sei</th>
-      <th colspan="3"></th>
+      <th colspan="3">Ações</th>
     </tr>
   </thead>
 
@@ -26,14 +32,32 @@ Companies
     <% @companies.each do |company| %>
       <tr>
         <td><%= company.sei %></td>
-        <td><%= link_to 'Show', company , class: 'btn btn-success btn-sm' %>
-          <%= link_to 'Edit', edit_company_path(company) , class: 'btn btn-success btn-sm' %>
-          <%= link_to 'Destroy', company, method: :delete, data: { confirm: 'Are you sure?' } , class: 'btn btn-danger btn-sm' %></td>
+        <td><%= link_to 'Mostrar', company , class: 'btn btn-primary btn-sm' %>
+          <%= link_to 'Editar', edit_company_path(company) , class: 'btn btn-primary btn-sm' %>
+          <%= link_to(company, method: :delete, data: { confirm: 'Tens certeza?', verify: company.sei, verify_text: 'Caso tenha, por favor digite o número do SEI dessa empresa para continuar' }, class: 'btn btn-danger btn-sm') do %>
+          <i class="fa fa-trash-o"></i>
+        <%end%>
       </tr>
     <% end %>
   </tbody>
 </table>
-<hr/>
 <%= render './pagination', value: @companies %>
 <% end %>
 <hr/>
+
+<script>
+$('document').ready(function () {
+
+  $('#company-form').on('focusout', function () {
+    changeState($(this));
+  });
+
+  function changeState(form) {
+    if (form.val().length > 0) {
+      form.addClass('has-value');
+    } else {
+      form.removeClass('has-value');
+    }
+  }
+});
+</script>

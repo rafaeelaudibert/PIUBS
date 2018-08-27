@@ -4,7 +4,7 @@
 <%end%>
 <form class="form-inline">
 <input class="form-control mr-sm-2" type="search" placeholder="City name" aria-label="Search">
-<button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
+<button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
 </form>
 <hr/>
 <div class="digg_pagination">
@@ -28,8 +28,8 @@
     <tr>
       <td><%= city.name %></td>
       <td><%= city.state.name %></td>
-      <td><%= link_to 'Show', city , class: 'btn btn-success btn-sm' %>
-        <!-- <%= link_to 'Edit', edit_city_path(city), class: 'btn btn-success btn-sm' %> <%= link_to 'Destroy', city, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>-->
+      <td><%= link_to 'Show', city , class: 'btn btn-primary btn-sm' %>
+        <!-- <%= link_to 'Edit', edit_city_path(city), class: 'btn btn-primary btn-sm' %> <%= link_to 'Destroy', city, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>-->
       </td>
     </tr>
   <% end %>
@@ -44,8 +44,8 @@
 </div>
 <hr/><br/>
 
-<%= link_to 'New City', new_city_path, class: 'btn btn-success btn-sm' if current_user.try(:admin?) %>
-<%= link_to 'Edit', edit_state_path(@state), class: 'btn btn-success btn-sm' if current_user.try(:admin?) %>
+<%= link_to 'New City', new_city_path, class: 'btn btn-primary btn-sm' if current_user.try(:admin?) %>
+<%= link_to 'Edit', edit_state_path(@state), class: 'btn btn-primary btn-sm' if current_user.try(:admin?) %>
 <%= link_to 'Back', states_path, class: 'btn btn-primary btn-sm' %>
 <br/><br/>
 <!-- <%= link_to 'Edit', edit_state_path(@state) %> -->

@@ -1,33 +1,65 @@
-<p id="notice"><%= notice %></p>
+<%= content_for :body_title do%>
+<h4 class="display-5">Respostas Finais</h4>
+<%end%>
 
-<h1>Answers</h1>
+<div class="float-right" style="display: inline-block !important">
+<form role="search">
+  <div class="input-group" style="margin: 0">
+    <input id="answer-form" class="form-control mr-sm-2" type="search" aria-label="Search">
+    <label>
+      <i class="fa fa-search"></i>
+      &nbsp;Resposta Final
+    </label>
+    <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
+  </div>
+</form>
+</div>
+<hr class="under-header"/>
 
-<table>
-  <thead>
+<% if @answers.length > 0 %>
+<%= render './pagination', value: @answers %>
+<table class="table table-striped table-hover">
+  <thead class="thead-dark">
     <tr>
-      <th>Question</th>
-      <th>Answer</th>
-      <th>Category</th>
-      <th>User</th>
-      <th colspan="3"></th>
+      <th>Questão</th>
+      <th>Resposta</th>
+      <th>Categoria</th>
+      <th>Usuário</th>
+      <th colspan="3">Ações</th>
     </tr>
   </thead>
 
   <tbody>
     <% @answers.each do |answer| %>
       <tr>
-        <td><%= answer.question %></td>
-        <td><%= answer.answer %></td>
-        <td><%= answer.category %></td>
-        <td><%= answer.user %></td>
-        <td><%= link_to 'Show', answer %></td>
-        <td><%= link_to 'Edit', edit_answer_path(answer) %></td>
-        <td><%= link_to 'Destroy', answer, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= truncate strip_tags(answer.question), length: 40 %></td>
+        <td><%= truncate strip_tags(answer.answer), length: 40 %></td>
+        <td><%= answer.category.name %></td>
+        <td><%= answer.user.name %></td>
+        <td>
+          <%= link_to 'Mostrar', answer , class: 'btn btn-primary btn-sm'%>
+        </td>
       </tr>
     <% end %>
   </tbody>
 </table>
+<%= render './pagination', value: @answers %>
+<% end %>
+<hr/>
 
-<br>
+<script>
+$('document').ready(function () {
 
-<%= link_to 'New Answer', new_answer_path %>
+  $('#answer-form').on('focusout', function () {
+    changeState($(this));
+  });
+
+  function changeState(form) {
+    if (form.val().length > 0) {
+      form.addClass('has-value');
+    } else {
+      form.removeClass('has-value');
+    }
+  }
+});
+</script>

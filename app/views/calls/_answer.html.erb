@@ -1,11 +1,15 @@
 <%= form_tag({:class => 'form-inline'}) do %>
-<div class="form-group" style="max-width: 850px">
-  <%= label_tag :search_field %>
-  <%= text_field_tag :search_field, "", class: 'form-control boxed'%>
-  <%= submit_tag 'Search', type: 'button', id: 'search_button', class: "btn btn-secondary btn-sm"%>
+<div class="input-group">
+  <input type="text" name="search_field" id="search_field" value="" class="form-control boxed faq" style="margin-right: 0.5rem">
+  <label for="search_field">
+    <i class="fa fa-search"></i>
+    &nbsp;Search for an answer on FAQ
+  </label>
+  <input type="button" name="commit" value="Search" id="search_button" class="btn btn-primary" data-disable-with="Search">
+  <br/>
 
-  <div class="" id="table"></div>
 </div>
+<div class="" id="table"></div>
 
 <script>
   let textField = document.getElementById('search_field');
@@ -60,5 +64,20 @@
     $("#faq_box").hide(200);
     tinyMCE.get(0).setContent(answer);
   }
+
+  $('document').ready(function () {
+
+    $('#search_field').on('focusout', function () {
+      changeState($(this));
+    });
+
+    function changeState(form) {
+      if (form.val().length > 0) {
+        form.addClass('has-value');
+      } else {
+        form.removeClass('has-value');
+      }
+    }
+  });
 </script>
 <% end %>

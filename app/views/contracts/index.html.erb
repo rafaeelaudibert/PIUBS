@@ -1,25 +1,33 @@
-<p id="notice"><%= notice %></p>
 <%= content_for :body_title do%>
-Contracts
+<h4 class="display-5">Contratos</h4>
 <%end%>
-<%= link_to 'New Contract', new_contract_path, class: 'btn btn-success' %>
-<div class="float-right">
-<form class="form-inline">
-  <input class="form-control mr-sm-2 ml-3" type="search" placeholder="Contract number" aria-label="Search">
-  <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
+
+<div class="float-right" style="display: inline-block !important">
+<form role="search">
+  <div class="input-group" style="margin: 0">
+    <input id="contract-form" class="form-control mr-sm-2" type="search" aria-label="Search">
+    <label>
+      <i class="fa fa-search"></i>
+      &nbsp;Contrato
+    </label>
+    <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
+  </div>
 </form>
 </div>
-<hr/>
-<%= render './pagination', value: @contracts %>
+<div class="float-left create-new">
+<%= link_to 'Criar novo contrato', new_contract_path, class: 'btn btn-primary' %>
+</div>
+<hr class="under-header"/>
+
 <% if @contracts.length > 0 %>
-<hr/>
-<table class="table table-bordered table-striped table-hover">
+<%= render './pagination', value: @contracts %>
+<table class="table table-striped table-hover">
   <thead class="thead-dark">
     <tr>
-      <th>Contract number</th>
-      <th>City</th>
-      <th>Sei</th>
-      <th colspan="3"></th>
+      <th>Nº do Contrato</th>
+      <th>Cidade</th>
+      <th>SEI</th>
+      <th colspan="3">Ações</th>
     </tr>
   </thead>
 
@@ -29,14 +37,30 @@ Contracts
         <td><%= contract.contract_number %></td>
         <td><%= contract.city.name %></td>
         <td><%= contract.sei %></td>
-        <td><%= link_to 'Show', contract , class: 'btn btn-success btn-sm' %>
-          <%= link_to 'Edit', edit_contract_path(contract), class: 'btn btn-success btn-sm'%>
-          <%= link_to 'Destroy', contract, method: :delete, data: { confirm: 'Are you sure?' } , class: 'btn btn-danger btn-sm'%></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-<hr/>
-<%= render './pagination', value: @contracts %>
+        <td><%= link_to 'Mostrar', contract , class: 'btn btn-primary btn-sm' %>
+          <%= link_to(contract, method: :delete, data: { confirm: 'Tens certeza?', verify: contract.contract_number, verify_text: 'Caso tenha, por favor digite o número do contrato para continuar' }, class: 'btn btn-danger btn-sm') do %>
+          <i class="fa fa-trash-o"></i>
+        <%end%>
+      <% end %>
+    </tbody>
+  </table>
+  <%= render './pagination', value: @contracts %>
 <% end %>
 <hr/>
+
+<script>
+  $('document').ready(function () {
+
+    $('#contract-form').on('focusout', function () {
+      changeState($(this));
+    });
+
+    function changeState(form) {
+      if (form.val().length > 0) {
+        form.addClass('has-value');
+      } else {
+        form.removeClass('has-value');
+      }
+    }
+  });
+</script>

@@ -1,41 +1,73 @@
-<%= content_for :body_title do%> Atendimentos<%end%>
-<div class="card">
-<div class="card-block">
-<div class="card-title-block"> Call List
-</div>
+<%= content_for :body_title do%>
+<h4 class="display-5">Atendimentos</h4>
+<%end%>
 
-<table class="table table-striped">
-  <thead>
+<div class="float-right" style="display: inline-block !important">
+<form role="search">
+  <div class="input-group" style="margin: 0">
+    <input id="call-form" class="form-control mr-sm-2" type="search" aria-label="Search">
+    <label>
+      <i class="fa fa-search"></i>
+      &nbsp;Atendimento
+    </label>
+    <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
+  </div>
+</form>
+</div>
+<div class="float-left create-new">
+<%= link_to 'Solicitar novo atendimento', new_call_path, class: 'btn btn-primary' %>
+</div>
+<hr class="under-header"/>
+
+<% if @calls.length > 0 %>
+<%= render './pagination', value: @calls %>
+<table class="table table-striped table-hover">
+  <thead class="thead-dark">
     <tr>
-      <th>Protocol</th>
-      <th>Title</th>
+      <th>Protocolo</th>
+      <th>Questão</th>
       <th>Status</th>
-      <th>Version</th>
-      <th>Severity</th>
-      <th>City</th>
-      <th>Category</th>
-      <th>State</th>
-      <th colspan="3"></th>
+      <th>Cidade</th>
+      <th>Categoria</th>
+      <th colspan="3">Ações</th>
     </tr>
   </thead>
 
   <tbody>
     <% @calls.each do |call| %>
       <tr>
-        <td><%= link_to "#{call.protocol}", call %></td>
+        <td><%= call.protocol %></td>
         <td><%= call.title %></td>
         <td><%= call.status %></td>
-        <td><%= call.version %></td>
-        <td><%= call.severity %></td>
         <td><%= call.city.name %></td>
         <td><%= call.category.name %></td>
-        <td><%= call.state.name %></td>
         <td>
-            <%= link_to(call, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm') do %> <i class="fa fa-trash-o"></i> <%end%></td>
-      </tr>
-    <% end %>
-  </tbody>
+          <%= link_to 'Mostrar', call , class: 'btn btn-primary btn-sm'%>
+          <%= link_to(call, method: :delete, data: { confirm: 'Tens certeza?', verify: call.protocol, verify_text: 'Caso tenha, por favor digite o número do protocolo para continuar' }, class: 'btn btn-danger btn-sm') do %>
+          <i class="fa fa-trash-o"></i>
+        <%end%>
+      </td>
+    </tr>
+  <% end %>
+</tbody>
 </table>
-</div>
-</div>
-<%= link_to 'New Call', new_call_path, class: 'btn btn-primary' %>
+<%= render './pagination', value: @calls %>
+<% end %>
+<hr/>
+
+<script>
+$('document').ready(function () {
+
+$('#call-form').on('focusout', function () {
+  changeState($(this));
+});
+
+function changeState(form) {
+  if (form.val().length > 0) {
+    form.addClass('has-value');
+  } else {
+    form.removeClass('has-value');
+  }
+}
+});
+</script>
