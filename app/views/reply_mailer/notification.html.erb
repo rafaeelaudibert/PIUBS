@@ -1,19 +1,32 @@
 <h1>PIUBS</h1>
 
+<% if @current_user.email == @call_user.email %>
+  <p>
+    Olá,
+    <b><%= @call_user.name %></b>, você adicionou uma nova resposta ao seu atendimento.
+  </p>
+
+<% else %>
+  <p>
+    Olá,
+    <b><%= @call_user.name %></b>, seu atendimento tem uma nova resposta.
+  </p>
+
+<% end %>
+
 <p>
-  Olá, <%= @call_user.name %>, seu atendimento tem uma nova resposta.
+  Protocolo de atendimento:
+  <%= @call.protocol %>
 </p>
 
 <p>
-  Protocolo de atendimento: <%= @call.protocol %>
+  Nova resposta:
+  <br>
+  <%= @reply.description.html_safe %>
 </p>
 
 <p>
-  Nova resposta: <br> <%= @reply.description.html_safe %>
-</p>
-
-<p>
-  <%= @reply.created_at %>
+  <%= @reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
 </p>
 
 <p>

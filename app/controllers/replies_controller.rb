@@ -34,7 +34,7 @@ class RepliesController < ApplicationController
       if @reply.save
         format.html { redirect_to call_path(@reply.protocol), notice: 'Reply was successfully created.' }
         format.json { render :show, status: :created, location: @reply }
-        ReplyMailer.notification(@reply).deliver
+        ReplyMailer.notification(@reply, current_user).deliver
       else
         format.html { render :new }
         format.json { render json: @reply.errors, status: :unprocessable_entity }
