@@ -62,7 +62,9 @@
   <hr/>
 
   <button type="button" id="reply" class="btn btn-primary">New Reply</button>
-  <button type="button" id="faq-reply" class="btn btn-primary">Reply from FAQ</button>
+  <% if current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
+    <button type="button" id="faq-reply" class="btn btn-primary">Reply from FAQ</button>
+  <% end %>
 </div>
 </div>
 
