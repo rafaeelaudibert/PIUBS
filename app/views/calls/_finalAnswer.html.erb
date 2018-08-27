@@ -14,14 +14,15 @@
 <% end %>
 
 <% @question = Call.find(params[:id]) %>
+<div class="form" style="max-width: 650px">
   <div class="field">
     <%= form.label :question %>
-    <%= form.text_field :question, value: @question.title %>
+    <%= form.text_field :question, value: @question.title, class: 'form-control boxed' %>
   </div>
 
   <div class="field">
     <%= form.label :answer %>
-    <%= form.text_field :answer %>
+    <%= form.text_area :answer, class: 'form-control boxed', rows: '8' %>
   </div>
 
   <div class="form-group input-group">
@@ -48,8 +49,9 @@
   <br/><br/>
 
   <div class="actions">
-    <%= form.submit 'Done' %>
+    <%= form.submit 'Done', class: 'btn btn-primary' %>
   </div>
+</div>
 <% end %>
 
 <script>
@@ -100,10 +102,10 @@
         if (input.length) {
           input.val(log);
         } else {
-          if (log) 
+          if (log)
             alert(log);
           }
-        
+
       });
     });
 
