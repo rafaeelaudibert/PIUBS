@@ -17,14 +17,12 @@
   let tableDiv = document.getElementById('table');
 
   button.addEventListener('click', () => {
-    console.log(textField.value.length)
     if (textField.value.length > 3) {
       jQuery.ajax({
         url: '/answers/query/' + textField.value,
         type: "GET",
         dataType: "json",
         success: data => {
-          console.log(data);
           if (data.length > 0) {
 
             //Create a HTML Table element.
@@ -63,6 +61,7 @@
     $("#reply_box").show(200);
     $("#faq_box").hide(200);
     tinyMCE.get(0).setContent(answer);
+    $("#on-faq").prop('checked', true);
   }
 
   $('document').ready(function () {
