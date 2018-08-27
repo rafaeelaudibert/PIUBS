@@ -1436,12 +1436,6 @@ label {
   border-color: #4bcf99;
 }
 
-.form-control.boxed {
-  border-radius: 0;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-}
-
 .form-control.boxed:focus {
   border: 1px solid #85CE36;
 }
@@ -4236,7 +4230,7 @@ span a {
   button {
     border-radius: 0.25rem;
     margin-left: 0.5rem;
-    padding: 0.55rem;
+    padding: 0.5rem;
     margin-bottom: 0;
     height: inherit;
   }
@@ -4263,8 +4257,7 @@ span a {
 
   &:focus {
     outline: none;
-    box-shadow: none !important;
-    border-radius: 0.25rem !important;
+    border-radius: 0.1rem !important;
     border-bottom: 1px solid lighten(black, 60%);
     border-width: 2px;
     background-color: white !important;
@@ -4290,7 +4283,7 @@ span a {
 
 .table {
   margin-top: 2rem;
-  font-size: 22px;
+  font-size: 17px;
 
   td {
     font-size: 18px;

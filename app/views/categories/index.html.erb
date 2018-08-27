@@ -34,8 +34,6 @@
       <tr>
         <td><%= category.name %></td>
         <td>
-          <%= link_to 'Mostrar', category , class: 'btn btn-primary btn-sm'%>
-          <%= link_to 'Editar', edit_category_path(category) , class: 'btn btn-primary btn-sm' %>
           <%= link_to(category, method: :delete, data: { confirm: 'Tens certeza?'}, class: 'btn btn-danger btn-sm') do %>
           <i class="fa fa-trash-o"></i>
         <%end%>
