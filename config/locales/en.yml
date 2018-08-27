@@ -34,57 +34,57 @@ en:
     models:
       city:
         zero: "cidades"
-        one: "a cidade"
+        one: "cidade"
         few: "as cidades"
         other: "cidades"
       answer:
         zero: "respostas finais"
-        one: "a resposta finais"
+        one: "resposta final"
         few: "as respostas finais"
         other: "respostas finais"
       attachment:
         zero: "anexos"
-        one: "o anexo"
+        one: "anexo"
         few: "os anexos"
         other: "anexos"
       call:
         zero: "atendimentos"
-        one: "o atendimento"
+        one: "atendimento"
         few: "os atendimentos"
         other: "atendimentos"
       category:
         zero: "categorias"
-        one: "a categoria"
+        one: "categoria"
         few: "as categorias"
         other: "categorias"
       company:
         zero: "empresas"
-        one: "a empresa"
+        one: "empresa"
         few: "as empresas"
         other: "empresas"
       contract:
         zero: "contratos"
-        one: "o contrato"
+        one: "contrato"
         few: "os contratos"
         other: "contratos"
       reply:
         zero: "respostas"
-        one: "a resposta"
+        one: "resposta"
         few: "as respostas"
         other: "respostas"
       state:
         zero: "estados"
-        one: "o estado"
+        one: "estado"
         few: "os estados"
         other: "estados"
       unity:
         zero: "UBS"
-        one: "a UBS"
+        one: "UBS"
         few: "as UBS"
         other: "UBS"
       user:
         zero: "usuários"
-        one: "o usuário"
+        one: "usuário"
         few: "os usuários"
         other: "usuários"
   will_paginate:
