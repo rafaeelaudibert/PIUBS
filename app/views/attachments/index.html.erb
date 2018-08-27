@@ -30,31 +30,30 @@
   <tbody>
     <% @attachments.each do |attachment| %>
       <tr>
-        <% pp attachment %>
-          <td><%= attachment.answer.id %></td>
-          <td><%= attachment.filename.capitalize %></td>
-          <td><%= link_to "Download", download_attachment_path(attachment.id), class: 'btn btn-primary btn-sm' %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-  <%= render './pagination', value: @attachments %>
+        <td><%= attachment.answer.id %></td>
+        <td><%= attachment.filename.capitalize %></td>
+        <td><%= link_to "Download", download_attachment_path(attachment.id), class: 'btn btn-primary btn-sm' %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%= render './pagination', value: @attachments %>
 <% end %>
 <hr/>
 
 <script>
-  $('document').ready(function () {
+$('document').ready(function () {
 
-    $('#attachment-form').on('focusout', function () {
-      changeState($(this));
-    });
-
-    function changeState(form) {
-      if (form.val().length > 0) {
-        form.addClass('has-value');
-      } else {
-        form.removeClass('has-value');
-      }
-    }
+  $('#attachment-form').on('focusout', function () {
+    changeState($(this));
   });
+
+  function changeState(form) {
+    if (form.val().length > 0) {
+      form.addClass('has-value');
+    } else {
+      form.removeClass('has-value');
+    }
+  }
+});
 </script>
