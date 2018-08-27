@@ -3,6 +3,7 @@
 <% if current_user.try(:admin?) %>
   <li><%= link_to(root_path, class: 'nav-item nav-link') do %> <i class="fa fa-bar-chart-o"></i> Estatísticas <%end%></li>
   <li <%= "class=active" if current_page?(calls_path) || current_page?(root_path) %> > <%= link_to(calls_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Atendimentos <%end%></li>
+  <li <%= "class=active" if current_page?(faq_path) %> > <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ<%end%></li>
   <li <%= "class=active" if current_page?(states_path) %> > <%= link_to(states_path, class: 'nav-item nav-link') do %> <i class="fa fa-globe"></i> Estados<%end%></li>
   <li <%= "class=active" if current_page?(cities_path) %> > <%= link_to(cities_path, class: 'nav-item nav-link') do %> <i class="fa fa-map-marker"></i> Cidades<%end%></li>
   <li <%= "class=active" if current_page?(unities_path) %> > <%= link_to(unities_path, class: 'nav-item nav-link') do %> <i class="fa fa-medkit"></i> UBS <%end%></li>
@@ -47,6 +48,7 @@
 <!-- UBS Admin Sidebar-->
 <% if current_user.try(:ubs_admin?) %>
   <li <%= "class=active" if current_page?(calls_path) || current_page?(root_path) %> > <%= link_to(calls_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Atendimentos <%end%></li>
+  <li <%= "class=active" if current_page?(faq_path) %> > <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ<%end%></li>
   <li <%= "class=active" if current_page?(users_path) || current_page?(new_user_level_path) || current_page?(new_user_invitation_path) %> > <%= link_to(users_path, class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Colaboradores <i class="fa arrow"></i><%end%>
     <ul class="sidebar-nav collapse">
       <li>
@@ -62,11 +64,13 @@
 <!-- UBS User Sidebar-->
 <% if current_user.try(:ubs_user?) %>
   <li <%= "class=active" if current_page?(calls_path) || current_page?(root_path) %> > <%= link_to(calls_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Atendimentos <%end%></li>
+  <li <%= "class=active" if current_page?(faq_path) %> > <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ<%end%></li>
 <% end %>
 
 <!-- Company Admin Sidebar-->
 <% if current_user.try(:company_admin?) %>
   <li <%= "class=active" if current_page?(calls_path) || current_page?(root_path) %> > <%= link_to(calls_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Atendimentos <%end%></li>
+  <li <%= "class=active" if current_page?(faq_path) %> > <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ<%end%></li>
   <li <%= "class=active" if current_page?(companies_path) %> > <%= link_to(companies_path, class: 'nav-item nav-link') do %> <i class="fa fa-building-o"></i> Empresa <%end%></li>
   <li <%= "class=active" if current_page?(contracts_path) %> > <%= link_to(contracts_path, class: 'nav-item nav-link') do %> <i class="fa fa-clipboard"></i> Contratos<%end%></li>
   <li <%= "class=active" if current_page?(users_path) || current_page?(new_user_level_path) || current_page?(new_user_invitation_path) %> > <%= link_to(users_path, class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Colaboradores <i class="fa arrow"></i><%end%>
@@ -84,12 +88,14 @@
 <!-- Company User Sidebar-->
 <% if current_user.try(:company_user?) %>
   <li <%= "class=active" if current_page?(calls_path) || current_page?(root_path) %> > <%= link_to(calls_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Atendimentos <%end%></li>
+  <li <%= "class=active" if current_page?(faq_path) %> > <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ<%end%></li>
 <% end %>
 
 <!-- Call Center Admin Sidebar-->
 <% if current_user.try(:call_center_admin?) %>
   <li><%= link_to(root_path, class: 'nav-item nav-link') do %> <i class="fa fa-bar-chart-o"></i> Estatísticas <%end%></li>
   <li <%= "class=active" if current_page?(calls_path) || current_page?(root_path) %> > <%= link_to(calls_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Atendimentos <%end%></li>
+  <li <%= "class=active" if current_page?(faq_path) %> > <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ<%end%></li>
   <li <%= "class=active" if current_page?(users_path) || current_page?(new_user_level_path) || current_page?(new_user_invitation_path) %> > <%= link_to(users_path, class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Colaboradores <i class="fa arrow"></i><%end%>
     <ul class="sidebar-nav collapse">
       <li>
@@ -106,6 +112,7 @@
 <% if current_user.try(:call_center_user?) %>
   <li><%= link_to(root_path, class: 'nav-item nav-link') do %> <i class="fa fa-bar-chart-o"></i> Estatísticas <%end%></li>
   <li <%= "class=active" if current_page?(calls_path) || current_page?(root_path) %> > <%= link_to(calls_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Atendimentos <%end%></li>
+  <li <%= "class=active" if current_page?(faq_path) %> > <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ<%end%></li>
 <% end %>
 
 <!-- City user Sidebar-->

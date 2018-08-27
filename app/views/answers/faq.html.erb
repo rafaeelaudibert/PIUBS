@@ -1,5 +1,5 @@
 <%= content_for :body_title do%>
-<h4 class="display-5">Respostas finais</h4>
+<h4 class="display-5">FAQ</h4>
 <%end%>
 
 <div class="float-right" style="display: inline-block !important">
@@ -8,7 +8,7 @@
     <input id="answer-form" class="form-control mr-sm-2" type="search" aria-label="Search">
     <label>
       <i class="fa fa-search"></i>
-      &nbsp;Resposta Final
+      &nbsp;FAQ
     </label>
     <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
   </div>
@@ -17,14 +17,13 @@
 <hr class="under-header"/>
 
 <% if @answers.length > 0 %>
-<%= render './pagination', value: @answers %>
+<%= render './pagination', value: @answers, model:'faq' %>
 <table class="table table-striped table-hover">
   <thead class="thead-dark">
     <tr>
       <th>Questão</th>
       <th>Resposta</th>
       <th>Categoria</th>
-      <th>No FAQ?</th>
       <th colspan="3">Ações</th>
     </tr>
   </thead>
@@ -35,7 +34,6 @@
         <td><%= truncate strip_tags(answer.question), length: 40 %></td>
         <td><%= truncate strip_tags(answer.answer), length: 40 %></td>
         <td><%= answer.category.name %></td>
-        <td><%= answer.faq ? 'Sim' : 'Não' %></td>
         <td>
           <%= link_to 'Mostrar', answer , class: 'btn btn-primary btn-sm'%>
         </td>
@@ -43,7 +41,7 @@
     <% end %>
   </tbody>
 </table>
-<%= render './pagination', value: @answers %>
+<%= render './pagination', value: @answers%>
 <% end %>
 <hr/>
 
