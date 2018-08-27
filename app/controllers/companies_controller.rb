@@ -31,7 +31,7 @@ class CompaniesController < ApplicationController
     respond_to do |format|
       begin
         if @company.save
-          format.html { redirect_to @company, notice: 'Company was successfully created.' }
+          format.html { redirect_to new_user_invitation_path(sei: @company.sei), notice: 'Company was successfully created. Please add its admin' }
           format.json { render :show, status: :created, location: @company }
         else
           handleError format, :new, ''
