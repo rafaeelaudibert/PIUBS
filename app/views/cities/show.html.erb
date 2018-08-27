@@ -36,8 +36,6 @@
 <% end %>
 
 <br>
-<%= link_to 'New UBS', new_unity_path(city: @city.id), class: 'btn btn-primary btn-sm' if current_user.try(:admin?) %>
-<%= link_to 'New Contract', new_contract_path(city: @city.id), class: 'btn btn-primary btn-sm' if current_user.try(:admin?) %>
-<%= link_to 'Edit', edit_city_path(@city), class: 'btn btn-primary btn-sm' if current_user.try(:admin?) %>
-<%= link_to 'Back', cities_path, class: 'btn btn-primary btn-sm' %>
+<%= link_to 'Adicionar nova UBS', new_unity_path(city: @city.id), class: 'btn btn-primary btn-sm' if current_user.try(:admin?) %>
+<%= link_to 'Adicionar Contrato', new_contract_path(city: @city.id), class: 'btn btn-primary btn-sm' if current_user.try(:admin?) && !(Contract.where('city_id = ?', @city.id)) %>
 <br/><br/>

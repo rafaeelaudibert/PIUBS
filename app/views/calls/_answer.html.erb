@@ -9,7 +9,7 @@
   <br/>
 
 </div>
-<div class="" id="table"></div>
+<div id="table"></div>
 
 <script>
   let textField = document.getElementById('search_field');
@@ -27,10 +27,12 @@
 
             //Create a HTML Table element.
             const table = document.createElement("table");
+            table.classList.add('table', 'table-striped', 'table-hover')
             table.border = "1";
 
             //Add the header row.
             let row = table.insertRow(-1);
+            row.classList.add('thead-dark')
             for (let header of["Question", "Answer", "Actions"]) 
               row.appendChild(document.createElement("TH")).innerHTML = header;
             

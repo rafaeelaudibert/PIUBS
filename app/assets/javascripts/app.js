@@ -14,9 +14,9 @@ config.ResponsiveBootstrapToolkitVisibilityDivs = {
 };
 
 // RafaAudibert - Trying to solve errors
-if (typeof ResponsiveBootstrapToolkit !== 'undefined') {
-  ResponsiveBootstrapToolkit.use('Custom', config.ResponsiveBootstrapToolkitVisibilityDivs);
-}
+
+ResponsiveBootstrapToolkit.use('Custom', config.ResponsiveBootstrapToolkitVisibilityDivs);
+
 
 //validation configuration
 config.validations = {
