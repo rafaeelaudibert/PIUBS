@@ -5,23 +5,57 @@
 
 //form
 .form-control.boxed.faq {
-  border-radius: 0.1rem;
-  box-shadow: inset -0.5px -0.5px 5px rgba(0, 0, 0, 0.6);
-
-  &:focus {
-    box-shadow: inset -0.5px -0.5px 10px rgba(0, 0, 0, 0.6);
-  }
+  box-shadow: inset -0.5px -0.5px 3px rgba(0, 0, 0, 0.6);
 }
 
 .form-control {
   border-radius: 0.1rem !important;
   &:focus {
-    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
+    box-shadow: none;
   }
 }
 
 [type="search"] {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 35px;
+  font-size: 16px;
+  border: none !important;
   background-color: transparent !important;
+
+  & + label {
+    position: absolute;
+    top: 10px;
+    left: 3px;
+    font-size: 16px;
+    color: lighten(black, 60%);
+    transition: all 0.2s ease-out;
+  }
+
+  &:focus {
+    outline: none;
+    border-radius: 0.1rem !important;
+    border-bottom: 1px solid lighten(black, 60%);
+    border-width: 2px;
+    background-color: white !important;
+    transition: all 0.2s ease-out;
+  }
+
+  &.has-value + label,
+  &:focus + label {
+    top: -17px;
+    color: lighten(black, 40%);
+    font-size: 12px;
+  }
+
+  &.has-value {
+    background-color: white !important;
+  }
+
+  &.has-value:not(:focus) + label {
+    color: lighten(black, 60%);
+  }
 }
 
 li.active > a {
