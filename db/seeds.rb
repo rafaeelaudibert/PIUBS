@@ -5,6 +5,7 @@
 
 require 'faker'
 require 'logger'
+require 'cpf_cnpj'
 
 Rails.logger = Logger.new(STDOUT)
 Rails.logger.level = Logger::INFO # Options for logger.level DEBUG < INFO < WARN < ERROR < FATAL < UNKNOWN
@@ -15,7 +16,8 @@ def seed_users
     _role_id = _role[1]
     _email = _role_name + '@piubs.com'
     _passwd = 'changeme'
-    new_user = User.new(name: _role_name, email: _email, password: _passwd, password_confirmation: _passwd, role: _role_name)
+    _cpf = CPF.generate
+    new_user = User.new(cpf: _cpf, name: _role_name, email: _email, password: _passwd, password_confirmation: _passwd, role: _role_name)
     if new_user.save
       Rails.logger.info("User #{_email} was created successfuly!")
     else
@@ -28,7 +30,8 @@ def seed_user(company)
   _role_name = 'company_admin'
   _email = "company_admin_#{company.sei}@piubs.com"
   _passwd = 'changeme'
-  new_user = User.new(name: _role_name, email: _email, password: _passwd, password_confirmation: _passwd, role: _role_name)
+  _cpf = CPF.generate
+  new_user = User.new(cpf: _cpf, name: _role_name, email: _email, password: _passwd, password_confirmation: _passwd, role: _role_name)
   if new_user.save
     Rails.logger.info("Company USER ADMIN #{_email} was created successfuly!")
   else
@@ -99,14 +102,14 @@ def seed_companies
 end
 
 def seed_categories
-    ["Hardware", "Software", "Outro"].each do |_category|
-      category = Category.new("name": _category)
-      if category.save
-        Rails.logger.info("Inserted a new category: #{_category}")
-      else
-        Rails.logger.error("ERROR creating a CATEGORY")
-      end
+  %w[Hardware Software Outro].each do |_category|
+    category = Category.new("name": _category)
+    if category.save
+      Rails.logger.info("Inserted a new category: #{_category}")
+    else
+      Rails.logger.error('ERROR creating a CATEGORY')
     end
+  end
 end
 
 def seed_faq
@@ -119,9 +122,9 @@ def seed_faq
                    'user': User.find(1),
                    'faq': true)
     if q.save
-      Rails.logger.debug("Inserted a new answer")
+      Rails.logger.debug('Inserted a new answer')
     else
-      Rails.logger.error("ERROR creating an ANSWER")
+      Rails.logger.error('ERROR creating an ANSWER')
     end
   end
   Rails.logger.info('Finished')
