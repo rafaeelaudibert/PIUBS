@@ -1,3 +1,14 @@
-Answer#notification
+PIUBS
 
-<%= @greeting %>, find me in app/views/answer_mailer/notification.text.erb
+Olá, <%= @call_user.name %>, seu atendimento tem uma nova resposta final.
+
+Protocolo: <%= @call.protocol %>
+
+Atendimento: <%= @call.title %>
+
+Resposta final:
+<%= @answer.answer.html_safe %>
+
+<%= @answer.created_at.strftime("%d %b %y - %H:%M:%S") %>
+
+<%= link_to "Clique aqui para acessar o PIUBS e visualizar o atendimento completo", @link %>
