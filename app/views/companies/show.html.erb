@@ -23,7 +23,7 @@
           <td><%= _user.email %></td>
           <td><%= cpf.formatted %></td>
           <td><%= _user.last_sign_in_at ? _user.last_sign_in_at.strftime("%d %b %y - %H:%M:%S") : 'Nunca'%></td>
-          <td><%= link_to 'Show', _user , class: 'btn btn-primary btn-sm' %></td>
+          <td><%= link_to 'Mostrar', _user , class: 'btn btn-primary btn-sm' %></td>
         </tr>
       <% end %>
     </tbody>
@@ -31,8 +31,8 @@
   <hr/>
 <% else %>
   <h1 class="h6">
-    Essa empresa não possui contratos cadastrados no sistema.
-    <%= "Você pode adicionar um clicando no botão abaixo." if current_user.try(:admin?) %>
+    Essa empresa não possui usuários cadastrados no sistema.
+    <%= "Você pode adicionar um pelo menu ao lado em Colaboradores > Adicionar Usuários." if current_user.try(:admin?) || (current_user.try(:company_admin?) && current_user.sei == @company.sei) %>
     <br/><br/>
   </h1>
 <% end %>
@@ -79,6 +79,6 @@
       <% end %>
 
       <%= link_to 'Novo contrato', new_contract_path(company: @company.sei), class: 'btn btn-primary' if current_user.try(:admin?) %>
-      <%= link_to 'Editar', edit_company_path(@company), class: 'btn btn-primary' %>
+      <%= link_to('Apagar empresa', @company, method: :delete, data: { confirm: 'Tens certeza?', verify: @company.sei, verify_text: 'Caso tenha, por favor digite o número do SEI dessa empresa para continuar' }, class: 'btn btn-danger') %>
       <%= link_to 'Voltar', companies_path, class: 'btn btn-danger' %>
       <br/><br/>
