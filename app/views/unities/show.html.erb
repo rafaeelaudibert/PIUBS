@@ -1,53 +1,36 @@
-<p id="notice"><%= notice %></p>
+<%= content_for :body_title do%>
+<h4 class="display-5"><%= "#{@unity.cnes} / #{@unity.name}" %>
+  <small class="text-muted" style="font-size: 1.6rem">
+    <%= " - #{@unity.city.name}" %></small>
+</h4>
+<% end %>
 
-<div>
-  <h1 class="h5">Name:</h1>
-  <%= @unity.name %>
-</div>
+<h1 class="h3">Contrato:</h1>
+<% if @contract %>
+<table class="table table-bordered table-striped table-hover">
+  <thead class="thead-dark">
+    <tr>
+      <th>Nº do Contrato</th>
+      <th>SEI</th>
+      <th colspan="3">Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= @contract.contract_number %></td>
+      <td><%= @contract.sei %></td>
+      <td><%= link_to 'Show', @contract , class: 'btn btn-primary btn-sm' %></td>
+    </tr>
+  </tbody>
+</table>
+<% else %>
+<h1 class="h6">
+  A cidade responsável por essa UBS não possui nenhum contrato cadastrado no banco de dados.
+  <%= "Você pode adicionar um clicando no botão abaixo." if current_user.try(:admin?) %>
+</h1>
+<% end %>
 
-<div>
-  <h1 class="h5">City:</h1>
-  <%= @unity.city.name %>
-</div>
-
-<div>
-  <h1 class="h5">CNES:</h1>
-  <%= @unity.cnes %>
-</div>
-
-<hr/>
-<h1 class="h3">Contracts:</h1>
+<%= link_to 'Novo Contrato', new_contract_path(city: @unity.city.id), class: 'btn btn-primary btn-sm' if current_user.try(:admin?) && !@contract%>
+<%= link_to 'Editar', edit_unity_path(@unity), class: 'btn btn-primary btn-sm' %>
+<%= link_to 'Voltar', unities_path, class: 'btn btn-danger btn-sm' %>
 <br/><br/>
-
-<% if @contracts %>
-  <table class="table table-bordered table-striped table-hover">
-    <thead class="thead-dark">
-      <tr>
-        <th>Contract Number</th>
-        <th>Company SEI</th>
-        <th colspan="3"></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @contracts.each do |_contract| %>
-        <tr>
-          <% contract = Contract.find(_contract.id) %>
-            <td><%= contract.contract_number %></td>
-            <td><%= contract.sei %></td>
-            <td><%= link_to 'Show', contract , class: 'btn btn-primary btn-sm' %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-    <hr/>
-  <% else %>
-    <h1 class="h6">
-      UBS's owner city has no Contracts.
-      <%= "You can insert one clicking in the button below" if current_user.try(:admin?) %>
-    </h1>
-  <% end %>
-
-  <%= link_to 'New Contract', new_contract_path(city: @unity.city.id), class: 'btn btn-primary btn-sm' if current_user.try(:admin?) %>
-  <%= link_to 'Edit', edit_unity_path(@unity), class: 'btn btn-primary btn-sm' %>
-  <%= link_to 'Back', unities_path, class: 'btn btn-primary btn-sm' %>
-  <br/><br/>
