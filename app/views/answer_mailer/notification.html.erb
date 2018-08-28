@@ -1,0 +1,30 @@
+<h1>PIUBS</h1>
+
+<p>
+  Olá,
+  <b><%= @call_user.name %></b>, seu atendimento tem uma nova resposta final.
+</p>
+
+<p>
+  Protocolo:
+  <b><%= @call.protocol %></b>
+</p>
+
+<p>
+  Atendimento:
+  <b><%= @call.title %></b>
+</p>
+
+<p>
+  Resposta final:
+  <br>
+  <%= @answer.answer.html_safe %>
+</p>
+
+<p>
+  <%= @answer.created_at.strftime("%d %b %y - %H:%M:%S") %>
+</p>
+
+<p>
+  <a href="<%= @link %>">Clique aqui para acessar o PIUBS e visualizar o atendimento completo</a>
+</p>

@@ -46,6 +46,7 @@ class AnswersController < ApplicationController
             raise 'Não consegui anexar o arquivo. Por favor tente mais tarde' unless @attachment.save
           end
         end
+        AnswerMailer.notification(@call, @answer, current_user).deliver
         format.html { redirect_to @call, notice: 'Final answer was successfully marked.' }
         format.json { render :show, status: :created, location: @answer }
       else
