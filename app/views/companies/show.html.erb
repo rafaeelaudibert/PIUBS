@@ -1,24 +1,52 @@
-<p id="notice"><%= notice %></p>
+<%= content_for :body_title do%>
+<h4 class="display-5"><%= "Company #{@company.sei}" %>
+</h4>
+<% end %>
 
-<div>
-  <h1 class="h5">Company SEI:</h1>
-  <%= @company.sei %>
-</div>
-
-<hr/>
-<h1 class="h3">Contracts:</h1>
-<br/><br/>
-
-<% if @contracts %>
-  <%= render './pagination', value: @contracts %>
+<h1 class="h3">Usuários cadastrados:</h1>
+<% if @users.length > 0 %>
+<table class="table table-striped table-hover">
+  <thead class="thead-dark">
+    <tr>
+      <th>Nome do usuário</th>
+      <th>E-mail</th>
+      <th>CPF</th>
+      <th>Ultimo login</th>
+      <th colspan="3">Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @users.each do |_user| %>
+      <tr>
+        <% cpf = CPF.new(_user.cpf) %>
+          <td><%= _user.name %></td>
+          <td><%= _user.email %></td>
+          <td><%= cpf.formatted %></td>
+          <td><%= _user.last_sign_in_at ? _user.last_sign_in_at.strftime("%d %b %y - %H:%M:%S") : 'Nunca'%></td>
+          <td><%= link_to 'Show', _user , class: 'btn btn-primary btn-sm' %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
   <hr/>
-  <table class="table table-bordered table-striped table-hover">
+<% else %>
+  <h1 class="h6">
+    Essa empresa não possui contratos cadastrados no sistema.
+    <%= "Você pode adicionar um clicando no botão abaixo." if current_user.try(:admin?) %>
+    <br/><br/>
+  </h1>
+<% end %>
+
+<h1 class="h3">Contratos:</h1>
+<% if @contracts.length > 0 %>
+  <%= render './pagination', value: @contracts %>
+  <table class="table table-striped table-hover">
     <thead class="thead-dark">
       <tr>
-        <th>Contract Number</th>
-        <th>City Name</th>
-        <th>State</th>
-        <th colspan="3"></th>
+        <th>Nº do Contrato</th>
+        <th>Nome da cidade</th>
+        <th>Estado</th>
+        <th colspan="3">Ações</th>
       </tr>
     </thead>
     <tbody>
@@ -30,7 +58,13 @@
                 <td><%= contract.contract_number %></td>
                 <td><%= city.name %></td>
                 <td><%= state.name %></td>
-                <td><%= link_to 'Show', contract , class: 'btn btn-primary btn-sm' %></td>
+                <td>
+                  <% if contract.filename %>
+                    <%= link_to "Clique para fazer download", download_contract_path(id: contract.id), class: 'btn btn-primary btn-sm' %>
+                  <% else %>
+                    <button class="btn btn-primary btn-sm" disabled="disabled">Não há arquivos anexados</button>
+                  <% end %>
+                </td>
               </tr>
             <% end %>
           </tbody>
@@ -38,12 +72,13 @@
         <hr/>
       <% else %>
         <h1 class="h6">
-          This Company has no Contracts.
-          <%= "You can insert one clicking in the button below" if current_user.try(:admin?) %>
+          Essa empresa não possui contratos cadastrados no sistema.
+          <%= "Você pode adicionar um clicando no botão abaixo." if current_user.try(:admin?) %>
+          <br/><br/>
         </h1>
       <% end %>
 
-      <%= link_to 'New Contract', new_contract_path(company: @company.sei), class: 'btn btn-primary btn-sm' if current_user.try(:admin?) %>
-      <%= link_to 'Edit', edit_company_path(@company), class: 'btn btn-primary btn-sm' %>
-      <%= link_to 'Back', companies_path, class: 'btn btn-primary btn-sm' %>
+      <%= link_to 'Novo contrato', new_contract_path(company: @company.sei), class: 'btn btn-primary' if current_user.try(:admin?) %>
+      <%= link_to 'Editar', edit_company_path(@company), class: 'btn btn-primary' %>
+      <%= link_to 'Voltar', companies_path, class: 'btn btn-danger' %>
       <br/><br/>
