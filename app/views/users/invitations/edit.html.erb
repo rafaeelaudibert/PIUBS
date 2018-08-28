@@ -23,14 +23,14 @@
             <div class="form-group">
               <% if f.object.class.require_password_on_accepting %>
               <p><%= f.label "Crie uma senha" %>
-              <%= f.password_field :password, class: 'form-control' %></p>
+              <%= f.password_field :password, class: 'form-control underlined' %></p>
             </div>
             <div class="form-group">
               <p><%= f.label "Confirme a sua senha" %>
-              <%= f.password_field :password_confirmation, class: 'form-control' %></p>
+              <%= f.password_field :password_confirmation, class: 'form-control underlined' %></p>
               <% end %>
             </div>
-              <p><%= f.submit "Confirmar", :class => 'btn btn-success' %></p>
+              <p><%= f.submit "Confirmar", :class => 'btn btn-primary' %></p>
           <% end %>
         </div>
       </div>
