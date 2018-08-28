@@ -31,6 +31,6 @@
 <% end %>
 
 <%= link_to 'Novo Contrato', new_contract_path(city: @unity.city.id), class: 'btn btn-primary btn-sm' if current_user.try(:admin?) && !@contract%>
-<%= link_to 'Editar', edit_unity_path(@unity), class: 'btn btn-primary btn-sm' %>
-<%= link_to 'Voltar', unities_path, class: 'btn btn-danger btn-sm' %>
+<%= link_to('Apagar UBS', @unity, method: :delete, data: { confirm: 'Tens certeza?', verify: @unity.cnes, verify_text: 'Caso tenha, por favor digite o número do CNES dessa UBS para continuar' }, class: 'btn btn-danger btn-sm') %>
+<%= link_to 'Voltar', city_path(id: @unity.city.id), class: 'btn btn-danger btn-sm' %>
 <br/><br/>

@@ -39,7 +39,6 @@
         <td><%= unity.city.name %></td>
         <td>
           <%= link_to 'Mostrar', unity , class: 'btn btn-primary btn-sm'%>
-          <%= link_to 'Editar', edit_unity_path(unity) , class: 'btn btn-primary btn-sm' %>
           <%= link_to(unity, method: :delete, data: { confirm: 'Tens certeza?', verify: unity.cnes, verify_text: 'Caso tenha, por favor digite o número do CNES dessa UBS para continuar' }, class: 'btn btn-danger btn-sm') do %>
           <i class="fa fa-trash-o"></i>
         <%end%>
