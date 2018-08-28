@@ -57,3 +57,4 @@ gem 'shog'                      # Colorized console logging
 gem 'pg_search'
 gem "font-awesome-rails"
 gem 'data-confirm-modal'
+gem "cpf_cnpj"

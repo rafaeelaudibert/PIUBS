@@ -91,6 +91,7 @@ GEM
     coffee-script-source (1.12.2)
     colorize (0.8.1)
     concurrent-ruby (1.0.5)
+    cpf_cnpj (0.5.0)
     crass (1.0.4)
     data-confirm-modal (1.6.2)
       railties (>= 3.0)
@@ -293,6 +294,7 @@ DEPENDENCIES
   carrierwave
   chromedriver-helper
   coffee-rails (~> 4.2)
+  cpf_cnpj
   data-confirm-modal
   database_cleaner
   devise
