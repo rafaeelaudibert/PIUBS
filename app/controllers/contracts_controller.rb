@@ -4,7 +4,7 @@ class ContractsController < ApplicationController
   # GET /contracts
   # GET /contracts.json
   def index
-    @contracts = Contract.paginate(page: params[:page], per_page: 10)
+    @contracts = Contract.paginate(page: params[:page], per_page: 25)
   end
 
   # GET /contracts/1
