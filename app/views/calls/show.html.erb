@@ -162,6 +162,10 @@
         </div>
       <%end%>
     <% end %>
+    <button type="button" id="reply-2" class="btn btn-primary">New Reply</button>
+    <% if current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
+      <button type="button" id="faq-reply-2" class="btn btn-primary">Reply from FAQ</button>
+    <% end %>
   </div>
 </div>
 
@@ -203,23 +207,53 @@
 </div>
 
 <script>
-  $("#reply").click(function () {
-    $("#reply_box").toggle(200);
+  // Reply buttons
+  $("#reply").click(e => {
+    if (e.target.parentNode == $("#reply_box")[0].parentNode) {
+      $("#reply_box").toggle(200);
+    } else {
+      $("#reply_box").hide(0);
+      e.target.parentNode.appendChild(document.getElementById('reply_box'));
+      $("#reply_box").show(200);
+    }
+    $("#faq_box").hide(200);
+  });
+  $("#reply-2").click(e => {
+    if (e.target.parentNode == $("#reply_box")[0].parentNode) {
+      $("#reply_box").toggle(200);
+    } else {
+      $("#reply_box").hide(0);
+      e.target.parentNode.appendChild(document.getElementById('reply_box'));
+      $("#reply_box").show(200);
+    }
     $("#faq_box").hide(200);
   });
 
-  $("#new-reply").click(function () {
-    $("#reply_box").toggle(200);
-    $("#faq_box").hide(200);
-  });
-
-  $("#faq-reply").click(function () {
+  // FAQ buttons
+  $("#faq-reply").click(e => {
+    if (e.target.parentNode == $("#faq_box")[0].parentNode) {
+      $("#faq_box").toggle(200);
+    } else {
+      $("#faq_box").hide(0);
+      e.target.parentNode.appendChild(document.getElementById('faq_box'));
+      $("#faq_box").show(200);
+    }
     $("#reply_box").hide(200);
-    $("#faq_box").toggle(200);
+  });
+  $("#faq-reply-2").click(e => {
+    if (e.target.parentNode == $("#faq_box")[0].parentNode) {
+      $("#faq_box").toggle(200);
+    } else {
+      $("#faq_box").hide(0);
+      e.target.parentNode.appendChild(document.getElementById('faq_box'));
+      $("#faq_box").show(200);
+    }
+    $("#reply_box").hide(200);
   });
 
-  $("#cancel").click(function () {
-    $("#reply_box").toggle(200);
+  // CANCEL button
+  $("#cancel").click(() => {
+    $("#reply_box").hide(200);
   });
 </script>
 
