@@ -154,40 +154,48 @@
               </span>
             <% end %>
             <span class="badge badge-pill badge-dark">
-              <%= reply.status %>
-            </span>
+              <% options = ['Aberto', 'Em Andamento', 'Fechado'] %>
+                <%= options[reply.status] if reply.status%>
+              </span>
+            </div>
           </div>
         </div>
-      </div>
-    <%end%>
-  <% end %>
-</div>
+      <%end%>
+    <% end %>
+    <button type="button" id="reply-2" class="btn btn-primary">New Reply</button>
+    <% if current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
+      <button type="button" id="faq-reply-2" class="btn btn-primary">Reply from FAQ</button>
+    <% end %>
+  </div>
 </div>
 
 <% if @call.answer_id %>
-<div class="card card-primary">
-  <div class="card-header" id="headingTwo">
-    <div class="header-block">
-      <p class="title" style="color: white">
-        <i class="fa fa-envelope mr-2"></i>
-        Final Answer</p>
+  <div class="card card-primary">
+    <div class="card-header" id="headingTwo">
+      <div class="header-block">
+        <p class="title" style="color: white">
+          <i class="fa fa-envelope mr-2"></i>
+          Final Answer</p>
+      </div>
     </div>
-  </div>
-  <div class="card-block">
-    <% answer = Answer.find(@call.answer_id) %>
-      <span class="badge badge-pill badge-dark m-1">
-        <%= answer.created_at %></span>
-      <span class="badge badge-pill badge-dark m-1">support</span><hr/>
-      <%= answer.answer.html_safe %>
-      <% if answer.attachment.length > 0 %>
-        <hr/>
-        <strong class='m-2'>
-          Attachments
-        </strong>
-        <br/>
-        <br/>
-        <% answer.attachment.each do |_attachment| %>
-            <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %> <i class="fa fa-file-text mr-1"></i> <%= truncate(_attachment.filename, length: 10, omission: '...')%> <%end%>
+    <div class="card-block">
+      <% answer = Answer.find(@call.answer_id) %>
+        <span class="badge badge-pill badge-dark m-1">
+          <%= answer.created_at %></span>
+        <span class="badge badge-pill badge-dark m-1">support</span><hr/>
+        <%= answer.answer.html_safe %>
+        <% if answer.attachment.length > 0 %>
+          <hr/>
+          <strong class='m-2'>
+            Attachments
+          </strong>
+          <br/>
+          <br/>
+          <% answer.attachment.each do |_attachment| %>
+            <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+            <i class="fa fa-file-text mr-1"></i>
+            <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+          <%end%>
         <% end %>
       <% end %>
     </div>
@@ -199,23 +207,53 @@
 </div>
 
 <script>
-  $("#reply").click(function () {
-    $("#reply_box").toggle(200);
+  // Reply buttons
+  $("#reply").click(e => {
+    if (e.target.parentNode == $("#reply_box")[0].parentNode) {
+      $("#reply_box").toggle(200);
+    } else {
+      $("#reply_box").hide(0);
+      e.target.parentNode.appendChild(document.getElementById('reply_box'));
+      $("#reply_box").show(200);
+    }
+    $("#faq_box").hide(200);
+  });
+  $("#reply-2").click(e => {
+    if (e.target.parentNode == $("#reply_box")[0].parentNode) {
+      $("#reply_box").toggle(200);
+    } else {
+      $("#reply_box").hide(0);
+      e.target.parentNode.appendChild(document.getElementById('reply_box'));
+      $("#reply_box").show(200);
+    }
     $("#faq_box").hide(200);
   });
 
-  $("#new-reply").click(function () {
-    $("#reply_box").toggle(200);
-    $("#faq_box").hide(200);
-  });
-
-  $("#faq-reply").click(function () {
+  // FAQ buttons
+  $("#faq-reply").click(e => {
+    if (e.target.parentNode == $("#faq_box")[0].parentNode) {
+      $("#faq_box").toggle(200);
+    } else {
+      $("#faq_box").hide(0);
+      e.target.parentNode.appendChild(document.getElementById('faq_box'));
+      $("#faq_box").show(200);
+    }
     $("#reply_box").hide(200);
-    $("#faq_box").toggle(200);
+  });
+  $("#faq-reply-2").click(e => {
+    if (e.target.parentNode == $("#faq_box")[0].parentNode) {
+      $("#faq_box").toggle(200);
+    } else {
+      $("#faq_box").hide(0);
+      e.target.parentNode.appendChild(document.getElementById('faq_box'));
+      $("#faq_box").show(200);
+    }
+    $("#reply_box").hide(200);
   });
 
-  $("#cancel").click(function () {
-    $("#reply_box").toggle(200);
+  // CANCEL button
+  $("#cancel").click(() => {
+    $("#reply_box").hide(200);
   });
 </script>
 
@@ -235,16 +273,15 @@
       }
 
       const formChildren = finalAnswer.children[1].children;
-      const answerField = formChildren[3].children[1];
+      const answerDivField = formChildren[2].children[1];
+      const answerField = answerDivField.children[1];
       answerField.value = parent.children[0].innerHTML;
 
       const floatRight = parent.children[3].children
-      const faqField = formChildren[8];
-      console.log(faqField.style.display);
+      const faqField = formChildren[2].children[6];
       faqField.style.display = floatRight.length == 2
         ? 'none'
         : 'inline-flex';
-      console.log(floatRight);
     }
   </script>
 <% end %>

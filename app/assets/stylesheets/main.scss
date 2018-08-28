@@ -1,6 +1,10 @@
 //btn
 .btn {
   border-radius: 0.1rem !important;
+
+  &:hover:disabled {
+    color: #050805;
+  }
 }
 
 //form

@@ -1,12 +1,12 @@
-<p id="notice"><%= notice %></p>
 <%= content_for :body_title do%>
-<%= @city.name %>
-<small class="text-muted">
-  <%= @city.state.name %></small>
+<h4 class="display-5"><%= @city.name %>
+  <small class="text-muted" style="font-size: 1.8rem">
+    <%= @city.state.name %></small>
+</h4>
+
 <%end%>
 
 <h1 class="h3">Unidades Básicas de Saúde:</h1>
-<br/><br/>
 
 <% if @ubs.length > 0 %>
 <table class="table table-bordered table-striped table-hover">
@@ -14,7 +14,7 @@
     <tr>
       <th>CNES</th>
       <th>Name</th>
-      <th colspan="3"></th>
+      <th colspan="3">Ações</th>
     </tr>
   </thead>
   <tbody>
@@ -30,8 +30,40 @@
   </table>
 <% else %>
   <h1 class="h6">
-    This city has no UBS in the database.
-    <%= "You can insert one clicking in the button below" if current_user.try(:admin?) %>
+    Essa cidade não tem nenhuma UBS cadastrada no banco de dados.
+    <%= "Você pode inserir uma clicando no botão abaixo" if current_user.try(:admin?) %>
+  </h1>
+<% end %>
+
+<br/>
+<h1 class="h3">Contrato:</h1>
+<% if @contract %>
+  <table class="table table-bordered table-striped table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th>Nº do Contrato</th>
+        <th>SEI</th>
+        <th colspan="3">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><%= @contract.contract_number %></td>
+        <td><%= @contract.sei %></td>
+        <td>
+          <% if @contract.filename %>
+            <%= link_to "Clique para fazer download", download_contract_path(id: @contract.id), class: 'btn btn-primary btn-sm' %>
+          <% else %>
+            <button class="btn btn-primary btn-sm" disabled="disabled">Não há arquivos anexados</button>
+          <% end %>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+<% else %>
+  <h1 class="h6">
+    Essa cidade não tem contratos cadastrados no banco de dados.
+    <%= "Você pode adicionar um clicando no botão abaixo." if current_user.try(:admin?) %>
   </h1>
 <% end %>
 

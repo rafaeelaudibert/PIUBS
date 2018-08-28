@@ -2,6 +2,9 @@
   <span class='user-name'><%= link_to user.name, user%></span>
   <span><%= mail_to user.email, 'Send e-mail', class: 'btn btn-primary' %></span>
 </td>
+<td class="user">
+  <%= CPF.new(user.cpf).formatted %>
+</td>
 <td class='user user-role'>
   <%= form_for(user) do |f| %>
   <div class="form-group">
