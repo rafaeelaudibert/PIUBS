@@ -187,76 +187,79 @@
         <br/>
         <br/>
         <% answer.attachment.each do |_attachment| %>
-            <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %> <i class="fa fa-file-text mr-1"></i> <%= truncate(_attachment.filename, length: 10, omission: '...')%> <%end%>
-        <% end %>
+          <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+          <i class="fa fa-file-text mr-1"></i>
+          <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+        <%end%>
       <% end %>
-    </div>
+    <% end %>
   </div>
+</div>
 <% end %>
 
 <div id="final-answer" style="display: none">
-  <%= render 'finalAnswer', answer: @answer %>
+<%= render 'finalAnswer', answer: @answer %>
 </div>
 
 <script>
-  $("#reply").click(function () {
-    $("#reply_box").toggle(200);
-    $("#faq_box").hide(200);
-  });
+$("#reply").click(function () {
+  $("#reply_box").toggle(200);
+  $("#faq_box").hide(200);
+});
 
-  $("#new-reply").click(function () {
-    $("#reply_box").toggle(200);
-    $("#faq_box").hide(200);
-  });
+$("#new-reply").click(function () {
+  $("#reply_box").toggle(200);
+  $("#faq_box").hide(200);
+});
 
-  $("#faq-reply").click(function () {
-    $("#reply_box").hide(200);
-    $("#faq_box").toggle(200);
-  });
+$("#faq-reply").click(function () {
+  $("#reply_box").hide(200);
+  $("#faq_box").toggle(200);
+});
 
-  $("#cancel").click(function () {
-    $("#reply_box").toggle(200);
-  });
+$("#cancel").click(function () {
+  $("#reply_box").toggle(200);
+});
 </script>
 
 <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-  <script>
-    function toggleFinalAnswer(button) {
+<script>
+  function toggleFinalAnswer(button) {
 
-      const finalAnswer = $('#final-answer')[0];
-      const parent = button.parentNode;
+    const finalAnswer = $('#final-answer')[0];
+    const parent = button.parentNode;
 
-      if (parent.lastChild == finalAnswer) {
-        $('#final-answer').toggle(200);
-      } else {
-        $('#final-answer').hide();
-        parent.appendChild(finalAnswer);
-        $('#final-answer').show(200);
-      }
-
-      const formChildren = finalAnswer.children[1].children;
-      const answerField = formChildren[3].children[1];
-      answerField.value = parent.children[0].innerHTML;
-
-      const floatRight = parent.children[3].children
-      const faqField = formChildren[8];
-      console.log(faqField.style.display);
-      faqField.style.display = floatRight.length == 2
-        ? 'none'
-        : 'inline-flex';
-      console.log(floatRight);
+    if (parent.lastChild == finalAnswer) {
+      $('#final-answer').toggle(200);
+    } else {
+      $('#final-answer').hide();
+      parent.appendChild(finalAnswer);
+      $('#final-answer').show(200);
     }
-  </script>
+
+    const formChildren = finalAnswer.children[1].children;
+    const answerDivField = formChildren[2].children[1];
+    const answerField = answerDivField.children[1];
+    answerField.value = parent.children[0].innerHTML;
+
+    const floatRight = parent.children[3].children
+    const faqField = formChildren[2].children[6];
+    faqField.style.display = floatRight.length == 2
+      ? 'none'
+      : 'inline-flex';
+    console.log(floatRight);
+  }
+</script>
 <% end %>
 <style>
-  #reply_description_ifr {
-    height: 250px !important;
-  }
+#reply_description_ifr {
+  height: 250px !important;
+}
 
-  #mceu_30 {
-    display: none;
-  }
-  .btn.btn-oval {
-    border-radius: 25px !important;
-  }
+#mceu_30 {
+  display: none;
+}
+.btn.btn-oval {
+  border-radius: 25px !important;
+}
 </style>
