@@ -5,10 +5,11 @@ class AnswerMailer < ApplicationMailer
   #
   #   en.answer_mailer.notification.subject
   #
-  def notification(call, current_user)
+  def notification(call, answer, current_user)
     @call = call
     @call_user = User.find(@call.user_id)
     @current_user = current_user
+    @answer = answer
     @link = "#{root_url}calls/#{@call.protocol}"
 
     mail to: @call_user.email
