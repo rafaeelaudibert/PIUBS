@@ -21,7 +21,7 @@
     <%= form.text_area :description, class: 'tinymce', :rows => 40, :cols => 120 %>
   </div>
 
-  <% if is_support_user %>
+  <% if is_support_user || current_user.try(:admin?)%>
     <div class="field">
       <%= select("reply", "status", options_for_select([["aberto", 0],["em andamento",1],["fechado",2]], @reply.status), {include_blank: true}, class: 'form-control') %>
     </div>

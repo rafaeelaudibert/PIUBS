@@ -62,7 +62,7 @@
   <hr/>
 
   <button type="button" id="reply" class="btn btn-primary">New Reply</button>
-  <% if current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
+  <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
     <button type="button" id="faq-reply" class="btn btn-primary">Reply from FAQ</button>
   <% end %>
 </div>
@@ -163,7 +163,7 @@
       <%end%>
     <% end %>
     <button type="button" id="reply-2" class="btn btn-primary">New Reply</button>
-    <% if current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
+    <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
       <button type="button" id="faq-reply-2" class="btn btn-primary">Reply from FAQ</button>
     <% end %>
   </div>
