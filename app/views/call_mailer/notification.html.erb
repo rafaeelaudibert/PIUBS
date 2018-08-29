@@ -1,5 +1,24 @@
-<h1>Call#notification</h1>
+<h1>PIUBS</h1>
 
 <p>
-  <%= @greeting %>, find me in app/views/call_mailer/notification.html.erb
+  Olá,
+  <b><%= @current_user.name %></b>, você abriu um novo atendimento.
+</p>
+
+<p>
+  Protocolo:
+  <b><%= @call.protocol %></b>
+</p>
+
+<p>
+  Atendimento:
+  <b><%= @call.title %></b>
+</p>
+
+<p>
+  <%= @call.created_at.strftime("%d %b %y - %H:%M:%S") %>
+</p>
+
+<p>
+  <a href="<%= @link %>">Clique aqui para acessar o PIUBS e visualizar o atendimento completo</a>
 </p>

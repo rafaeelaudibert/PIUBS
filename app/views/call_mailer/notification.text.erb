@@ -1,3 +1,11 @@
-Call#notification
+PIUBS
 
-<%= @greeting %>, find me in app/views/call_mailer/notification.text.erb
+Olá, <%= @call_user.name %>, você abriu um novo atendimento.
+
+Protocolo: <%= @call.protocol %>
+
+Atendimento: <%= @call.title %>
+
+<%= @call.created_at.strftime("%d %b %y - %H:%M:%S") %>
+
+<%= link_to "Clique aqui para acessar o PIUBS e visualizar o atendimento completo", @link %>

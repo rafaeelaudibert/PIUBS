@@ -5,9 +5,11 @@ class CallMailer < ApplicationMailer
   #
   #   en.call_mailer.notification.subject
   #
-  def notification
-    @greeting = "Hi"
+  def notification(call, current_user)
+    @call = call
+    @current_user = current_user
+    @link = "#{root_url}calls/#{@call.protocol}"
 
-    mail to: "to@example.org"
+    mail to: @current_user.email
   end
 end
