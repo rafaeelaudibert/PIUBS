@@ -1,0 +1,13 @@
+toolbar:
+  - styleselect bold italic | undo redo | image link | emoticons | forecolor backcolor | preview restoredraft
+menubar:
+  - view
+plugins:
+  - image
+  - link
+  - autolink
+  - autosave
+  - wordcount
+  - emoticons
+  - preview
+  - textcolor
