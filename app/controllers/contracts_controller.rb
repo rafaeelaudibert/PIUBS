@@ -2,13 +2,11 @@ class ContractsController < ApplicationController
   before_action :set_contract, only: %i[show edit update destroy download]
 
   # GET /contracts
-  # GET /contracts.json
   def index
     @contracts = Contract.paginate(page: params[:page], per_page: 25)
   end
 
   # GET /contracts/1
-  # GET /contracts/1.json
   def show; end
 
   # GET /contracts/new
@@ -25,59 +23,40 @@ class ContractsController < ApplicationController
   end
 
   # POST /contracts
-  # POST /contracts.json
   def create
     @contract = Contract.new(contract_params)
-
-    respond_to do |format|
-      if hasOneCity # If there already is a city with this ID in the database
-        @contract.errors.add(:city_id, :blank, message: 'This city already have a contract linked to it')
-        format.html { render :new }
-        format.json { render json: @contract.errors, status: :unprocessable_entity }
-      elsif !checkPDF
-        @contract.errors.add(:filename, :blank, message: 'You must insert a file and it MUST be in the PDF format')
-        format.html { render :edit }
-        format.json { render json: @contract.errors, status: :unprocessable_entity }
-      elsif @contract.save
-        format.html { redirect_to @contract, notice: 'Contract was successfully created.' }
-        format.json { render :show, status: :created, location: @contract }
-      else
-        format.html { render :new }
-        format.json { render json: @contract.errors, status: :unprocessable_entity }
-      end
+    if hasOneCity # If there already is a city with this ID in the database
+      @contract.errors.add(:city_id, :blank, message: 'This city already have a contract linked to it')
+      render :new
+    elsif !checkPDF
+      @contract.errors.add(:filename, :blank, message: 'You must insert a file and it MUST be in the PDF format')
+      render :new
+    elsif @contract.save
+      redirect_to @contract, notice: 'Contract was successfully created.'
+    else
+      render :new
     end
   end
 
   # PATCH/PUT /contracts/1
-  # PATCH/PUT /contracts/1.json
   def update
-    respond_to do |format|
-      if hasOneCityEdit(@contract.city_id) # If there already is a city with this ID in the database
-        @contract.errors.add(:city_id, :blank, message: 'This city already have a contract linked to it')
-        format.html { render :edit }
-        format.json { render json: @contract.errors, status: :unprocessable_entity }
-      elsif !checkPDF
-        @contract.errors.add(:filename, :blank, message: 'You must insert a file and it MUST be in the PDF format')
-        format.html { render :edit }
-        format.json { render json: @contract.errors, status: :unprocessable_entity }
-      elsif @contract.update(contract_params)
-        format.html { redirect_to @contract, notice: 'Contract was successfully updated.' }
-        format.json { render :show, status: :ok, location: @contract }
-      else
-        format.html { render :edit }
-        format.json { render json: @contract.errors, status: :unprocessable_entity }
-      end
+    if hasOneCityEdit(@contract.city_id) # If there already is a city with this ID in the database
+      @contract.errors.add(:city_id, :blank, message: 'This city already have a contract linked to it')
+      render :edit
+    elsif !checkPDF
+      @contract.errors.add(:filename, :blank, message: 'You must insert a file and it MUST be in the PDF format')
+      render :edit
+    elsif @contract.update(contract_params)
+      redirect_to @contract, notice: 'Contract was successfully updated.'
+    else
+      render :edit
     end
   end
 
   # DELETE /contracts/1
-  # DELETE /contracts/1.json
   def destroy
     @contract.destroy
-    respond_to do |format|
-      format.html { redirect_to contracts_url, notice: 'Contract was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    redirect_to contracts_url, notice: 'Contract was successfully destroyed.'
   end
 
   # GET /contract/:id/download

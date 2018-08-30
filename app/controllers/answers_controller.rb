@@ -13,7 +13,6 @@ class AnswersController < ApplicationController
   end
 
   # GET /answers/1
-  # GET /answers/1.json
   def show; end
 
   # GET /answers/new
@@ -27,32 +26,30 @@ class AnswersController < ApplicationController
   def edit; end
 
   # POST /answers
-  # POST /answers.json
   def create
     ans_params = answer_params
     files = ans_params.delete(:file) if ans_params[:file]
     @answer = Answer.new(ans_params)
-    respond_to do |format|
-      if @answer.save
-        if params[:question_id]
-          @call = Call.find(params[:question_id])
-          @call.answer_id = @answer.id
-          raise 'We could not set the call answer_id properly. Please check it' unless @call.save
-        end
-        if files
-          parsed_params = attachment_params files
-          parsed_params[:filename].each_with_index do |_filename, _index|
-            @attachment = Attachment.new(eachAttachment(parsed_params, _index, @answer.id))
-            raise 'Não consegui anexar o arquivo. Por favor tente mais tarde' unless @attachment.save
-          end
-        end
-        AnswerMailer.notification(@call, @answer, current_user).deliver
-        format.html { redirect_to @call, notice: 'Final answer was successfully marked.' }
-        format.json { render :show, status: :created, location: @answer }
-      else
-        format.html { render :new }
-        format.json { render json: @answer.errors, status: :unprocessable_entity }
+
+    if @answer.save
+      if params[:question_id]
+        @call = Call.find(params[:question_id])
+        @call.answer_id = @answer.id
+        raise 'We could not set the call answer_id properly. Please check it' unless @call.save
       end
+
+      if files
+        parsed_params = attachment_params files
+        parsed_params[:filename].each_with_index do |_filename, _index|
+          @attachment = Attachment.new(eachAttachment(parsed_params, _index, @answer.id))
+          raise 'Não consegui anexar o arquivo. Por favor tente mais tarde' unless @attachment.save
+        end
+      end
+
+      AnswerMailer.notification(@call, @answer, current_user).deliver
+      redirect_to @call, notice: 'Final answer was successfully marked.'
+    else
+      render :new
     end
   end
 

@@ -8,7 +8,6 @@ class AttachmentsController < ApplicationController
   end
 
   # GET /attachments/1
-  # GET /attachments/1.json
   def show; end
 
   # GET /attachments/new
@@ -20,7 +19,6 @@ class AttachmentsController < ApplicationController
   def edit; end
 
   # POST /attachments
-  # POST /attachments.json
   def create
     parsed_params = attachment_params
     parsed_params[:filename].each_with_index do |_filename, _index|
@@ -28,39 +26,26 @@ class AttachmentsController < ApplicationController
       raise 'Não consegui anexar o arquivo. Por favor tente mais tarde' unless @attachment.save
     end
 
-    respond_to do |format|
-      if @attachment.save
-        format.html { redirect_to @attachment, notice: 'Attachment was successfully created.' }
-        format.json { render :show, status: :created, location: @attachment }
-      else
-        format.html { render :new }
-        format.json { render json: @attachment.errors, status: :unprocessable_entity }
-      end
+    if @attachment.save
+      redirect_to @attachment, notice: 'Attachment was successfully created.'
+    else
+      render :new
     end
   end
 
   # PATCH/PUT /attachments/1
-  # PATCH/PUT /attachments/1.json
   def update
-    respond_to do |format|
-      if @attachment.update(attachment_params)
-        format.html { redirect_to @attachment, notice: 'Attachment was successfully updated.' }
-        format.json { render :show, status: :ok, location: @attachment }
-      else
-        format.html { render :edit }
-        format.json { render json: @attachment.errors, status: :unprocessable_entity }
-      end
+    if @attachment.update(attachment_params)
+      redirect_to @attachment, notice: 'Attachment was successfully updated.'
+    else
+      render :edit
     end
   end
 
   # DELETE /attachments/1
-  # DELETE /attachments/1.json
   def destroy
     @attachment.destroy
-    respond_to do |format|
-      format.html { redirect_to attachments_url, notice: 'Attachment was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    redirect_to attachments_url, notice: 'Attachment was successfully destroyed.'
   end
 
   # GET /attachment/:id/download

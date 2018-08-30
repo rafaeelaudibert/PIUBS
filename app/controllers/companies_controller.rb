@@ -24,49 +24,28 @@ class CompaniesController < ApplicationController
   def edit; end
 
   # POST /companies
-  # POST /companies.json
   def create
     @company = Company.new(company_params)
-
-    respond_to do |format|
-      begin
-        if @company.save
-          format.html { redirect_to new_user_invitation_path(sei: @company.sei), notice: 'Company was successfully created. Please add its admin' }
-          format.json { render :show, status: :created, location: @company }
-        else
-          handleError format, :new, ''
-        end
-      rescue StandardError
-        handleError format, :new, 'This sei already exists in the database.'
-      end
+    if @company.save
+      redirect_to new_user_invitation_path(sei: @company.sei), notice: 'Company was successfully created. Please add its admin'
+    else
+      render :new
     end
   end
 
   # PATCH/PUT /companies/1
-  # PATCH/PUT /companies/1.json
   def update
-    respond_to do |format|
-      begin
-        if @company.update(company_params)
-          format.html { redirect_to @company, notice: 'Company was successfully updated.' }
-          format.json { render :show, status: :ok, location: @company }
-        else
-          handleError format, :edit, ''
-        end
-      rescue StandardError
-        handleError format, :edit, 'This SEI already exists in the database'
-      end
+    if @company.update(company_params)
+      redirect_to @company, notice: 'Company was successfully updated.'
+    else
+      render :edit
     end
   end
 
   # DELETE /companies/1
-  # DELETE /companies/1.json
   def destroy
     @company.destroy
-    respond_to do |format|
-      format.html { redirect_to companies_url, notice: 'Company was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    redirect_to companies_url, notice: 'Company was successfully destroyed.'
   end
 
   private
