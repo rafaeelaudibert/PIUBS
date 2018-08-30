@@ -4,5 +4,6 @@ class Call < ApplicationRecord
   belongs_to :state
   belongs_to :company, class_name: 'Company', foreign_key: :sei
   belongs_to :answer, optional: true
+  validates :protocol, presence: true, uniqueness: true
   has_many :replies, class_name: 'Reply', foreign_key: :protocol
 end
