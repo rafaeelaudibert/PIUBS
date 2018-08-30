@@ -47,7 +47,7 @@ class AnswersController < ApplicationController
       end
 
       AnswerMailer.notification(@call, @answer, current_user).deliver
-      redirect_to @call, notice: 'Final answer was successfully marked.'
+      redirect_to (@call || root_path), notice: 'Final answer was successfully marked.'
     else
       render :new
     end
