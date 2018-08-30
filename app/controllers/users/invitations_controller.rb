@@ -94,6 +94,12 @@ class Users::InvitationsController < Devise::InvitationsController
 
   def update_sanitized_params
     devise_parameter_sanitizer.permit(:accept_invitation, keys: [:name, :password, :password_confirmation, :invitation_token, :cpf])
+    begin
+      params.require(:user).require(:name)
+      params.require(:user).require(:cpf)
+    rescue
+      redirect_back fallback_location: not_found_path, alert: "Por favor, preencha todos os campos."
+    end
   end
 
   def create_sanitized_params

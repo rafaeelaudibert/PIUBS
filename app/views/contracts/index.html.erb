@@ -26,6 +26,7 @@
     <tr>
       <th>Nº do Contrato</th>
       <th>Cidade</th>
+      <th>Estado</th>
       <th>SEI</th>
       <th colspan="3">Ações</th>
     </tr>
@@ -36,8 +37,14 @@
       <tr>
         <td><%= contract.contract_number %></td>
         <td><%= contract.city.name %></td>
+        <td><%= contract.city.state.name %></td>
         <td><%= contract.sei %></td>
-        <td><%= link_to 'Mostrar', contract , class: 'btn btn-primary btn-sm' %>
+        <td>
+          <% if contract.filename %>
+            <%= link_to "Clique para fazer download", download_contract_path(id: contract.id), class: 'btn btn-primary btn-sm' %>
+          <% else %>
+            <button class="btn btn-primary btn-sm" disabled="disabled">Não há arquivos anexados</button>
+          <% end %>
           <%= link_to(contract, method: :delete, data: { confirm: 'Tens certeza?', verify: contract.contract_number, verify_text: 'Caso tenha, por favor digite o número do contrato para continuar' }, class: 'btn btn-danger btn-sm') do %>
           <i class="fa fa-trash-o"></i>
         <%end%>

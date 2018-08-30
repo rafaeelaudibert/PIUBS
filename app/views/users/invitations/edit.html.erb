@@ -6,6 +6,7 @@
         <%= image_tag("icons/logo.png", :alt => "Apoio à empresa") %>
           PIUBS </h1>
       </header>
+      <%= render 'layouts/messages' %>
       <div class="auth-content">
         <p class="text-center">INFORME SEUS DADOS</p>
           <%= form_for resource, :as => resource_name, :url => invitation_path(resource_name), :html => { :method => :put } do |f| %>
