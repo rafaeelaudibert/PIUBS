@@ -27,7 +27,7 @@ class CompaniesController < ApplicationController
   def create
     @company = Company.new(company_params)
     if @company.save
-      redirect_to new_user_invitation_path(sei: @company.sei), notice: 'Company was successfully created. Please add its admin'
+      redirect_to new_user_invitation_path(sei: @company.sei, role: 'company_admin'), notice: 'Company was successfully created. Please add its admin'
     else
       render :new
     end
