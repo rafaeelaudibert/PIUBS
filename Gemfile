@@ -48,6 +48,8 @@ end
 gem 'binding_of_caller'
 
 # PIUBS used gems
+gem "validators"
+gem "cpf_cnpj"
 gem "mail_form", ">= 1.3.0" #send mail
 gem 'will_paginate', '~> 3.1.0' # Pagination
 gem 'carrierwave'

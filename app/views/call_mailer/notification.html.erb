@@ -2,7 +2,7 @@
 
 <p>
   Olá,
-  <b><%= @call_user.name %></b>, seu atendimento tem uma nova resposta final.
+  <b><%= @current_user.name %></b>, você abriu um novo atendimento.
 </p>
 
 <p>
@@ -16,13 +16,7 @@
 </p>
 
 <p>
-  Resposta final:
-  <br>
-  <%= @answer.answer.html_safe %>
-</p>
-
-<p>
-  <%= @answer.created_at.strftime("%d %b %y - %H:%M:%S") %>
+  <%= @call.created_at.strftime("%d %b %y - %H:%M:%S") %>
 </p>
 
 <p>

@@ -31,6 +31,12 @@
 
 en:
   activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            cpf:
+              invalid_cpf: 'no formato inválido. Por favor, insira seus dados corretamente'
     models:
       city:
         zero: "cidades"

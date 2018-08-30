@@ -5,7 +5,7 @@
           <div class="form-group">
             <% resource.class.invite_key_fields.each do |field| -%>
               <p><%= f.label field %>
-              <%= f.text_field field, :autofocus => true, class: 'form-control' %></p>
+              <%= f.text_field field, :autofocus => true, class: 'form-control', required: true %></p>
             <% end -%>
           </div>
           <div class="form-group">
@@ -13,7 +13,7 @@
               <%= f.hidden_field :role, :value => $roles_allowed[0] %>
             <% else %>
               <%= f.label "Escolha o tipo de usuário" %>
-              <%= f.select(:role, $roles_allowed, {:include_blank => "Selecione", :selected => nil}, {:class => "form-control"})%>
+              <%= f.select(:role, $roles_allowed, {:include_blank => "Selecione", :selected => nil}, {:class => "form-control", required: true})%>
             <% end %>
           </div>
           <% if current_user.admin? %>
