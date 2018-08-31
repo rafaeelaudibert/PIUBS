@@ -12,7 +12,6 @@ class Users::InvitationsController < Devise::InvitationsController
   def new
     @role = params[:role] if params[:role]
     @sei = params[:sei].to_i if params[:sei]
-    pp @role, @sei
     super
   end
 
