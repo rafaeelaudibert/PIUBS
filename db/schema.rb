@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_24_121832) do
+ActiveRecord::Schema.define(version: 2018_08_30_111704) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -56,6 +56,7 @@ ActiveRecord::Schema.define(version: 2018_08_24_121832) do
     t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.bigint "answer_id"
+    t.integer "cnes"
     t.index ["answer_id"], name: "index_calls_on_answer_id"
     t.index ["category_id"], name: "index_calls_on_category_id"
     t.index ["city_id"], name: "index_calls_on_city_id"
@@ -172,6 +173,7 @@ ActiveRecord::Schema.define(version: 2018_08_24_121832) do
   add_foreign_key "calls", "cities"
   add_foreign_key "calls", "companies", column: "sei", primary_key: "sei"
   add_foreign_key "calls", "states"
+  add_foreign_key "calls", "unities", column: "cnes", primary_key: "cnes"
   add_foreign_key "calls", "users"
   add_foreign_key "cities", "states"
   add_foreign_key "contracts", "cities"
