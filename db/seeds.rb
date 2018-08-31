@@ -245,3 +245,5 @@ def main
   seed_replies
   Rails.logger.warn('[FINISH] SEED')
 end
+
+main
