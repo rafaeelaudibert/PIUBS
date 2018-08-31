@@ -16,7 +16,6 @@ class CallsController < ApplicationController
   end
 
   # GET /calls/1
-  # GET /calls/1.json
   def show
     @answer = Answer.new
     @reply = Reply.new
@@ -26,13 +25,13 @@ class CallsController < ApplicationController
   # GET /calls/new
   def new
     @call = Call.new
+    @company = Company.find(params[:sei]) if params[:sei]
   end
 
   # GET /calls/1/edit
   def edit; end
 
   # POST /calls
-  # POST /calls.json
   def create
     @call = Call.new(call_params)
     # status, severity, protocol, company_id
@@ -43,30 +42,22 @@ class CallsController < ApplicationController
     @call.severity = 'Normal'
     @call.user_id = user.id
     @call.id = @call.protocol
+    @call.company ||= Company.find(0)
 
-    respond_to do |format|
-      if @call.save
-        format.html { redirect_to @call, notice: 'Call was successfully created.' }
-        format.json { render :show, status: :created, location: @call }
-        CallMailer.notification(@call,current_user).deliver
-      else
-        format.html { render :new }
-        format.json { render json: @call.errors, status: :unprocessable_entity }
-      end
+    if @call.save
+      redirect_to @call, notice: 'Call was successfully created.'
+      CallMailer.notification(@call,current_user).deliver
+    else
+      render :new
     end
   end
 
   # PATCH/PUT /calls/1
-  # PATCH/PUT /calls/1.json
   def update
-    respond_to do |format|
-      if @call.update(call_params)
-        format.html { redirect_to @call, notice: 'Call was successfully updated.' }
-        format.json { render :show, status: :ok, location: @call }
-      else
-        format.html { render :edit }
-        format.json { render json: @call.errors, status: :unprocessable_entity }
-      end
+    if @call.update(call_params)
+      redirect_to @call, notice: 'Call was successfully updated.'
+    else
+      render :edit
     end
   end
 
@@ -74,10 +65,7 @@ class CallsController < ApplicationController
   # DELETE /calls/1.json
   def destroy
     @call.destroy
-    respond_to do |format|
-      format.html { redirect_to calls_url, notice: 'Call was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    redirect_to calls_url, notice: 'Call was successfully destroyed.'
   end
 
   private
@@ -104,6 +92,6 @@ class CallsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def call_params
-    params.require(:call).permit(:title, :description, :finished_at, :status, :version, :access_profile, :feature_detail, :answer_summary, :severity, :protocol, :city_id, :category_id, :state_id, :company_id)
+    params.require(:call).permit(:title, :description, :finished_at, :status, :version, :access_profile, :feature_detail, :answer_summary, :severity, :protocol, :city_id, :category_id, :state_id, :company_id, :cnes)
   end
 end

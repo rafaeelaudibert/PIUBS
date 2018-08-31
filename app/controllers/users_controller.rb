@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_action :authenticate_user!
-  before_action :admin_only, :except => [:show]
+  before_action :admin_only, except: [:show]
 
   def index
     @users = User.all
@@ -25,8 +25,7 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    user = User.find(params[:id])
-    user.destroy
+    User.find(params[:id]).destroy
     redirect_to users_path, notice: 'User deleted.'
   end
 
@@ -77,7 +76,6 @@ class UsersController < ApplicationController
   end
 
   def secure_params
-    params.require(:user).permit(:role, :name, :cpf)
+    params.require(:user).permit(:role, :name, :cpf, :sei, :cnes, :city_id)
   end
-
 end

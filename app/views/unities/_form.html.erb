@@ -49,30 +49,30 @@
       </option>
     </select>
   </div>
+
+  <script>
+
+    let stateSelect = document.getElementById('unity_state_id');
+    let citySelect = document.getElementById('unity_city_id');
+
+    stateSelect.addEventListener('change', () => jQuery.ajax({
+      url: '/cities/states/' + stateSelect.value,
+      type: "GET",
+      dataType: "json",
+      success: insertData
+    }));
+
+    function insertData(cities) {
+      let innerHTML = '';
+      for (city of cities) {
+        innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
+      }
+      citySelect.innerHTML = innerHTML || '<option value="0"> Selecione um Estado primeiro </option>';
+    }
+  </script>
 <% end %>
 
 <%= form.submit 'Save', :class => 'btn btn-primary btn-sm' %>
 <%= link_to 'Cancel', unities_path, :class => 'btn btn-danger btn-sm' %>
 
 <% end %>
-
-<script>
-
-let stateSelect = document.getElementById('unity_state_id');
-let citySelect = document.getElementById('unity_city_id');
-
-stateSelect.addEventListener('change', () => jQuery.ajax({
-  url: '/cities/states/' + stateSelect.value,
-  type: "GET",
-  dataType: "json",
-  success: insertData
-}));
-
-function insertData(cities) {
-  let innerHTML = '';
-  for (city of cities) {
-    innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
-  }
-  citySelect.innerHTML = innerHTML || '<option value="0"> Selecione um Estado primeiro </option>';
-}
-</script>

@@ -13,18 +13,25 @@ Rails.logger.level = Logger::INFO # Options for logger.level DEBUG < INFO < WARN
 # Creates the users, except company_admin and company_user ones
 def seed_users
   Rails.logger.info('[START]  -- Users insertion')
-  User.roles.each do |_role|
-    next if _role == 'company_admin' || _role == 'company_user' # Prevent from creating this, as they will be already created later
-    _role_name = _role[0]
-    _role_id = _role[1]
-    _email = _role_name + '@piubs.com'
-    _passwd = 'changeme'
-    user = User.new(cpf: CPF.generate, name: _role_name.capitalize, email: _email, password: _passwd, password_confirmation: _passwd, role: _role_name)
-    if user.save
-      Rails.logger.debug("User #{_email} was created successfuly!")
-    else
-      Rails.logger.error("Error creating user #{_email}!")
+
+  if User.new(cpf: CPF.generate, name: 'Admin Master', email: 'admin@piubs.com', password: 'changeme', password_confirmation: 'changeme', role: 'admin', sei: 0).save
+    User.roles.each do |_role|
+      next if _role[0] == 'admin' || _role[0] == 'company_admin' || _role[0] == 'company_user' # Prevent from creating this, as they will be already created later or have already been created
+      _role_name = _role[0]
+      _role_id = _role[1]
+      _email = _role_name + '@piubs.com'
+      _passwd = 'changeme'
+      user = User.new(cpf: CPF.generate, name: _role_name.capitalize, email: _email, password: _passwd, password_confirmation: _passwd, role: _role_name)
+      if user.save
+        Rails.logger.debug("User #{_email} was created successfuly!")
+      else
+        Rails.logger.error("Error creating user #{_email}!")
+        Rails.logger.error(user.errors.full_messages)
+      end
     end
+  else
+    Rails.logger.fatal('Error creating ADMIN MASTER USER!')
+    raise
   end
   Rails.logger.info('[FINISH] -- Users insertion')
 end
@@ -36,6 +43,7 @@ def seed_company_user(company, role_name)
     Rails.logger.debug("User #{_email} was created successfuly!")
   else
     Rails.logger.error("Error creating user #{_email}!")
+    Rails.logger.error(user.errors.full_messages)
   end
 end
 
@@ -45,6 +53,7 @@ def seed_unity(cnes, name, city)
     Rails.logger.debug("INSERTED a UNITY in #{city.name}: #{name}")
   else
     Rails.logger.error("ERROR inserting UNITY in #{city.name}: #{name}")
+    Rails.logger.error(ubs.errors.full_messages)
   end
 end
 
@@ -60,6 +69,7 @@ def seed_city(city_name, state)
     seed_contract(city)
   else
     Rails.logger.error("ERROR inserting CITY in #{state.name}: #{city_name}")
+    Rails.logger.error(city.errors.full_messages)
   end
 end
 
@@ -75,6 +85,7 @@ def seed_states
       Rails.logger.info("[FINISH] -- #{state.name} cities insertion")
     else
       Rails.logger.error("ERROR inserting STATE #{_estado['nome']}")
+      Rails.logger.error(state.errors.full_messages)
     end
   end
   Rails.logger.info('[FINISH] -- States insertion')
@@ -92,20 +103,27 @@ def seed_contract(city)
     Rails.logger.debug("INSERTED a CONTRACT in the database: #{sei}#{city.id}")
   else
     Rails.logger.error("ERROR inserting CONTRACT: #{sei}#{city.id}")
+    Rails.logger.error(contract.errors.full_messages)
   end
 end
 
 def seed_companies
   Rails.logger.info('[START]  -- Companies insertion')
-  (1..20).each do |_sei|
-    company = Company.new('sei' => _sei)
-    if company.save
-      Rails.logger.debug("INSERTED a COMPANY in the database: #{_sei}")
-      seed_company_user company, 'company_admin'
-      seed_company_user company, 'company_user'
-    else
-      Rails.logger.error("ERROR inserting COMPANY #{_sei}")
+  if Company.new(sei: 0).save
+    (1..20).each do |_sei|
+      company = Company.new(sei: _sei)
+      if company.save
+        Rails.logger.debug("INSERTED a COMPANY in the database: #{_sei}")
+        seed_company_user company, 'company_admin'
+        seed_company_user company, 'company_user'
+      else
+        Rails.logger.error("ERROR inserting COMPANY #{_sei}")
+        Rails.logger.error(company.errors.full_messages)
+      end
     end
+  else
+    Rails.logger.fatal('ERROR inserting MAIN COMPANY')
+    raise
   end
   Rails.logger.info('[FINISH] -- Companies insertion')
 end
@@ -118,6 +136,7 @@ def seed_categories
       Rails.logger.debug("Inserted a new category: #{_category}")
     else
       Rails.logger.error('ERROR creating a CATEGORY')
+      Rails.logger.error(category.errors.full_messages)
     end
   end
   Rails.logger.info('[FINISH] -- Categories insertion')
@@ -138,6 +157,7 @@ def seed_answers
       Rails.logger.debug('Inserted a new answer')
     else
       Rails.logger.error('ERROR creating an ANSWER')
+      Rails.logger.error(answer.errors.full_messages)
     end
   end
   Rails.logger.info('[FINISH] -- Answers (and FAQ) insertion')
@@ -167,11 +187,13 @@ def seed_calls
                     state_id: City.find(my_city).state.id,
                     sei: companies.sample.sei,
                     user_id: allowedUsers.sample.id,
-                    id: protocol)
+                    id: protocol,
+                    cnes: Unity.where(city_id: my_city).sample.cnes)
     if call.save
       Rails.logger.debug('Inserted a new call')
     else
       Rails.logger.error('ERROR creating a CALL')
+      Rails.logger.error(call.errors.full_messages)
     end
   end
   Rails.logger.info('[FINISH] -- Calls insertion')
@@ -197,6 +219,7 @@ def seed_replies
       seed_faq_from_replies(call, reply) if reply.faq
     else
       Rails.logger.error('ERROR creating a REPLY')
+      Rails.logger.error(reply.errors.full_messages)
     end
   end
   Rails.logger.info('[FINISH] -- Replies (and FAQ) insertion')
@@ -212,15 +235,15 @@ def seed_faq_from_replies(_call, _reply)
     Rails.logger.debug('Inserted a new FAQ answer')
   else
     Rails.logger.error('ERROR creating a FAQ ANSWER')
-    pp answer
+    Rails.logger.error(answer.errors.full_messages)
   end
 end
 
 def main
   Rails.logger.warn('[START]  SEED')
-  seed_users
   seed_companies
-  seed_states
+  seed_users
+  seed_states # Cities are also seed'd here
   seed_categories
   seed_answers
   seed_calls

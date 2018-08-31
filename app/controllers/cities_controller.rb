@@ -8,7 +8,6 @@ class CitiesController < ApplicationController
   end
 
   # GET /cities/1
-  # GET /cities/1.json
   def show
     @ubs = @city.unity_ids.sort
     @contract = @city.contract
@@ -24,42 +23,28 @@ class CitiesController < ApplicationController
   def edit; end
 
   # POST /cities
-  # POST /cities.json
   def create
     @city = City.new(city_params)
-    respond_to do |format|
-      if @city.save
-        format.html { redirect_to @city, notice: 'City was successfully created.' }
-        format.json { render :show, status: :created, location: @city }
-      else
-        format.html { render :new }
-        format.json { render json: @city.errors, status: :unprocessable_entity }
-      end
+    if @city.save
+      redirect_to @city, notice: 'City was successfully created.'
+    else
+      render :new
     end
   end
 
   # PATCH/PUT /cities/1
-  # PATCH/PUT /cities/1.json
   def update
-    respond_to do |format|
-      if @city.update(city_params)
-        format.html { redirect_to @city, notice: 'City was successfully updated.' }
-        format.json { render :show, status: :ok, location: @city }
-      else
-        format.html { render :edit }
-        format.json { render json: @city.errors, status: :unprocessable_entity }
-      end
+    if @city.update(city_params)
+      redirect_to @city, notice: 'City was successfully updated.'
+    else
+      render :edit
     end
   end
 
   # DELETE /cities/1
-  # DELETE /cities/1.json
   def destroy
     @city.destroy
-    respond_to do |format|
-      format.html { redirect_to cities_url, notice: 'City was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    redirect_to cities_url, notice: 'City was successfully destroyed.'
   end
 
   # GET /cities/states

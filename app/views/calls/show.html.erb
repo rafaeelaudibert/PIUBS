@@ -49,6 +49,8 @@
   <% end %>
 
   <hr/>
+  <%= t :ubs %>:
+  <span class="badge badge-pill badge-light m-2"><%= @call.unity.name %></span>
   <%= t :city %>:
   <span class="badge badge-pill badge-light m-2"><%= @call.city.name %></span>
   <%= t :uf %>
@@ -182,6 +184,8 @@
       <% answer = Answer.find(@call.answer_id) %>
         <span class="badge badge-pill badge-dark m-1">
           <%= answer.created_at %></span>
+        <span class="badge badge-pill badge-dark m-1">
+          <%= User.find(answer.user_id).name %></span>
         <span class="badge badge-pill badge-dark m-1">support</span><hr/>
         <%= answer.answer.html_safe %>
         <% if answer.attachment.length > 0 %>

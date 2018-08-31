@@ -37,15 +37,89 @@
     <%= form.text_field :feature_detail, class: 'form-control boxed' %>
   </div>
 
-  <div class="field">
-    <%= form.label :city_id, 'Cidade' %>
-    <%= form.collection_select(:city_id, City.all, :id, :name, {include_blank: "Selecione uma cidade: "}, class: 'form-control boxed') %>
-  </div>
+  <% if @company %>
+    <div class="form-group">
+      <%= form.label :state_id, 'Estado' %>
+      <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[state_id]" id="call_state_id" class="form-control boxed">
+        <option value="0">
+          Selecione um Estado
+        </option>
+        <% State.where(id: @company.state_ids).each do |_state| %>
+          <option value="<%= _state.id %>">
+            <%= _state.name %>
+          </option>
+        <% end %>
+      </select>
+    </div>
 
-  <div class="field">
-    <%= form.label :state_id, 'Estado' %>
-    <%= form.collection_select(:state_id, get_all_states, :id, :name, {include_blank: "Selecione um Estado: "}, class: 'form-control boxed') %>
-  </div>
+    <div class="form-group">
+      <%= form.label :city_id, 'Cidade' %>
+      <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[city_id]" id="call_city_id" class="form-control boxed">
+        <option value="0">
+          Selecione um Estado primeiro
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :cnes, 'UBS' %>
+      <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[cnes]" id="call_cnes" class="form-control boxed">
+        <option value="0">
+          Selecione uma Cidade primeiro
+        </option>
+      </select>
+    </div>
+    <script>
+
+      const retrieveQuery = () => {
+        const data = {};
+        location.search.slice(1).split('&').forEach(parte => data[parte.split('=')[0]] = parte.split('=')[1]);
+
+        return data;
+      }
+      const query = retrieveQuery();
+
+      const stateSelect = document.getElementById('call_state_id');
+      const citySelect = document.getElementById('call_city_id');
+      const ubsSelect = document.getElementById('call_cnes')
+      const triggeredByState = () => jQuery.ajax({url: `/companies/${query.sei}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
+      const trigerredByCity = () => jQuery.ajax({url: `/companies/${query.sei}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
+      stateSelect.addEventListener('change', triggeredByState);
+      citySelect.addEventListener('change', trigerredByCity);
+
+      function insertCitiesData(cities) {
+        let innerHTML = '';
+        for (city of cities) {
+          innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
+        }
+        citySelect.innerHTML = innerHTML || '<option value="0"> Selecione um Estado primeiro </option>';
+        trigerredByCity(); // Updates the unity select as well
+      }
+
+      function insertUBSData(unities) {
+        let innerHTML = '';
+        for (unity of unities) {
+          innerHTML += '<option value=' + unity.cnes + '>' + unity.name + '</option>'
+        }
+        ubsSelect.innerHTML = innerHTML || '<option value="0"> Selecione uma Cidade primeiro </option>';
+      }
+    </script>
+  <% else %>
+    <div class="field">
+      <%= form.label :city_id, 'Cidade' %>
+      <%= form.collection_select(:city_id, City.all.sample(50), :id, :name, {include_blank: "Selecione uma cidade: "}, class: 'form-control boxed') %>
+    </div>
+
+    <div class="field">
+      <%= form.label :state_id, 'Estado' %>
+      <%= form.collection_select(:state_id, get_all_states, :id, :name, {include_blank: "Selecione um Estado: "}, class: 'form-control boxed') %>
+    </div>
+
+    <div class="field">
+      <%= form.label :cnes, 'UBS' %>
+      <%= form.collection_select(:cnes, Unity.all.sample(10), :cnes, :name, {include_blank: "Selecione uma UBS: "}, class: 'form-control boxed') %>
+    </div>
+  <% end %>
 
   <div class="field">
     <%= form.label :category_id, 'Categoria' %>
