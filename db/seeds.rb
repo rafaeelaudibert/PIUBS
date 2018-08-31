@@ -38,7 +38,8 @@ end
 
 def seed_company_user(company, role_name)
   _email = "#{role_name}_#{company.sei}@piubs.com"
-  user = User.new(sei: company.sei, cpf: CPF.generate, name: role_name, email: _email, password: 'changeme', password_confirmation: 'changeme', role: role_name)
+  user = User.new(cpf: CPF.generate, name: role_name, email: _email, password: 'changeme', password_confirmation: 'changeme', role: role_name)
+  user.sei = company.sei # Gambiarra, sorry
   if user.save
     Rails.logger.debug("User #{_email} was created successfuly!")
   else
