@@ -21,7 +21,7 @@ class RepliesController < ApplicationController
   def create
     @reply = Reply.new(reply_params)
     @reply.user_id = current_user.id
-    @reply.category = is_support_user ? 'support' : 'reply'
+    @reply.category = is_support_user || current_user.try(:admin?) ? 'support' : 'reply'
     if @reply.save
       redirect_to call_path(@reply.protocol), notice: 'Reply was successfully created.'
       ReplyMailer.notification(@reply, current_user).deliver
