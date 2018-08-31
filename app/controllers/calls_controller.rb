@@ -46,6 +46,7 @@ class CallsController < ApplicationController
 
     if @call.save
       redirect_to @call, notice: 'Call was successfully created.'
+      CallMailer.notification(@call,current_user).deliver
     else
       render :new
     end
