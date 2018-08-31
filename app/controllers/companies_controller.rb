@@ -48,6 +48,21 @@ class CompaniesController < ApplicationController
     redirect_to companies_url, notice: 'Company was successfully destroyed.'
   end
 
+  # get /companies/1/cities/1
+  def getCities
+    @company = Company.find(params[:id])
+    respond_to do |format|
+      format.js { render json: City.where(id: @company.city_ids, state_id: params[:state_id]) }
+    end
+  end
+
+  def getUnities
+    @company = Company.find(params[:id])
+    respond_to do |format|
+      format.js { render json: Unity.where(city_id: params[:city_id]).order('name ASC') }
+    end
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.

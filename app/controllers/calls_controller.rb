@@ -25,6 +25,7 @@ class CallsController < ApplicationController
   # GET /calls/new
   def new
     @call = Call.new
+    @company = Company.find(params[:sei]) if params[:sei]
   end
 
   # GET /calls/1/edit
@@ -41,6 +42,7 @@ class CallsController < ApplicationController
     @call.severity = 'Normal'
     @call.user_id = user.id
     @call.id = @call.protocol
+    @call.company ||= Company.find(0)
 
     if @call.save
       redirect_to @call, notice: 'Call was successfully created.'
@@ -89,6 +91,6 @@ class CallsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def call_params
-    params.require(:call).permit(:title, :description, :finished_at, :status, :version, :access_profile, :feature_detail, :answer_summary, :severity, :protocol, :city_id, :category_id, :state_id, :company_id)
+    params.require(:call).permit(:title, :description, :finished_at, :status, :version, :access_profile, :feature_detail, :answer_summary, :severity, :protocol, :city_id, :category_id, :state_id, :company_id, :cnes)
   end
 end
