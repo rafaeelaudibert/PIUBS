@@ -3,5 +3,5 @@ class City < ApplicationRecord
   has_many :unity
   has_many :users
   has_one :contract
-  validates :name, presence: true, uniqueness: true
+  validates :name, presence: true
 end
