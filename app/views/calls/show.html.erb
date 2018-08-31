@@ -289,7 +289,7 @@
       const formChildren = finalAnswer.children[1].children;
       const answerDivField = formChildren[2].children[1];
       const answerField = answerDivField.children[1];
-      answerField.value = parent.children[0].innerHTML;
+      answerField.innerHTML = parent.parentNode.children[1].innerText;
 
       const floatRight = parent.children[3].children
       const faqField = formChildren[2].children[6];
