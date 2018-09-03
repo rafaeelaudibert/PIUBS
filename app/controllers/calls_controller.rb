@@ -33,20 +33,33 @@ class CallsController < ApplicationController
 
   # POST /calls
   def create
-    @call = Call.new(call_params)
+    call_parameters = call_params
+    files = call_parameters.delete(:file) if call_parameters[:file]
+    @call = Call.new(call_parameters)
     # status, severity, protocol, company_id
     user = current_user
     @call.sei = user.sei
     @call.status = 0
-    @call.protocol = get_protocol
+    @call.protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
     @call.severity = 'Normal'
     @call.user_id = user.id
     @call.id = @call.protocol
     @call.company ||= Company.find(0)
 
     if @call.save
+      if files
+        parsed_params = attachment_params files
+        parsed_params[:filename].each_with_index do |_filename, _index|
+          @attachment = Attachment.new(eachAttachment(parsed_params, _index))
+          raise 'Não consegui anexar o arquivo. Por favor tente mais tarde' unless @attachment.save
+
+          @link = AttachmentLink.new(attachment_id: @attachment.id, call_id: @call.id, source: 'call')
+          raise 'Não consegui criar o link entre arquivo e o atendimento. Por favor tente mais tarde' unless @link.save
+        end
+      end
+
+      CallMailer.notification(@call, current_user).deliver
       redirect_to @call, notice: 'Call was successfully created.'
-      CallMailer.notification(@call,current_user).deliver
     else
       render :new
     end
@@ -75,23 +88,33 @@ class CallsController < ApplicationController
     @call = Call.find(params[:id])
   end
 
-  def get_current_time
-    Time.zone.now.strftime('%H%M%S')
-  end
-
-  def get_current_date
-    Date.today.strftime('%d%m%Y')
-  end
-
-  def get_protocol
-    user = format('%05d', current_user.id.to_i) # Leading zeros, allowing to have 99999 users
-    time = get_current_time
-    date = get_current_date
-    protocol = "#{date}#{time}#{user}"
-  end
-
   # Never trust parameters from the scary internet, only allow the white list through.
   def call_params
-    params.require(:call).permit(:title, :description, :finished_at, :status, :version, :access_profile, :feature_detail, :answer_summary, :severity, :protocol, :city_id, :category_id, :state_id, :company_id, :cnes)
+    params.require(:call).permit(:title, :description, :finished_at, :status, :version, :access_profile, :feature_detail, :answer_summary, :severity, :protocol, :city_id, :category_id, :state_id, :company_id, :cnes, file: [])
+  end
+
+  ## ATTACHMENTS STUFF
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def attachment_params(file)
+    parameters = {}
+    if file
+      parameters[:filename] = []
+      parameters[:content_type] = []
+      parameters[:file_contents] = []
+      file.each do |_file|
+        parameters[:filename].append(File.basename(_file.original_filename))
+        parameters[:content_type].append(_file.content_type)
+        parameters[:file_contents].append(_file.read)
+      end
+    end
+    parameters
+  end
+
+  def eachAttachment(_parsed_params, _index)
+    new_params = {}
+    new_params[:filename] = _parsed_params[:filename][_index]
+    new_params[:content_type] = _parsed_params[:content_type][_index]
+    new_params[:file_contents] = _parsed_params[:file_contents][_index]
+    new_params
   end
 end

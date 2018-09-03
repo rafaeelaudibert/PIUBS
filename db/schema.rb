@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_30_111704) do
+ActiveRecord::Schema.define(version: 2018_09_02_130001) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,14 +27,25 @@ ActiveRecord::Schema.define(version: 2018_08_30_111704) do
     t.index ["user_id"], name: "index_answers_on_user_id"
   end
 
+  create_table "attachment_links", force: :cascade do |t|
+    t.bigint "answer_id"
+    t.bigint "reply_id"
+    t.bigint "call_id"
+    t.integer "source"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "attachment_id"
+    t.index ["answer_id"], name: "index_attachment_links_on_answer_id"
+    t.index ["call_id"], name: "index_attachment_links_on_call_id"
+    t.index ["reply_id"], name: "index_attachment_links_on_reply_id"
+  end
+
   create_table "attachments", force: :cascade do |t|
     t.string "filename"
     t.string "content_type"
     t.binary "file_contents"
-    t.bigint "answer_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["answer_id"], name: "index_attachments_on_answer_id"
   end
 
   create_table "calls", force: :cascade do |t|
@@ -167,7 +178,7 @@ ActiveRecord::Schema.define(version: 2018_08_30_111704) do
 
   add_foreign_key "answers", "categories"
   add_foreign_key "answers", "users"
-  add_foreign_key "attachments", "answers"
+  add_foreign_key "attachment_links", "attachments"
   add_foreign_key "calls", "answers"
   add_foreign_key "calls", "categories"
   add_foreign_key "calls", "cities"

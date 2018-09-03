@@ -1,7 +1,8 @@
 class Answer < ApplicationRecord
   belongs_to :category
   belongs_to :user
-  has_many :attachment
+  has_many :attachment_links
+  has_many :attachments, through: :attachment_links
   has_many :call
   validates :question, presence: true
   validates :answer, presence: true

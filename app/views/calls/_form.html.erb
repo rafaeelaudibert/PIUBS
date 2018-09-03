@@ -126,7 +126,71 @@
     <%= form.collection_select(:category_id, Category.all, :id, :name, {include_blank: "Selecione uma Categoria: "}, class: 'form-control boxed') %>
   </div>
 
+  <div class="form-group input-group">
+    <br/>
+    <%= form.label :file, 'Anexar arquivos', class: "btn btn-secondary btn-file input-group-btn" %>
+    <%= form.file_field :file, class: 'form-control-file', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 2.megabytes}, style:"display: none"%>
+    <%= form.text_field :file_text, class:"form-control", readonly: true %>
+  </div>
+
   <%= form.submit 'Criar atendimento', :class => 'btn btn-primary btn-sm' %>
   <%= link_to 'Cancelar', calls_path, :class => 'btn btn-danger btn-sm' %>
 </div>
 <% end %>
+
+<script>
+function validateFiles(inputFile) {
+
+  var size = 0;
+  var maxFileSize = $(inputFile).data('max-file-size');
+
+  $.each(inputFile.files, function () {
+    if (this.size) {
+      size += this.size;
+    }
+  });
+
+  if (size && maxFileSize && size > parseInt(maxFileSize)) {
+    const animation = {
+      "in": "bounceIn",
+      "out": "fadeOutUpBig"
+    };
+    const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
+    Notification.create("<%= 'Warning' %>", '<%= "This file exceeds the maximum allowed file size (2 MB)" %>', heart, animation, 2, 5);
+    $(inputFile).val('');
+  };
+}
+
+$(function () {
+
+  // We can attach the `fileselect` event to all file inputs on the page
+  $(document).on('change', ':file', function () {
+    var input = $(this),
+      numFiles = input.get(0).files
+        ? input.get(0).files.length
+        : 1,
+      label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+    input.trigger('fileselect', [numFiles, label]);
+  });
+
+  // We can watch for our custom `fileselect` event like this
+  $(document).ready(function () {
+    $(':file').on('fileselect', function (event, numFiles, label) {
+
+      var input = $(this).parents('.input-group').find(':text'),
+        log = numFiles > 1
+          ? numFiles + ' files selected'
+          : label;
+
+      if (input.length) {
+        input.val(log);
+      } else {
+        if (log) 
+          alert(log);
+        }
+      
+    });
+  });
+
+});
+</script>

@@ -48,266 +48,366 @@
     </p>
   <% end %>
 
-  <hr/>
-  <%= t :ubs %>:
-  <span class="badge badge-pill badge-light m-2"><%= @call.unity.name %></span>
-  <%= t :city %>:
-  <span class="badge badge-pill badge-light m-2"><%= @call.city.name %></span>
-  <%= t :uf %>
-  <span class="badge badge-pill badge-light m-2"><%= @call.state.name %></span>
-  <%= t :status %>
-  <span class="badge badge-pill badge-light m-2"><%= @call.status %></span>
-  <%= t :severity %>
-  <span class="badge badge-pill badge-light m-2"><%= @call.severity %></span>
-  <%= t :category %>
-  <span class="badge badge-pill badge-light m-2"><%= @call.category.name %></span>
-  <hr/>
-
-  <button type="button" id="reply" class="btn btn-primary">New Reply</button>
-  <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-    <button type="button" id="faq-reply" class="btn btn-primary">Reply from FAQ</button>
+  <% if @call.attachments.length > 0 %>
+    <hr/>
+    <strong class='m-2'>
+      Attachments
+    </strong>
+    <br/>
+    <br/>
+    <% @call.attachments.each do |_attachment| %>
+      <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+      <i class="fa fa-file-text mr-1"></i>
+      <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+    <%end%>
   <% end %>
+<% end %>
+
+<hr/>
+<%= t :ubs %>:
+<span class="badge badge-pill badge-light m-2"><%= @call.unity.name %></span>
+<%= t :city %>:
+<span class="badge badge-pill badge-light m-2"><%= @call.city.name %></span>
+<%= t :uf %>
+<span class="badge badge-pill badge-light m-2"><%= @call.state.name %></span>
+<%= t :status %>
+<span class="badge badge-pill badge-light m-2"><%= @call.status %></span>
+<%= t :severity %>
+<span class="badge badge-pill badge-light m-2"><%= @call.severity %></span>
+<%= t :category %>
+<span class="badge badge-pill badge-light m-2"><%= @call.category.name %></span>
+<hr/>
+
+<button type="button" id="reply" class="btn btn-primary">New Reply</button>
+<% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
+  <button type="button" id="faq-reply" class="btn btn-primary">Reply from FAQ</button>
+<% end %>
 </div>
 </div>
 
 <div class="card card-primary" style="display: none" id="reply_box">
 <div class="card-header pl-2">
-  <div class="header-block">
-    <p class="title" style="color: white;">
-      <i class="fa fa-mail-forward mr-2"></i>Reply Call</p>
-  </div>
+<div class="header-block">
+  <p class="title" style="color: white;">
+    <i class="fa fa-mail-forward mr-2"></i>Reply Call</p>
+</div>
 </div>
 <div class="card-body">
-  <%= render 'reply', reply: @reply %>
+<%= render 'reply', reply: @reply %>
 </div>
 </div>
 
 <div class="card card-primary" style="display: none" id="faq_box">
 <div class="card-header pl-2">
-  <div class="header-block">
-    <p class="title" style="color: white;">
-      <i class="fa fa-mail-forward mr-2"></i>FAQ List:</p>
-  </div>
+<div class="header-block">
+  <p class="title" style="color: white;">
+    <i class="fa fa-mail-forward mr-2"></i>FAQ List:</p>
+</div>
 
 </div>
 <div class="card-body">
-  <%= render 'answer', categories: @categories %>
+<%= render 'answer', categories: @categories %>
 </div>
 </div>
 <br/><br/><br/>
 <div class="card card-primary">
 <div class="card-header" id="headingTwo">
-  <div class="header-block">
-    <p class="title" style="color: white">
-      <i class="fa fa-comment-o mr-2"></i>
-      Replies</p>
-  </div>
+<div class="header-block">
+  <p class="title" style="color: white">
+    <i class="fa fa-comment-o mr-2"></i>
+    Replies</p>
+</div>
 </div>
 <div class="card-block">
-  <% @call.replies.each do |reply| %>
+<% @call.replies.each do |reply| %>
 
-    <% if reply.category == 'reply' %>
-      <div class="card card-default mb-3" style="box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
-        <div class="card-header">
-          <em class="fa fa-comment-o m-2"></em>
-          <span class="badge badge-pill badge-dark m-2">
-            <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
-          </span>
-          -
-          <strong class="m-2">
-            <%= User.find(reply.user_id).name %>
-          </strong>
-          added a reply.
+  <% if reply.category == 'reply' %>
+    <div class="card card-default mb-3" style="box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
+      <div class="card-header">
+        <em class="fa fa-comment-o m-2"></em>
+        <span class="badge badge-pill badge-dark m-2">
+          <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+        </span>
+        -
+        <strong class="m-2">
+          <%= User.find(reply.user_id).name %>
+        </strong>
+        added a reply.
 
-        </div>
-        <div class="card-body" style="padding: 5px 30px 15px">
-          <p class="card-text">
-            <%= reply.description.html_safe %>
-          </p>
-        </div>
       </div>
-    <%end%>
-
-    <% if reply.category == 'support' %>
-      <div class="card card-default mb-3" style="border-left: 5px solid #85CE36; box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
-        <div class="card-header">
-          <em class="fa fa-comment-o m-2"></em>
-          <span class="badge badge-pill badge-dark m-1">
-            <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
-          </span>
-          <span class="badge badge-pill badge-dark m-1">support</span>
-          -
-          <strong class="m-2">
-            <%= User.find(reply.user_id).name %>
-          </strong>
-          added a support.
-        </div>
-        <div class="card-block">
-
+      <div class="card-body" style="padding: 5px 30px 15px">
+        <p class="card-text">
           <%= reply.description.html_safe %>
-          <hr/>
-          <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-            <%= link_to 'Mark as Final Answer', '#', onclick: 'toggleFinalAnswer(this)', class: 'btn btn-primary btn-sm' %>
+
+          <% if reply.attachments.length > 0 %>
+            <hr/>
+            <strong class='m-2'>
+              Attachments
+            </strong>
+            <br/>
+            <br/>
+            <% reply.attachments.each do |_attachment| %>
+              <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+              <i class="fa fa-file-text mr-1"></i>
+              <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+            <%end%>
           <% end %>
-          <div style="float: right">
-            <% if reply.faq == true %>
-              <span class="badge badge-pill badge-dark">
-                ON FAQ
-              </span>
-            <% end %>
-            <span class="badge badge-pill badge-dark">
-              <% options = ['Aberto', 'Em Andamento', 'Fechado'] %>
-                <%= options[reply.status] if reply.status%>
-              </span>
-            </div>
-          </div>
-        </div>
-      <%end%>
-    <% end %>
-    <button type="button" id="reply-2" class="btn btn-primary">New Reply</button>
-    <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-      <button type="button" id="faq-reply-2" class="btn btn-primary">Reply from FAQ</button>
-    <% end %>
+        <% end %>
+      </p>
+    </div>
   </div>
+<%end%>
+
+<% if reply.category == 'support' %>
+  <div class="card card-default mb-3" style="border-left: 5px solid #85CE36; box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
+    <div class="card-header">
+      <em class="fa fa-comment-o m-2"></em>
+      <span class="badge badge-pill badge-dark m-1">
+        <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+      </span>
+      <span class="badge badge-pill badge-dark m-1">support</span>
+      -
+      <strong class="m-2">
+        <%= User.find(reply.user_id).name %>
+      </strong>
+      added a support.
+    </div>
+    <div class="card-block">
+      <%= reply.description.html_safe %>
+
+      <% if reply.attachments.length > 0 %>
+        <hr/>
+        <strong class='m-2'>
+          Attachments
+        </strong>
+        <br/>
+        <br/>
+        <% reply.attachments.each do |_attachment| %>
+          <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+          <i class="fa fa-file-text mr-1"></i>
+          <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+        <%end%>
+      <% end %>
+    <% end %>
+
+    <hr/>
+    <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
+      <%= link_to 'Mark as Final Answer', '#', onclick: 'toggleFinalAnswer(this)', class: 'btn btn-primary btn-sm' %>
+    <% end %>
+    <div style="float: right">
+      <% if reply.faq == true %>
+        <span class="badge badge-pill badge-dark">
+          ON FAQ
+        </span>
+      <% end %>
+      <span class="badge badge-pill badge-dark">
+        <% options = ['Aberto', 'Em Andamento', 'Fechado'] %>
+          <%= options[reply.status] if reply.status%>
+        </span>
+      </div>
+    </div>
+  </div>
+<%end%>
+<% end %>
+<button type="button" id="reply-2" class="btn btn-primary">New Reply</button>
+<% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
+<button type="button" id="faq-reply-2" class="btn btn-primary">Reply from FAQ</button>
+<% end %>
+</div>
 </div>
 
 <% if @call.answer_id %>
-  <div class="card card-primary">
-    <div class="card-header" id="headingTwo">
-      <div class="header-block">
-        <p class="title" style="color: white">
-          <i class="fa fa-envelope mr-2"></i>
-          Final Answer</p>
-      </div>
-    </div>
-    <div class="card-block">
-      <% answer = Answer.find(@call.answer_id) %>
-        <span class="badge badge-pill badge-dark m-1">
-          <%= answer.created_at %></span>
-        <span class="badge badge-pill badge-dark m-1">
-          <%= User.find(answer.user_id).name %></span>
-        <span class="badge badge-pill badge-dark m-1">support</span><hr/>
-        <%= answer.answer.html_safe %>
-        <% if answer.attachment.length > 0 %>
-          <hr/>
-          <strong class='m-2'>
-            Attachments
-          </strong>
-          <br/>
-          <br/>
-          <% answer.attachment.each do |_attachment| %>
-            <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
-            <i class="fa fa-file-text mr-1"></i>
-            <%= truncate(_attachment.filename, length: 10, omission: '...')%>
-          <%end%>
-        <% end %>
-      <% end %>
-    </div>
-  </div>
+<div class="card card-primary">
+<div class="card-header" id="headingTwo">
+<div class="header-block">
+  <p class="title" style="color: white">
+    <i class="fa fa-envelope mr-2"></i>
+    Final Answer</p>
+</div>
+</div>
+<div class="card-block">
+<% answer = Answer.find(@call.answer_id) %>
+  <span class="badge badge-pill badge-dark m-1">
+    <%= answer.created_at %></span>
+  <span class="badge badge-pill badge-dark m-1">
+    <%= User.find(answer.user_id).name %></span>
+  <span class="badge badge-pill badge-dark m-1">support</span><hr/>
+  <%= answer.answer.html_safe %>
+  <% if answer.attachments.length > 0 %>
+    <hr/>
+    <strong class='m-2'>
+      Attachments
+    </strong>
+    <br/>
+    <br/>
+    <% answer.attachments.each do |_attachment| %>
+      <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+      <i class="fa fa-file-text mr-1"></i>
+      <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+    <%end%>
+  <% end %>
+<% end %>
+</div>
+</div>
 <% end %>
 
 <div id="final-answer" style="display: none">
-  <%= render 'finalAnswer', answer: @answer %>
+<%= render 'finalAnswer', answer: @answer %>
 </div>
 
 <script>
 
-  const cleanMCE = () => {
-    tinymce.EditorManager.execCommand('mceRemoveEditor', true, 'tinymce');
-    tinymce.EditorManager.execCommand('mceAddEditor', true, 'tinymce');
-    $('#tinymce_ifr').css('height', '300px');
-  }
-  // Reply buttons
-  $("#reply").click(e => {
-    if (e.target.parentNode == $("#reply_box")[0].parentNode) {
-      $("#reply_box").toggle(200);
-    } else {
-      $("#reply_box").hide(0);
-      e.target.parentNode.appendChild(document.getElementById('reply_box'));
-      cleanMCE();
-      $("#reply_box").show(200);
-    }
-    $("#faq_box").hide(200);
-  });
-  $("#reply-2").click(e => {
-    if (e.target.parentNode == $("#reply_box")[0].parentNode) {
-      $("#reply_box").toggle(200);
-    } else {
-      $("#reply_box").hide(0);
-      e.target.parentNode.appendChild(document.getElementById('reply_box'));
-      cleanMCE();
-      $("#reply_box").show(200);
-    }
-    $("#faq_box").hide(200);
-  });
+const cleanMCE = () => {
+tinymce.EditorManager.execCommand('mceRemoveEditor', true, 'tinymce');
+tinymce.EditorManager.execCommand('mceAddEditor', true, 'tinymce');
+$('#tinymce_ifr').css('height', '300px');
+}
+// Reply buttons
+$("#reply").click(e => {
+if (e.target.parentNode == $("#reply_box")[0].parentNode) {
+$("#reply_box").toggle(200);
+} else {
+$("#reply_box").hide(0);
+e.target.parentNode.appendChild(document.getElementById('reply_box'));
+cleanMCE();
+$("#reply_box").show(200);
+}
+$("#faq_box").hide(200);
+});
+$("#reply-2").click(e => {
+if (e.target.parentNode == $("#reply_box")[0].parentNode) {
+$("#reply_box").toggle(200);
+} else {
+$("#reply_box").hide(0);
+e.target.parentNode.appendChild(document.getElementById('reply_box'));
+cleanMCE();
+$("#reply_box").show(200);
+}
+$("#faq_box").hide(200);
+});
 
-  // FAQ buttons
-  $("#faq-reply").click(e => {
-    if (e.target.parentNode == $("#faq_box")[0].parentNode) {
-      $("#faq_box").toggle(200);
-    } else {
-      $("#faq_box").hide(0);
-      e.target.parentNode.appendChild(document.getElementById('faq_box'));
-      cleanMCE();
-      $("#faq_box").show(200);
-    }
-    $("#reply_box").hide(200);
-  });
-  $("#faq-reply-2").click(e => {
-    if (e.target.parentNode == $("#faq_box")[0].parentNode) {
-      $("#faq_box").toggle(200);
-    } else {
-      $("#faq_box").hide(0);
-      e.target.parentNode.appendChild(document.getElementById('faq_box'));
-      cleanMCE();
-      $("#faq_box").show(200);
-    }
-    $("#reply_box").hide(200);
-  });
+// FAQ buttons
+$("#faq-reply").click(e => {
+if (e.target.parentNode == $("#faq_box")[0].parentNode) {
+$("#faq_box").toggle(200);
+} else {
+$("#faq_box").hide(0);
+e.target.parentNode.appendChild(document.getElementById('faq_box'));
+cleanMCE();
+$("#faq_box").show(200);
+}
+$("#reply_box").hide(200);
+});
+$("#faq-reply-2").click(e => {
+if (e.target.parentNode == $("#faq_box")[0].parentNode) {
+$("#faq_box").toggle(200);
+} else {
+$("#faq_box").hide(0);
+e.target.parentNode.appendChild(document.getElementById('faq_box'));
+cleanMCE();
+$("#faq_box").show(200);
+}
+$("#reply_box").hide(200);
+});
 
-  // CANCEL button
-  $("#cancel").click(() => {
-    $("#reply_box").hide(200);
-  });
+// CANCEL button
+$("#cancel").click(() => {
+$("#reply_box").hide(200);
+});
+
+function validateFiles(inputFile) {
+
+var size = 0;
+var maxFileSize = $(inputFile).data('max-file-size');
+
+$.each(inputFile.files, function () {
+if (this.size) {
+  size += this.size;
+}
+});
+
+if (size && maxFileSize && size > parseInt(maxFileSize)) {
+const animation = {
+  "in": "bounceIn",
+  "out": "fadeOutUpBig"
+};
+const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
+Notification.create("<%= 'Warning' %>", '<%= "This file exceeds the maximum allowed file size (2 MB)" %>', heart, animation, 2, 5);
+$(inputFile).val('');
+};
+}
+
+$(function () {
+
+// We can attach the `fileselect` event to all file inputs on the page
+$(document).on('change', ':file', function () {
+var input = $(this),
+  numFiles = input.get(0).files
+    ? input.get(0).files.length
+    : 1,
+  label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+input.trigger('fileselect', [numFiles, label]);
+});
+
+// We can watch for our custom `fileselect` event like this
+$(document).ready(function () {
+$(':file').on('fileselect', function (event, numFiles, label) {
+
+  var input = $(this).parents('.input-group').find(':text'),
+    log = numFiles > 1
+      ? numFiles + ' files selected'
+      : label;
+
+  if (input.length) {
+    input.val(log);
+  } else {
+    if (log) 
+      alert(log);
+    }
+  
+});
+});
+
+});
 </script>
 
 <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-  <script>
-    function toggleFinalAnswer(button) {
+<script>
+function toggleFinalAnswer(button) {
 
-      const finalAnswer = $('#final-answer')[0];
-      const parent = button.parentNode;
+const finalAnswer = $('#final-answer')[0];
+const parent = button.parentNode;
 
-      if (parent.lastChild == finalAnswer) {
-        $('#final-answer').toggle(200);
-      } else {
-        $('#final-answer').hide();
-        parent.appendChild(finalAnswer);
-        $('#final-answer').show(200);
-      }
+if (parent.lastChild == finalAnswer) {
+  $('#final-answer').toggle(200);
+} else {
+  $('#final-answer').hide();
+  parent.appendChild(finalAnswer);
+  $('#final-answer').show(200);
+}
 
-      const formChildren = finalAnswer.children[1].children;
-      const answerDivField = formChildren[2].children[1];
-      const answerField = answerDivField.children[1];
-      answerField.innerHTML = parent.parentNode.children[1].innerText;
+const formChildren = finalAnswer.children[1].children;
+const answerDivField = formChildren[2].children[1];
+const answerField = answerDivField.children[1];
+answerField.innerHTML = parent.parentNode.children[1].children[0].innerText;
 
-      const floatRight = parent.children[3].children
-      const faqField = formChildren[2].children[6];
-      faqField.style.display = floatRight.length == 2
-        ? 'none'
-        : 'inline-flex';
-    }
-  </script>
+const floatRight = parent.children[3].children
+const faqField = formChildren[2].children[6];
+faqField.style.display = floatRight.length == 2
+  ? 'none'
+  : 'inline-flex';
+}
+</script>
 <% end %>
 <style>
-  #reply_description_ifr {
-    height: 250px !important;
-  }
+#reply_description_ifr {
+height: 250px !important;
+}
 
-  #mceu_30 {
-    display: none;
-  }
-  .btn.btn-oval {
-    border-radius: 25px !important;
-  }
+#mceu_30 {
+display: none;
+}
+.btn.btn-oval {
+border-radius: 25px !important;
+}
 </style>

@@ -173,7 +173,7 @@ def seed_calls
   Rails.logger.info('[START]  -- Calls insertion')
   (1..quantity).each do |_|
     my_city = cities.sample.id
-    protocol = Time.now.strftime('%d%m%Y%H%M%S%L').to_i
+    protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
     call = Call.new(title: Faker::Lorem.sentence(15, true, 2),
                     description: Faker::Lorem.sentence(80, true, 6),
                     version: ['1.0.0', '1.0.1', '2.0.0', 'infinito.0.0-beta'].sample,

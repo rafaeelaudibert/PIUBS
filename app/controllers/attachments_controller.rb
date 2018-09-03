@@ -64,7 +64,7 @@ class AttachmentsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def attachment_params
-    parameters = params.require(:attachment).permit(:answer_id, file: [])
+    parameters = params.require(:attachment).permit(:id, :source, file: [])
     file = parameters.delete(:file) if parameters
     if file
       parameters[:filename] = []
@@ -84,7 +84,6 @@ class AttachmentsController < ApplicationController
     new_params[:filename] = _parsed_params[:filename][_index]
     new_params[:content_type] = _parsed_params[:content_type][_index]
     new_params[:file_contents] = _parsed_params[:file_contents][_index]
-    new_params[:answer_id] = _parsed_params[:answer_id]
     pp new_params
     new_params
   end
