@@ -41,8 +41,11 @@ class AnswersController < ApplicationController
       if files
         parsed_params = attachment_params files
         parsed_params[:filename].each_with_index do |_filename, _index|
-          @attachment = Attachment.new(eachAttachment(parsed_params, _index, @answer.id))
+          @attachment = Attachment.new(eachAttachment(parsed_params, _index))
           raise 'Não consegui anexar o arquivo. Por favor tente mais tarde' unless @attachment.save
+
+          @link = AttachmentLink.new(attachment_id: @attachment.id, answer_id: @answer.id, source: 'answer')
+          raise 'Não consegui criar o link entre arquivo e resposta final. Por favor tente mais tarde' unless @link.save
         end
       end
 
@@ -113,12 +116,11 @@ class AnswersController < ApplicationController
     parameters
   end
 
-  def eachAttachment(_parsed_params, _index, _answer)
+  def eachAttachment(_parsed_params, _index)
     new_params = {}
     new_params[:filename] = _parsed_params[:filename][_index]
     new_params[:content_type] = _parsed_params[:content_type][_index]
     new_params[:file_contents] = _parsed_params[:file_contents][_index]
-    new_params[:answer_id] = _answer
     new_params
   end
 end

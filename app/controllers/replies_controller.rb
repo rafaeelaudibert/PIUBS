@@ -19,12 +19,26 @@ class RepliesController < ApplicationController
 
   # POST /replies
   def create
-    @reply = Reply.new(reply_params)
+    rep_params = reply_params
+    files = rep_params.delete(:file) if rep_params[:file]
+    @reply = Reply.new(rep_params)
     @reply.user_id = current_user.id
     @reply.category = is_support_user || current_user.try(:admin?) ? 'support' : 'reply'
+
     if @reply.save
-      redirect_to call_path(@reply.protocol), notice: 'Reply was successfully created.'
+      if files
+        parsed_params = attachment_params files
+        parsed_params[:filename].each_with_index do |_filename, _index|
+          @attachment = Attachment.new(eachAttachment(parsed_params, _index))
+          raise 'Não consegui anexar o arquivo. Por favor tente mais tarde' unless @attachment.save
+
+          @link = AttachmentLink.new(attachment_id: @attachment.id, reply_id: @reply.id, source: 'reply')
+          raise 'Não consegui criar o link entre arquivo e a resposta. Por favor tente mais tarde' unless @link.save
+        end
+      end
+
       ReplyMailer.notification(@reply, current_user).deliver
+      redirect_to call_path(@reply.protocol), notice: 'Reply was successfully created.'
     else
       render :new
     end
@@ -62,6 +76,31 @@ class RepliesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def reply_params
-    params.require(:reply).permit(:protocol, :description, :user_id, :status, :faq)
+    params.require(:reply).permit(:protocol, :description, :user_id, :status, :faq, file: [])
+  end
+
+  ## ATTACHMENTS STUFF
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def attachment_params(file)
+    parameters = {}
+    if file
+      parameters[:filename] = []
+      parameters[:content_type] = []
+      parameters[:file_contents] = []
+      file.each do |_file|
+        parameters[:filename].append(File.basename(_file.original_filename))
+        parameters[:content_type].append(_file.content_type)
+        parameters[:file_contents].append(_file.read)
+      end
+    end
+    parameters
+  end
+
+  def eachAttachment(_parsed_params, _index)
+    new_params = {}
+    new_params[:filename] = _parsed_params[:filename][_index]
+    new_params[:content_type] = _parsed_params[:content_type][_index]
+    new_params[:file_contents] = _parsed_params[:file_contents][_index]
+    new_params
   end
 end
