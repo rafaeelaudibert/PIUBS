@@ -87,6 +87,13 @@ class AnswersController < ApplicationController
     end
   end
 
+  # GET /answers/attachments/:id
+  def attachments
+    respond_to do |format|
+      format.js { render json: Answer.find(params[:id]).attachments.map { |_attachment| { filename: _attachment.filename, id: _attachment.id } } }
+    end
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.

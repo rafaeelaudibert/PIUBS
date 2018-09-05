@@ -6,6 +6,7 @@ Rails.application.routes.draw do
 
   get 'faq', to: 'answers#faq', as: 'faq'
   get 'answers/query/:search', to: 'answers#search', as: 'answers_search'
+  get 'answers/attachments/:id', to: 'answers#attachments', as: 'answers_attachments'
   resources :answers
   resources :replies
   resources :calls
