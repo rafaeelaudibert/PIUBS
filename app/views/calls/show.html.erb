@@ -125,6 +125,7 @@
     <div class="card card-default mb-3" style="box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
       <div class="card-header">
         <em class="fa fa-comment-o m-2"></em>
+        <span class="badge badge-pill badge-dark m-1" style="display: none"><%= '#' << reply.id.to_s %></span>
         <span class="badge badge-pill badge-dark m-2">
           <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
         </span>
@@ -145,13 +146,14 @@
               Attachments
             </strong>
             <br/>
-            <br/>
-            <% reply.attachments.each do |_attachment| %>
-              <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
-              <i class="fa fa-file-text mr-1"></i>
-              <%= truncate(_attachment.filename, length: 10, omission: '...')%>
-            <%end%>
-          <% end %>
+            <div>
+              <% reply.attachments.each do |_attachment| %>
+                <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+                <i class="fa fa-file-text mr-1"></i>
+                <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+              <%end%>
+            <% end %>
+          </div>
         <% end %>
       </p>
     </div>
@@ -162,6 +164,7 @@
   <div class="card card-default mb-3" style="border-left: 5px solid #85CE36; box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
     <div class="card-header">
       <em class="fa fa-comment-o m-2"></em>
+      <span class="badge badge-pill badge-dark m-1" style="display: none"><%= '#' << reply.id.to_s %></span>
       <span class="badge badge-pill badge-dark m-1">
         <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
       </span>
@@ -181,13 +184,14 @@
           Attachments
         </strong>
         <br/>
-        <br/>
-        <% reply.attachments.each do |_attachment| %>
-          <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
-          <i class="fa fa-file-text mr-1"></i>
-          <%= truncate(_attachment.filename, length: 10, omission: '...')%>
-        <%end%>
-      <% end %>
+        <div>
+          <% reply.attachments.each do |_attachment| %>
+            <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+            <i class="fa fa-file-text mr-1"></i>
+            <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+          <%end%>
+        <% end %>
+      </div>
     <% end %>
 
     <hr/>
@@ -239,13 +243,14 @@
       Attachments
     </strong>
     <br/>
-    <br/>
-    <% answer.attachments.each do |_attachment| %>
-      <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
-      <i class="fa fa-file-text mr-1"></i>
-      <%= truncate(_attachment.filename, length: 10, omission: '...')%>
-    <%end%>
-  <% end %>
+    <div>
+      <% answer.attachments.each do |_attachment| %>
+        <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+        <i class="fa fa-file-text mr-1"></i>
+        <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+      <%end%>
+    <% end %>
+  </div>
 <% end %>
 </div>
 </div>
@@ -264,6 +269,9 @@ $('#tinymce_ifr').css('height', '300px');
 }
 // Reply buttons
 $("#reply").click(e => {
+extraFilesFaq = 0;
+$('#reply_file').trigger('change', 'answer');
+$('#reply_faq_attachments')[0].value = ''
 if (e.target.parentNode == $("#reply_box")[0].parentNode) {
 $("#reply_box").toggle(200);
 } else {
@@ -274,6 +282,7 @@ $("#reply_box").show(200);
 }
 $("#faq_box").hide(200);
 });
+
 $("#reply-2").click(e => {
 if (e.target.parentNode == $("#reply_box")[0].parentNode) {
 $("#reply_box").toggle(200);
@@ -340,23 +349,29 @@ $(inputFile).val('');
 $(function () {
 
 // We can attach the `fileselect` event to all file inputs on the page
-$(document).on('change', ':file', function () {
+$(document).on('change', ':file', function (event, where) {
 var input = $(this),
   numFiles = input.get(0).files
     ? input.get(0).files.length
     : 1,
   label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-input.trigger('fileselect', [numFiles, label]);
+input.trigger('fileselect', [numFiles, label, where]);
 });
 
 // We can watch for our custom `fileselect` event like this
 $(document).ready(function () {
-$(':file').on('fileselect', function (event, numFiles, label) {
-
-  var input = $(this).parents('.input-group').find(':text'),
-    log = numFiles > 1
-      ? numFiles + ' files selected'
+$(':file').on('fileselect', function (event, numFiles, label, where) {
+  var input = $(this).parents('.input-group').find(':text');
+  var log;
+  if (where == 'reply') {
+    log = numFiles + extraFilesReply > 1
+      ? numFiles + extraFilesReply + ' files selected'
       : label;
+  } else {
+    log = numFiles + extraFilesFaq > 1
+      ? numFiles + extraFilesFaq + ' files selected'
+      : label;
+  }
 
   if (input.length) {
     input.val(log);
@@ -373,6 +388,7 @@ $(':file').on('fileselect', function (event, numFiles, label) {
 
 <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
 <script>
+let extraFilesReply = 0;
 function toggleFinalAnswer(button) {
 
 const finalAnswer = $('#final-answer')[0];
@@ -391,11 +407,28 @@ const answerDivField = formChildren[2].children[1];
 const answerField = answerDivField.children[1];
 answerField.innerHTML = parent.parentNode.children[1].children[0].innerText;
 
-const floatRight = parent.children[3].children
+console.log(parent.children);
+const float = parent.children[3].children
 const faqField = formChildren[2].children[6];
-faqField.style.display = floatRight.length == 2
-  ? 'none'
-  : 'inline-flex';
+faqField.style.display = float.length == 0
+  ? parent.children[7].children.length == 2
+    ? 'none'
+    : 'inline-flex'
+  : float.length == 2
+    ? 'none'
+    : 'inline-flex';
+
+const replyId = parent.parentNode.children[0].children[1].innerText.split('#')[1];
+$.ajax({
+  url: '/replies/attachments/' + replyId,
+  type: "GET",
+  dataType: "json",
+  success: data => {
+    extraFilesReply = data.length;
+    $('#answer_file').trigger('change', 'reply');
+    $('#reply_attachments')[0].value = data.map(val => val.id);
+  }
+});
 }
 </script>
 <% end %>

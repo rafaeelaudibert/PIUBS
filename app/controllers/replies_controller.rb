@@ -21,11 +21,13 @@ class RepliesController < ApplicationController
   def create
     rep_params = reply_params
     files = rep_params.delete(:file) if rep_params[:file]
+    faq_attachments_ids = rep_params.delete(:faq_attachments).split(',') if rep_params[:faq_attachments]
     @reply = Reply.new(rep_params)
     @reply.user_id = current_user.id
     @reply.category = is_support_user || current_user.try(:admin?) ? 'support' : 'reply'
 
     if @reply.save
+      # CREATE an attachment
       if files
         parsed_params = attachment_params files
         parsed_params[:filename].each_with_index do |_filename, _index|
@@ -34,6 +36,14 @@ class RepliesController < ApplicationController
 
           @link = AttachmentLink.new(attachment_id: @attachment.id, reply_id: @reply.id, source: 'reply')
           raise 'Não consegui criar o link entre arquivo e a resposta. Por favor tente mais tarde' unless @link.save
+        end
+      end
+
+      # "IMPORT" attachments from the faq answer to this reply
+      if faq_attachments_ids
+        faq_attachments_ids.each do |_id|
+          @link = AttachmentLink.new(attachment_id: _id, reply_id: @reply.id, source: 'reply')
+          raise 'Não consegui criar o link entre arquivo que veio do FAQ e a resposta. Por favor tente mais tarde' unless @link.save
         end
       end
 
@@ -59,6 +69,13 @@ class RepliesController < ApplicationController
     redirect_to replies_url, notice: 'Reply was successfully destroyed.'
   end
 
+  # GET /replies/attachments/:id
+  def attachments
+    respond_to do |format|
+      format.js { render json: Reply.find(params[:id]).attachments.map { |_attachment| { filename: _attachment.filename, id: _attachment.id } } }
+    end
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.
@@ -76,7 +93,7 @@ class RepliesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def reply_params
-    params.require(:reply).permit(:protocol, :description, :user_id, :status, :faq, file: [])
+    params.require(:reply).permit(:faq_attachments, :protocol, :description, :user_id, :status, :faq, file: [])
   end
 
   ## ATTACHMENTS STUFF

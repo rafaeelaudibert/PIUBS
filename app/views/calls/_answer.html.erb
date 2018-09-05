@@ -12,6 +12,7 @@
 <div id="table"></div>
 
 <script>
+  let extraFilesFaq = 0;
   let textField = document.getElementById('search_field');
   let button = document.getElementById('search_button');
   let tableDiv = document.getElementById('table');
@@ -33,12 +34,13 @@
             //Add the header row.
             let row = table.insertRow(-1);
             row.classList.add('thead-dark')
-            for (let header of["Question", "Answer", "Actions"]) 
+            for (let header of["Id", "Question", "Answer", "Actions"]) 
               row.appendChild(document.createElement("TH")).innerHTML = header;
             
             //Add the data rows.
             for (let entry of data) {
               let row = table.insertRow(-1);
+              row.insertCell(-1).innerHTML = entry.id;
               row.insertCell(-1).innerHTML = entry.question;
               row.insertCell(-1).innerHTML = entry.answer;
               row.insertCell(-1).innerHTML = '<button onclick="faq_click(this)" type="button" class="btn btn-primary btn-sm">Select</button>'
@@ -59,11 +61,24 @@
   });
 
   const faq_click = button => {
-    const answer = button.parentNode.parentNode.children[1].innerHTML;
+    const answer = button.parentNode.parentNode.children[2].innerHTML;
+    const id = button.parentNode.parentNode.children[0].innerHTML;
     $("#reply_box").show(200);
     $("#faq_box").hide(200);
-    tinyMCE.get(0).setContent(answer);
     $("#on-faq").prop('checked', true);
+
+    $.ajax({
+      url: '/answers/attachments/' + id,
+      type: "GET",
+      dataType: "json",
+      success: data => {
+        tinyMCE.get(0).setContent(`${answer}<br/><br><b>Essa resposta foi retirada do FAQ. Ela estava disponível <a href="/answers/${id}" target='_blank'>aqui</a></b>`);
+
+        extraFilesFaq = data.length;
+        $('#reply_file').trigger('change', 'answer');
+        $('#reply_faq_attachments')[0].value = data.map(val => val.id);
+      }
+    });
   }
 
   $('document').ready(function () {
