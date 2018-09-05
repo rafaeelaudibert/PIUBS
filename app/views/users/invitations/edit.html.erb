@@ -3,40 +3,112 @@
     <div class="card">
       <header class="auth-header">
         <h1 class="auth-title">
-        <%= image_tag("icons/logo.png", :alt => "Apoio à empresa") %>
-          PIUBS </h1>
+          <%= image_tag("icons/logo.png", :alt => "Apoio à empresa") %>
+          PIUBS
+        </h1>
       </header>
       <%= render 'layouts/messages' %>
       <div class="auth-content">
         <p class="text-center">INFORME SEUS DADOS</p>
-          <%= form_for resource, :as => resource_name, :url => invitation_path(resource_name), :html => { :method => :put } do |f| %>
-            <%= devise_error_messages! %>
-            <%= f.hidden_field :invitation_token, readonly: true %>
-            <div class="form-group">
-              <p><%= f.label "nome" %>
-              <%= f.text_field :name, class: 'form-control underlined', required: true %></p>
-            </div>
-            <div class="form-group">
-              <p><%= f.label "CPF" %>
-              <%= f.text_field :cpf, class: 'form-control underlined', required: true %></p>
-            </div>
-            <div class="form-group">
-              <% if f.object.class.require_password_on_accepting %>
-              <p><%= f.label "Crie uma senha" %>
+        <%= form_for resource, :as => resource_name, :url => invitation_path(resource_name), :html => { :method => :put } do |f| %>
+        <%= devise_error_messages! %>
+        <%= f.hidden_field :invitation_token, readonly: true %>
+        <div class="form-group">
+          <p><%= f.label "nome" %>
+            <%= f.text_field :name, class: 'form-control underlined', required: true %></p>
+        </div>
+        <div class="form-group">
+          <p><%= f.label "CPF" %>
+            <%= f.text_field :cpf, class: 'form-control underlined', required: true %>
+            <label class="hidden" style="color: #CC2222;font-weight:300;">CPF INVÁLIDO</label>
+          </p>
+        </div>
+        <div class="form-group">
+          <% if f.object.class.require_password_on_accepting %>
+            <p><%= f.label "Crie uma senha" %>
               <%= f.password_field :password, class: 'form-control underlined' %></p>
-            </div>
-            <div class="form-group">
-              <p><%= f.label "Confirme a sua senha" %>
+          </div>
+          <div class="form-group">
+            <p><%= f.label "Confirme a sua senha" %>
               <%= f.password_field :password_confirmation, class: 'form-control underlined' %></p>
-              <% end %>
-            </div>
-              <p><%= f.submit "Confirmar", :class => 'btn btn-primary' %></p>
           <% end %>
         </div>
-      </div>
-      <div class="text-center">
-        <p class="btn btn-secondary btn-sm">
-                        <i class="fa fa-plus-square"></i> Copyright &copy; PIUBS AE - Version 0.1.0 </p>
-      </div>
+        <p><%= f.submit "Confirmar", :class => 'btn btn-primary' %></p>
+      <% end %>
     </div>
   </div>
+  <div class="text-center">
+    <p class="btn btn-secondary btn-sm">
+      <i class="fa fa-plus-square"></i>
+      Copyright &copy; PIUBS AE - Version 0.1.0
+    </p>
+  </div>
+</div>
+</div>
+
+<script>
+
+// CPF VALIDATION
+function fMasc(objeto, mascara) {
+  obj = objeto
+  masc = mascara
+  setTimeout("fMascEx()", 1)
+
+  function fMascEx() {
+    obj.value = masc(obj.value)
+  }
+}
+
+function CPFmask(cpf) {
+  cpf = cpf.replace(/\D/g, "")
+  cpf = cpf.substring(0, 11);
+  cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2")
+  cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2")
+  cpf = cpf.replace(/(\d{3})(\d{1,2})$/, "$1-$2")
+  return cpf
+}
+
+function validateCPF(strCPF) {
+  let soma = 0,
+    resto;
+
+  if (strCPF == "00000000000") 
+    return false;
+  
+  for (let i = 1; i <= 9; i++) 
+    soma = soma + parseInt(strCPF.substring(i - 1, i)) * (11 - i);
+  
+  resto = (soma * 10) % 11;
+  if (resto == 10 || resto == 11) 
+    resto = 0;
+  
+  if (resto != parseInt(strCPF.substring(9, 10))) 
+    return false;
+  
+  soma = 0;
+  for (let i = 1; i <= 10; i++) 
+    soma = soma + parseInt(strCPF.substring(i - 1, i)) * (12 - i);
+  resto = (soma * 10) % 11;
+
+  if (resto == 10 || resto == 11) 
+    resto = 0;
+  
+  if (resto != parseInt(strCPF.substring(10, 11))) 
+    return false;
+  return true;
+}
+
+$('#user_cpf').keypress(e => {
+  fMasc(e.target, mCPF);
+})
+
+$('#user_cpf').focusout(e => {
+  if (e.target.value.length >= 14 && validateCPF(e.target.value.split('.').join('').split('-').join(''))) {
+    e.target.classList.remove('underlined-danger');
+    e.target.nextElementSibling.classList.add('hidden')
+  } else {
+    e.target.classList.add('underlined-danger');
+    e.target.nextElementSibling.classList.remove('hidden')
+  }
+});
+</script>
