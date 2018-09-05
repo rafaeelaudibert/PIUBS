@@ -29,6 +29,7 @@
           $('#view_city_users').hide(0);
           $('#view_ubs_users').hide(0);
           $('#view_call_center_users').hide(0);
+          <%= $mostra = 'company_admin' %>
         } else if (e.target.value == 'ubs_admin') {
           $('#select_companies').hide(0);
           $('#select_states_ubs').show(0);
@@ -64,6 +65,7 @@
 
     <div class="form-group" id='view_company_users' style="display: none">
       COMPANY USERS
+      <%= $mostra %>
     </div>
     <div class="form-group" id='view_city_users' style="display: none">
       CITY USERS
