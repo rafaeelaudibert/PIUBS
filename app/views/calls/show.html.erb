@@ -413,10 +413,8 @@ $.ajax({
   dataType: "json",
   success: data => {
     extraFilesReply = data.length;
-    if (data.length > 0) {
-      $('#answer_file').trigger('change', 'reply');
-      $('#reply_attachments')[0].value = data.map(val => val.id);
-    }
+    $('#answer_file').trigger('change', 'reply');
+    $('#reply_attachments')[0].value = data.map(val => val.id);
   }
 });
 }

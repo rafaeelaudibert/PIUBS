@@ -74,11 +74,9 @@
       success: data => {
         tinyMCE.get(0).setContent(`${answer}<br/><br><b>Essa resposta foi retirada do FAQ. Ela estava disponível <a href="/answers/${id}" target='_blank'>aqui</a></b>`);
 
-        if (data.length > 0) {
-          extraFilesFaq = data.length;
-          $('#reply_file').trigger('change', 'answer');
-          $('#reply_faq_attachments')[0].value = data.map(val => val.id);
-        }
+        extraFilesFaq = data.length;
+        $('#reply_file').trigger('change', 'answer');
+        $('#reply_faq_attachments')[0].value = data.map(val => val.id);
       }
     });
   }
