@@ -29,6 +29,7 @@ class AnswersController < ApplicationController
   def create
     ans_params = answer_params
     files = ans_params.delete(:file) if ans_params[:file]
+    reply_attachments_ids = params[:reply_attachments].split(',') if params[:reply_attachments]
     @answer = Answer.new(ans_params)
 
     if @answer.save
@@ -49,8 +50,16 @@ class AnswersController < ApplicationController
         end
       end
 
+      # "IMPORT" attachments from the reply to this answer
+      if reply_attachments_ids
+        reply_attachments_ids.each do |_id|
+          @link = AttachmentLink.new(attachment_id: _id, answer_id: @answer.id, source: 'answer')
+          raise 'Não consegui criar o link entre arquivo que veio da reply e essa resposta. Por favor tente mais tarde' unless @link.save
+        end
+      end
+
       AnswerMailer.notification(@call, @answer, current_user).deliver
-      redirect_to (@call || root_path), notice: 'Final answer was successfully marked.'
+      redirect_to (@call || root_path), notice: 'Final answer was successfully set.'
     else
       render :new
     end
@@ -103,7 +112,7 @@ class AnswersController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def answer_params
-    params.require(:answer).permit(:question, :answer, :category_id, :user_id, :faq, :question_id, file: [])
+    params.require(:answer).permit(:question, :answer, :category_id, :user_id, :faq, :question_id, :reply_attachments, file: [])
   end
 
   ## ATTACHMENTS STUFF

@@ -69,6 +69,13 @@ class RepliesController < ApplicationController
     redirect_to replies_url, notice: 'Reply was successfully destroyed.'
   end
 
+  # GET /replies/attachments/:id
+  def attachments
+    respond_to do |format|
+      format.js { render json: Reply.find(params[:id]).attachments.map { |_attachment| { filename: _attachment.filename, id: _attachment.id } } }
+    end
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.

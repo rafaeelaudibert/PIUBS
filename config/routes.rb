@@ -8,7 +8,10 @@ Rails.application.routes.draw do
   get 'answers/query/:search', to: 'answers#search', as: 'answers_search'
   get 'answers/attachments/:id', to: 'answers#attachments', as: 'answers_attachments'
   resources :answers
+
+  get 'replies/attachments/:id', to: 'replies#attachments', as: 'replies_attachments'
   resources :replies
+
   resources :calls
 
   get 'categories/all', to: 'categories#all', as: 'all_categories'

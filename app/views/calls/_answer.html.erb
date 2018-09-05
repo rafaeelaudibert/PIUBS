@@ -12,8 +12,7 @@
 <div id="table"></div>
 
 <script>
-  let extraFiles = 0;
-  let extraFilesID;
+  let extraFilesFaq = 0;
   let textField = document.getElementById('search_field');
   let button = document.getElementById('search_button');
   let tableDiv = document.getElementById('table');
@@ -76,8 +75,8 @@
         tinyMCE.get(0).setContent(`${answer}<br/><br><b>Essa resposta foi retirada do FAQ. Ela estava disponível <a href="/answers/${id}" target='_blank'>aqui</a></b>`);
 
         if (data.length > 0) {
-          extraFiles = data.length;
-          $(':file').trigger('change');
+          extraFilesFaq = data.length;
+          $('#reply_file').trigger('change', 'answer');
           $('#reply_faq_attachments')[0].value = data.map(val => val.id);
         }
       }
