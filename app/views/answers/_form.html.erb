@@ -13,20 +13,20 @@
 <% end %>
 
 <div class="field">
-  <%= form.label :question %>
+  <%= form.label :question, 'Questão*' %>
   <% if @question %>
-    <%= form.text_field :question, value: @question.title %>
+    <%= form.text_field :question, value: @question.title, required: true %>
   <% else %>
-    <%= form.text_field :question %>
+    <%= form.text_field :question, required: true %>
   <% end %>
 </div>
 
 <div class="field">
-  <%= form.label :answer %>
+  <%= form.label :answer, 'Resposta*' %>
   <% if @reply %>
-    <%= form.text_field :answer, value: strip_tags(@reply.description.gsub("&nbsp;", "")) %>
+    <%= form.text_field :answer, value: strip_tags(@reply.description.gsub("&nbsp;", "")), required:true %>
   <% else %>
-    <%= form.text_field :answer %>
+    <%= form.text_field :answer, required: true %>
   <% end %>
 </div>
 
@@ -38,20 +38,20 @@
 <% text = 'display: none' %>
   <% if @question %>
     <div class="field" style="display: none">
-      <%= form.label :category_id %>
-      <%= form.text_field :category_id, value: @question.category.id %>
+      <%= form.label :category_id, 'Categoria*' %>
+      <%= form.text_field :category_id, value: @question.category.id, required: true %>
     </div>
     <%= hidden_field_tag :question_id, @question.id %>
   <% else %>
     <div class="field">
-      <%= form.label :category_id %>
-      <%= form.text_field :category_id %>
+      <%= form.label :category_id, 'Categoria*' %>
+      <%= form.text_field :category_id, required: true %>
     </div>
   <% end %>
 
   <div class="field" style="display: none">
-    <%= form.label :user_id %>
-    <%= form.text_field :user_id, value: current_user.id %>
+    <%= form.label :user_id, 'Usuário*' %>
+    <%= form.text_field :user_id, value: current_user.id, required: true %>
   </div>
 
   <% unless @reply && @reply.faq == true %>

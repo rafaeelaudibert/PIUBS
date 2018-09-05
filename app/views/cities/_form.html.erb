@@ -12,19 +12,19 @@
 <% end %>
 
 <div class="form-group">
-  <%= form.label :name %>
-  <%= form.text_field :name, class: 'form-control' %>
+  <%= form.label :name, 'Nome*' %>
+  <%= form.text_field :name, class: 'form-control', required: true %>
 </div>
 
 <% if @state %>
   <div class="form-group" style="display: none">
-    <%= form.label :state_id %>
-    <%= form.text_field :state_id , name: 'city[state_id]', id:'city_state_id', class: 'form-control', value: @state.id %>
+    <%= form.label :state_id, 'Estado' %>
+    <%= form.text_field :state_id , name: 'city[state_id]', id:'city_state_id', class: 'form-control', value: @state.id, required: true %>
   </div>
 <% else %>
   <div class="form-group">
-    <label for="city_state_id">Estado</label>
-    <select skip_default_ids="false" allow_method_names_outside_object="true" name="city[state_id]" id="city_state_id" class="form-control">
+    <label for="city_state_id">Estado*</label>
+    <select skip_default_ids="false" allow_method_names_outside_object="true" name="city[state_id]" id="city_state_id" class="form-control" required="required">
       <option value="0">
         Selecione um Estado
       </option>
