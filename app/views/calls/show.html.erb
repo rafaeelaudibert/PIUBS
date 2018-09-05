@@ -354,8 +354,8 @@ $(document).ready(function () {
 $(':file').on('fileselect', function (event, numFiles, label) {
 
   var input = $(this).parents('.input-group').find(':text'),
-    log = numFiles > 1
-      ? numFiles + ' files selected'
+    log = numFiles + extraFiles > 1
+      ? numFiles + extraFiles + ' files selected'
       : label;
 
   if (input.length) {

@@ -13,8 +13,9 @@
 <% end %>
 <div style="max-width: 850px">
 
-  <%= form.text_field :protocol, class: 'form-control hidden' %>
+  <%= form.text_field :protocol, type: 'hidden', class: 'form-control' %>
   <%= form.check_box :faq, checked: false, id:'on-faq', style: "display: none;" %>
+  <%= form.text_field :faq_attachments, type: 'hidden', class: 'form-control' %>
 
   <div class="field">
     <%= form.label :description %>
