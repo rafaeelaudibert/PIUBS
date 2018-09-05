@@ -13,8 +13,8 @@
 <% end %>
 <div class="col-4">
   <div class="form-group">
-    <%= form.label :sei %>
-    <%= form.number_field :sei, class: 'form-control' %>
+    <%= form.label :sei, 'SEI*' %>
+    <%= form.number_field :sei, class: 'form-control', required: true%>
   </div>
 
   <%= form.submit 'Save', :class => 'btn btn-primary btn-sm' %>
