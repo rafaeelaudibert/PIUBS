@@ -1,22 +1,41 @@
 <div class="container">
 
-  <h3>Users</h3>
+  <h3>Usuários</h3>
 
   <%= form_for resource, :as => resource_name do |f| %>
   <%= devise_error_messages! %>
 
-    <%= f.label "Escolha o tipo de usuário" %>
-    <%= f.select(:role, map_user_roles, {:include_blank => "Todos", :selected => nil}, {:class => "form-control"})%>
+    <%= f.select(:role, map_user_roles, {:include_blank => "Nível", :selected => nil}, {:class => "form-control"})%>
+
+    <div class="form-group" id='select_companies' style="display: none">
+      <%= f.select(:sei, ["1","2"], {:include_blank => "Empresa", :selected => nil}, {:class => "form-control"})%>
+    </div>
+
+    <div class="form-group" id='select_states_ubs' style="display: none">
+      <%= f.select(:sei, ["RS","SC"], {:include_blank => "Estado", :selected => nil}, {:class => "form-control"})%>
+    </div>
+
+    <div class="form-group" id='select_states_city' style="display: none">
+      <%= f.select(:sei, ["SP","RJ"], {:include_blank => "Estado", :selected => nil}, {:class => "form-control"})%>
+    </div>
 
     <script>
       $('#user_role').change(e => {
-        if (e.target.value == 'city_admin') {
-          $('#sei_group').hide(0);
-          $('#city_group').show(0);
-        } else if (e.target.value == 'company_admin') {
-          $('#sei_group').show(0);
-          $('#city_group').hide(0);
-        } else {
+        if (e.target.value == 'company_admin') {
+          $('#select_companies').show(0);
+          $('#select_states_ubs').hide(0);
+          $('#select_states_city').hide(0);
+        } else if (e.target.value == 'ubs_admin') {
+          $('#select_companies').hide(0);
+          $('#select_states_ubs').show(0);
+          $('#select_states_city').hide(0);
+        } else if (e.target.value == 'city_admin') {
+          $('#select_companies').hide(0);
+          $('#select_states_ubs').hide(0);
+          $('#select_states_city').show(0);
+        } else if (e.target.value == 'call_center_admin') {
+          $('#select_states').show(0);
+        }else {
           $('#sei_group').hide(0);
           $('#city_group').hide(0);
         }
