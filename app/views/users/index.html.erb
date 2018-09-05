@@ -1,30 +1,63 @@
 <div class="container">
 
   <h3>Users</h3>
-  <div class="row">
-    <div class="col">
-      <table class="table table-bordered table-striped table-hover">
-        <thead class="thead-dark">
-          <tr>
-            <th>
-              Nome
-            </th>
-            <th>
-              CPF
-            </th>
-            <th>
-              Permissão
-            </th>
-            <th colspan="2"></th>
+
+  <%= form_for resource, :as => resource_name do |f| %>
+  <%= devise_error_messages! %>
+
+    <%= f.label "Escolha o tipo de usuário" %>
+    <%= f.select(:role, map_user_roles, {:include_blank => "Todos", :selected => nil}, {:class => "form-control"})%>
+
+    <script>
+      $('#user_role').change(e => {
+        if (e.target.value == 'city_admin') {
+          $('#sei_group').hide(0);
+          $('#city_group').show(0);
+        } else if (e.target.value == 'company_admin') {
+          $('#sei_group').show(0);
+          $('#city_group').hide(0);
+        } else {
+          $('#sei_group').hide(0);
+          $('#city_group').hide(0);
+        }
+      });
+    </script>
+
+    <div class="form-group" id='sei_group' style="display: none">
+      ok
+    </div>
+  <% end %>
+
+
+
+    <div class="row">
+      <div class="col">
+        <table class="table table-bordered table-striped table-hover">
+          <thead class="thead-dark">
+            <tr>
+              <th>Nome</th>
+              <th>CPF</th>
+              <th>Permissão</th>
+              <th colspan="2"></th>
+            </tr>
           </thead>
-          <tbody>
-            <% @users.sort.each do |user| %>
-              <tr>
-                <%= render user %>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
+            <tbody id='city_group' style="display: none">
+              <% @users.sort.each do |user| %>
+                <tr>
+                  <%= render user %>
+                </tr>
+              <% end %>
+            </tbody>
+            <tbody id='city_group' style="display: none">
+              <% @users.sort.each do |user| %>
+                <tr>
+                  <%= render user %>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
+
   </div>
