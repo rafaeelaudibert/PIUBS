@@ -266,6 +266,8 @@ $('#tinymce_ifr').css('height', '300px');
 }
 // Reply buttons
 $("#reply").click(e => {
+extraFilesFaq = 0;
+$('#reply_file').trigger('change', 'answer');
 if (e.target.parentNode == $("#reply_box")[0].parentNode) {
 $("#reply_box").toggle(200);
 } else {
@@ -276,6 +278,7 @@ $("#reply_box").show(200);
 }
 $("#faq_box").hide(200);
 });
+
 $("#reply-2").click(e => {
 if (e.target.parentNode == $("#reply_box")[0].parentNode) {
 $("#reply_box").toggle(200);
