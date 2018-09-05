@@ -22,6 +22,7 @@
     <script>
       $('#user_role').change(e => {
         if (e.target.value == 'company_admin') {
+          <% $view_user = 'company_admin' %>
           $('#select_companies').show(0);
           $('#select_states_ubs').hide(0);
           $('#select_states_city').hide(0);
@@ -29,7 +30,6 @@
           $('#view_city_users').hide(0);
           $('#view_ubs_users').hide(0);
           $('#view_call_center_users').hide(0);
-          <%= $mostra = 'company_admin' %>
         } else if (e.target.value == 'ubs_admin') {
           $('#select_companies').hide(0);
           $('#select_states_ubs').show(0);
@@ -39,6 +39,7 @@
           $('#view_ubs_users').show(0);
           $('#view_call_center_users').hide(0);
         } else if (e.target.value == 'city_admin') {
+          <% $view_user = 'city_admin' %>
           $('#select_companies').hide(0);
           $('#select_states_ubs').hide(0);
           $('#select_states_city').show(0);
@@ -62,14 +63,6 @@
     </script>
   <% end %>
 
-
-    <div class="form-group" id='view_company_users' style="display: none">
-      COMPANY USERS
-      <%= $mostra %>
-    </div>
-    <div class="form-group" id='view_city_users' style="display: none">
-      CITY USERS
-    </div>
     <div class="form-group" id='view_ubs_users' style="display: none">
       UBS USERS
     </div>
@@ -89,17 +82,21 @@
               <th colspan="2"></th>
             </tr>
           </thead>
-            <tbody id='city_group' style="display: none">
+            <tbody id='view_company_users' style="display: none">
               <% @users.sort.each do |user| %>
                 <tr>
-                  <%= render user %>
+                  <% if (user.role == $view_user) %>
+                    <%= render user %>
+                  <% end %>
                 </tr>
               <% end %>
             </tbody>
-            <tbody id='city_group' style="display: none">
+            <tbody id='view_city_users' style="display: none">
               <% @users.sort.each do |user| %>
                 <tr>
-                  <%= render user %>
+                  <% if (user.role == $view_user) %>
+                    <%= render user %>
+                  <% end %>
                 </tr>
               <% end %>
             </tbody>
