@@ -6,6 +6,7 @@ class User < ApplicationRecord
   has_many :answer
   enum role: %i[admin city_admin city_user ubs_admin ubs_user company_admin company_user call_center_admin call_center_user]
   validates_cpf_format_of :cpf, options: { allow_blank: true, allow_nil: true }
+  validates :cpf, presence: true, uniqueness: true
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
