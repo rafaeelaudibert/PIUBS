@@ -1,3 +1,5 @@
+<%= tinymce_assets %>
+<%= tinymce %>
 <%= form_with(model: call, local: true) do |form| %>
 <% if call.errors.any? %>
   <div id="error_explanation">
@@ -19,7 +21,7 @@
 
   <div class="field">
     <%= form.label :description, 'Descrição* (Descreva seu problema, o que estava fazendo quando ele aconteceu, quais procedimos já tentou, etc...)' %>
-    <%= form.text_area :description, class: 'form-control boxed', rows: '8', autocomplete: :off, required: true %>
+    <%= form.text_area :description, id:'tinymce', class: 'tinymce', :rows => 15, :cols => 120%>
   </div>
 
   <div class="field">
@@ -138,6 +140,12 @@
 </div>
 <% end %>
 
+<style>
+#mceu_32 {
+display: none;
+}
+</style>
+
 <script>
 function validateFiles(inputFile) {
 
@@ -185,10 +193,10 @@ $(function () {
       if (input.length) {
         input.val(log);
       } else {
-        if (log) 
+        if (log)
           alert(log);
         }
-      
+
     });
   });
 
