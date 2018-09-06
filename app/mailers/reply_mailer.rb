@@ -6,6 +6,6 @@ class ReplyMailer < ApplicationMailer
     @current_user = current_user
     @link = "#{root_url}calls/#{@call.protocol}"
 
-    mail(to: @call_user, subject: "Nova resposta ao atendimento #{@reply.protocol}")
+    mail(to: @call_user.email, subject: "Nova resposta ao atendimento #{@reply.protocol}")
   end
 end
