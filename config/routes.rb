@@ -30,10 +30,8 @@ Rails.application.routes.draw do
   resources :cities
   resources :states
 
-  devise_for :users, controllers: { invitations: 'users/invitations', registrations: 'registrations' }
+  devise_for :users, controllers: { invitations: 'users/invitations', registrations: 'users/registrations' }
   root to: 'visitors#index'
-  get 'novo_usuario_nivel', to: 'users#pre_new_user_invitation', as: 'new_user_level'
-  post 'novo_usuario_nivel_selecionado', to: 'users#get_invitation_role', as: 'new_user_level_selected'
 
   resources :users
   get '404', to: 'application#page_not_found', as: 'not_found'

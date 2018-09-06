@@ -4,6 +4,7 @@ class User < ApplicationRecord
   belongs_to :city, class_name: 'City', foreign_key: :id, optional: true
   has_many :calls
   has_many :answer
+
   enum role: %i[admin city_admin city_user ubs_admin ubs_user company_admin company_user call_center_admin call_center_user]
   validates_cpf_format_of :cpf, options: { allow_blank: true, allow_nil: true }
   validates :cpf, presence: true, uniqueness: true
