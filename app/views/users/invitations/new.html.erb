@@ -16,7 +16,7 @@
         <%= f.hidden_field :role, value: @role %>
       <% else %>
         <%= f.label "Escolha o tipo de usuário*" %>
-        <%= f.select(:role, $roles_allowed, {:include_blank => "Selecione", :selected => nil}, {:class => "form-control"}, required: true)%>
+        <%= f.select(:role, $roles_allowed, {:include_blank => "Selecione", :selected => nil, required: true}, {:class => "form-control"})%>
       <% end %>
     <% end %>
   </div>

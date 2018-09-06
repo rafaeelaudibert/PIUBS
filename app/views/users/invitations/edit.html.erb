@@ -53,10 +53,10 @@ function fMasc(objeto, mascara) {
   obj = objeto
   masc = mascara
   setTimeout("fMascEx()", 1)
+}
 
-  function fMascEx() {
-    obj.value = masc(obj.value)
-  }
+function fMascEx() {
+  obj.value = masc(obj.value)
 }
 
 function CPFmask(cpf) {
@@ -99,7 +99,7 @@ function validateCPF(strCPF) {
 }
 
 $('#user_cpf').keypress(e => {
-  fMasc(e.target, mCPF);
+  fMasc(e.target, CPFmask);
 })
 
 $('#user_cpf').focusout(e => {
