@@ -16,13 +16,13 @@
 <% @question = Call.find(params[:id]) %>
   <div class="form" style="max-width: 650px">
     <div class="field">
-      <%= form.label :question %>
-      <%= form.text_field :question, value: @question.title, class: 'form-control boxed' %>
+      <%= form.label :question, 'Questão', class: 'required' %>
+      <%= form.text_field :question, value: @question.title, class: 'form-control boxed', required: true %>
     </div>
 
     <div class="field">
-      <%= form.label :answer %>
-      <%= form.text_area :answer, class: 'form-control boxed', rows: '8' %>
+      <%= form.label :answer, 'Resposta', class: 'required' %>
+      <%= form.text_area :answer, class: 'form-control boxed', rows: '8', required: true %>
     </div>
 
     <div class="form-group input-group">
@@ -32,20 +32,21 @@
     </div>
 
     <div class="field" style="display: none">
-      <%= form.label :category_id %>
-      <%= form.text_field :category_id, value: @question.category.id %>
+      <%= form.label :category_id, 'Categoria' %>
+      <%= form.text_field :category_id, value: @question.category.id, required: true %>
     </div>
-    <%= hidden_field_tag :question_id, @question.id %>
+    <%= hidden_field_tag :question_id, @question.id, required: true %>
 
     <div class="field" style="display: none">
-      <%= form.label :user_id %>
-      <%= form.text_field :user_id, value: current_user.id %>
+      <%= form.label :user_id, 'Usuário', class: 'required' %>
+      <%= form.text_field :user_id, value: current_user.id, required: true %>
     </div>
 
     <div class="form-check form-check-inline">
       <%= form.check_box :faq, class: "form-check-input" %>
       <%= form.label :faq, value: 'Add to FAQ?', class: 'form-check-label' %>
     </div>
+    <%= hidden_field_tag :reply_attachments, '' %>
     <br/><br/>
 
     <div class="actions">

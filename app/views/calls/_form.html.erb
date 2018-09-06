@@ -1,3 +1,5 @@
+<%= tinymce_assets %>
+<%= tinymce %>
 <%= form_with(model: call, local: true) do |form| %>
 <% if call.errors.any? %>
   <div id="error_explanation">
@@ -13,23 +15,23 @@
 <% end %>
 <div class="col-8 mb-8">
   <div class="field">
-    <%= form.label :title, 'Título' %>
-    <%= form.text_field :title, class: 'form-control boxed', autocomplete: :off %>
+    <%= form.label :title, 'Título', class: 'required' %>
+    <%= form.text_field :title, class: 'form-control boxed', autocomplete: :off, required: true %>
   </div>
 
   <div class="field">
-    <%= form.label :description, 'Descrição' %>
-    <%= form.text_area :description, class: 'form-control boxed', rows: '8', autocomplete: :off %>
+    <%= form.label :description, 'Descrição (Descreva seu problema, o que estava fazendo quando ele aconteceu, quais procedimos já tentou, etc...)', class: 'required' %>
+    <%= form.text_area :description, id:'tinymce', class: 'tinymce', :rows => 15, :cols => 120%>
   </div>
 
   <div class="field">
-    <%= form.label :version, 'Versão' %>
-    <%= form.text_field :version, class: 'form-control boxed' %>
+    <%= form.label :version, 'Versão', class: 'required' %>
+    <%= form.text_field :version, class: 'form-control boxed', required: true %>
   </div>
 
   <div class="field">
-    <%= form.label :access_profile, 'Perfil de Acesso' %>
-    <%= form.text_field :access_profile, class: 'form-control boxed' %>
+    <%= form.label :access_profile, 'Perfil de Acesso', class: 'required' %>
+    <%= form.text_field :access_profile, class: 'form-control boxed', required: true %>
   </div>
 
   <div class="field">
@@ -39,8 +41,8 @@
 
   <% if @company %>
     <div class="form-group">
-      <%= form.label :state_id, 'Estado' %>
-      <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[state_id]" id="call_state_id" class="form-control boxed">
+      <%= form.label :state_id, 'Estado', class: 'required' %>
+      <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[state_id]" id="call_state_id" class="form-control boxed" required="required">
         <option value="0">
           Selecione um Estado
         </option>
@@ -53,8 +55,8 @@
     </div>
 
     <div class="form-group">
-      <%= form.label :city_id, 'Cidade' %>
-      <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[city_id]" id="call_city_id" class="form-control boxed">
+      <%= form.label :city_id, 'Cidade', class: 'required' %>
+      <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[city_id]" id="call_city_id" class="form-control boxed" required="required">
         <option value="0">
           Selecione um Estado primeiro
         </option>
@@ -62,8 +64,8 @@
     </div>
 
     <div class="form-group">
-      <%= form.label :cnes, 'UBS' %>
-      <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[cnes]" id="call_cnes" class="form-control boxed">
+      <%= form.label :cnes, 'UBS', class: 'required' %>
+      <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[cnes]" id="call_cnes" class="form-control boxed" required="required">
         <option value="0">
           Selecione uma Cidade primeiro
         </option>
@@ -106,24 +108,24 @@
     </script>
   <% else %>
     <div class="field">
-      <%= form.label :city_id, 'Cidade' %>
-      <%= form.collection_select(:city_id, City.all.sample(50), :id, :name, {include_blank: "Selecione uma cidade: "}, class: 'form-control boxed') %>
+      <%= form.label :city_id, 'Cidade', class: 'required'%>
+      <%= form.collection_select(:city_id, City.all.sample(50), :id, :name, {include_blank: "Selecione uma cidade: "}, class: 'form-control boxed', required: true) %>
     </div>
 
     <div class="field">
-      <%= form.label :state_id, 'Estado' %>
-      <%= form.collection_select(:state_id, get_all_states, :id, :name, {include_blank: "Selecione um Estado: "}, class: 'form-control boxed') %>
+      <%= form.label :state_id, 'Estado', class: 'required' %>
+      <%= form.collection_select(:state_id, get_all_states, :id, :name, {include_blank: "Selecione um Estado: "}, class: 'form-control boxed', required: true) %>
     </div>
 
     <div class="field">
-      <%= form.label :cnes, 'UBS' %>
-      <%= form.collection_select(:cnes, Unity.all.sample(10), :cnes, :name, {include_blank: "Selecione uma UBS: "}, class: 'form-control boxed') %>
+      <%= form.label :cnes, 'UBS', class: 'required' %>
+      <%= form.collection_select(:cnes, Unity.all.sample(10), :cnes, :name, {include_blank: "Selecione uma UBS: "}, class: 'form-control boxed', required: true) %>
     </div>
   <% end %>
 
   <div class="field">
-    <%= form.label :category_id, 'Categoria' %>
-    <%= form.collection_select(:category_id, Category.all, :id, :name, {include_blank: "Selecione uma Categoria: "}, class: 'form-control boxed') %>
+    <%= form.label :category_id, 'Categoria', class: 'required' %>
+    <%= form.collection_select(:category_id, Category.all, :id, :name, {include_blank: "Selecione uma Categoria: "}, class: 'form-control boxed', required: true) %>
   </div>
 
   <div class="form-group input-group">
@@ -137,6 +139,12 @@
   <%= link_to 'Cancelar', calls_path, :class => 'btn btn-danger btn-sm' %>
 </div>
 <% end %>
+
+<style>
+#mceu_32 {
+display: none;
+}
+</style>
 
 <script>
 function validateFiles(inputFile) {
@@ -185,10 +193,10 @@ $(function () {
       if (input.length) {
         input.val(log);
       } else {
-        if (log) 
+        if (log)
           alert(log);
         }
-      
+
     });
   });
 

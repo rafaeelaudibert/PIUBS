@@ -15,8 +15,8 @@
         <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
         <%= devise_error_messages! %>
         <div class="form-group">
-          <%= f.label :email %>
-          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control underlined', placeholder: 'Seu endereço de e-mail' %>
+          <%= f.label :email, 'E-mail', class: 'required' %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control underlined', placeholder: 'Seu endereço de e-mail', required: true %>
         </div>
         <div class="form-group">
           <%= f.submit "Envie-me instruções de recuperação de senha", class: 'btn btn-block btn-primary' %>

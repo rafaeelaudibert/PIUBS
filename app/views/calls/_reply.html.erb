@@ -13,12 +13,16 @@
 <% end %>
 <div style="max-width: 850px">
 
-  <%= form.text_field :protocol, class: 'form-control hidden' %>
-  <%= form.check_box :faq, checked: false, id:'on-faq', style: "display: none;" %>
+  <%= form.text_field :protocol, type: 'hidden', class: 'form-control', required: true %>
+
+  <% if is_support_user || current_user.try(:admin?) %>
+    <%= form.check_box :faq, checked: false, id:'on-faq', style: "display: none;" %>
+    <%= form.text_field :faq_attachments, type: 'hidden', class: 'form-control' %>
+  <% end %>
 
   <div class="field">
-    <%= form.label :description %>
-    <%= form.text_area :description, id:'tinymce', class: 'tinymce', :rows => 40, :cols => 120 %>
+    <%= form.label :description, 'Descrição', class: 'required' %>
+    <%= form.text_area :description, id:'tinymce', class: 'tinymce', :rows => 40, :cols => 120%>
   </div>
 
   <div class="form-group input-group">
@@ -29,7 +33,8 @@
 
   <% if is_support_user || current_user.try(:admin?)%>
     <div class="field">
-      <%= select("reply", "status", options_for_select([["aberto", 0],["em andamento",1],["fechado",2]], @reply.status), {include_blank: true}, class: 'form-control') %>
+      <%= form.label :status, 'Status', class: 'required' %>
+      <%= select("reply", "status", options_for_select([["aberto", 0],["em andamento",1],["fechado",2]], @reply.status), {include_blank: true}, class: 'form-control', required: true) %>
     </div>
   <%end%>
 

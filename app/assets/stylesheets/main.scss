@@ -19,6 +19,16 @@
   }
 }
 
+.underlined-danger {
+  border: none !important;
+  box-shadow: none !important;
+  border-bottom: 1px solid #CC2222 !important;
+}
+
+label.hidden{
+  display: none;
+}
+
 [type="search"] {
   position: relative;
   z-index: 1;
