@@ -21,7 +21,6 @@
 <table class="table table-striped table-hover">
   <thead class="thead-dark">
     <tr>
-      <th>Resposta final</th>
       <th>Nome do arquivo</th>
       <th colspan="3">Ações</th>
     </tr>
@@ -30,7 +29,6 @@
   <tbody>
     <% @attachments.each do |attachment| %>
       <tr>
-        <td><%= attachment.answer.id %></td>
         <td><%= attachment.filename.capitalize %></td>
         <td><%= link_to "Download", download_attachment_path(attachment.id), class: 'btn btn-primary btn-sm' %></td>
       </tr>
