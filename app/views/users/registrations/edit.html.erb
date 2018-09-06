@@ -4,14 +4,14 @@
   <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
     <%= devise_error_messages! %>
 
-
-
-    <!-- <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-      <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
-    <% end %> -->
+    <input type="password" style="display:none" >
+    <div class="form-group">
+      <%= f.label "E-mail" %>
+      <%= f.email_field :email, class: 'form-control', autofocus: true, autocomplete: "email", required: true %>
+    </div>
 
     <div class="form-group">
-      <p><%= f.label "nome" %>
+      <p><%= f.label "Nome" %>
       <%= f.text_field :name, class: 'form-control', required: true %></p>
     </div>
 
@@ -21,21 +21,17 @@
     </div>
 
     <div class="form-group">
-      <%= f.label "E-mail" %>
-      <%= f.email_field :email, class: 'form-control', autofocus: true, autocomplete: "email" %>
-    </div>
-
-    <div class="form-group">
       <%= f.label "Senha atual" %>
-      <%= f.password_field :current_password, class: 'form-control', autocomplete: "off" %>
+      <%= f.password_field :current_password, class: 'form-control', autocomplete: "off", required: true %>
     </div>
-
+      <i>Para manter a senha atual, deixe em branco os campos abaixo</i><br/><br/>
     <div class="form-group">
       <%= f.label "Nova senha" %>
       <%= f.password_field :password, class: 'form-control', autocomplete: "off" %>
       <% if @minimum_password_length %>
         <em>No mínimo <%= @minimum_password_length %> caracteres</em>
       <% end %>
+
     </div>
 
     <div class="form-group">
@@ -45,10 +41,4 @@
 
       <%= f.submit "Salvar", :class => 'btn btn-primary' %>
   <% end %>
-
-  <!-- <h3>Cancel my account</h3>
-
-  <p>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete %></p> -->
-
-  <!-- <%= link_to "Back", :back %> -->
 </div>
