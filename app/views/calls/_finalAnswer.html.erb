@@ -16,12 +16,12 @@
 <% @question = Call.find(params[:id]) %>
   <div class="form" style="max-width: 650px">
     <div class="field">
-      <%= form.label :question, 'Questão*' %>
+      <%= form.label :question, 'Questão', class: 'required' %>
       <%= form.text_field :question, value: @question.title, class: 'form-control boxed', required: true %>
     </div>
 
     <div class="field">
-      <%= form.label :answer, 'Resposta*' %>
+      <%= form.label :answer, 'Resposta', class: 'required' %>
       <%= form.text_area :answer, class: 'form-control boxed', rows: '8', required: true %>
     </div>
 
@@ -38,7 +38,7 @@
     <%= hidden_field_tag :question_id, @question.id, required: true %>
 
     <div class="field" style="display: none">
-      <%= form.label :user_id, 'Usuário*' %>
+      <%= form.label :user_id, 'Usuário', class: 'required' %>
       <%= form.text_field :user_id, value: current_user.id, required: true %>
     </div>
 

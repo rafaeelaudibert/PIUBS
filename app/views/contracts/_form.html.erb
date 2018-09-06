@@ -13,23 +13,23 @@
 <% end %>
 
 <div class="form-group">
-  <%= form.label :file, 'Contrato*' %>
+  <%= form.label :file, 'Contrato', class: 'required' %>
   <%= form.file_field :file, class: 'form-control-file', required: true%>
 </div>
 
 <div class="form-group">
-  <%= form.label :contract_number, 'Nº do Contrato*' %>
+  <%= form.label :contract_number, 'Nº do Contrato', class: 'required' %>
   <%= form.text_field :contract_number , class: 'form-control', required: true%>
 </div>
 
 <% if @city %>
   <div class="form-group" style="display: none">
-    <%= form.label :city_id, 'Cidade*' %>
+    <%= form.label :city_id, 'Cidade', class: 'required' %>
     <%= form.text_field :city_id , name: 'contract[city_id]', id:'contract_city_id', class: 'form-control', value: @city.id, required: true %>
   </div>
 <% else %>
   <div class="form-group">
-    <%= form.label :state_id, 'Estado*' %>
+    <%= form.label :state_id, 'Estado', class: 'required' %>
     <select skip_default_ids="false" allow_method_names_outside_object="true" name="contract[state_id]" id="contract_state_id" class="form-control" required="required">
       <option value="0">
         Selecione um Estado
@@ -43,7 +43,7 @@
   </div>
 
   <div class="form-group">
-    <%= form.label :city_id, 'Cidade*' %>
+    <%= form.label :city_id, 'Cidade', class: 'required' %>
     <select skip_default_ids="false" allow_method_names_outside_object="true" name="contract[city_id]" id="contract_city_id" class="form-control" required="required">
       <option value="0">
         Selecione um Estado primeiro
@@ -54,12 +54,12 @@
 
 <% if @company %>
   <div class="form-group" style="display:none">
-    <%= form.label :sei, 'SEI da Empresa*' %>
+    <%= form.label :sei, 'SEI da Empresa', class: 'required' %>
     <%= form.text_field :sei, class: 'form-control', value: @company.sei, required: true%>
   </div>
 <% else %>
   <div class="form-group">
-    <%= form.label :sei, 'SEI da Empresa*' %>
+    <%= form.label :sei, 'SEI da Empresa', class: 'required' %>
     <select skip_default_ids="false" allow_method_names_outside_object="true" name="contract[sei]" id="contract_sei" class="form-control" required="required">
       <option value="0">
         Selecione uma empresa

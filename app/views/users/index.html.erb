@@ -1,30 +1,109 @@
 <div class="container">
 
-  <h3>Users</h3>
-  <div class="row">
-    <div class="col">
-      <table class="table table-bordered table-striped table-hover">
-        <thead class="thead-dark">
-          <tr>
-            <th>
-              Nome
-            </th>
-            <th>
-              CPF
-            </th>
-            <th>
-              Permissão
-            </th>
-            <th colspan="2"></th>
+  <h3>Usuários</h3>
+
+  <%= form_for resource, :as => resource_name do |f| %>
+  <%= devise_error_messages! %>
+
+    <%= f.select(:role, map_user_roles, {:include_blank => "Nível", :selected => nil}, {:class => "form-control"})%>
+
+    <div class="form-group" id='select_companies' style="display: none">
+      <%= f.select(:sei, ["1","2"], {:include_blank => "Empresa", :selected => nil}, {:class => "form-control"})%>
+    </div>
+
+    <div class="form-group" id='select_states_ubs' style="display: none">
+      <%= f.select(:sei, ["RS","SC"], {:include_blank => "Estado", :selected => nil}, {:class => "form-control"})%>
+    </div>
+
+    <div class="form-group" id='select_states_city' style="display: none">
+      <%= f.select(:sei, ["SP","RJ"], {:include_blank => "Estado", :selected => nil}, {:class => "form-control"})%>
+    </div>
+
+    <script>
+      $('#user_role').change(e => {
+        if (e.target.value == 'company_admin') {
+          <% $view_user = 'company_admin' %>
+          $('#select_companies').show(0);
+          $('#select_states_ubs').hide(0);
+          $('#select_states_city').hide(0);
+          $('#view_company_users').show(0);
+          $('#view_city_users').hide(0);
+          $('#view_ubs_users').hide(0);
+          $('#view_call_center_users').hide(0);
+        } else if (e.target.value == 'ubs_admin') {
+          $('#select_companies').hide(0);
+          $('#select_states_ubs').show(0);
+          $('#select_states_city').hide(0);
+          $('#view_company_users').hide(0);
+          $('#view_city_users').hide(0);
+          $('#view_ubs_users').show(0);
+          $('#view_call_center_users').hide(0);
+        } else if (e.target.value == 'city_admin') {
+          <% $view_user = 'city_admin' %>
+          $('#select_companies').hide(0);
+          $('#select_states_ubs').hide(0);
+          $('#select_states_city').show(0);
+          $('#view_company_users').hide(0);
+          $('#view_city_users').show(0);
+          $('#view_ubs_users').hide(0);
+          $('#view_call_center_users').hide(0);
+        } else if (e.target.value == 'call_center_admin') {
+          <% $view_user = 'call_center_admin' %>
+          $('#select_companies').hide(0);
+          $('#select_states_ubs').hide(0);
+          $('#select_states_city').hide(0);
+          $('#view_company_users').hide(0);
+          $('#view_city_users').hide(0);
+          $('#view_ubs_users').hide(0);
+          $('#view_call_center_users').show(0);
+        }else {
+          $('#sei_group').hide(0);
+          $('#city_group').hide(0);
+        }
+      });
+    </script>
+  <% end %>
+
+    <div class="form-group" id='view_ubs_users' style="display: none">
+      UBS USERS
+    </div>
+    <div class="form-group" id='view_call_center_users' style="display: none">
+      CALL CENTER USERS
+    </div>
+
+
+    <div class="row">
+      <div class="col">
+        <table class="table table-bordered table-striped table-hover">
+          <thead class="thead-dark">
+            <tr>
+              <th>Nome</th>
+              <th>CPF</th>
+              <th>Permissão</th>
+              <th colspan="2"></th>
+            </tr>
           </thead>
-          <tbody>
-            <% @users.sort.each do |user| %>
-              <tr>
-                <%= render user %>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
+            <tbody id='view_company_users' style="display: none">
+              <% @users.sort.each do |user| %>
+                <tr>
+                  <% if (user.role == $view_user) %>
+                    <%= render user %>
+                  <% end %>
+                </tr>
+              <% end %>
+            </tbody>
+            <tbody id='view_city_users' style="display: none">
+              <% @users.sort.each do |user| %>
+                <tr>
+                  <% if (user.role == $view_user) %>
+                    <%= render user %>
+                  <% end %>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
+
   </div>

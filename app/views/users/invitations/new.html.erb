@@ -4,7 +4,7 @@
   <%= devise_error_messages! %>
   <div class="form-group">
     <% resource.class.invite_key_fields.each do |field| -%>
-      <p><%= f.label field %>
+      <p><%= f.label field, class: 'required' %>
         <%= f.text_field field, :autofocus => true, class: 'form-control' %></p>
     <% end -%>
   </div>
@@ -15,7 +15,7 @@
       <% if @role %>
         <%= f.hidden_field :role, value: @role %>
       <% else %>
-        <%= f.label "Escolha o tipo de usuário*" %>
+        <%= f.label "Escolha o tipo de usuário", class: 'required' %>
         <%= f.select(:role, $roles_allowed, {:include_blank => "Selecione", :selected => nil, required: true}, {:class => "form-control"})%>
       <% end %>
     <% end %>

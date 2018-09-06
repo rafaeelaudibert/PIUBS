@@ -17,7 +17,7 @@
         <%= f.hidden_field :reset_password_token %>
 
         <div class="form-group">
-          <%= f.label :password, "Nova senha*" %><br/>
+          <%= f.label :password, "Nova senha", class: 'required' %><br/>
           <% if @minimum_password_length %>
             <em>(<%= @minimum_password_length %>
               characters minimum)</em><br/>
@@ -26,7 +26,7 @@
         </div>
 
         <div class="form-group">
-          <%= f.label :password_confirmation, "Confirme sua nova senha*" %><br/>
+          <%= f.label :password_confirmation, "Confirme sua nova senha", class: 'required' %><br/>
           <%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-control underlined', required: true %>
         </div>
 

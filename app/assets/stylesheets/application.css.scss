@@ -64,6 +64,11 @@ html {
   color: #9ed85f;
 }
 
+label.required::after {
+  content: ' *';
+  color: red;
+}
+
 .app {
   position: relative;
   width: 100%;

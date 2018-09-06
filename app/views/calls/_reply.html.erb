@@ -21,7 +21,7 @@
   <% end %>
 
   <div class="field">
-    <%= form.label :description, 'Descrição*' %>
+    <%= form.label :description, 'Descrição', class: 'required' %>
     <%= form.text_area :description, id:'tinymce', class: 'tinymce', :rows => 40, :cols => 120%>
   </div>
 
@@ -33,6 +33,7 @@
 
   <% if is_support_user || current_user.try(:admin?)%>
     <div class="field">
+      <%= form.label :status, 'Status', class: 'required' %>
       <%= select("reply", "status", options_for_select([["aberto", 0],["em andamento",1],["fechado",2]], @reply.status), {include_blank: true}, class: 'form-control', required: true) %>
     </div>
   <%end%>
