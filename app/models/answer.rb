@@ -16,5 +16,5 @@ class Answer < ApplicationRecord
   pg_search_scope :search_for, against: {
     question: 'A',
     answer: 'B'
-  }, using: { tsearch: { any_word: true, negation: true } }
+  }, using: { tsearch: { any_word: true, prefix: true }, trigram: { threshold: 0.3 } }
 end
