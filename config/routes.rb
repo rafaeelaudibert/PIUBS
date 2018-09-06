@@ -26,9 +26,9 @@ Rails.application.routes.draw do
   resources :cities
   resources :states
 
-  devise_for :users, controllers: { invitations: 'users/invitations', registrations: 'registrations' }
+  devise_for :users, controllers: { invitations: 'users/invitations', registrations: 'users/registrations' }
   root to: 'visitors#index'
-  
+
   resources :users
   get '404', to: 'application#page_not_found', as: 'not_found'
   get '422', to: 'application#acess_denied', as: 'denied'
