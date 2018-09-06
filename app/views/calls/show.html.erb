@@ -31,7 +31,7 @@
   <hr/>
   <p>
     <strong><%= t :call %>:</strong>
-    <%= @call.description %>
+    <%= @call.description.html_safe %>
   </p>
   <p>
     <strong><%= t :acess_profile_label %>:
@@ -378,10 +378,10 @@ $(':file').on('fileselect', function (event, numFiles, label, where) {
   if (input.length) {
     input.val(log);
   } else {
-    if (log) 
+    if (log)
       alert(log);
     }
-  
+
 });
 });
 
