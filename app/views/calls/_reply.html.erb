@@ -21,7 +21,7 @@
   <% end %>
 
   <div class="field">
-    <%= form.label :description, 'Descrição*' %>
+    <%= form.label :description, 'Descrição', class: 'required' %>
     <%= form.text_area :description, id:'tinymce', class: 'tinymce', :rows => 40, :cols => 120%>
   </div>
 
