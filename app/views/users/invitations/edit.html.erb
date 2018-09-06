@@ -14,22 +14,22 @@
         <%= devise_error_messages! %>
         <%= f.hidden_field :invitation_token, readonly: true %>
         <div class="form-group">
-          <p><%= f.label "Nome*" %>
+          <p><%= f.label "Nome", class: 'required' %>
             <%= f.text_field :name, class: 'form-control underlined', required: true %></p>
         </div>
         <div class="form-group">
-          <p><%= f.label "CPF*" %>
+          <p><%= f.label "CPF", class: 'required' %>
             <%= f.text_field :cpf, class: 'form-control underlined', required: true %>
             <label class="hidden" style="color: #CC2222;font-weight:300;">CPF INVÁLIDO</label>
           </p>
         </div>
         <div class="form-group">
           <% if f.object.class.require_password_on_accepting %>
-            <p><%= f.label "Crie uma senha*" %>
+            <p><%= f.label "Crie uma senha", class: 'required' %>
               <%= f.password_field :password, class: 'form-control underlined', required: true %></p>
           </div>
           <div class="form-group">
-            <p><%= f.label "Confirme a sua senha*" %>
+            <p><%= f.label "Confirme a sua senha", class: 'required' %>
               <%= f.password_field :password_confirmation, class: 'form-control underlined', required: true %></p>
           <% end %>
         </div>
@@ -72,28 +72,28 @@ function validateCPF(strCPF) {
   let soma = 0,
     resto;
 
-  if (strCPF == "00000000000") 
+  if (strCPF == "00000000000")
     return false;
-  
-  for (let i = 1; i <= 9; i++) 
+
+  for (let i = 1; i <= 9; i++)
     soma = soma + parseInt(strCPF.substring(i - 1, i)) * (11 - i);
-  
+
   resto = (soma * 10) % 11;
-  if (resto == 10 || resto == 11) 
+  if (resto == 10 || resto == 11)
     resto = 0;
-  
-  if (resto != parseInt(strCPF.substring(9, 10))) 
+
+  if (resto != parseInt(strCPF.substring(9, 10)))
     return false;
-  
+
   soma = 0;
-  for (let i = 1; i <= 10; i++) 
+  for (let i = 1; i <= 10; i++)
     soma = soma + parseInt(strCPF.substring(i - 1, i)) * (12 - i);
   resto = (soma * 10) % 11;
 
-  if (resto == 10 || resto == 11) 
+  if (resto == 10 || resto == 11)
     resto = 0;
-  
-  if (resto != parseInt(strCPF.substring(10, 11))) 
+
+  if (resto != parseInt(strCPF.substring(10, 11)))
     return false;
   return true;
 }

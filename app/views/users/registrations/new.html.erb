@@ -4,12 +4,12 @@
   <%= devise_error_messages! %>
 
   <div class="form-group">
-    <%= f.label :email, 'E-mail*' %>
+    <%= f.label :email, 'E-mail', class: 'required' %>
     <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', required: true %>
   </div>
 
   <div class="form-group">
-    <%= f.label :password, 'Senha*' %>
+    <%= f.label :password, 'Senha', class: 'required' %>
     <% if @minimum_password_length %>
       <em>(No mínimo
         <%= @minimum_password_length %>
@@ -19,7 +19,7 @@
   </div>
 
   <div class="form-group">
-    <%= f.label :password_confirmation, 'Confirmação de senha*' %>
+    <%= f.label :password_confirmation, 'Confirmação de senha', class: 'required' %>
     <%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-control', required: true %>
   </div>
 
