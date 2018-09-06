@@ -47,7 +47,7 @@ class RepliesController < ApplicationController
         end
       end
 
-      ReplyMailer.notification(@reply, current_user).deliver
+      ReplyMailer.notify(@reply, current_user).deliver
       redirect_to call_path(@reply.protocol), notice: 'Reply was successfully created.'
     else
       render :new

@@ -36,7 +36,7 @@ class AnswersController < ApplicationController
       if params[:question_id]
         @call = Call.find(params[:question_id])
         @call.answer_id = @answer.id
-        AnswerMailer.notification(@call, @answer, current_user).deliver
+        AnswerMailer.notify(@call, @answer, current_user).deliver
         raise 'We could not set the call answer_id properly. Please check it' unless @call.save
       end
 
