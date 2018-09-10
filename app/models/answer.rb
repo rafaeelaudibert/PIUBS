@@ -21,7 +21,8 @@ class Answer < ApplicationRecord
                   ignoring: :accents,
                   using: {
                     tsearch: { any_word: true,
-                               prefix: true },
+                               prefix: true,
+                               dictionary: :portuguese },
                     trigram: { threshold: 0.1 }
                   }
 end
