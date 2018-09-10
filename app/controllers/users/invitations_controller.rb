@@ -33,17 +33,9 @@ class Users::InvitationsController < Devise::InvitationsController
         $roles_allowed = [:ubs_admin]
       else
         if current_user.ubs_admin?
-          $roless_allowed = [:ubs_user]
+          $roles_allowed = [:ubs_user]
         else
-          $roles_allowed = if current_user.company_admin?
-                             [:company_user]
-                           else
-                             $roles_allowed = if current_user.call_center_admin?
-                                                [:call_center_user]
-                                              else
-                                                []
-                                              end
-                           end
+          $roles_allowed = current_user.company_admin? ? [:company_user] : current_user.call_center_admin? ? [:call_center_user] : []
         end
       end
     end
@@ -92,6 +84,7 @@ class Users::InvitationsController < Devise::InvitationsController
     devise_parameter_sanitizer.permit(:accept_invitation, keys: %i[name password password_confirmation invitation_token cpf])
     begin
       params.require(:user).require(:name)
+      params.require(:user).require(:last_name)
       params.require(:user).require(:cpf)
     rescue StandardError
       redirect_back fallback_location: not_found_path, alert: 'Por favor, preencha todos os campos.'
