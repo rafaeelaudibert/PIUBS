@@ -18,6 +18,10 @@
             <%= f.text_field :name, class: 'form-control underlined', required: true %></p>
         </div>
         <div class="form-group">
+          <p><%= f.label "Sobrenome", class: 'required' %>
+            <%= f.text_field :last_name, class: 'form-control underlined', required: true %></p>
+        </div>
+        <div class="form-group">
           <p><%= f.label "CPF", class: 'required' %>
             <%= f.text_field :cpf, class: 'form-control underlined', required: true %>
             <label class="hidden" style="color: #CC2222;font-weight:300;">CPF INVÁLIDO</label>

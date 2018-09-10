@@ -10,7 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_10_130001) do
+
+ActiveRecord::Schema.define(version: 2018_09_10_205754) do
+
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "fuzzystrmatch"
@@ -170,6 +172,7 @@ ActiveRecord::Schema.define(version: 2018_09_10_130001) do
     t.string "cpf"
     t.bigint "city_id"
     t.integer "cnes"
+    t.string "last_name"
     t.index ["city_id"], name: "index_users_on_city_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
