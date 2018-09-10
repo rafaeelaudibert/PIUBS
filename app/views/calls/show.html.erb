@@ -138,7 +138,9 @@
       </div>
       <div class="card-body" style="padding: 5px 30px 15px">
         <p class="card-text">
-          <%= reply.description.html_safe %>
+          <span>
+            <%= reply.description.html_safe %>
+          </span>
 
           <% if reply.attachments.length > 0 %>
             <hr/>
@@ -176,7 +178,9 @@
       added a support.
     </div>
     <div class="card-block">
-      <%= reply.description.html_safe %>
+      <span>
+        <%= reply.description.html_safe %>
+      </span>
 
       <% if reply.attachments.length > 0 %>
         <hr/>
@@ -378,10 +382,10 @@ $(':file').on('fileselect', function (event, numFiles, label, where) {
   if (input.length) {
     input.val(log);
   } else {
-    if (log)
+    if (log) 
       alert(log);
     }
-
+  
 });
 });
 
@@ -404,12 +408,11 @@ if (parent.lastChild == finalAnswer) {
   $('#final-answer').show(200);
 }
 
-const formChildren = finalAnswer.children[1].children;
+const formChildren = finalAnswer.children[3].children;
 const answerDivField = formChildren[2].children[1];
 const answerField = answerDivField.children[1];
 answerField.innerHTML = parent.parentNode.children[1].children[0].innerText;
 
-console.log(parent.children);
 const float = parent.children[3].children
 const faqField = formChildren[2].children[6];
 faqField.style.display = float.length == 0
