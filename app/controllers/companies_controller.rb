@@ -48,18 +48,35 @@ class CompaniesController < ApplicationController
     redirect_to companies_url, notice: 'Company was successfully destroyed.'
   end
 
-  # get /companies/1/cities/1
-  def getCities
+  # GET /companies/1/states
+  def getStates
     @company = Company.find(params[:id])
     respond_to do |format|
-      format.js { render json: City.where(id: @company.city_ids, state_id: params[:state_id]) }
+      format.js { render json: State.where(id: @company.state_ids).order('id ASC') }
     end
   end
 
+  # GET /companies/1/users
+  def getUsers
+    @company = Company.find(params[:id])
+    respond_to do |format|
+      format.js { render json: User.where(sei: @company.sei).order('id ASC') }
+    end
+  end
+
+  # GET /companies/1/cities/1
+  def getCities
+    @company = Company.find(params[:id])
+    respond_to do |format|
+      format.js { render json: City.where(id: @company.city_ids, state_id: params[:state_id]).order('id ASC') }
+    end
+  end
+
+  # GET /companies/1/unities/1
   def getUnities
     @company = Company.find(params[:id])
     respond_to do |format|
-      format.js { render json: Unity.where(city_id: params[:city_id]).order('name ASC') }
+      format.js { render json: Unity.where(city_id: params[:city_id]).order('cnes ASC') }
     end
   end
 

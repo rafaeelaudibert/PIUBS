@@ -21,6 +21,8 @@ Rails.application.routes.draw do
   get 'contracts/:id/download', to: 'contracts#download', as: 'download_contract'
   resources :contracts
 
+  get 'companies/:id/states', to: 'companies#getStates', as: 'company_states_path'
+  get 'companies/:id/users', to: 'companies#getUsers', as: 'company_users_path'
   get 'companies/:id/cities/:state_id', to: 'companies#getCities', as: 'company_cities_path'
   get 'companies/:id/unities/:city_id', to: 'companies#getUnities', as: 'company_unities_path'
   resources :companies, param: :sei
