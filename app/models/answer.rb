@@ -13,8 +13,16 @@ class Answer < ApplicationRecord
 
   # PgSearch stuff
   include PgSearch
-  pg_search_scope :search_for, against: {
-    question: 'A',
-    answer: 'B'
-  }, using: { tsearch: { any_word: true, negation: true } }
+  pg_search_scope :search_for,
+                  against: {
+                    question: 'A',
+                    answer: 'B'
+                  },
+                  ignoring: :accents,
+                  using: {
+                    tsearch: { any_word: true,
+                               prefix: true,
+                               dictionary: :portuguese },
+                    trigram: { threshold: 0.1 }
+                  }
 end

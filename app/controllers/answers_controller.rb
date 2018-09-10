@@ -92,7 +92,7 @@ class AnswersController < ApplicationController
   # GET /answers/query/:search
   def search
     respond_to do |format|
-      format.js { render json: Answer.where('faq = true').search_for(params[:search]).with_pg_search_rank }
+      format.js { render json: Answer.where('faq = true').search_for(params[:search]).with_pg_search_rank.limit(15) }
     end
   end
 
