@@ -69,6 +69,13 @@ label.required::after {
   color: red;
 }
 
+div.required_info::before {
+  content: 'Preencha todos os campos obrigatórios *';
+  font-style: italic;
+  color: red;
+  opacity: 0.9;
+}
+
 .app {
   position: relative;
   width: 100%;
