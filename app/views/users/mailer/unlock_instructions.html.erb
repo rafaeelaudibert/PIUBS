@@ -1,7 +1,23 @@
-<p>Hello <%= @resource.email %>!</p>
+<div style="text-align: center;background-color: #FFFFFF; width: 80%; box-shadow: 0px 0px 15px 7px rgba(0, 0, 0, 0.2); padding:1rem 1rem; margin: 2.5rem auto">
+  <div style="width: 100%; height: 4rem; background-color: #444444; vertical-align: middle; border-top:1rem; margin-bottom: 1rem">
+    <h1 style="font-size: 3rem;color: #ffffff;">PIUBS</h1>
+  </div>
 
-<p>Your account has been locked due to an excessive number of unsuccessful sign in attempts.</p>
+  <p>
+    <span style="font-size: 2rem">Olá,
+      <b style="color: #007bff"><%= @resource.name %>!</b>
+    </span>
+  </p>
 
-<p>Click the link below to unlock your account:</p>
+  <p>
+    A sua conta foi bloqueada devido a um número excessivo de tentativas de login não sucedidas.
+  </p>
 
-<p><%= link_to 'Unlock my account', unlock_url(@resource, unlock_token: @token) %></p>
+  <p>
+    Clique no link abaixo para desbloquear a sua conta.</p>
+
+  <p>
+    <%= link_to 'Desbloquear minha conta', unlock_url(@resource, unlock_token: @token) %>
+  </p>
+
+</div>
