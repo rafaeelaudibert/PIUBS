@@ -35,9 +35,26 @@ class AnswersController < ApplicationController
     if @answer.save
       if params[:question_id]
         @call = Call.find(params[:question_id])
-        @call.answer_id = @answer.id
-        AnswerMailer.notify(@call, @answer, current_user).deliver
-        raise 'We could not set the call answer_id properly. Please check it' unless @call.save
+
+        # Retira a última answer caso ela não esteja no FAQ, e exclui seus attachment_links
+        if @call.answer_id && @call.answer.faq == false
+          @oldAnswer = Answer.find(@call.answer_id)
+          @oldAnswer.attachment_links.each(&:destroy)
+
+          # Atualiza o answer_id
+          @call.answer_id = @answer.id
+          AnswerMailer.notify(@call, @answer, current_user).deliver
+          raise 'We could not set the call answer_id properly. Please check it' unless @call.save
+
+          # Destroi a anterior
+          @oldAnswer.destroy
+        else
+          # Atualiza o answer_id
+          @call.answer_id = @answer.id
+          AnswerMailer.notify(@call, @answer, current_user).deliver
+          raise 'We could not set the call answer_id properly. Please check it' unless @call.save
+        end
+
       end
 
       if files
@@ -92,7 +109,7 @@ class AnswersController < ApplicationController
   # GET /answers/query/:search
   def search
     respond_to do |format|
-      format.js { render json: Answer.where('faq = true').search_for(params[:search]).with_pg_search_rank }
+      format.js { render json: Answer.where('faq = true').search_for(params[:search]).with_pg_search_rank.limit(15) }
     end
   end
 
