@@ -1,13 +1,12 @@
 <td class="user">
   <% if (user.invitation_accepted_at != nil) %>
     <span class='user-name'><%= link_to user.name, user %></span>
-    <span><%= mail_to user.email, 'Send e-mail', class: 'btn btn-primary' %></span>
   <% else %>
     <span class='user-name'></span>
   <% end %>
 </td>
 <td class="user">
-  <%= user.email %>
+  <%= mail_to user.email, user.email %>
 </td>
 <td class="user">
   <% if (user.current_sign_in_at) %>
