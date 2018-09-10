@@ -37,14 +37,12 @@ class CallsController < ApplicationController
     files = call_parameters.delete(:file) if call_parameters[:file]
     @call = Call.new(call_parameters)
     # status, severity, protocol, company_id
-    user = current_user
-    @call.sei = user.sei
     @call.status = 0
     @call.protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
     @call.severity = 'Normal'
-    @call.user_id = user.id
     @call.id = @call.protocol
-    @call.company ||= Company.find(0)
+    @call.user_id ||= current_user.id
+    @call.sei ||= current_user.sei
 
     if @call.save
       if files
@@ -58,7 +56,7 @@ class CallsController < ApplicationController
         end
       end
 
-      CallMailer.notify(@call, current_user).deliver
+      CallMailer.notify(@call, @call.user).deliver
       redirect_to @call, notice: 'Call was successfully created.'
     else
       render :new
@@ -90,7 +88,7 @@ class CallsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def call_params
-    params.require(:call).permit(:title, :description, :finished_at, :status, :version, :access_profile, :feature_detail, :answer_summary, :severity, :protocol, :city_id, :category_id, :state_id, :company_id, :cnes, file: [])
+    params.require(:call).permit(:sei, :user_id, :title, :description, :finished_at, :status, :version, :access_profile, :feature_detail, :answer_summary, :severity, :protocol, :city_id, :category_id, :state_id, :company_id, :cnes, file: [])
   end
 
   ## ATTACHMENTS STUFF

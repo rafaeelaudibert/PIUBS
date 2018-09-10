@@ -1,4 +1,4 @@
-<div class="required_info"></div><br />
+<div class="required_info"></div><br/>
 <%= tinymce_assets %>
 <%= tinymce %>
 <%= form_with(model: call, local: true) do |form| %>
@@ -15,191 +15,281 @@
   </div>
 <% end %>
 <div class="col-8 mb-8">
-  <div class="field">
-    <%= form.label :title, 'Título', class: 'required' %>
-    <%= form.text_field :title, class: 'form-control boxed', autocomplete: :off, required: true %>
-  </div>
 
-  <div class="field">
-    <%= form.label :description, 'Descrição (Descreva seu problema, o que estava fazendo quando ele aconteceu, quais procedimos já tentou, etc...)', class: 'required' %>
-    <%= form.text_area :description, id:'tinymce', class: 'tinymce', :rows => 15, :cols => 120%>
-  </div>
-
-  <div class="field">
-    <%= form.label :version, 'Versão', class: 'required' %>
-    <%= form.text_field :version, class: 'form-control boxed', required: true %>
-  </div>
-
-  <div class="field">
-    <%= form.label :access_profile, 'Perfil de Acesso', class: 'required' %>
-    <%= form.text_field :access_profile, class: 'form-control boxed', required: true %>
-  </div>
-
-  <div class="field">
-    <%= form.label :feature_detail, 'Detalhe da Funcionalidade' %>
-    <%= form.text_field :feature_detail, class: 'form-control boxed' %>
-  </div>
-
-  <% if @company %>
-    <div class="form-group">
-      <%= form.label :state_id, 'Estado', class: 'required' %>
-      <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[state_id]" id="call_state_id" class="form-control boxed" required="required">
-        <option value="0">
-          Selecione um Estado
-        </option>
-        <% State.where(id: @company.state_ids).each do |_state| %>
-          <option value="<%= _state.id %>">
-            <%= _state.name %>
+  <%# Admin ou call_center_user %>
+    <% if !@company || @company.sei == 0 %>
+      <div class="form-group">
+        <%= form.label :state_id, 'Empresa', class: 'required' %>
+        <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[sei]" id="call_sei" class="form-control boxed" required="required">
+          <option value="0">
+            Selecione uma Empresa
           </option>
-        <% end %>
-      </select>
-    </div>
+          <% Company.all.each do |_company| %>
+            <option value="<%= _company.sei %>">
+              <%= _company.sei %>
+            </option>
+          <% end %>
+        </select>
+      </div>
 
-    <div class="form-group">
-      <%= form.label :city_id, 'Cidade', class: 'required' %>
-      <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[city_id]" id="call_city_id" class="form-control boxed" required="required">
-        <option value="0">
-          Selecione um Estado primeiro
-        </option>
-      </select>
-    </div>
+      <div class="form-group">
+        <%= form.label :user_id, 'Usuário', class: 'required' %>
+        <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[user_id]" id="call_user_id" class="form-control boxed" required="required">
+          <option value="0">
+            Selecione uma Empresa primeiro
+          </option>
+        </select>
+      </div>
 
-    <div class="form-group">
-      <%= form.label :cnes, 'UBS', class: 'required' %>
-      <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[cnes]" id="call_cnes" class="form-control boxed" required="required">
-        <option value="0">
-          Selecione uma Cidade primeiro
-        </option>
-      </select>
-    </div>
-    <script>
+      <div class="form-group">
+        <%= form.label :state_id, 'Estado', class: 'required' %>
+        <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[state_id]" id="call_state_id" class="form-control boxed" required="required">
+          <option value="0">
+            Selecione uma Empresa primeiro
+          </option>
+        </select>
+      </div>
 
-      const retrieveQuery = () => {
-        const data = {};
-        location.search.slice(1).split('&').forEach(parte => data[parte.split('=')[0]] = parte.split('=')[1]);
+      <div class="form-group">
+        <%= form.label :city_id, 'Cidade', class: 'required' %>
+        <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[city_id]" id="call_city_id" class="form-control boxed" required="required">
+          <option value="0">
+            Selecione um Estado primeiro
+          </option>
+        </select>
+      </div>
 
-        return data;
-      }
-      const query = retrieveQuery();
+      <div class="form-group">
+        <%= form.label :cnes, 'UBS', class: 'required' %>
+        <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[cnes]" id="call_cnes" class="form-control boxed" required="required">
+          <option value="0">
+            Selecione uma Cidade primeiro
+          </option>
+        </select>
+      </div>
+      <hr style="margin: 1.5rem 0 2rem"></hr>
+      <script>
 
-      const stateSelect = document.getElementById('call_state_id');
-      const citySelect = document.getElementById('call_city_id');
-      const ubsSelect = document.getElementById('call_cnes')
-      const triggeredByState = () => jQuery.ajax({url: `/companies/${query.sei}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
-      const trigerredByCity = () => jQuery.ajax({url: `/companies/${query.sei}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
-      stateSelect.addEventListener('change', triggeredByState);
-      citySelect.addEventListener('change', trigerredByCity);
+        const companySelect = document.getElementById('call_sei');
+        const userSelect = document.getElementById('call_user_id');
+        const stateSelect = document.getElementById('call_state_id');
+        const citySelect = document.getElementById('call_city_id');
+        const ubsSelect = document.getElementById('call_cnes')
 
-      function insertCitiesData(cities) {
-        let innerHTML = '';
-        for (city of cities) {
-          innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
+        const triggeredByCompany = () => {
+          jQuery.ajax({url: `/companies/${companySelect.value}/states`, type: "GET", dataType: "json", success: insertStatesData, error: console.log});
+          jQuery.ajax({url: `/companies/${companySelect.value}/users`, type: "GET", dataType: "json", success: insertUsersData, error: console.log});
         }
-        citySelect.innerHTML = innerHTML || '<option value="0"> Selecione um Estado primeiro </option>';
-        trigerredByCity(); // Updates the unity select as well
-      }
+        const triggeredByState = () => jQuery.ajax({url: `/companies/${companySelect.value}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
+        const triggeredByCity = () => jQuery.ajax({url: `/companies/${companySelect.value}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
 
-      function insertUBSData(unities) {
-        let innerHTML = '';
-        for (unity of unities) {
-          innerHTML += '<option value=' + unity.cnes + '>' + unity.name + '</option>'
+        companySelect.addEventListener('change', triggeredByCompany);
+        stateSelect.addEventListener('change', triggeredByState);
+        citySelect.addEventListener('change', triggeredByCity);
+
+        function insertUsersData(users) {
+          let innerHTML = '<option value="0"> Selecione o Usuário </option>';
+          for (user of users) {
+            innerHTML += '<option value=' + user.id + '>' + `${user.name} - ${user.cpf}` + '</option>'
+          }
+          userSelect.innerHTML = innerHTML;
         }
-        ubsSelect.innerHTML = innerHTML || '<option value="0"> Selecione uma Cidade primeiro </option>';
-      }
-    </script>
-  <% else %>
+
+        function insertStatesData(states) {
+          let innerHTML = '<option value="0"> Selecione o Estado </option>';
+          for (state of states) {
+            innerHTML += '<option value=' + state.id + '>' + state.name + '</option>'
+          }
+          stateSelect.innerHTML = innerHTML;
+        }
+
+        function insertCitiesData(cities) {
+          let innerHTML = '<option value="0"> Selecione a cidade </option>';
+          for (city of cities) {
+            innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
+          }
+          citySelect.innerHTML = innerHTML;
+        }
+
+        function insertUBSData(unities) {
+          let innerHTML = '<option value="0"> Selecione a UBS </option>';
+          for (unity of unities) {
+            innerHTML += '<option value=' + unity.cnes + '>' + unity.name + '</option>'
+          }
+          ubsSelect.innerHTML = innerHTML
+        }
+      </script>
+    <% end %>
+
     <div class="field">
-      <%= form.label :city_id, 'Cidade', class: 'required'%>
-      <%= form.collection_select(:city_id, City.all.sample(50), :id, :name, {include_blank: "Selecione uma cidade: "}, class: 'form-control boxed', required: true) %>
+      <%= form.label :title, 'Título', class: 'required' %>
+      <%= form.text_field :title, class: 'form-control boxed', autocomplete: :off, required: true %>
     </div>
 
     <div class="field">
-      <%= form.label :state_id, 'Estado', class: 'required' %>
-      <%= form.collection_select(:state_id, get_all_states, :id, :name, {include_blank: "Selecione um Estado: "}, class: 'form-control boxed', required: true) %>
+      <%= form.label :description, 'Descrição (Descreva seu problema, o que estava fazendo quando ele aconteceu, quais procedimos já tentou, etc...)', class: 'required' %>
+      <%= form.text_area :description, id:'tinymce', class: 'tinymce', :rows => 15, :cols => 120%>
     </div>
 
     <div class="field">
-      <%= form.label :cnes, 'UBS', class: 'required' %>
-      <%= form.collection_select(:cnes, Unity.all.sample(10), :cnes, :name, {include_blank: "Selecione uma UBS: "}, class: 'form-control boxed', required: true) %>
+      <%= form.label :version, 'Versão', class: 'required' %>
+      <%= form.text_field :version, class: 'form-control boxed', required: true %>
     </div>
-  <% end %>
 
-  <div class="field">
-    <%= form.label :category_id, 'Categoria', class: 'required' %>
-    <%= form.collection_select(:category_id, Category.all, :id, :name, {include_blank: "Selecione uma Categoria: "}, class: 'form-control boxed', required: true) %>
+    <div class="field">
+      <%= form.label :access_profile, 'Perfil de Acesso', class: 'required' %>
+      <%= form.text_field :access_profile, class: 'form-control boxed', required: true %>
+    </div>
+
+    <div class="field">
+      <%= form.label :feature_detail, 'Detalhe da Funcionalidade' %>
+      <%= form.text_field :feature_detail, class: 'form-control boxed' %>
+    </div>
+
+    <% if @company && @company.sei != 0%>
+      <div class="form-group">
+        <%= form.label :state_id, 'Estado', class: 'required' %>
+        <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[state_id]" id="call_state_id" class="form-control boxed" required="required">
+          <option value="0">
+            Selecione um Estado
+          </option>
+          <% State.where(id: @company.state_ids).each do |_state| %>
+            <option value="<%= _state.id %>">
+              <%= _state.name %>
+            </option>
+          <% end %>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :city_id, 'Cidade', class: 'required' %>
+        <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[city_id]" id="call_city_id" class="form-control boxed" required="required">
+          <option value="0">
+            Selecione um Estado primeiro
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :cnes, 'UBS', class: 'required' %>
+        <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[cnes]" id="call_cnes" class="form-control boxed" required="required">
+          <option value="0">
+            Selecione uma Cidade primeiro
+          </option>
+        </select>
+      </div>
+      <script>
+
+        const retrieveQuery = () => {
+          const data = {};
+          location.search.slice(1).split('&').forEach(parte => data[parte.split('=')[0]] = parte.split('=')[1]);
+
+          return data;
+        }
+        const query = retrieveQuery();
+
+        const stateSelect = document.getElementById('call_state_id');
+        const citySelect = document.getElementById('call_city_id');
+        const ubsSelect = document.getElementById('call_cnes')
+        const triggeredByState = () => jQuery.ajax({url: `/companies/${query.sei}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
+        const trigerredByCity = () => jQuery.ajax({url: `/companies/${query.sei}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
+        stateSelect.addEventListener('change', triggeredByState);
+        citySelect.addEventListener('change', trigerredByCity);
+
+        function insertCitiesData(cities) {
+          let innerHTML = '<option value="0"> Selecione a cidade </option>';;
+          for (city of cities) {
+            innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
+          }
+          citySelect.innerHTML = innerHTML;
+        }
+
+        function insertUBSData(unities) {
+          let innerHTML = '<option value="0"> Selecione a UBS </option>';
+          for (unity of unities) {
+            innerHTML += '<option value=' + unity.cnes + '>' + unity.name + '</option>'
+          }
+          ubsSelect.innerHTML = innerHTML;
+        }
+      </script>
+    <% end %>
+
+    <div class="field">
+      <%= form.label :category_id, 'Categoria', class: 'required' %>
+      <%= form.collection_select(:category_id, Category.all, :id, :name, {include_blank: "Selecione uma Categoria: "}, class: 'form-control boxed', required: true) %>
+    </div>
+
+    <div class="form-group input-group">
+      <br/>
+      <%= form.label :file, 'Anexar arquivos', class: "btn btn-secondary btn-file input-group-btn" %>
+      <%= form.file_field :file, class: 'form-control-file', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 2.megabytes}, style:"display: none"%>
+      <%= form.text_field :file_text, class:"form-control", readonly: true %>
+    </div>
+
+    <%= form.submit 'Criar atendimento', :class => 'btn btn-primary btn-sm' %>
+    <%= link_to 'Cancelar', calls_path, :class => 'btn btn-danger btn-sm' %>
   </div>
-
-  <div class="form-group input-group">
-    <br/>
-    <%= form.label :file, 'Anexar arquivos', class: "btn btn-secondary btn-file input-group-btn" %>
-    <%= form.file_field :file, class: 'form-control-file', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 2.megabytes}, style:"display: none"%>
-    <%= form.text_field :file_text, class:"form-control", readonly: true %>
-  </div>
-
-  <%= form.submit 'Criar atendimento', :class => 'btn btn-primary btn-sm' %>
-  <%= link_to 'Cancelar', calls_path, :class => 'btn btn-danger btn-sm' %>
-</div>
 <% end %>
 
 <style>
-#mceu_32 {
-display: none;
-}
+  #mceu_32 {
+    display: none;
+  }
 </style>
 
 <script>
-function validateFiles(inputFile) {
+  function validateFiles(inputFile) {
 
-  var size = 0;
-  var maxFileSize = $(inputFile).data('max-file-size');
+    var size = 0;
+    var maxFileSize = $(inputFile).data('max-file-size');
 
-  $.each(inputFile.files, function () {
-    if (this.size) {
-      size += this.size;
-    }
-  });
-
-  if (size && maxFileSize && size > parseInt(maxFileSize)) {
-    const animation = {
-      "in": "bounceIn",
-      "out": "fadeOutUpBig"
-    };
-    const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
-    Notification.create("<%= 'Warning' %>", '<%= "This file exceeds the maximum allowed file size (2 MB)" %>', heart, animation, 2, 5);
-    $(inputFile).val('');
-  };
-}
-
-$(function () {
-
-  // We can attach the `fileselect` event to all file inputs on the page
-  $(document).on('change', ':file', function () {
-    var input = $(this),
-      numFiles = input.get(0).files
-        ? input.get(0).files.length
-        : 1,
-      label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-    input.trigger('fileselect', [numFiles, label]);
-  });
-
-  // We can watch for our custom `fileselect` event like this
-  $(document).ready(function () {
-    $(':file').on('fileselect', function (event, numFiles, label) {
-
-      var input = $(this).parents('.input-group').find(':text'),
-        log = numFiles > 1
-          ? numFiles + ' files selected'
-          : label;
-
-      if (input.length) {
-        input.val(log);
-      } else {
-        if (log)
-          alert(log);
-        }
-
+    $.each(inputFile.files, function () {
+      if (this.size) {
+        size += this.size;
+      }
     });
-  });
 
-});
+    if (size && maxFileSize && size > parseInt(maxFileSize)) {
+      const animation = {
+        "in": "bounceIn",
+        "out": "fadeOutUpBig"
+      };
+      const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
+      Notification.create("<%= 'Warning' %>", '<%= "This file exceeds the maximum allowed file size (2 MB)" %>', heart, animation, 2, 5);
+      $(inputFile).val('');
+    };
+  }
+
+  $(function () {
+
+    // We can attach the `fileselect` event to all file inputs on the page
+    $(document).on('change', ':file', function () {
+      var input = $(this),
+        numFiles = input.get(0).files
+          ? input.get(0).files.length
+          : 1,
+        label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+      input.trigger('fileselect', [numFiles, label]);
+    });
+
+    // We can watch for our custom `fileselect` event like this
+    $(document).ready(function () {
+      $(':file').on('fileselect', function (event, numFiles, label) {
+
+        var input = $(this).parents('.input-group').find(':text'),
+          log = numFiles > 1
+            ? numFiles + ' files selected'
+            : label;
+
+        if (input.length) {
+          input.val(log);
+        } else {
+          if (log) 
+            alert(log);
+          }
+        
+      });
+    });
+
+  });
 </script>
