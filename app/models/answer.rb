@@ -18,6 +18,7 @@ class Answer < ApplicationRecord
                     question: 'A',
                     answer: 'B'
                   },
+                  ignoring: :accents,
                   using: {
                     tsearch: { any_word: true,
                                prefix: true },
