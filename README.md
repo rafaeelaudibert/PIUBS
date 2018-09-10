@@ -28,13 +28,17 @@ $ bundle install
 
 - Configure you database in `/config/database.yml`
 
-- Create DB tables
+- Create DB tables, with the default dataset
 
 ```bash
-$ rake db:create db:migrate
+$ rake db:setup
 ```
 
-- Restore the DB `PIUBS` from `db/piubs_dev_backup.backup` using `psql` or the [PgAdminIII](https://www.pgadmin.org/download/) GUI.
+- If you don't want the default dataset, and wants a clean database, you can run only the following:
+
+```bash
+$ rake db:create db:schema:load
+```
 
 - Start your local server
 
