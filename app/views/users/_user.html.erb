@@ -1,29 +1,31 @@
 <td class="user">
-  <span class='user-name'><%= link_to user.name, user%></span>
-  <span><%= mail_to user.email, 'Send e-mail', class: 'btn btn-primary' %></span>
+  <% if (user.invitation_accepted_at != nil) %>
+    <span class='user-name'><%= link_to user.name, user %></span>
+  <% else %>
+    <span class='user-name'></span>
+  <% end %>
 </td>
 <td class="user">
-  <%= CPF.new(user.cpf).formatted %>
+  <%= mail_to user.email, user.email %>
 </td>
-<td class='user user-role'>
-  <%= form_for(user) do |f| %>
-  <div class="form-group">
-    <select name="user[role]" id="user_role" class="form-control">
-      <% User.roles.keys.map {|role| [role.titleize,role]}.each do |_role| %>
-        <% if user.role == _role[1] %>
-          <option value="<%= _role[1] %>" selected="selected">
-          <% else %>
-            <option value="<%= _role[1] %>">
-            <% end %>
-            <%= _role[0] %>
-          </option>
-        <% end %>
-      </select>
-    </div>
-    <%= f.submit 'Alterar Permissão', class: 'btn btn-primary' %>
+<td class="user">
+  <% if (user.current_sign_in_at) %>
+    <%= user.current_sign_in_at.strftime('%d %b %y - %H:%M:%S') %>
+  <% end %>
+</td>
+<td class="user user-status">
+  <% if (user.invitation_accepted_at != nil) %>
+    Cadastrado
+  <% else %>
+    Convidado
   <% end %>
 </td>
 <td class='user user-role'>
-  <%= link_to "Apagar usuário", user_path(user), data: { confirm: 'Tens certeza?', verify: user.email, verify_text: 'Caso tenha, por favor digite o endereço de e-mail desse usuário para continuar' }, :method => :delete, :class => 'btn btn-danger
+  <% if (user.invitation_accepted_at != nil) %>
+    <% $trash_label = "Apagar usuário" %>
+  <% else %>
+    <% $trash_label = "Cancelar convite" %>
+  <% end %>
+  <%= link_to $trash_label, user_path(user), data: { confirm: 'Tens certeza?', verify: user.email, verify_text: 'Caso tenha, por favor digite o endereço de e-mail desse usuário para continuar' }, :method => :delete, :class => 'btn btn-danger
   button-xs' unless user == current_user || user.role == "admin" %>
 </td>

@@ -9,9 +9,9 @@
       </header>
       <div class="auth-content">
         <p class="text-center">ALTERE SUA SENHA</p>
-        <p class="text-muted text-center">
-          <small>Insira seu endereço de email para recuperar a sua senha.</small>
-        </p>
+
+        <div class="required_info"></div><br />
+
         <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
         <%= devise_error_messages! %>
         <%= f.hidden_field :reset_password_token %>
@@ -19,8 +19,8 @@
         <div class="form-group">
           <%= f.label :password, "Nova senha", class: 'required' %><br/>
           <% if @minimum_password_length %>
-            <em>(<%= @minimum_password_length %>
-              characters minimum)</em><br/>
+            <em>(No mínimo <%= @minimum_password_length %>
+              caracteres)</em><br/>
           <% end %>
           <%= f.password_field :password, autofocus: true, autocomplete: "off", class: 'form-control underlined', required: true %>
         </div>
