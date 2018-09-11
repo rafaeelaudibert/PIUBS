@@ -1,6 +1,6 @@
 <td class="user">
   <% if (user.invitation_accepted_at != nil) %>
-    <span class='user-name'><%= link_to user.name, user %></span>
+    <span class='user-name'><%= link_to user.name + " #{user.last_name}", user %></span>
   <% else %>
     <span class='user-name'></span>
   <% end %>
@@ -15,7 +15,7 @@
 </td>
 <td class="user user-status">
   <% if (user.invitation_accepted_at != nil) %>
-    Cadastrado
+    Cadastrado 
   <% else %>
     Convidado
   <% end %>
