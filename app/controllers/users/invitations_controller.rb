@@ -81,7 +81,7 @@ class Users::InvitationsController < Devise::InvitationsController
   end
 
   def update_sanitized_params
-    devise_parameter_sanitizer.permit(:accept_invitation, keys: %i[name password password_confirmation invitation_token cpf])
+    devise_parameter_sanitizer.permit(:accept_invitation, keys: %i[name last_name password password_confirmation invitation_token cpf])
     begin
       params.require(:user).require(:name)
       params.require(:user).require(:last_name)

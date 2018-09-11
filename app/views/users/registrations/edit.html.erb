@@ -18,6 +18,11 @@
     </div>
 
     <div class="form-group">
+      <p><%= f.label "Sobrenome", class: 'required' %>
+      <%= f.text_field :last_name, class: 'form-control', required: true, :html => {value: current_user.last_name} %></p>
+    </div>
+
+    <div class="form-group">
       <p><%= f.label "CPF", class: 'required' %>
       <%= f.text_field :cpf, class: 'form-control', required: true %></p>
     </div>
