@@ -15,9 +15,9 @@
 </td>
 <td class="user user-status">
   <% if (user.invitation_accepted_at != nil) %>
-    Cadastrado 
+    Cadastrado
   <% else %>
-    Convidado
+    Convidado em <br /> <%= user.invitation_sent_at.strftime('%d %b %y - %H:%M:%S') %>
   <% end %>
 </td>
 <td class='user user-role'>
