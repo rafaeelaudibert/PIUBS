@@ -9,7 +9,7 @@ class AnswersController < ApplicationController
 
   # get /faq
   def faq
-    @answers = Answer.where('faq = true').paginate(page: params[:page], per_page: 25)
+    @answers = Answer.where('faq = true').order('id DESC').paginate(page: params[:page], per_page: 25)
   end
 
   # GET /answers/1
@@ -76,7 +76,7 @@ class AnswersController < ApplicationController
         end
       end
 
-      redirect_to (@call || root_path), notice: 'Final answer was successfully set.'
+      redirect_to (@call || faq_path || root_path), notice: 'Final answer was successfully set.'
     else
       render :new
     end
