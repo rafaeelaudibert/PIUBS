@@ -15,8 +15,9 @@ class Answer < ApplicationRecord
   include PgSearch
   pg_search_scope :search_for,
                   against: {
-                    question: 'A',
-                    answer: 'B'
+                    keywords: 'A',
+                    question: 'B',
+                    answer: 'C'
                   },
                   ignoring: :accents,
                   using: {

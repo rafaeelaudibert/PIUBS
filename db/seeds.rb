@@ -166,7 +166,8 @@ def seed_answers
                         answer: Faker::Lorem.sentence(50, true, 6),
                         category_id: categories.sample.id,
                         user: allowedUsers.sample,
-                        faq: Random.rand > 0.90)
+                        faq: Random.rand > 0.90,
+                        keywords: Faker::Lorem.sentence(1, true, 3))
     if answer.save
       Rails.logger.debug('Inserted a new answer')
     else
@@ -243,7 +244,8 @@ def seed_faq_from_replies(_call, _reply)
                       answer: _reply.description,
                       category_id: _call.category_id,
                       user: _reply.user,
-                      faq: true)
+                      faq: true,
+                      keywords: Faker::Lorem.sentence(1, true, 3))
   if answer.save
     Rails.logger.debug('Inserted a new FAQ answer')
   else

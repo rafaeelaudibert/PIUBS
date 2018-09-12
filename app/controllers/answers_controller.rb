@@ -129,7 +129,8 @@ class AnswersController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def answer_params
-    params.require(:answer).permit(:question, :answer, :category_id, :user_id, :faq, :question_id, :reply_attachments, file: [])
+    params[:answer][:keywords] = params[:answer][:keywords].split(',').join(' ')
+    params.require(:answer).permit(:keywords, :question, :answer, :category_id, :user_id, :faq, :question_id, :reply_attachments, file: [])
   end
 
   ## ATTACHMENTS STUFF
