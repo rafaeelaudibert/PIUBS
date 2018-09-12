@@ -12,6 +12,7 @@
         <p class="text-muted text-center">
           <small>Insira seu endereço de e-mail para realizar a recuperação de senha.</small>
         </p>
+        <div class="required_info"></div><br />
         <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
         <%= devise_error_messages! %>
         <div class="form-group">

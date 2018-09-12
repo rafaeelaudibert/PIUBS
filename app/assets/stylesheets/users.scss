@@ -31,9 +31,18 @@
   }
 }
 
+.user-status {
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
 .amail {
   &:hover {
     color: black;
     text-decoration: none;
   }
+}
+
+.table-users {
+  text-align: center;
 }

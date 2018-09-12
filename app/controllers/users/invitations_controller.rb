@@ -1,4 +1,5 @@
 class Users::InvitationsController < Devise::InvitationsController
+  before_action :admin_only, only: :new
   before_action :set_roles_allowed, only: :new
   before_action :set_unities_allowed, only: :new
   before_action :set_cities, only: :new
@@ -27,7 +28,7 @@ class Users::InvitationsController < Devise::InvitationsController
 
   def set_roles_allowed
     if current_user.admin?
-      $roles_allowed = %i[admin city_admin company_admin call_center_admin] ## disable :ubs_admin
+      $roles_allowed = %i[admin city_admin ubs_admin company_admin call_center_admin]
     else
       if current_user.city_admin?
         $roles_allowed = [:ubs_admin]
@@ -81,7 +82,7 @@ class Users::InvitationsController < Devise::InvitationsController
   end
 
   def update_sanitized_params
-    devise_parameter_sanitizer.permit(:accept_invitation, keys: %i[name password password_confirmation invitation_token cpf])
+    devise_parameter_sanitizer.permit(:accept_invitation, keys: %i[name last_name password password_confirmation invitation_token cpf])
     begin
       params.require(:user).require(:name)
       params.require(:user).require(:last_name)
@@ -93,5 +94,11 @@ class Users::InvitationsController < Devise::InvitationsController
 
   def create_sanitized_params
     devise_parameter_sanitizer.permit(:invite, keys: %i[email role sei cnes city_id])
+  end
+
+  def admin_only
+    unless current_user.admin? || current_user.ubs_admin? || current_user.company_admin? || current_user.call_center_admin? || current_user.city_admin?
+      redirect_to root_path, alert: 'Access denied.'
+    end
   end
 end

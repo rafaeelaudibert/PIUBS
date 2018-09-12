@@ -18,8 +18,15 @@
     </div>
 
     <div class="form-group">
+      <p><%= f.label "Sobrenome", class: 'required' %>
+      <%= f.text_field :last_name, class: 'form-control', required: true, :html => {value: current_user.last_name} %></p>
+    </div>
+
+    <div class="form-group">
       <p><%= f.label "CPF", class: 'required' %>
-      <%= f.text_field :cpf, class: 'form-control', required: true %></p>
+        <%= f.text_field :cpf, class: 'form-control', required: true %>
+        <label class="hidden" style="color: #CC2222;font-weight:300;">CPF INVÁLIDO</label>
+      </p>
     </div>
 
     <div class="form-group">
@@ -44,3 +51,73 @@
       <%= f.submit "Salvar", :class => 'btn btn-primary' %>
   <% end %>
 </div>
+
+
+<script>
+
+// CPF VALIDATION
+function fMasc(objeto, mascara) {
+  obj = objeto
+  masc = mascara
+  setTimeout("fMascEx()", 1)
+}
+
+function fMascEx() {
+  obj.value = masc(obj.value)
+}
+
+function CPFmask(cpf) {
+  cpf = cpf.replace(/\D/g, "")
+  cpf = cpf.substring(0, 11);
+  cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2")
+  cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2")
+  cpf = cpf.replace(/(\d{3})(\d{1,2})$/, "$1-$2")
+  return cpf
+}
+
+function validateCPF(strCPF) {
+  let soma = 0,
+    resto;
+
+  if (strCPF == "00000000000")
+    return false;
+
+  for (let i = 1; i <= 9; i++)
+    soma = soma + parseInt(strCPF.substring(i - 1, i)) * (11 - i);
+
+  resto = (soma * 10) % 11;
+  if (resto == 10 || resto == 11)
+    resto = 0;
+
+  if (resto != parseInt(strCPF.substring(9, 10)))
+    return false;
+
+  soma = 0;
+  for (let i = 1; i <= 10; i++)
+    soma = soma + parseInt(strCPF.substring(i - 1, i)) * (12 - i);
+  resto = (soma * 10) % 11;
+
+  if (resto == 10 || resto == 11)
+    resto = 0;
+
+  if (resto != parseInt(strCPF.substring(10, 11)))
+    return false;
+  return true;
+}
+
+$('#user_cpf').keypress(e => {
+  fMasc(e.target, CPFmask);
+})
+
+$('#user_cpf').focusout(e => {
+  if (e.target.value.length >= 14 && validateCPF(e.target.value.split('.').join('').split('-').join(''))) {
+    e.target.classList.remove('underlined-danger');
+    e.target.nextElementSibling.classList.add('hidden')
+  } else {
+    e.target.classList.add('underlined-danger');
+    e.target.nextElementSibling.classList.remove('hidden')
+  }
+});
+
+$('document').ready(() => $('#user_cpf').trigger('keypress').trigger('focusout'));
+</script>
