@@ -1,5 +1,5 @@
 <hr/>
-<div class="required_info"></div><br />
+<div class="required_info"></div><br/>
 <%= form_with(model: answer, local: true) do |form| %>
 <% if answer.errors.any? %>
   <div id="error_explanation">
@@ -32,11 +32,15 @@
       <%= form.text_field :file_text, class:"form-control", readonly: true %>
     </div>
 
+    <div class="field">
+      <%= form.label :keywords, 'Palavras-chave', class: 'required' %>
+      <%= form.text_field :keywords, 'data-role': 'tagsinput', placeholder: ' ' %>
+    </div>
+
     <div class="field" style="display: none">
       <%= form.label :category_id, 'Categoria' %>
       <%= form.text_field :category_id, value: @question.category.id, required: true %>
     </div>
-    <%= hidden_field_tag :question_id, @question.id, required: true %>
 
     <div class="field" style="display: none">
       <%= form.label :user_id, 'Usuário', class: 'required' %>
@@ -47,6 +51,8 @@
       <%= form.check_box :faq, class: "form-check-input" %>
       <%= form.label :faq, value: 'Add to FAQ?', class: 'form-check-label' %>
     </div>
+
+    <%= hidden_field_tag :question_id, @question.id, required: true %>
     <%= hidden_field_tag :reply_attachments, '' %>
     <br/><br/>
 
