@@ -1,2 +1,4 @@
-<h1>Nova resposta</h1>
+<%= content_for :body_title do%>
+<h4 class="display-5">New Answer</h4>
+<%end%>
 <%= render 'form', answer: @answer %>

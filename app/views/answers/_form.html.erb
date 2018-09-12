@@ -58,15 +58,15 @@
   </div>
 
   <% unless @reply && @reply.faq == true %>
-    <div class="form-check form-check-inline">
-      <%= form.check_box :faq, class: "form-check-input" %>
+    <div class="form-check form-check-inline" hidden>
+      <%= form.check_box :faq, class: "form-check-input", checked: true %>
       <%= form.label :faq, value: 'Add to FAQ?', class: 'form-check-label' %>
     </div>
-    <br/><br/>
+    <br/>
   <% end %>
 
     <%= form.submit 'Salvar Resposta',:class => 'btn btn-primary btn-sm' %>
-    <%= link_to 'Cancelar', answers_path, :class => 'btn btn-danger btn-sm' %>
+    <%= link_to 'Cancelar', faq_path, :class => 'btn btn-danger btn-sm' %>
 
 </div>
 <% end %>
