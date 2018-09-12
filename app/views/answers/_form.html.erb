@@ -14,61 +14,66 @@
   </div>
 <% end %>
 <div class="form" style="max-width: 700px">
-<div class="field">
-  <%= form.label :question, 'Questão', class: 'required' %>
-  <% if @question %>
-    <%= form.text_field :question, value: @question.title, required: true %>
-  <% else %>
-    <%= form.text_field :question,  class: 'form-control boxed', required: true %>
-  <% end %>
-</div>
-
-<div class="field">
-  <%= form.label :answer, 'Resposta', class: 'required' %>
-  <% if @reply %>
-    <%= form.text_area :answer,id:'tinymce', class: 'tinymce', value: strip_tags(@reply.description.gsub("&nbsp;", "")), rows: 15 %>
-  <% else %>
-    <%= form.text_area :answer, id:'tinymce', class: 'tinymce', rows: 15 %>
-  <% end %>
-</div>
-
-<div class="form-group">
-  <%= form.label :file %>
-  <%= form.file_field :file, class: 'form-control boxed', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 2.megabytes}%>
-</div>
-
-<% text = 'display: none' %>
-  <% if @question %>
-    <div class="field" style="display: none">
-      <%= form.label :category_id, 'Categoria', class: 'required' %>
-      <%= form.text_field :category_id, value: @question.category.id, required: true %>
-
-    </div>
-    <%= hidden_field_tag :question_id, @question.id %>
-  <% else %>
-    <div class="field">
-      <%= form.label :category_id, 'Categoria', class: 'required' %>
-      <%= form.collection_select(:category_id, Category.all, :id, :name, {include_blank: "Selecione uma Categoria: "}, class: 'form-control boxed', required: true) %>
-    </div>
-  <% end %>
-
-  <div class="field" style="display: none">
-    <%= form.label :user_id, 'Usuário', class: 'required' %>
-    <%= form.text_field :user_id, value: current_user.id, required: true %>
+  <div class="field">
+    <%= form.label :question, 'Questão', class: 'required' %>
+    <% if @question %>
+      <%= form.text_field :question, value: @question.title, required: true %>
+    <% else %>
+      <%= form.text_field :question, class: 'form-control boxed', required: true %>
+    <% end %>
   </div>
 
-  <% unless @reply && @reply.faq == true %>
-    <div class="form-check form-check-inline">
-      <%= form.check_box :faq, class: "form-check-input" %>
-      <%= form.label :faq, value: 'Add to FAQ?', class: 'form-check-label' %>
+  <div class="field">
+    <%= form.label :answer, 'Resposta', class: 'required' %>
+    <% if @reply %>
+      <%= form.text_area :answer,id:'tinymce', class: 'tinymce', value: strip_tags(@reply.description.gsub("&nbsp;", "")), rows: 15 %>
+    <% else %>
+      <%= form.text_area :answer, id:'tinymce', class: 'tinymce', rows: 15 %>
+    <% end %>
+  </div>
+
+  <div class="field">
+    <%= form.label :keywords, 'Palavras-chave', class: 'required' %>
+    <%= form.text_field :keywords, 'data-role': 'tagsinput', placeholder: ' ', required: true %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :file %>
+    <%= form.file_field :file, class: 'form-control boxed', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 2.megabytes}%>
+  </div>
+
+  <% text = 'display: none' %>
+    <% if @question %>
+      <div class="field" style="display: none">
+        <%= form.label :category_id, 'Categoria', class: 'required' %>
+        <%= form.text_field :category_id, value: @question.category.id, required: true %>
+
+      </div>
+      <%= hidden_field_tag :question_id, @question.id %>
+    <% else %>
+      <div class="field">
+        <%= form.label :category_id, 'Categoria', class: 'required' %>
+        <%= form.collection_select(:category_id, Category.all, :id, :name, {include_blank: "Selecione uma Categoria: "}, class: 'form-control boxed', required: true) %>
+      </div>
+    <% end %>
+
+    <div class="field" style="display: none">
+      <%= form.label :user_id, 'Usuário', class: 'required' %>
+      <%= form.text_field :user_id, value: current_user.id, required: true %>
     </div>
-    <br/><br/>
-  <% end %>
+
+    <% unless @reply && @reply.faq == true %>
+      <div class="form-check form-check-inline">
+        <%= form.check_box :faq, class: "form-check-input" %>
+        <%= form.label :faq, value: 'Add to FAQ?', class: 'form-check-label' %>
+      </div>
+      <br/><br/>
+    <% end %>
 
     <%= form.submit 'Cadastrar no Resposta',:class => 'btn btn-primary btn-sm' %>
     <%= link_to 'Cancelar', answers_path, :class => 'btn btn-danger btn-sm' %>
 
-</div>
+  </div>
 <% end %>
 
 <script>
