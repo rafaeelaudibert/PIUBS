@@ -5,7 +5,6 @@ class Answer < ApplicationRecord
   has_many :attachments, through: :attachment_links
   has_many :call
   validates :question, presence: true
-  validates :keywords, presence: true
   validates :answer, presence: true
   validates :category_id, presence: true
   validates :user_id, presence: true
