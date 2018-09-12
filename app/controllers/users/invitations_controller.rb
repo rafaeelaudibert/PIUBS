@@ -24,6 +24,12 @@ class Users::InvitationsController < Devise::InvitationsController
     super
   end
 
+  protected
+
+  def after_invite_path_for(resource_name)
+    users_path(resource_name)
+  end
+
   private
 
   def set_roles_allowed
