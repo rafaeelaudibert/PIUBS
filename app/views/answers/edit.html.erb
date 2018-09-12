@@ -1,6 +1,4 @@
-<h1>Editing Answer</h1>
-
+<%= content_for :body_title do%>
+<h4 class="display-5">Editing Answer</h4>
+<%end%>
 <%= render 'form', answer: @answer %>
-
-<%= link_to 'Show', @answer %> |
-<%= link_to 'Back', answers_path %>
