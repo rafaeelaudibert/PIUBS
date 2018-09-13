@@ -12,6 +12,8 @@ Rails.application.routes.draw do
   get 'replies/attachments/:id', to: 'replies#attachments', as: 'replies_attachments'
   resources :replies
 
+  post 'calls/link_call_support_user'
+  post 'calls/unlink_call_support_user'
   resources :calls
 
   get 'categories/all', to: 'categories#all', as: 'all_categories'
