@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_12_164101) do
+ActiveRecord::Schema.define(version: 2018_09_13_160003) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "fuzzystrmatch"
@@ -72,6 +72,7 @@ ActiveRecord::Schema.define(version: 2018_09_12_164101) do
     t.bigint "user_id"
     t.bigint "answer_id"
     t.integer "cnes"
+    t.integer "support_user"
     t.index ["answer_id"], name: "index_calls_on_answer_id"
     t.index ["category_id"], name: "index_calls_on_category_id"
     t.index ["city_id"], name: "index_calls_on_city_id"
@@ -195,6 +196,7 @@ ActiveRecord::Schema.define(version: 2018_09_12_164101) do
   add_foreign_key "calls", "states"
   add_foreign_key "calls", "unities", column: "cnes", primary_key: "cnes"
   add_foreign_key "calls", "users"
+  add_foreign_key "calls", "users", column: "support_user"
   add_foreign_key "cities", "states"
   add_foreign_key "contracts", "cities"
   add_foreign_key "contracts", "companies", column: "sei", primary_key: "sei"
