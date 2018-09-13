@@ -28,7 +28,7 @@
 
     <div class="form-group input-group">
       <%= form.label :file, class: "btn btn-secondary btn-file input-group-btn" %>
-      <%= form.file_field :file, class: 'form-control-file', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 2.megabytes}, style:"display: none"%>
+      <%= form.file_field :file, class: 'form-control-file', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 20.megabytes}, style:"display: none"%>
       <%= form.text_field :file_text, class:"form-control", readonly: true %>
     </div>
 
