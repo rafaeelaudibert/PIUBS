@@ -1,5 +1,6 @@
 class UnitiesController < ApplicationController
   before_action :set_unity, only: %i[show edit update destroy]
+  include ApplicationHelper
 
   # GET /unities
   def index

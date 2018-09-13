@@ -1,5 +1,6 @@
 class AttachmentsController < ApplicationController
   before_action :set_attachment, only: %i[show edit update destroy download]
+  include ApplicationHelper
 
   # GET /attachments
   # GET /attachments.json

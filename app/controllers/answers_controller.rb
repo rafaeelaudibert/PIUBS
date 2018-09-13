@@ -1,5 +1,6 @@
 class AnswersController < ApplicationController
   before_action :set_answer, only: %i[show edit update destroy]
+  include ApplicationHelper
 
   # GET /answers
   # GET /answers.json

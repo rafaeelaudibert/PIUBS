@@ -1,5 +1,6 @@
 class CallsController < ApplicationController
   before_action :set_call, only: %i[show edit update destroy]
+  include ApplicationHelper
 
   # GET /calls
   # GET /calls.json

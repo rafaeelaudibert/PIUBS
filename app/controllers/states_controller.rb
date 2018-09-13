@@ -1,5 +1,6 @@
 class StatesController < ApplicationController
   before_action :set_state, only: %i[show edit update destroy]
+  include ApplicationHelper
 
   # GET /states
   # GET /states.json

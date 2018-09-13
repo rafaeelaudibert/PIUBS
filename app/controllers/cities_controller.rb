@@ -1,5 +1,6 @@
 class CitiesController < ApplicationController
   before_action :set_city, only: %i[show edit update destroy]
+  include ApplicationHelper
 
   # GET /cities
   # GET /cities.json

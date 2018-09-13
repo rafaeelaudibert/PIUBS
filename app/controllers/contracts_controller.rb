@@ -1,5 +1,6 @@
 class ContractsController < ApplicationController
   before_action :set_contract, only: %i[show edit update destroy download]
+  include ApplicationHelper
 
   # GET /contracts
   def index

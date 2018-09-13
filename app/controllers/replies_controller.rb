@@ -1,5 +1,6 @@
 class RepliesController < ApplicationController
   before_action :set_reply, only: %i[show edit update destroy]
+  include ApplicationHelper
 
   # GET /replies
   def index

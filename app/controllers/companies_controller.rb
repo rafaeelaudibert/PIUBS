@@ -1,6 +1,7 @@
 class CompaniesController < ApplicationController
   # before_action :admin_only
   before_action :set_company, only: %i[show edit update destroy]
+  include ApplicationHelper
 
   # GET /companies
   # GET /companies.json
