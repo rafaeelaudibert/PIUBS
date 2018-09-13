@@ -1,5 +1,6 @@
 class AnswersController < ApplicationController
   before_action :set_answer, only: %i[show edit update destroy]
+  before_action :filter_role, except: %i[faq]
   include ApplicationHelper
 
   # GET /answers
@@ -157,5 +158,16 @@ class AnswersController < ApplicationController
     new_params[:content_type] = _parsed_params[:content_type][_index]
     new_params[:file_contents] = _parsed_params[:file_contents][_index]
     new_params
+  end
+
+  def filter_role
+    action = params[:action]
+    if %w[index edit update].include? action
+      redirect_to denied_path unless is_admin?
+    elsif %w[new create destroy].include? action
+      redirect_to denied_path unless is_admin? || is_support_user?
+    elsif action == 'show'
+      redirect_to denied_path unless @answer.faq
+    end
   end
 end
