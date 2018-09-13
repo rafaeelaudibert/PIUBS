@@ -5,11 +5,11 @@ class CallsController < ApplicationController
   # GET /calls.json
   def index
     if current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) || current_user.try(:admin?)
-      @calls = Call.paginate(page: params[:page], per_page: 25)
+      @calls = Call.order(created_at: :desc).paginate(page: params[:page], per_page: 25)
     elsif current_user.try(:company_admin?)
-      @calls = Call.where('sei = ?', current_user.sei).paginate(page: params[:page], per_page: 25)
+      @calls = Call.where(sei: current_user.sei).order(created_at: :desc).paginate(page: params[:page], per_page: 25)
     elsif current_user.try(:company_user?)
-      @calls = Call.where('user_id = ?', current_user.id).paginate(page: params[:page], per_page: 25)
+      @calls = Call.where(user_id: current_user.id).order(created_at: :desc).paginate(page: params[:page], per_page: 25)
     else
       @calls = []
     end
@@ -20,6 +20,11 @@ class CallsController < ApplicationController
     @answer = Answer.new
     @reply = Reply.new
     @categories = Category.all
+    if @call.support_user == current_user.id
+      @my_call = true
+    else
+      @my_call = false
+    end
   end
 
   # GET /calls/new
@@ -77,6 +82,34 @@ class CallsController < ApplicationController
   def destroy
     @call.destroy
     redirect_to calls_url, notice: 'Call was successfully destroyed.'
+  end
+
+  def link_call_support_user
+    @call = Call.find(params[:call_options_id])
+    unless @call.support_user
+      @call.support_user = current_user.id
+      if @call.save
+        redirect_back(fallback_location: root_path, notice: 'SALVOU')
+      else
+        redirect_back(fallback_location: root_path, notice: 'NAO SALVOU')
+      end
+    else
+      redirect_back(fallback_location: root_path, alert: 'NÃO AUTORIZADO')
+    end
+  end
+
+  def unlink_call_support_user
+    @call = Call.find(params[:call_options_id])
+    if @call.support_user == current_user.id
+      @call.support_user = ""
+      if @call.save
+        redirect_back(fallback_location: root_path, notice: 'SALVOU')
+      else
+        redirect_back(fallback_location: root_path, notice: 'NAO SALVOU')
+      end
+    else
+      redirect_back(fallback_location: root_path, alert: 'NÃO AUTORIZADO')
+    end
   end
 
   private
