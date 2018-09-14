@@ -1,5 +1,6 @@
 class CategoriesController < ApplicationController
   before_action :set_category, only: %i[show edit update destroy]
+  before_action :filter_role
   include ApplicationHelper
 
   # GET /categories
@@ -65,5 +66,9 @@ class CategoriesController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def category_params
     params.require(:category).permit(:name)
+  end
+
+  def filter_role
+    redirect_to denied_path unless is_admin?
   end
 end
