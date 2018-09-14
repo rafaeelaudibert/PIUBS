@@ -33,10 +33,12 @@
   </div>
 
   <% if is_support_user || current_user.try(:admin?)%>
-    <div class="field">
-      <%= form.label :status, 'Status', class: 'required' %>
-      <%= select("reply", "status", options_for_select([["aberto", 0],["em andamento",1],["fechado",2]], @reply.status), {include_blank: true}, class: 'form-control', required: true) %>
-    </div>
+    <% if @call.support_user == current_user.id %>
+      <div class="field">
+        <%= form.label :status, 'Status', class: 'required' %>
+        <%= select("reply", "status", options_for_select([["aberto", 0],["em andamento",1],["fechado",2]], @reply.status), {include_blank: true}, class: 'form-control', required: true) %>
+      </div>
+    <% end %>
   <%end%>
 
   <%= form.submit 'Send reply', class: 'btn btn-primary btn-sm' %>

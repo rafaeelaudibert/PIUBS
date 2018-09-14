@@ -7,6 +7,7 @@
   <span class="badge badge-dark"><%= @call.protocol %></span>
 </h5>
 <%end%>
+
 <div class="card card-primary">
 <!-- Default panel contents -->
 <div class="card-header " style="color: white; font-weight: bold;">
@@ -78,10 +79,20 @@
 <span class="badge badge-pill badge-light m-2"><%= @call.category.name %></span>
 <hr/>
 
-<button type="button" id="reply" class="btn btn-primary">New Reply</button>
-<% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-  <button type="button" id="faq-reply" class="btn btn-primary">Reply from FAQ</button>
+<% if @my_call %>
+  <%= button_to 'Soltar atendimento', calls_unlink_call_support_user_path(:call_options_id => @call.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Soltar este atendimento' }, method: :post, class: "btn btn-danger", :style => "color:#FFF; margin-bottom: 1em;" %>
+  <button type="button" id="reply" class="btn btn-primary">New Reply</button>
+  <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
+    <button type="button" id="faq-reply" class="btn btn-primary">Reply from FAQ</button>
+  <% end %>
+<% else %>
+  <% unless @call.support_user %>
+    <%= button_to 'Pegar atendimento', calls_link_call_support_user_path(:call_options_id => @call.id, :user_option_id => current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este atendimento' }, method: :post, class: "btn", :style => "color:#FFF; background-color: #084B8A; margin-bottom: 1em;" %>
+  <% else %>
+    <div style="color: red; font-weight: 400; margin-bottom:1em; background-color:#CCC; padding:20px;">Este atendimento já pertence a outro usuário do suporte.</div>
+  <% end %>
 <% end %>
+
 </div>
 </div>
 
@@ -219,10 +230,14 @@
     </div>
   <%end%>
 <% end %>
-<button type="button" id="reply-2" class="btn btn-primary">New Reply</button>
-<% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-  <button type="button" id="faq-reply-2" class="btn btn-primary">Reply from FAQ</button>
+  
+<% if @my_call %>
+  <button type="button" id="reply-2" class="btn btn-primary">New Reply</button>
+  <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
+    <button type="button" id="faq-reply-2" class="btn btn-primary">Reply from FAQ</button>
+  <% end %>
 <% end %>
+  
 </div>
 </div>
 <% end %>
@@ -390,10 +405,10 @@ $(':file').on('fileselect', function (event, numFiles, label, where) {
   if (input.length) {
     input.val(log);
   } else {
-    if (log) 
+    if (log)
       alert(log);
     }
-  
+
 });
 });
 
