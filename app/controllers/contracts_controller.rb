@@ -1,5 +1,6 @@
 class ContractsController < ApplicationController
   before_action :set_contract, only: %i[show edit update destroy download]
+  before_action :filter_role
   include ApplicationHelper
 
   # GET /contracts
@@ -105,5 +106,14 @@ class ContractsController < ApplicationController
     file = params.require(:contract).require(:file)
     return file.content_type.split('/')[1].to_s == 'pdf' if file
     false
+  end
+
+  def filter_role
+    action = params[:action]
+    if %w[index new create destroy edit update].include? action
+      redirect_to denied_path unless is_admin?
+    elsif %w[show download].include? action
+      redirect_to denied_path unless is_admin? || (current_user.try(:company_admin?) && @contract.sei == current_user.sei)
+    end
   end
 end
