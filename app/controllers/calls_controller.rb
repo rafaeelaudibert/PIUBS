@@ -1,16 +1,17 @@
 class CallsController < ApplicationController
   before_action :set_call, only: %i[show edit update destroy]
+  before_action :filter_role
   include ApplicationHelper
 
   # GET /calls
   # GET /calls.json
   def index
-    if current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) || current_user.try(:admin?)
+    if is_support_user? || is_admin?
       @calls = Call.paginate(page: params[:page], per_page: 25)
     elsif current_user.try(:company_admin?)
-      @calls = Call.where('sei = ?', current_user.sei).paginate(page: params[:page], per_page: 25)
+      @calls = Call.where(sei: current_user.sei).paginate(page: params[:page], per_page: 25)
     elsif current_user.try(:company_user?)
-      @calls = Call.where('user_id = ?', current_user.id).paginate(page: params[:page], per_page: 25)
+      @calls = Call.where(user_id: current_user.id).paginate(page: params[:page], per_page: 25)
     else
       @calls = []
     end
@@ -115,5 +116,16 @@ class CallsController < ApplicationController
     new_params[:content_type] = _parsed_params[:content_type][_index]
     new_params[:file_contents] = _parsed_params[:file_contents][_index]
     new_params
+  end
+
+  def filter_role
+    action = params[:action]
+    if %w[edit update].include? action
+      redirect_to denied_path unless is_admin?
+    elsif %w[new create destroy].include? action
+      redirect_to denied_path unless is_admin? || is_support_user? || is_company_user?
+    elsif action == 'show'
+      redirect_to denied_path unless (current_user.try(:company_admin?) && @call.sei == current_user.sei) || ((current_user.try(:company_user?) && @call.user_id == current_user.id)) || is_support_user? || is_admin?
+    end
   end
 end
