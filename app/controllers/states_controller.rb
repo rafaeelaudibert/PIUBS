@@ -1,5 +1,6 @@
 class StatesController < ApplicationController
   before_action :set_state, only: %i[show edit update destroy]
+  before_action :filter_role
   include ApplicationHelper
 
   # GET /states
@@ -57,5 +58,14 @@ class StatesController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def state_params
     params.require(:state).permit(:name)
+  end
+
+  def filter_role
+    action = params[:action]
+    if %w[new create destroy edit update show].include? action
+      redirect_to denied_path unless is_admin?
+    elsif %w[index show].include? action
+      redirect_to denied_path unless is_admin? || is_support_user
+    end
   end
 end
