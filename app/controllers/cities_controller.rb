@@ -1,6 +1,6 @@
 class CitiesController < ApplicationController
   before_action :set_city, only: %i[show edit update destroy]
-  before_action :filter_role, except: %i[index show states]
+  before_action :filter_role
   include ApplicationHelper
 
   # GET /cities
@@ -69,6 +69,11 @@ class CitiesController < ApplicationController
   end
 
   def filter_role
-    redirect_to denied_path unless is_admin?
+    action = params[:action]
+    if %w[new create destroy edit update show].include? action
+      redirect_to denied_path unless is_admin?
+    elsif %w[index show states].include? action
+      redirect_to denied_path unless is_admin? || is_support_user
+    end
   end
 end
