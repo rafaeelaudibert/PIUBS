@@ -49,6 +49,9 @@ class RepliesController < ApplicationController
         end
       end
 
+      @reply.call.status = @reply.status
+      raise 'Não consegui alterar o estado da call de acordo com a reply' unless @reply.call.save
+
       ReplyMailer.notify(@reply, current_user).deliver
       redirect_to call_path(@reply.protocol), notice: 'Reply was successfully created.'
     else
