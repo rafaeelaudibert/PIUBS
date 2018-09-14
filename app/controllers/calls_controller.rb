@@ -89,12 +89,12 @@ class CallsController < ApplicationController
     unless @call.support_user
       @call.support_user = current_user.id
       if @call.save
-        redirect_back(fallback_location: root_path, notice: 'SALVOU')
+        redirect_back(fallback_location: root_path, notice: 'Agora esse atendimento é seu')
       else
-        redirect_back(fallback_location: root_path, notice: 'NAO SALVOU')
+        redirect_back(fallback_location: root_path, notice: 'Ocorreu um erro ao tentar pegar o atendimento')
       end
     else
-      redirect_back(fallback_location: root_path, alert: 'NÃO AUTORIZADO')
+      redirect_back(fallback_location: root_path, alert: 'Você não pode pegar um atendimento de outro usuário do suporte')
     end
   end
 
@@ -103,12 +103,12 @@ class CallsController < ApplicationController
     if @call.support_user == current_user.id
       @call.support_user = ""
       if @call.save
-        redirect_back(fallback_location: root_path, notice: 'SALVOU')
+        redirect_back(fallback_location: root_path, notice: 'Atendimento liberado')
       else
-        redirect_back(fallback_location: root_path, notice: 'NAO SALVOU')
+        redirect_back(fallback_location: root_path, notice: 'Ocorreu um erro ao tentar liberar o atendimento')
       end
     else
-      redirect_back(fallback_location: root_path, alert: 'NÃO AUTORIZADO')
+      redirect_back(fallback_location: root_path, alert: 'Esse atendimento pertence a outro usuário do suporte')
     end
   end
 
