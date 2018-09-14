@@ -1,5 +1,7 @@
 class RepliesController < ApplicationController
   before_action :set_reply, only: %i[show edit update destroy]
+  before_action :filter_role
+  include ApplicationHelper
 
   # GET /replies
   def index
@@ -46,6 +48,9 @@ class RepliesController < ApplicationController
           raise 'Não consegui criar o link entre arquivo que veio do FAQ e a resposta. Por favor tente mais tarde' unless @link.save
         end
       end
+
+      @reply.call.status = @reply.status
+      raise 'Não consegui alterar o estado da call de acordo com a reply' unless @reply.call.save
 
       ReplyMailer.notify(@reply, current_user).deliver
       redirect_to call_path(@reply.protocol), notice: 'Reply was successfully created.'
@@ -94,6 +99,15 @@ class RepliesController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def reply_params
     params.require(:reply).permit(:faq_attachments, :protocol, :description, :user_id, :status, :faq, file: [])
+  end
+
+  def filter_role
+    action = params[:action]
+    if %w[index destroy edit update show].include? action
+      redirect_to denied_path unless is_admin?
+    elsif %w[attachments].include? action
+      redirect_to denied_path unless is_admin? || is_support_user
+    end
   end
 
   ## ATTACHMENTS STUFF

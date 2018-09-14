@@ -1,5 +1,7 @@
 class CallsController < ApplicationController
   before_action :set_call, only: %i[show edit update destroy]
+  before_action :filter_role
+  include ApplicationHelper
 
   # GET /calls
   # GET /calls.json
@@ -30,7 +32,7 @@ class CallsController < ApplicationController
   # GET /calls/new
   def new
     @call = Call.new
-    @company = Company.find(params[:sei]) if params[:sei]
+    set_company
   end
 
   # GET /calls/1/edit
@@ -48,6 +50,7 @@ class CallsController < ApplicationController
     @call.id = @call.protocol
     @call.user_id ||= current_user.id
     @call.sei ||= current_user.sei
+    set_company
 
     if @call.save
       if files
@@ -119,6 +122,10 @@ class CallsController < ApplicationController
     @call = Call.find(params[:id])
   end
 
+  def set_company
+    @company = Company.find(current_user.sei) if current_user.sei
+  end
+
   # Never trust parameters from the scary internet, only allow the white list through.
   def call_params
     params.require(:call).permit(:sei, :user_id, :title, :description, :finished_at, :status, :version, :access_profile, :feature_detail, :answer_summary, :severity, :protocol, :city_id, :category_id, :state_id, :company_id, :cnes, file: [])
@@ -147,5 +154,16 @@ class CallsController < ApplicationController
     new_params[:content_type] = _parsed_params[:content_type][_index]
     new_params[:file_contents] = _parsed_params[:file_contents][_index]
     new_params
+  end
+
+  def filter_role
+    action = params[:action]
+    if %w[edit update].include? action
+      redirect_to denied_path unless is_admin?
+    elsif %w[new create destroy].include? action
+      redirect_to denied_path unless is_admin? || is_support_user? || is_company_user?
+    elsif action == 'show'
+      redirect_to denied_path unless (current_user.try(:company_admin?) && @call.sei == current_user.sei) || ((current_user.try(:company_user?) && @call.user_id == current_user.id)) || is_support_user? || is_admin?
+    end
   end
 end
