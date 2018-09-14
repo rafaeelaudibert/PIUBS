@@ -15,7 +15,16 @@
   </div>
 <% end %>
 <div class="col-8 mb-8">
+  <div id="pre_search" class="search">
+    <div class="field">
+      <%= form.label :title, 'Título', class: 'required' %>
+      <%= form.text_field :title, class: 'form-control boxed', autocomplete: :off, required: true, id:'search' %>
+    </div>
+    <div id="table" class="m-2" style="max-height: 600px; overflow-y: scroll; padding: 5px">
+    </div>
+  </div>
 
+ <div class="hidden">
   <%# Admin ou call_center_user %>
     <% if !@company || @company.sei == 0 %>
       <div class="form-group">
@@ -68,67 +77,16 @@
         </select>
       </div>
       <hr style="margin: 1.5rem 0 2rem"></hr>
-      <script>
-
-        const companySelect = document.getElementById('call_sei');
-        const userSelect = document.getElementById('call_user_id');
-        const stateSelect = document.getElementById('call_state_id');
-        const citySelect = document.getElementById('call_city_id');
-        const ubsSelect = document.getElementById('call_cnes')
-
-        const triggeredByCompany = () => {
-          jQuery.ajax({url: `/companies/${companySelect.value}/states`, type: "GET", dataType: "json", success: insertStatesData, error: console.log});
-          jQuery.ajax({url: `/companies/${companySelect.value}/users`, type: "GET", dataType: "json", success: insertUsersData, error: console.log});
-        }
-        const triggeredByState = () => jQuery.ajax({url: `/companies/${companySelect.value}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
-        const triggeredByCity = () => jQuery.ajax({url: `/companies/${companySelect.value}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
-
-        companySelect.addEventListener('change', triggeredByCompany);
-        stateSelect.addEventListener('change', triggeredByState);
-        citySelect.addEventListener('change', triggeredByCity);
-
-        function insertUsersData(users) {
-          let innerHTML = '<option value="0"> Selecione o Usuário </option>';
-          for (user of users) {
-            innerHTML += '<option value=' + user.id + '>' + `${user.name} - ${user.cpf}` + '</option>'
-          }
-          userSelect.innerHTML = innerHTML;
-        }
-
-        function insertStatesData(states) {
-          let innerHTML = '<option value="0"> Selecione o Estado </option>';
-          for (state of states) {
-            innerHTML += '<option value=' + state.id + '>' + state.name + '</option>'
-          }
-          stateSelect.innerHTML = innerHTML;
-        }
-
-        function insertCitiesData(cities) {
-          let innerHTML = '<option value="0"> Selecione a cidade </option>';
-          for (city of cities) {
-            innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
-          }
-          citySelect.innerHTML = innerHTML;
-        }
-
-        function insertUBSData(unities) {
-          let innerHTML = '<option value="0"> Selecione a UBS </option>';
-          for (unity of unities) {
-            innerHTML += '<option value=' + unity.cnes + '>' + unity.name + '</option>'
-          }
-          ubsSelect.innerHTML = innerHTML
-        }
-      </script>
     <% end %>
 
     <div class="field">
       <%= form.label :title, 'Título', class: 'required' %>
-      <%= form.text_field :title, class: 'form-control boxed', autocomplete: :off, required: true %>
+      <%= form.text_field :title, class: 'form-control boxed', autocomplete: :off, required: true, id: 'title'%>
     </div>
 
     <div class="field">
       <%= form.label :description, 'Descrição (Descreva seu problema, o que estava fazendo quando ele aconteceu, quais procedimos já tentou, etc...)', class: 'required' %>
-      <%= form.text_area :description, id:'tinymce', class: 'tinymce', :rows => 15, :cols => 120%>
+      <%= form.text_area :description, id:'tinymce', class: 'tinymce', :rows => 30, :cols => 120, style: 'height:250px'%>
     </div>
 
     <div class="field">
@@ -178,64 +136,188 @@
           </option>
         </select>
       </div>
-      <script>
 
-        const retrieveQuery = () => {
-          const data = {};
-          location.search.slice(1).split('&').forEach(parte => data[parte.split('=')[0]] = parte.split('=')[1]);
-
-          return data;
-        }
-        const query = retrieveQuery();
-
-        const stateSelect = document.getElementById('call_state_id');
-        const citySelect = document.getElementById('call_city_id');
-        const ubsSelect = document.getElementById('call_cnes')
-        const triggeredByState = () => jQuery.ajax({url: `/companies/${query.sei}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
-        const trigerredByCity = () => jQuery.ajax({url: `/companies/${query.sei}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
-        stateSelect.addEventListener('change', triggeredByState);
-        citySelect.addEventListener('change', trigerredByCity);
-
-        function insertCitiesData(cities) {
-          let innerHTML = '<option value="0"> Selecione a cidade </option>';;
-          for (city of cities) {
-            innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
-          }
-          citySelect.innerHTML = innerHTML;
-        }
-
-        function insertUBSData(unities) {
-          let innerHTML = '<option value="0"> Selecione a UBS </option>';
-          for (unity of unities) {
-            innerHTML += '<option value=' + unity.cnes + '>' + unity.name + '</option>'
-          }
-          ubsSelect.innerHTML = innerHTML;
-        }
-      </script>
     <% end %>
+        <div class="field">
+          <%= form.label :category_id, 'Categoria', class: 'required' %>
+          <%= form.collection_select(:category_id, Category.all, :id, :name, {include_blank: "Selecione uma Categoria: "}, class: 'form-control boxed', required: true) %>
+        </div>
 
-    <div class="field">
-      <%= form.label :category_id, 'Categoria', class: 'required' %>
-      <%= form.collection_select(:category_id, Category.all, :id, :name, {include_blank: "Selecione uma Categoria: "}, class: 'form-control boxed', required: true) %>
-    </div>
-
-    <div class="form-group input-group">
-      <br/>
-      <%= form.label :file, 'Anexar arquivos', class: "btn btn-secondary btn-file input-group-btn" %>
-      <%= form.file_field :file, class: 'form-control-file', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 20.megabytes}, style:"display: none"%>
-      <%= form.text_field :file_text, class:"form-control", readonly: true %>
-    </div>
-
+        <div class="form-group input-group">
+          <br/>
+          <%= form.label :file, 'Anexar arquivos', class: "btn btn-secondary btn-file input-group-btn" %>
+          <%= form.file_field :file, class: 'form-control-file', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 2.megabytes}, style:"display: none"%>
+          <%= form.text_field :file_text, class:"form-control", readonly: true %>
+        </div>
     <%= form.submit 'Criar atendimento', :class => 'btn btn-primary btn-sm' %>
     <%= link_to 'Cancelar', calls_path, :class => 'btn btn-danger btn-sm' %>
   </div>
+
+  <div class="field ml-4" >
+    <%= form.check_box :faq, class: "form-check-input", id: 'create_call' %>
+    <%= form.label :faq, value: 'Declaro que a informação que será solicitada não foi encontrada no FAQ', class: 'form-check-label' %>
+  </div>
+
+</div>
 <% end %>
 
-<style>
-  #mceu_32 {
-    display: none;
+<script>
+  $("#create_call").click(function(){
+    var id = 'create_call';
+    var checked = $("#create_call:checked").length;
+    if (checked) {
+      var query = $("#search").val();
+      $("#title").val(query);
+      $(".hidden").show(300);
+      $(".search").hide();
+    }
+    else {
+      $(".hidden").hide();
+      $(".search").show(300);
+
+    }
+  });
+</script>
+
+
+
+<script>
+let tableDiv = document.getElementById('table');
+let textField = document.getElementById('search');
+var xTriggered = 0;
+$("#search").keyup(function( event ) {
+  var str = $("#search").val();
+  if ( event.which == 13 ) {
+     event.preventDefault();
   }
-</style>
+  else if (event.which == 8) {
+    console.log('backspace');
+    if (str == ''){
+      tableDiv.innerHTML = "";
+    }
+  }
+
+  if (str) {
+    var arr = str.match(/\S+/g);
+    var newstr = arr.join()
+
+    if (arr.length >= 1) {
+      // tableDiv.innerHTML = '<%= link_to image_tag("loading.gif", :alt => "Apoio à empresa", style: 'height: 35px, width:35px') %>';
+
+      jQuery.ajax({
+        url: '/answers/query/' + textField.value,
+        type: "GET",
+        dataType: "json",
+        success: data => {
+          if (data.length > 0) {
+            tableDiv.innerHTML = "";
+            //Add the data rows.
+            for (let entry of data) {
+              // let row = table.insertRow(-1);
+              let header = '<div class="card card-default"><div class="card-header"><div class="header-block">';
+              let title = '<p class="title"><em class="fa fa-question-circle mr-2"></em> <strong>'+entry.question+'</strong></p></div></div>';
+              let content = '<div class="card-block"><p>'+entry.answer+'</p>';
+              let view = '<a href="/answers/'+entry.id+'"class="btn btn-primary btn-sm right" target="_blank"> <em class="fa fa-eye"></em> Mostrar</a></div></div>';
+              tableDiv.innerHTML += header+title+content+view;
+            }
+
+          } else if (textField != 0) {
+            tableDiv.innerHTML = "Não há questões no FAQ sobre essa pergunta"
+          }
+        }
+      })
+    } else {
+      tableDiv.innerHTML = "Você precisa fazer uma pesquisa com no mínimo 4 letras";
+    }
+  }
+});
+</script>
+
+<script>
+  const retrieveQuery = () => {
+    const data = {};
+    location.search.slice(1).split('&').forEach(parte => data[parte.split('=')[0]] = parte.split('=')[1]);
+
+    return data;
+  }
+  const query = retrieveQuery();
+
+  const stateSelect = document.getElementById('call_state_id');
+  const citySelect = document.getElementById('call_city_id');
+  const ubsSelect = document.getElementById('call_cnes')
+  const triggeredByState = () => jQuery.ajax({url: `/companies/${query.sei}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
+  const trigerredByCity = () => jQuery.ajax({url: `/companies/${query.sei}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
+  stateSelect.addEventListener('change', triggeredByState);
+  citySelect.addEventListener('change', trigerredByCity);
+
+  function insertCitiesData(cities) {
+    let innerHTML = '<option value="0"> Selecione a cidade </option>';;
+    for (city of cities) {
+      innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
+    }
+    citySelect.innerHTML = innerHTML;
+  }
+
+  function insertUBSData(unities) {
+    let innerHTML = '<option value="0"> Selecione a UBS </option>';
+    for (unity of unities) {
+      innerHTML += '<option value=' + unity.cnes + '>' + unity.name + '</option>'
+    }
+    ubsSelect.innerHTML = innerHTML;
+  }
+</script>
+
+<script>
+
+  const companySelect = document.getElementById('call_sei');
+  const userSelect = document.getElementById('call_user_id');
+  const stateSelect = document.getElementById('call_state_id');
+  const citySelect = document.getElementById('call_city_id');
+  const ubsSelect = document.getElementById('call_cnes')
+
+  const triggeredByCompany = () => {
+    jQuery.ajax({url: `/companies/${companySelect.value}/states`, type: "GET", dataType: "json", success: insertStatesData, error: console.log});
+    jQuery.ajax({url: `/companies/${companySelect.value}/users`, type: "GET", dataType: "json", success: insertUsersData, error: console.log});
+  }
+  const triggeredByState = () => jQuery.ajax({url: `/companies/${companySelect.value}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
+  const triggeredByCity = () => jQuery.ajax({url: `/companies/${companySelect.value}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
+
+  companySelect.addEventListener('change', triggeredByCompany);
+  stateSelect.addEventListener('change', triggeredByState);
+  citySelect.addEventListener('change', triggeredByCity);
+
+  function insertUsersData(users) {
+    let innerHTML = '<option value="0"> Selecione o Usuário </option>';
+    for (user of users) {
+      innerHTML += '<option value=' + user.id + '>' + `${user.name} - ${user.cpf}` + '</option>'
+    }
+    userSelect.innerHTML = innerHTML;
+  }
+
+  function insertStatesData(states) {
+    let innerHTML = '<option value="0"> Selecione o Estado </option>';
+    for (state of states) {
+      innerHTML += '<option value=' + state.id + '>' + state.name + '</option>'
+    }
+    stateSelect.innerHTML = innerHTML;
+  }
+
+  function insertCitiesData(cities) {
+    let innerHTML = '<option value="0"> Selecione a cidade </option>';
+    for (city of cities) {
+      innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
+    }
+    citySelect.innerHTML = innerHTML;
+  }
+
+  function insertUBSData(unities) {
+    let innerHTML = '<option value="0"> Selecione a UBS </option>';
+    for (unity of unities) {
+      innerHTML += '<option value=' + unity.cnes + '>' + unity.name + '</option>'
+    }
+    ubsSelect.innerHTML = innerHTML
+  }
+</script>
 
 <script>
   function validateFiles(inputFile) {
@@ -295,10 +377,9 @@
         if (input.length) {
           input.val(log);
         } else {
-          if (log) 
+          if (log)
             alert(log);
           }
-        
       });
     });
 
