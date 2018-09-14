@@ -25,7 +25,7 @@ class CallsController < ApplicationController
   # GET /calls/new
   def new
     @call = Call.new
-    @company = Company.find(params[:sei]) if params[:sei]
+    set_company
   end
 
   # GET /calls/1/edit
@@ -43,6 +43,7 @@ class CallsController < ApplicationController
     @call.id = @call.protocol
     @call.user_id ||= current_user.id
     @call.sei ||= current_user.sei
+    set_company
 
     if @call.save
       if files
@@ -84,6 +85,10 @@ class CallsController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_call
     @call = Call.find(params[:id])
+  end
+
+  def set_company
+    @company = Company.find(current_user.sei) if current_user.sei
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
