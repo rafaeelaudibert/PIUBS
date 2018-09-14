@@ -1,4 +1,6 @@
 class VisitorsController < ApplicationController
+  include ApplicationHelper
+
   def index
     if current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) || current_user.try(:admin?)
       @calls = Call.paginate(page: params[:page], per_page: 25)

@@ -1,5 +1,7 @@
 class AttachmentsController < ApplicationController
   before_action :set_attachment, only: %i[show edit update destroy download]
+  before_action :filter_role
+  include ApplicationHelper
 
   # GET /attachments
   # GET /attachments.json
@@ -86,5 +88,32 @@ class AttachmentsController < ApplicationController
     new_params[:file_contents] = _parsed_params[:file_contents][_index]
     pp new_params
     new_params
+  end
+
+  def filter_role
+    action = params[:action]
+    if %w[index show edit update].include? action
+      redirect_to denied_path unless is_admin?
+    elsif action == 'download'
+      user_id = current_user.id
+      sei = current_user.sei
+      links = @attachment.attachment_links
+      unless is_admin? || is_support_user?
+        if is_company_user
+          links.each do |_link|
+            # Answer check
+            redirect_to denied_path if _link.answer? && !_link.answer.faq && ((current_user.try(:company_admin?) && Call.where(answer_id: _link.answer_id).first.sei != sei) || (current_user.try(:company_user?) && Call.where(answer_id: _link.answer_id).first.user_id != id))
+
+            # Reply check
+            redirect_to denied_path if _link.reply? && ((current_user.try(:company_admin?) && Call.find(_link.reply.protocol).sei != sei) || (current_user.try(:company_user?) && Call.find(_link.reply.protocol).user_id != id))
+
+            # Call check
+            redirect_to denied_path if _link.call? && ((current_user.try(:company_admin?) && _link.call.sei != sei) || (current_user.try(:company_user?) && _link.call.user_id != id))
+          end
+        else
+          redirect_to denied_path
+        end
+      end
+    end
   end
 end

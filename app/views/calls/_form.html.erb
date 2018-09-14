@@ -149,7 +149,6 @@
           <%= form.file_field :file, class: 'form-control-file', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 2.megabytes}, style:"display: none"%>
           <%= form.text_field :file_text, class:"form-control", readonly: true %>
         </div>
-
     <%= form.submit 'Criar atendimento', :class => 'btn btn-primary btn-sm' %>
     <%= link_to 'Cancelar', calls_path, :class => 'btn btn-danger btn-sm' %>
   </div>

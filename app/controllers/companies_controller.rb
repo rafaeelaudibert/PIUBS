@@ -1,6 +1,7 @@
 class CompaniesController < ApplicationController
-  # before_action :admin_only
   before_action :set_company, only: %i[show edit update destroy]
+  before_action :filter_role
+  include ApplicationHelper
 
   # GET /companies
   # GET /companies.json
@@ -92,16 +93,16 @@ class CompaniesController < ApplicationController
     params.require(:company).permit(:sei)
   end
 
-  # Handle repeated values errors
-  def handleError(format, method, message)
-    @company.errors.add(:sei, :blank, message: message) unless message == ''
-    format.html { render method }
-    format.json { render json: @company.errors, status: :unprocessable_entity }
-  end
-
-  def admin_only
-    unless current_user.try(:admin?)
-      redirect_to not_found_path, alert: 'Access denied.'
+  def filter_role
+    action = params[:action]
+    if %w[index new create destroy edit update].include? action
+      redirect_to denied_path unless is_admin?
+    elsif %w[getStates getUsers getCities getUnities].include? action
+      pp current_user
+      pp params
+      redirect_to denied_path unless is_admin? || is_support_user? || (is_company_user && params[:id].to_i == current_user.sei)
+    elsif action == 'show'
+      redirect_to denied_path unless current_user.try(:company_admin?) && @company.sei == current_user.sei
     end
   end
 end

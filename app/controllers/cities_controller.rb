@@ -1,5 +1,7 @@
 class CitiesController < ApplicationController
   before_action :set_city, only: %i[show edit update destroy]
+  before_action :filter_role
+  include ApplicationHelper
 
   # GET /cities
   # GET /cities.json
@@ -50,7 +52,7 @@ class CitiesController < ApplicationController
   # GET /cities/states
   def states
     respond_to do |format|
-      format.js { render json: City.where('state_id = ?', params[:id]).order('id ASC') }
+      format.js { render json: City.where(state_id: params[:id]).order('id ASC') }
     end
   end
 
@@ -64,5 +66,14 @@ class CitiesController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def city_params
     params.require(:city).permit(:name, :state_id)
+  end
+
+  def filter_role
+    action = params[:action]
+    if %w[new create destroy edit update show].include? action
+      redirect_to denied_path unless is_admin?
+    elsif %w[index show states].include? action
+      redirect_to denied_path unless is_admin? || is_support_user
+    end
   end
 end
