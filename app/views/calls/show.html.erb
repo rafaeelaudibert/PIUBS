@@ -9,12 +9,12 @@
 <%end%>
 
 <% if @my_call %>
-  <%= button_to 'Soltar atendimento', calls_unlink_call_support_user_path(:call_options_id => @call.id), method: :post, class: "btn btn-info" %>
+  <%= button_to 'Soltar atendimento', calls_unlink_call_support_user_path(:call_options_id => @call.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Soltar este atendimento' }, method: :post, class: "btn btn-info" %>
 <% else %>
   <% unless @call.support_user %>
-    <%= button_to 'Pegar atendimento', calls_link_call_support_user_path(:call_options_id => @call.id, :user_option_id => current_user.id), method: :post, class: "btn btn-info" %>
+    <%= button_to 'Pegar atendimento', calls_link_call_support_user_path(:call_options_id => @call.id, :user_option_id => current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este atendimento' }, method: :post, class: "btn btn-info" %>
   <% else %>
-    <div class="notify-link-call-to-support">Este atendimento já pertence a outro usuário do suporte.</div>
+    <div style="color: red; font-weight: 400; margin-bottom:1em; background-color:#CCC; padding:20px;">Este atendimento já pertence a outro usuário do suporte.</div>
   <% end %>
 <% end %>
 
