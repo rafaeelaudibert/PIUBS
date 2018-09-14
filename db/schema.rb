@@ -10,9 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 2018_09_10_205754) do
-
+ActiveRecord::Schema.define(version: 2018_09_12_164101) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "fuzzystrmatch"
@@ -28,6 +26,7 @@ ActiveRecord::Schema.define(version: 2018_09_10_205754) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "faq", default: false
+    t.string "keywords"
     t.index ["category_id"], name: "index_answers_on_category_id"
     t.index ["user_id"], name: "index_answers_on_user_id"
   end
@@ -129,6 +128,7 @@ ActiveRecord::Schema.define(version: 2018_09_10_205754) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "abbr"
   end
 
   create_table "unities", id: false, force: :cascade do |t|
@@ -137,6 +137,9 @@ ActiveRecord::Schema.define(version: 2018_09_10_205754) do
     t.bigint "city_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "address"
+    t.string "neighborhood"
+    t.string "phone"
     t.index ["city_id"], name: "index_unities_on_city_id"
     t.index ["cnes"], name: "index_unities_on_cnes", unique: true
   end

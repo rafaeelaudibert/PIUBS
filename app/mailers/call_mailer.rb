@@ -4,6 +4,6 @@ class CallMailer < ApplicationMailer
     @current_user = current_user
     @link = "#{root_url}calls/#{@call.protocol}"
 
-    mail to: @current_user.email, subject: "Criação do atendimento #{@call.protocol}"
+    mail to: @current_user.email, subject: "[PIUBS] - Criação do atendimento #{@call.protocol}"
   end
 end

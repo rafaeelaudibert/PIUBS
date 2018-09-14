@@ -20,7 +20,7 @@
   button.addEventListener('click', () => {
     if (textField.value.length > 3) {
       jQuery.ajax({
-        url: '/answers/query/' + textField.value,
+        url: '/answers/query/' + textField.value.split('.').join(' '),
         type: "GET",
         dataType: "json",
         success: data => {
@@ -94,6 +94,11 @@
         form.removeClass('has-value');
       }
     }
+
+    const questionTitle = "<%= @call.title %>";
+    textField.value = questionTitle;
+    $('#search_button').trigger('click');
+    $('#search_field').trigger('focusout');
   });
 
   $('#search_field').on('keydown', e => {

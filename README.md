@@ -8,6 +8,7 @@ To have this running your local machine, you must have the following application
 * Ruby >= 2.3.1
 * Rails 5.2.0
 * PostreSQL 9.6.*
+* PostreSQL Contrib 9.5
 
 Learn more about [Installing Rails](http://railsapps.github.io/installing-rails.html).  
 

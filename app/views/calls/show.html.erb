@@ -344,7 +344,15 @@ const animation = {
   "out": "fadeOutUpBig"
 };
 const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
-Notification.create("<%= 'Warning' %>", '<%= "This file exceeds the maximum allowed file size (2 MB)" %>', heart, animation, 2, 5);
+Notification.create("<%= 'Warning' %>", '<%= "This files exceeds the maximum allowed attachments size (20 MB)" %>', heart, animation, 2, 5);
+$(inputFile).val('');
+} else if (inputFile.files.length > 10) {
+const animation = {
+  "in": "bounceIn",
+  "out": "fadeOutUpBig"
+};
+const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
+Notification.create("<%= 'Warning' %>", '<%= "This attachments exceed the maximum attachment quantity limit (10 files)" %>', heart, animation, 2, 5);
 $(inputFile).val('');
 };
 }
@@ -379,10 +387,10 @@ $(':file').on('fileselect', function (event, numFiles, label, where) {
   if (input.length) {
     input.val(log);
   } else {
-    if (log)
+    if (log) 
       alert(log);
     }
-
+  
 });
 });
 

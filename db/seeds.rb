@@ -6,6 +6,7 @@
 require 'faker'
 require 'logger'
 require 'cpf_cnpj'
+require 'csv'
 
 Rails.logger = Logger.new(STDOUT)
 Rails.logger.level = Logger::INFO # Options for logger.level DEBUG < INFO < WARN < ERROR < FATAL < UNKNOWN
@@ -57,38 +58,51 @@ def seed_unity(cnes, name, city)
   end
 end
 
-def seed_city(city_name, state)
-  city = City.new('name' => city_name, 'state_id' => state.id)
-  if city.save
-    Rails.logger.debug("INSERTED a CITY in #{state.name}: #{city_name}")
-    (1..10).each do |_num|
-      _cnes = "#{city.id}#{_num}"
-      _ubs_name = "Unidade Básica de Saúde #{city_name} - #{_num}"
-      seed_unity(_cnes, _ubs_name, city)
-    end
-    seed_contract(city)
-  else
-    Rails.logger.error("ERROR inserting CITY in #{state.name}: #{city_name}")
-    Rails.logger.error(city.errors.full_messages)
-  end
-end
-
 def seed_states
   Rails.logger.info('[START]  -- States insertion')
-  JSON(IO.binread('./public/cities.json')).each do |_estado|
-    state = State.new('name' => _estado['nome'])
+  CSV.foreach('./public/csv/estados.csv', headers: true) do |row|
+    state = State.new(name: row['Und Fed'].titleize, abbr: row['UF'], id: row['COD UF'])
     if state.save
-      Rails.logger.info("[START]  -- #{state.name} cities insertion")
-      _estado['cidades'].each do |_city|
-        seed_city(_city, state)
-      end
-      Rails.logger.info("[FINISH] -- #{state.name} cities insertion")
+      Rails.logger.debug("INSERTED a STATE in the database: #{state.name}")
     else
-      Rails.logger.error("ERROR inserting STATE #{_estado['nome']}")
+      Rails.logger.error("ERROR inserting STATE #{state.name}")
       Rails.logger.error(state.errors.full_messages)
     end
   end
   Rails.logger.info('[FINISH] -- States insertion')
+end
+
+def seed_cities
+  Rails.logger.info('[START]  -- Cities insertion')
+  CSV.foreach('./public/csv/municipios.csv', headers: true) do |row|
+    city = City.new(name: row['NOME MUNIC'], state_id: row['COD UF'], id: row['CodMun'][0...-1])
+    if city.save
+      Rails.logger.debug("INSERTED a CITY in the database: #{city.id}")
+      seed_contract(city)
+    else
+      Rails.logger.error("ERROR inserting CITY #{city[:name]}")
+      Rails.logger.error(city.errors.full_messages)
+    end
+  end
+  Rails.logger.info('[FINISH] -- Cities insertion')
+end
+
+def seed_unities
+  Rails.logger.info('[START]  -- Unities insertion')
+  CSV.foreach('./public/csv/ubs.csv', headers: true) do |row|
+    _name = row['nom_estab'] ? row['nom_estab'].titleize : row['nom_estab']
+    _address = row['dsc_endereco'] ? row['dsc_endereco'].titleize : row['dsc_endereco']
+    _neighborhood = row['dsc_bairro'] ? row['dsc_bairro'].titleize : row['dsc_bairro']
+    _phone = row['dsc_telefone'] == 'Não se aplica' ? '' : row['dsc_telefone']
+    unity = Unity.new(cnes: row['cod_cnes'], name: _name, city_id: row['cod_munic'], address: _address, neighborhood: _neighborhood, phone: _phone)
+    if unity.save
+      Rails.logger.debug("INSERTED a UNITY in the database: #{unity.cnes}")
+    else
+      Rails.logger.error("ERROR inserting CITY #{unity[:name]}")
+      Rails.logger.error(unity.errors.full_messages)
+    end
+  end
+  Rails.logger.info('[FINISH] -- Unities insertion')
 end
 
 def seed_contract(city)
@@ -152,7 +166,8 @@ def seed_answers
                         answer: Faker::Lorem.sentence(50, true, 6),
                         category_id: categories.sample.id,
                         user: allowedUsers.sample,
-                        faq: Random.rand > 0.95)
+                        faq: Random.rand > 0.90,
+                        keywords: Faker::Lorem.sentence(1, true, 3))
     if answer.save
       Rails.logger.debug('Inserted a new answer')
     else
@@ -164,31 +179,31 @@ def seed_answers
 end
 
 def seed_calls
-  quantity = 250
-  allowedUsers = User.where(role: %w[company_admin company_user])
-  cities = City.all
+  quantity = 300
+  unities = Unity.all
   categories = Category.all
-  companies = Company.all
   Rails.logger.info('[START]  -- Calls insertion')
   (1..quantity).each do |_|
-    my_city = cities.sample.id
-    protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
+    _ubs = unities.sample
+    _city = City.find(_ubs.city_id)
+    _contract = Contract.where(city_id: _city.id).first
+    _user = User.where(sei: _contract.sei).sample
+    _protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
     call = Call.new(title: Faker::Lorem.sentence(15, true, 2),
                     description: Faker::Lorem.sentence(80, true, 6),
-                    version: ['1.0.0', '1.0.1', '2.0.0', 'infinito.0.0-beta'].sample,
+                    version: ['1.0.0', '1.0.1', '2.0.0', '3.0.0-beta'].sample,
                     access_profile: %w[Médico Enfermeiro Administrador Secretário].sample,
                     feature_detail: %w[Impressão Login Consulta FAQ].sample,
-                    answer_summary: '',
                     severity: %w[Urgente Intermediario Normal Baixo].sample,
                     status: [0, 1, 2].sample,
-                    protocol: protocol,
-                    city_id: my_city,
+                    protocol: _protocol,
+                    city_id: _city.id,
                     category_id: categories.sample.id,
-                    state_id: City.find(my_city).state.id,
-                    sei: companies.sample.sei,
-                    user_id: allowedUsers.sample.id,
-                    id: protocol,
-                    cnes: Unity.where(city_id: my_city).sample.cnes)
+                    state_id: _city.state_id,
+                    sei: _contract.sei,
+                    user_id: _user.id,
+                    id: _protocol,
+                    cnes: _ubs.cnes)
     if call.save
       Rails.logger.debug('Inserted a new call')
     else
@@ -200,20 +215,19 @@ def seed_calls
 end
 
 def seed_replies
-  quantity = 1500
+  quantity = 2000
   calls = Call.all
   categories = Category.all
-  allowedUsers = User.where(role: %w[call_center_admin call_center_user company_admin company_user])
   Rails.logger.info('[START]  -- Replies (and FAQ) insertion')
   (1..quantity).each do |_|
+    user = Random.rand > 0.7 ? User.where(role: %w[call_center_admin call_center_user]).sample : User.where(role: %w[company_admin company_user]).sample
     call = calls.sample
-    user = allowedUsers.sample
     reply = Reply.new(protocol: call.protocol,
                       description: Faker::Lorem.sentence(25, true, 0),
                       user_id: user.id,
                       status: [0, 1, 2].sample,
                       category: user.role == 'company_admin' || user.role == 'company_user' ? 'reply' : 'support',
-                      faq: user.role == 'company_admin' || user.role == 'company_user' ? false : Random.rand > 0.95)
+                      faq: user.role == 'company_admin' || user.role == 'company_user' ? false : Random.rand > 0.90)
     if reply.save
       Rails.logger.debug("Inserted a new reply to the protocol #{reply.protocol}")
       seed_faq_from_replies(call, reply) if reply.faq
@@ -230,7 +244,8 @@ def seed_faq_from_replies(_call, _reply)
                       answer: _reply.description,
                       category_id: _call.category_id,
                       user: _reply.user,
-                      faq: true)
+                      faq: true,
+                      keywords: Faker::Lorem.sentence(1, true, 3))
   if answer.save
     Rails.logger.debug('Inserted a new FAQ answer')
   else
@@ -243,7 +258,9 @@ def main
   Rails.logger.warn('[START]  SEED')
   seed_companies
   seed_users
-  seed_states # Cities are also seed'd here
+  seed_states
+  seed_cities
+  seed_unities
   seed_categories
   seed_answers
   seed_calls
