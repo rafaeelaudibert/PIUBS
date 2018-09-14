@@ -201,7 +201,9 @@
           for (city of cities) {
             innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
           }
+
           citySelect.innerHTML = innerHTML;
+          trigerredByCity();
         }
 
         function insertUBSData(unities) {
