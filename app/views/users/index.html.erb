@@ -20,7 +20,7 @@
               <tbody>
                 <% @users.order(invitation_accepted_at: :desc, invitation_created_at: :desc).each do |user| %>
                   <tr>
-                    <% if (user.invited_by_id == current_user.id) %>
+                    <% if user.invited_by_id == current_user.id || current_user.try(:admin?) %>
                       <%= render user %>
                     <% end %>
                   </tr>
