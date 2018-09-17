@@ -121,3 +121,21 @@
   vertical-align: baseline;
   border-radius: .25em;
 }
+
+
+.closed-call {
+  padding: 0.5rem;
+  background-color: #cccccc;
+  vertical-align: middle;
+  text-align: center;
+
+  p {
+    line-height: 1.5rem;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  button {
+    margin-bottom: 0.5rem;
+  }
+}

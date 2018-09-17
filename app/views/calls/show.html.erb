@@ -72,28 +72,41 @@
 <%= t :uf %>
 <span class="badge badge-pill badge-light m-2"><%= @call.state.name %></span>
 <%= t :status %>
-<span class="badge badge-pill badge-light m-2"><%= parseStatus @call.status %></span>
+<span class="badge badge-pill badge-light m-2"><%= @call.status %></span>
 <%= t :severity %>
 <span class="badge badge-pill badge-light m-2"><%= @call.severity %></span>
-<%= t :category %>
-<span class="badge badge-pill badge-light m-2"><%= @call.category.name %></span>
-<hr/>
+<% pp @call %>
+  <%= t :category %>
+  <span class="badge badge-pill badge-light m-2"><%= @call.category.name %></span>
+  <hr/>
 
-<% if @my_call %>
-  <button type="button" id="reply" class="btn btn-primary">New Reply</button>
-  <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-    <button type="button" id="faq-reply" class="btn btn-primary">Reply from FAQ</button>
-  <% end %>
-  <a data-confirm="Tens certeza?" class="btn btn-danger right" rel="nofollow" data-method="post" href="/calls/unlink_call_support_user?call_options_id=<%= @call.id %>">
-    Soltar Atendimento
-  </a>
-<% else %>
-  <% unless @call.support_user %>
-    <%= button_to 'Pegar atendimento', calls_link_call_support_user_path(:call_options_id => @call.id, :user_option_id => current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este atendimento' }, method: :post, class: "btn
-    right", :style => "color:#FFF; background-color: #084B8A; margin-bottom: 1em;" %>
+  <% if @call.open? %>
+    <% if @my_call%>
+      <button type="button" id="reply" class="btn btn-primary">New Reply</button>
+      <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
+        <button type="button" id="faq-reply" class="btn btn-primary">Reply from FAQ</button>
+      <% end %>
+      <a data-confirm="Tens certeza?" class="btn btn-danger right" rel="nofollow" data-method="post" href="/calls/unlink_call_support_user?call_options_id=<%= @call.id %>">
+        Soltar Atendimento
+      </a>
+    <% else %>
+      <% unless @call.support_user %>
+        <%= button_to 'Pegar atendimento', calls_link_call_support_user_path(:call_options_id => @call.id, :user_option_id => current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este atendimento' }, method: :post, class: "btn
+        right", :style => "color:#FFF; background-color: #084B8A; margin-bottom: 1em;" %>
+      <% else %>
+        <div style="color: red; font-weight: 400; margin-bottom:1em; background-color:#CCC; padding:20px;">Este atendimento já pertence a outro usuário do suporte.</div>
+      <% end %>
+    <% end %>
   <% else %>
-    <div style="color: red; font-weight: 400; margin-bottom:1em; background-color:#CCC; padding:20px;">Este atendimento já pertence a outro usuário do suporte.</div>
-  <% end %>
+    <div class="closed-call">
+      <% if is_admin? || is_support_user? %>
+        <p>Chamado fechado</p>
+      <% else %>
+        <p>Chamado fechado! Somente reabra caso a solução oferecida pela atendente não tenha resolvido o seu problema.</br>
+      </p>
+      <button type="button" class="btn btn-danger btn-lg">Reabrir chamado</button>
+    <% end %>
+  </div>
 <% end %>
 
 </div>
@@ -225,7 +238,7 @@
           </span>
         <% end %>
         <span class="badge badge-pill badge-dark">
-          <%= parseStatus(reply.status) if reply.status%>
+          <%= reply.status if reply.status%>
         </span>
       </div>
     </div>
