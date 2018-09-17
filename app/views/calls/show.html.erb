@@ -84,13 +84,13 @@
   <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
     <button type="button" id="faq-reply" class="btn btn-primary">Reply from FAQ</button>
   <% end %>
-  <a data-confirm="Tens certeza?" class="btn btn-danger" rel="nofollow" data-method="post" href="/calls/unlink_call_support_user?call_options_id=<%= @call.id %>">
+  <a data-confirm="Tens certeza?" class="btn btn-danger right" rel="nofollow" data-method="post" href="/calls/unlink_call_support_user?call_options_id=<%= @call.id %>">
     Soltar Atendimento
   </a>
 <% else %>
   <% unless @call.support_user %>
-    <%= button_to 'Pegar atendimento', calls_link_call_support_user_path(:call_options_id => @call.id, :user_option_id => current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este atendimento' }, method: :post, class: "btn",
-    :style => "color:#FFF; background-color: #084B8A; margin-bottom: 1em;" %>
+    <%= button_to 'Pegar atendimento', calls_link_call_support_user_path(:call_options_id => @call.id, :user_option_id => current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este atendimento' }, method: :post, class: "btn
+    right", :style => "color:#FFF; background-color: #084B8A; margin-bottom: 1em;" %>
   <% else %>
     <div style="color: red; font-weight: 400; margin-bottom:1em; background-color:#CCC; padding:20px;">Este atendimento já pertence a outro usuário do suporte.</div>
   <% end %>
