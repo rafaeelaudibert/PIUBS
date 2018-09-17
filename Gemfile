@@ -45,7 +45,7 @@ gem 'jquery-rails'
 gem 'json'
 gem 'pg'
 gem 'puma', '~> 3.11'
-gem 'rails', '~> 5.2.0'
+gem 'rails', '~> 5.2.1'
 gem 'sass-rails', '~> 5.0'
 gem 'sqlite3'
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]

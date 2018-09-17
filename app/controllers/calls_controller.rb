@@ -1,5 +1,6 @@
 class CallsController < ApplicationController
   before_action :set_call, only: %i[show edit update destroy]
+  before_action :set_company, only: %i[create new]
   before_action :filter_role
   include ApplicationHelper
 
@@ -40,7 +41,6 @@ class CallsController < ApplicationController
   # GET /calls/new
   def new
     @call = Call.new
-    set_company
   end
 
   # GET /calls/1/edit
@@ -52,13 +52,12 @@ class CallsController < ApplicationController
     files = call_parameters.delete(:file) if call_parameters[:file]
     @call = Call.new(call_parameters)
     # status, severity, protocol, company_id
-    @call.status = 0
     @call.protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
-    @call.severity = 'Normal'
     @call.id = @call.protocol
     @call.user_id ||= current_user.id
     @call.sei ||= current_user.sei
-    set_company
+    @call.open!               # Call is open by default
+    @call.severity = 'normal' # Call has a normal severity by default
 
     if @call.save
       if files
@@ -136,7 +135,7 @@ class CallsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def call_params
-    params.require(:call).permit(:sei, :user_id, :title, :description, :finished_at, :status, :version, :access_profile, :feature_detail, :answer_summary, :severity, :protocol, :city_id, :category_id, :state_id, :company_id, :cnes, file: [])
+    params.require(:call).permit(:sei, :user_id, :title, :description, :finished_at, :version, :access_profile, :feature_detail, :answer_summary, :severity, :protocol, :city_id, :category_id, :state_id, :company_id, :cnes, file: [])
   end
 
   ## ATTACHMENTS STUFF

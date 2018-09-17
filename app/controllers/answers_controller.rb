@@ -37,7 +37,7 @@ class AnswersController < ApplicationController
     if @answer.save
       if params[:question_id]
         @call = Call.find(params[:question_id])
-        @call.status = 2 # Fecha ela
+        @call.closed!
 
         # Retira a última answer caso ela não esteja no FAQ, e exclui seus attachment_links
         if @call.answer_id && @call.answer.faq == false
