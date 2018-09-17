@@ -1,61 +1,61 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.5.1'
-gem 'rails', '~> 5.2.0'
-gem 'puma', '~> 3.11'
-gem 'json'
-gem 'sqlite3'
-gem 'sass-rails', '~> 5.0'
-gem 'uglifier', '>= 1.3.0'
-gem 'coffee-rails', '~> 4.2'
-gem 'jbuilder', '~> 2.5'
-gem 'bootsnap', '>= 1.1.0', require: false
-group :development, :test do
-  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-end
-group :development do
-  gem 'web-console', '>= 3.3.0'
-  gem 'listen', '>= 3.0.5', '< 3.2'
-  gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
-end
-group :test do
-  gem 'capybara', '>= 2.15', '< 4.0'
-  gem 'selenium-webdriver'
-  gem 'chromedriver-helper'
-end
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
-gem 'bootstrap', '~> 4.1.2'
-gem 'devise'
-gem 'devise_invitable'
-gem 'high_voltage'
-gem 'jquery-rails'
-gem 'pg'
+
+# Development only gems
 group :development do
   gem 'better_errors'
+  gem 'binding_of_caller'
+  gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'rails_layout'
+  gem 'spring'
   gem 'spring-commands-rspec'
+  gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'web-console', '>= 3.3.0'
 end
+
+# Tests only gems
+group :test do
+  gem 'capybara', '>= 2.15', '< 4.0'
+  gem 'chromedriver-helper'
+  gem 'database_cleaner'
+  gem 'launchy'
+  gem 'selenium-webdriver'
+end
+
+# Development + Tests only gems
 group :development, :test do
+  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'rspec-rails'
 end
-group :test do
-  gem 'database_cleaner'
-  gem 'launchy'
-end
-gem 'binding_of_caller'
 
-# PIUBS used gems
-gem "validators"
-gem "mail_form", ">= 1.3.0" #send mail
-gem 'will_paginate', '~> 3.1.0' # Pagination
-gem 'carrierwave'
-gem 'mini_magick', '~> 4.3'     # Image uploaded by carrierwave manipulation
-gem 'tinymce-rails' # text editor
+# Default gems
+gem 'bootsnap', '>= 1.1.0', require: false
+gem 'bootstrap', '~> 4.1.2'
+gem 'coffee-rails', '~> 4.2'
+gem 'devise'
+gem 'devise_invitable'
+gem 'high_voltage'
+gem 'jbuilder', '~> 2.5'
+gem 'jquery-rails'
+gem 'json'
+gem 'pg'
+gem 'puma', '~> 3.11'
+gem 'rails', '~> 5.2.0'
+gem 'sass-rails', '~> 5.0'
+gem 'sqlite3'
+gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem 'uglifier', '>= 1.3.0'
+
+# PIUBS specific gems
+gem "cpf_cnpj"                  # CPF/CNPJ validations/management
+gem "font-awesome-rails"        # Icons
+gem "mail_form", ">= 1.3.0"     # Mailer gem
+gem "validators"                # Validators, such as CPF/e-mail
+gem 'data-confirm-modal'        # Modals for confimations
+gem 'pg_search'                 # Full-text search gem
 gem 'shog'                      # Colorized console logging
-gem 'pg_search'
-gem "font-awesome-rails"
-gem 'data-confirm-modal'
-gem "cpf_cnpj"
+gem 'tinymce-rails'             # WSYCWYG Text Editor
+gem 'will_paginate', '~> 3.1.0' # Pagination
