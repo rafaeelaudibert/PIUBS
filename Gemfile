@@ -55,6 +55,7 @@ gem 'uglifier', '>= 1.3.0'
 gem "cpf_cnpj"                  # CPF/CNPJ validations/management
 gem "font-awesome-rails"        # Icons
 gem "mail_form", ">= 1.3.0"     # Mailer gem
+gem "mini_racer"                # Fix "Autoprefixer doesn’t support Node v4.2.6"
 gem "validators"                # Validators, such as CPF/e-mail
 gem 'data-confirm-modal'        # Modals for confimations
 gem 'pg_search'                 # Full-text search gem

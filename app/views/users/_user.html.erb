@@ -16,12 +16,14 @@
 <td class="user user-status">
   <% if (user.invitation_accepted_at != nil) %>
     Cadastrado
+  <% elsif (user.invitation_sent_at != nil) %>
+      Convidado em <br /> <%= user.invitation_sent_at.strftime('%d %b %y - %H:%M:%S') %>
   <% else %>
-    Convidado em <br /> <%= user.invitation_sent_at.strftime('%d %b %y - %H:%M:%S') %>
+      Bot
   <% end %>
 </td>
 <td class='user user-role'>
-  <% if (user.invitation_accepted_at != nil) %>
+  <% if user.invitation_accepted_at != nil || user.invitation_sent_at == nil %>
     <% $trash_label = "Apagar usuário" %>
   <% else %>
     <% $trash_label = "Cancelar convite" %>
