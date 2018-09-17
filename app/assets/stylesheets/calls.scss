@@ -124,6 +124,7 @@
 
 
 .closed-call {
+  min-height: 50px;
   padding: 0.5rem;
   background-color: #cccccc;
   vertical-align: middle;
@@ -131,11 +132,12 @@
 
   p {
     line-height: 1.5rem;
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
+    font-size: 1.6rem;
+    font-weight: 800 !important;
+    margin-bottom: 0;
   }
 
   button {
-    margin-bottom: 0.5rem;
+    margin: 1rem 0 0.5rem;
   }
 }
