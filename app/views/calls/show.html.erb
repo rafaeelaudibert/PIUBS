@@ -72,7 +72,7 @@
 <%= t :uf %>
 <span class="badge badge-pill badge-light m-2"><%= @call.state.name %></span>
 <%= t :status %>
-<span class="badge badge-pill badge-light m-2"><%= @call.status %></span>
+<span class="badge badge-pill badge-light m-2"><%= parseStatus @call.status %></span>
 <%= t :severity %>
 <span class="badge badge-pill badge-light m-2"><%= @call.severity %></span>
 <%= t :category %>
@@ -80,14 +80,17 @@
 <hr/>
 
 <% if @my_call %>
-  <%= button_to 'Soltar atendimento', calls_unlink_call_support_user_path(:call_options_id => @call.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Soltar este atendimento' }, method: :post, class: "btn btn-danger", :style => "color:#FFF; margin-bottom: 1em;" %>
   <button type="button" id="reply" class="btn btn-primary">New Reply</button>
   <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
     <button type="button" id="faq-reply" class="btn btn-primary">Reply from FAQ</button>
   <% end %>
+  <a data-confirm="Tens certeza?" class="btn btn-danger" rel="nofollow" data-method="post" href="/calls/unlink_call_support_user?call_options_id=<%= @call.id %>">
+    Soltar Atendimento
+  </a>
 <% else %>
   <% unless @call.support_user %>
-    <%= button_to 'Pegar atendimento', calls_link_call_support_user_path(:call_options_id => @call.id, :user_option_id => current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este atendimento' }, method: :post, class: "btn", :style => "color:#FFF; background-color: #084B8A; margin-bottom: 1em;" %>
+    <%= button_to 'Pegar atendimento', calls_link_call_support_user_path(:call_options_id => @call.id, :user_option_id => current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este atendimento' }, method: :post, class: "btn",
+    :style => "color:#FFF; background-color: #084B8A; margin-bottom: 1em;" %>
   <% else %>
     <div style="color: red; font-weight: 400; margin-bottom:1em; background-color:#CCC; padding:20px;">Este atendimento já pertence a outro usuário do suporte.</div>
   <% end %>
@@ -222,22 +225,21 @@
           </span>
         <% end %>
         <span class="badge badge-pill badge-dark">
-          <% options = ['Aberto', 'Em Andamento', 'Fechado'] %>
-            <%= options[reply.status] if reply.status%>
-          </span>
-        </div>
+          <%= parseStatus(reply.status) if reply.status%>
+        </span>
       </div>
     </div>
-  <%end%>
+  </div>
+<%end%>
 <% end %>
-  
+
 <% if @my_call %>
-  <button type="button" id="reply-2" class="btn btn-primary">New Reply</button>
-  <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-    <button type="button" id="faq-reply-2" class="btn btn-primary">Reply from FAQ</button>
-  <% end %>
+<button type="button" id="reply-2" class="btn btn-primary">New Reply</button>
+<% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
+  <button type="button" id="faq-reply-2" class="btn btn-primary">Reply from FAQ</button>
 <% end %>
-  
+<% end %>
+
 </div>
 </div>
 <% end %>
@@ -246,30 +248,30 @@
 <div class="card card-primary">
 <div class="card-header" id="headingTwo">
 <div class="header-block">
-  <p class="title" style="color: white">
-    <i class="fa fa-envelope mr-2"></i>
-    Final Answer</p>
+<p class="title" style="color: white">
+  <i class="fa fa-envelope mr-2"></i>
+  Final Answer</p>
 </div>
 </div>
 <div class="card-block">
 <% answer = Answer.find(@call.answer_id) %>
-  <span class="badge badge-pill badge-dark m-1">
-    <%= answer.created_at %></span>
-  <span class="badge badge-pill badge-dark m-1">
-    <%= User.find(answer.user_id).name %></span>
-  <span class="badge badge-pill badge-dark m-1">support</span><hr/>
-  <%= answer.answer.html_safe %>
-  <% if answer.attachments.length > 0 %>
-    <hr/>
-    <strong class='m-2'>Attachments</strong><br/>
-    <div class='mt-2'>
-      <% answer.attachments.each do |_attachment| %>
-        <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
-        <i class="fa fa-file-text mr-1"></i>
-        <%= truncate(_attachment.filename, length: 10, omission: '...')%>
-      <%end%>
-    <% end %>
-  </div>
+<span class="badge badge-pill badge-dark m-1">
+  <%= answer.created_at %></span>
+<span class="badge badge-pill badge-dark m-1">
+  <%= User.find(answer.user_id).name %></span>
+<span class="badge badge-pill badge-dark m-1">support</span><hr/>
+<%= answer.answer.html_safe %>
+<% if answer.attachments.length > 0 %>
+  <hr/>
+  <strong class='m-2'>Attachments</strong><br/>
+  <div class='mt-2'>
+    <% answer.attachments.each do |_attachment| %>
+      <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+      <i class="fa fa-file-text mr-1"></i>
+      <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+    <%end%>
+  <% end %>
+</div>
 <% end %>
 </div>
 </div>
@@ -352,22 +354,22 @@ var maxFileSize = $(inputFile).data('max-file-size');
 
 $.each(inputFile.files, function () {
 if (this.size) {
-  size += this.size;
+size += this.size;
 }
 });
 
 if (size && maxFileSize && size > parseInt(maxFileSize)) {
 const animation = {
-  "in": "bounceIn",
-  "out": "fadeOutUpBig"
+"in": "bounceIn",
+"out": "fadeOutUpBig"
 };
 const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
 Notification.create("<%= 'Warning' %>", '<%= "This files exceeds the maximum allowed attachments size (20 MB)" %>', heart, animation, 2, 5);
 $(inputFile).val('');
 } else if (inputFile.files.length > 10) {
 const animation = {
-  "in": "bounceIn",
-  "out": "fadeOutUpBig"
+"in": "bounceIn",
+"out": "fadeOutUpBig"
 };
 const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
 Notification.create("<%= 'Warning' %>", '<%= "This attachments exceed the maximum attachment quantity limit (10 files)" %>', heart, animation, 2, 5);
@@ -380,34 +382,34 @@ $(function () {
 // We can attach the `fileselect` event to all file inputs on the page
 $(document).on('change', ':file', function (event, where) {
 var input = $(this),
-  numFiles = input.get(0).files
-    ? input.get(0).files.length
-    : 1,
-  label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+numFiles = input.get(0).files
+  ? input.get(0).files.length
+  : 1,
+label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
 input.trigger('fileselect', [numFiles, label, where]);
 });
 
 // We can watch for our custom `fileselect` event like this
 $(document).ready(function () {
 $(':file').on('fileselect', function (event, numFiles, label, where) {
-  var input = $(this).parents('.input-group').find(':text');
-  var log;
-  if (where == 'reply') {
-    log = numFiles + extraFilesReply > 1
-      ? numFiles + extraFilesReply + ' files selected'
-      : label;
-  } else {
-    log = numFiles + extraFilesFaq > 1
-      ? numFiles + extraFilesFaq + ' files selected'
-      : label;
-  }
+var input = $(this).parents('.input-group').find(':text');
+var log;
+if (where == 'reply') {
+  log = numFiles + extraFilesReply > 1
+    ? numFiles + extraFilesReply + ' files selected'
+    : label;
+} else {
+  log = numFiles + extraFilesFaq > 1
+    ? numFiles + extraFilesFaq + ' files selected'
+    : label;
+}
 
-  if (input.length) {
-    input.val(log);
-  } else {
-    if (log)
-      alert(log);
-    }
+if (input.length) {
+  input.val(log);
+} else {
+  if (log) 
+    alert(log);
+  }
 
 });
 });
@@ -424,11 +426,11 @@ const finalAnswer = $('#final-answer')[0];
 const parent = button.parentNode;
 
 if (parent.lastChild == finalAnswer) {
-  $('#final-answer').toggle(200);
+$('#final-answer').toggle(200);
 } else {
-  $('#final-answer').hide();
-  parent.appendChild(finalAnswer);
-  $('#final-answer').show(200);
+$('#final-answer').hide();
+parent.appendChild(finalAnswer);
+$('#final-answer').show(200);
 }
 
 const formChildren = finalAnswer.children[3].children;
@@ -439,23 +441,23 @@ answerField.innerHTML = parent.parentNode.children[1].children[0].innerText;
 const float = parent.children[3].children
 const faqField = formChildren[2].children[6];
 faqField.style.display = float.length == 0
-  ? parent.children[7].children.length == 2
-    ? 'none'
-    : 'inline-flex'
-  : float.length == 2
-    ? 'none'
-    : 'inline-flex';
+? parent.children[7].children.length == 2
+  ? 'none'
+  : 'inline-flex'
+: float.length == 2
+  ? 'none'
+  : 'inline-flex';
 
 const replyId = parent.parentNode.children[0].children[1].innerText.split('#')[1];
 $.ajax({
-  url: '/replies/attachments/' + replyId,
-  type: "GET",
-  dataType: "json",
-  success: data => {
-    extraFilesReply = data.length;
-    $('#answer_file').trigger('change', 'reply');
-    $('#reply_attachments')[0].value = data.map(val => val.id);
-  }
+url: '/replies/attachments/' + replyId,
+type: "GET",
+dataType: "json",
+success: data => {
+  extraFilesReply = data.length;
+  $('#answer_file').trigger('change', 'reply');
+  $('#reply_attachments')[0].value = data.map(val => val.id);
+}
 });
 }
 </script>

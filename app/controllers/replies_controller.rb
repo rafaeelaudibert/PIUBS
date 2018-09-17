@@ -26,6 +26,7 @@ class RepliesController < ApplicationController
     faq_attachments_ids = rep_params.delete(:faq_attachments).split(',') if rep_params[:faq_attachments]
     @reply = Reply.new(rep_params)
     @reply.user_id = current_user.id
+    @reply.status = @reply.call.status || 'Sem Status';
     @reply.category = is_support_user || current_user.try(:admin?) ? 'support' : 'reply'
 
     if @reply.save
@@ -48,9 +49,6 @@ class RepliesController < ApplicationController
           raise 'Não consegui criar o link entre arquivo que veio do FAQ e a resposta. Por favor tente mais tarde' unless @link.save
         end
       end
-
-      @reply.call.status = @reply.status
-      raise 'Não consegui alterar o estado da call de acordo com a reply' unless @reply.call.save
 
       ReplyMailer.notify(@reply, current_user).deliver
       redirect_to call_path(@reply.protocol), notice: 'Reply was successfully created.'
@@ -98,7 +96,7 @@ class RepliesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def reply_params
-    params.require(:reply).permit(:faq_attachments, :protocol, :description, :user_id, :status, :faq, file: [])
+    params.require(:reply).permit(:faq_attachments, :protocol, :description, :user_id, :faq, file: [])
   end
 
   def filter_role
