@@ -94,6 +94,7 @@ class CallsController < ApplicationController
     redirect_to calls_url, notice: 'Call was successfully destroyed.'
   end
 
+  # POST calls/link_call_support_user
   def link_call_support_user
     @call = Call.find(params[:call_options_id])
     unless @call.support_user
@@ -108,6 +109,7 @@ class CallsController < ApplicationController
     end
   end
 
+  # POST calls/unlink_call_support_user
   def unlink_call_support_user
     @call = Call.find(params[:call_options_id])
     if @call.support_user == current_user.id
@@ -119,6 +121,30 @@ class CallsController < ApplicationController
       end
     else
       redirect_back(fallback_location: root_path, alert: 'Esse atendimento pertence a outro usuário do suporte')
+    end
+  end
+
+  # POST /calls/reopen_call
+  def reopen_call
+    @call = Call.find(params[:call])
+    @call.reopened!
+
+    if @call.save
+
+      # Retira a última answer caso ela não esteja no FAQ, e exclui seus attachment_links
+      if @call.answer_id && @call.answer.faq == false
+        @answer = Answer.find(@call.answer_id)
+        @answer.attachment_links.each(&:destroy)
+
+        @call.answer_id = nil # Retira o answer_id
+        raise 'We could not remove the call answer_id properly, when trying to reopen it. Please check it' unless @call.save
+
+        @answer.destroy # Destroi a resposta final anterior
+      end
+      
+      redirect_back(fallback_location: root_path, notice: 'Atendimento reaberto')
+    else
+      redirect_back(fallback_location: root_path, notice: 'Ocorreu um erro ao tentar reabrir o atendimento')
     end
   end
 
