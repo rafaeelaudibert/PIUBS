@@ -213,7 +213,9 @@
 
       <hr/>
       <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-        <%= link_to 'Mark as Final Answer', '#', onclick: 'toggleFinalAnswer(this)', class: 'btn btn-primary btn-sm' %>
+        <% if @my_call %>
+          <%= link_to 'Mark as Final Answer', '#', onclick: 'toggleFinalAnswer(this)', class: 'btn btn-primary btn-sm' %>
+        <% end %>
       <% end %>
       <div style="float: right">
         <% if reply.faq == true %>
@@ -230,49 +232,51 @@
     </div>
   <%end%>
 <% end %>
-  
+
 <% if @my_call %>
   <button type="button" id="reply-2" class="btn btn-primary">New Reply</button>
   <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
     <button type="button" id="faq-reply-2" class="btn btn-primary">Reply from FAQ</button>
   <% end %>
 <% end %>
-  
+
 </div>
 </div>
 <% end %>
 
 <% if @call.answer_id %>
-<div class="card card-primary">
-<div class="card-header" id="headingTwo">
-<div class="header-block">
-  <p class="title" style="color: white">
-    <i class="fa fa-envelope mr-2"></i>
-    Final Answer</p>
-</div>
-</div>
-<div class="card-block">
-<% answer = Answer.find(@call.answer_id) %>
-  <span class="badge badge-pill badge-dark m-1">
-    <%= answer.created_at %></span>
-  <span class="badge badge-pill badge-dark m-1">
-    <%= User.find(answer.user_id).name %></span>
-  <span class="badge badge-pill badge-dark m-1">support</span><hr/>
-  <%= answer.answer.html_safe %>
-  <% if answer.attachments.length > 0 %>
-    <hr/>
-    <strong class='m-2'>Attachments</strong><br/>
-    <div class='mt-2'>
-      <% answer.attachments.each do |_attachment| %>
-        <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
-        <i class="fa fa-file-text mr-1"></i>
-        <%= truncate(_attachment.filename, length: 10, omission: '...')%>
-      <%end%>
-    <% end %>
+
+  <div class="card card-primary">
+  <div class="card-header" id="headingTwo">
+  <div class="header-block">
+    <p class="title" style="color: white">
+      <i class="fa fa-envelope mr-2"></i>
+      Final Answer</p>
   </div>
-<% end %>
-</div>
-</div>
+  </div>
+  <div class="card-block">
+  <% answer = Answer.find(@call.answer_id) %>
+    <span class="badge badge-pill badge-dark m-1">
+      <%= answer.created_at %></span>
+    <span class="badge badge-pill badge-dark m-1">
+      <%= User.find(answer.user_id).name %></span>
+    <span class="badge badge-pill badge-dark m-1">support</span><hr/>
+    <%= answer.answer.html_safe %>
+    <% if answer.attachments.length > 0 %>
+      <hr/>
+      <strong class='m-2'>Attachments</strong><br/>
+      <div class='mt-2'>
+        <% answer.attachments.each do |_attachment| %>
+          <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+          <i class="fa fa-file-text mr-1"></i>
+          <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+        <%end%>
+      <% end %>
+    </div>
+  <% end %>
+  </div>
+  </div>
+
 <% end %>
 
 <div id="final-answer" style="display: none">
