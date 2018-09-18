@@ -36,16 +36,16 @@
   <tbody>
     <% @calls.each do |call| %>
       <% if call.support_user == current_user.id %>
-        <% $marking_call = "marking-call" %>
+        <% $mark_call = "mark-call" %>
       <% else %>
-        <% $marking_call = "" %>
+        <% $mark_call = "" %>
       <% end %>
       <tr>
-        <td class="<%= $marking_call %>"><%= call.protocol %></td>
-        <td class="<%= $marking_call %>"><%= call.title %></td>
-        <td class="<%= $marking_call %>"><%= call.status %></td>
-        <td class="<%= $marking_call %>"><%= call.city.name %></td>
-        <td class="<%= $marking_call %>"><%= call.category.name %></td>
+        <td class="<%= $mark_call %>"><%= call.protocol %></td>
+        <td class="<%= $mark_call %>"><%= call.title %></td>
+        <td class="<%= $mark_call %>"><%= call.status %></td>
+        <td class="<%= $mark_call %>"><%= call.city.name %></td>
+        <td class="<%= $mark_call %>"><%= call.category.name %></td>
         <td>
           <%= link_to 'Mostrar', call , class: 'btn btn-primary btn-sm'%>
           <%= link_to(call, method: :delete, data: { confirm: 'Tens certeza?', verify: call.protocol, verify_text: 'Caso tenha, por favor digite o número do protocolo para continuar' }, class: 'btn btn-danger btn-sm') do %>
