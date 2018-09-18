@@ -1,9 +1,14 @@
 class UsersController < ApplicationController
   before_action :authenticate_user!
+  before_action :any_admin_only, only: %i[index]
   include ApplicationHelper
 
   def index
-    @users = User.all
+    if current_user.try(:admin?)
+      @users = User.all.where("invitation_created_at IS NOT NULL").order(invitation_accepted_at: :desc)
+    elsif current_user.try(:call_center_admin?) || current_user.try(:city_admin?) || current_user.try(:company_admin?) || current_user.try(:ubs_admin?)
+      @users = User.where(invited_by_id: current_user.id).order(invitation_accepted_at: :asc)
+    end
   end
 
   def show
@@ -39,6 +44,13 @@ class UsersController < ApplicationController
   private
 
   ### Functions to restrict user content
+
+  def any_admin_only
+    unless current_user.admin? || current_user.city_admin? || current_user.company_admin? || current_user.ubs_admin? || current_user.call_center_admin?
+      redirect_to root_path, alert: 'Access denied.'
+    end
+  end
+
   def admin_only
     redirect_to root_path, alert: 'Access denied.' unless current_user.admin?
   end
