@@ -1,8 +1,10 @@
 <td class="user">
   <% if (user.invitation_accepted_at != nil) %>
     <span class='user-name'><%= link_to user.name + " #{user.last_name}", user %></span>
-  <% else %>
+  <% elsif user.invitation_sent_at != nil %>
     <span class='user-name'></span>
+  <% else %>
+    <span class='user-name'>[User Bot]</span>
   <% end %>
 </td>
 <td class="user">
@@ -14,12 +16,12 @@
   <% end %>
 </td>
 <td class="user user-status">
-  <% if (user.invitation_accepted_at != nil) %>
+  <% if user.invitation_accepted_at != nil %>
     Cadastrado
-  <% elsif (user.invitation_sent_at != nil) %>
-      Convidado em <br /> <%= user.invitation_sent_at.strftime('%d %b %y - %H:%M:%S') %>
+  <% elsif user.invitation_sent_at != nil %>
+    Convidado em <br /> <%= user.invitation_sent_at.strftime('%d %b %y - %H:%M:%S') %>
   <% else %>
-      Bot
+    Cadastrado
   <% end %>
 </td>
 <td class='user user-role'>
