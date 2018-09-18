@@ -10,11 +10,38 @@
 <td class="user">
   <%= mail_to user.email, user.email %>
 </td>
-<td class="user">
-  <% if (user.current_sign_in_at) %>
-    <%= user.current_sign_in_at.strftime('%d %b %y - %H:%M:%S') %>
-  <% end %>
-</td>
+<% if current_user.try(:admin?) %>
+  <td class="user">
+    <%=
+      if user.role == "admin"
+        $mask_role = "Administrador"
+      elsif user.role == "company_admin"
+        $mask_role = "Empresa[Adm]"
+      elsif user.role == "company_user"
+        $mask_role = "Empresa[Usu]"
+      elsif user.role == "city_admin"
+        $mask_role = "Município"
+      elsif user.role == "ubs_admin"
+        $mask_role = "UBS[Adm]"
+      elsif user.role == "ubs_user"
+        $mask_role = "UBS[Usu]"
+      elsif user.role == "call_center_admin"
+        $mask_role = "Suporte[Adm]"
+      elsif user.role == "call_center_user"
+        $mask_role = "Suporte[Usu]"
+      else
+        $mask_role = "Não informado"
+      end
+      $mask_role
+    %>
+  </td>
+<% else %>
+  <td class="user">
+    <% if (user.current_sign_in_at) %>
+      <%= user.current_sign_in_at.strftime('%d %b %y - %H:%M:%S') %>
+    <% end %>
+  </td>
+<% end %>
 <td class="user user-status">
   <% if user.invitation_accepted_at != nil %>
     Cadastrado
@@ -30,6 +57,6 @@
   <% else %>
     <% $trash_label = "Cancelar convite" %>
   <% end %>
-  <%= link_to $trash_label, user_path(user), data: { confirm: 'Tens certeza?', verify: user.email, verify_text: 'Caso tenha, por favor digite o endereço de e-mail desse usuário para continuar' }, :method => :delete, :class => 'btn btn-danger
-  button-xs' unless user == current_user || user.role == "admin" %>
+  <%= link_to user_path(user), data: { confirm: 'Tens certeza?', verify: user.email, verify_text: 'Caso tenha, por favor digite o endereço de e-mail desse usuário para continuar' }, :method => :delete, :class => 'btn btn-danger
+  btn-sm' do %><i class="fa fa-trash-o"></i> <%end unless user == current_user || user.role == "admin" %>
 </td>

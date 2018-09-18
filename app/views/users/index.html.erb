@@ -12,22 +12,23 @@
               <tr>
                 <th>Nome</th>
                 <th>E-mail</th>
-                <th>Último login</th>
+                <% if current_user.try(:admin?) %>
+                  <th>Perfil</th>
+                <% else %>
+                  <th>Último login</th>
+                <% end %>
                 <th>Status</th>
                 <th colspan="2"></th>
               </tr>
             </thead>
               <tbody>
-                <% @users.order(invitation_accepted_at: :asc, invitation_created_at: :desc).each do |user| %>
+                <% @users.each do |user| %>
                   <tr>
-                    <% if user.invited_by_id == current_user.id || current_user.try(:admin?) %>
-                      <%= render user %>
-                    <% end %>
+                    <%= render user %>
                   </tr>
                 <% end %>
               </tbody>
-            </table>
-          </div>
+          </table>
         </div>
       </div>
 
