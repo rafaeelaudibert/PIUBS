@@ -318,7 +318,7 @@ DEPENDENCIES
   pg
   pg_search
   puma (~> 3.11)
-  rails (~> 5.2.0)
+  rails (~> 5.2.1)
   rails_layout
   rspec-rails
   sass-rails (~> 5.0)

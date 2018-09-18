@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_13_160003) do
+ActiveRecord::Schema.define(version: 2018_09_17_164101) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "fuzzystrmatch"
@@ -61,7 +61,6 @@ ActiveRecord::Schema.define(version: 2018_09_13_160003) do
     t.string "access_profile"
     t.string "feature_detail"
     t.string "answer_summary"
-    t.string "severity"
     t.string "protocol"
     t.bigint "city_id"
     t.bigint "category_id"
@@ -73,6 +72,7 @@ ActiveRecord::Schema.define(version: 2018_09_13_160003) do
     t.bigint "answer_id"
     t.integer "cnes"
     t.integer "support_user"
+    t.integer "severity"
     t.index ["answer_id"], name: "index_calls_on_answer_id"
     t.index ["category_id"], name: "index_calls_on_category_id"
     t.index ["city_id"], name: "index_calls_on_city_id"

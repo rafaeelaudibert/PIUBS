@@ -14,6 +14,7 @@ Rails.application.routes.draw do
 
   post 'calls/link_call_support_user'
   post 'calls/unlink_call_support_user'
+  post 'calls/reopen_call', to: 'calls#reopen_call', as: 'reopen_call'
   resources :calls
 
   get 'categories/all', to: 'categories#all', as: 'all_categories'

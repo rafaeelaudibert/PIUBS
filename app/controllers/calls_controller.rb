@@ -1,5 +1,6 @@
 class CallsController < ApplicationController
   before_action :set_call, only: %i[show edit update destroy]
+  before_action :set_company, only: %i[create new]
   before_action :filter_role
   include ApplicationHelper
 
@@ -40,7 +41,6 @@ class CallsController < ApplicationController
   # GET /calls/new
   def new
     @call = Call.new
-    set_company
   end
 
   # GET /calls/1/edit
@@ -52,13 +52,12 @@ class CallsController < ApplicationController
     files = call_parameters.delete(:file) if call_parameters[:file]
     @call = Call.new(call_parameters)
     # status, severity, protocol, company_id
-    @call.status = 0
     @call.protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
-    @call.severity = 'Normal'
     @call.id = @call.protocol
     @call.user_id ||= current_user.id
     @call.sei ||= current_user.sei
-    set_company
+    @call.open!               # Call is open by default
+    @call.severity = 'normal' # Call has a normal severity by default
 
     if @call.save
       if files
@@ -95,6 +94,7 @@ class CallsController < ApplicationController
     redirect_to calls_url, notice: 'Call was successfully destroyed.'
   end
 
+  # POST calls/link_call_support_user
   def link_call_support_user
     @call = Call.find(params[:call_options_id])
     unless @call.support_user
@@ -109,6 +109,7 @@ class CallsController < ApplicationController
     end
   end
 
+  # POST calls/unlink_call_support_user
   def unlink_call_support_user
     @call = Call.find(params[:call_options_id])
     if @call.support_user == current_user.id
@@ -120,6 +121,30 @@ class CallsController < ApplicationController
       end
     else
       redirect_back(fallback_location: root_path, alert: 'Esse atendimento pertence a outro usuário do suporte')
+    end
+  end
+
+  # POST /calls/reopen_call
+  def reopen_call
+    @call = Call.find(params[:call])
+    @call.reopened!
+
+    if @call.save
+
+      # Retira a última answer caso ela não esteja no FAQ, e exclui seus attachment_links
+      if @call.answer_id && @call.answer.faq == false
+        @answer = Answer.find(@call.answer_id)
+        @answer.attachment_links.each(&:destroy)
+
+        @call.answer_id = nil # Retira o answer_id
+        raise 'We could not remove the call answer_id properly, when trying to reopen it. Please check it' unless @call.save
+
+        @answer.destroy # Destroi a resposta final anterior
+      end
+      
+      redirect_back(fallback_location: root_path, notice: 'Atendimento reaberto')
+    else
+      redirect_back(fallback_location: root_path, notice: 'Ocorreu um erro ao tentar reabrir o atendimento')
     end
   end
 
@@ -136,7 +161,7 @@ class CallsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def call_params
-    params.require(:call).permit(:sei, :user_id, :title, :description, :finished_at, :status, :version, :access_profile, :feature_detail, :answer_summary, :severity, :protocol, :city_id, :category_id, :state_id, :company_id, :cnes, file: [])
+    params.require(:call).permit(:sei, :user_id, :title, :description, :finished_at, :version, :access_profile, :feature_detail, :answer_summary, :severity, :protocol, :city_id, :category_id, :state_id, :company_id, :cnes, file: [])
   end
 
   ## ATTACHMENTS STUFF

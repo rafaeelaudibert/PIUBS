@@ -126,3 +126,23 @@
   vertical-align: baseline;
   border-radius: .25em;
 }
+
+
+.closed-call {
+  min-height: 50px;
+  padding: 0.5rem;
+  background-color: #CCC;
+  vertical-align: middle;
+  text-align: center;
+
+  p {
+    line-height: 1.5rem;
+    font-size: 1.6rem;
+    font-weight: 800 !important;
+    margin-bottom: 0;
+  }
+
+  a {
+    margin: 1rem 0 0.5rem;
+  }
+}

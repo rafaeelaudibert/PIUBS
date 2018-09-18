@@ -1,10 +1,10 @@
-<div class="required_info"></div><br/>
+<div class="required_info"></div>
+<br/>
 <%= form_with(model: reply, local: true) do |form| %>
 <% if reply.errors.any? %>
   <div id="error_explanation">
     <h2><%= pluralize(reply.errors.count, "error") %>
       prohibited this reply from being saved:</h2>
-
     <ul>
       <% reply.errors.full_messages.each do |message| %>
         <li><%= message %></li>
@@ -13,9 +13,7 @@
   </div>
 <% end %>
 <div style="max-width: 850px">
-
   <%= form.text_field :protocol, type: 'hidden', class: 'form-control', required: true %>
-
   <% if is_support_user || current_user.try(:admin?) %>
     <%= form.check_box :faq, checked: false, id:'on-faq', style: "display: none;" %>
     <%= form.text_field :faq_attachments, type: 'hidden', class: 'form-control' %>
@@ -25,26 +23,14 @@
     <%= form.label :description, 'Descrição', class: 'required' %>
     <%= form.text_area :description, id:'tinymce', class: 'tinymce', :rows => 40, :cols => 120%>
   </div>
-
   <div class="form-group input-group">
     <%= form.label :file, 'Anexar arquivos', class: "btn btn-secondary btn-file input-group-btn" %>
     <%= form.file_field :file, class: 'form-control-file', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 20.megabytes}, style:"display: none"%>
     <%= form.text_field :file_text, class:"form-control", readonly: true %>
   </div>
-
-  <% if is_support_user || current_user.try(:admin?)%>
-    <% if @call.support_user == current_user.id %>
-      <div class="field">
-        <%= form.label :status, 'Status', class: 'required' %>
-        <%= select("reply", "status", options_for_select([["aberto", 0],["em andamento",1],["fechado",2]], @reply.status), {include_blank: true}, class: 'form-control', required: true) %>
-      </div>
-    <% end %>
-  <%end%>
-
   <%= form.submit 'Send reply', class: 'btn btn-primary btn-sm' %>
   <button id="cancel" type="button" class="btn btn-danger btn-sm">Cancel</button>
 </div>
-
 <script>
   $(document).ready(function () {
     var protocol = "<%= escape_javascript @call.protocol %>";
@@ -52,5 +38,4 @@
     $("#reply_protocol").hide();
   });
 </script>
-
 <% end %>
