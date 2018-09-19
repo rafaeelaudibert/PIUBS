@@ -1,4 +1,4 @@
-<div class="required_info"></div><br />
+<div class="required_info"></div><br/>
 <%= form_with(model: contract, local: true) do |form| %>
 <% if contract.errors.any? %>
   <div id="error_explanation">
@@ -15,7 +15,7 @@
 
 <div class="form-group">
   <%= form.label :file, 'Contrato', class: 'required' %>
-  <%= form.file_field :file, class: 'form-control-file', required: true%>
+  <%= form.file_field :file, class: 'form-control boxed', required: true, onchange: 'validateFiles(this)', data: {format: 'PDF'}%>
 </div>
 
 <div class="form-group">
@@ -96,5 +96,24 @@ function insertData(cities) {
     innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
   }
   citySelect.innerHTML = innerHTML || '<option value="0"> Selecione um Estado primeiro </option>';
+}
+
+function validateFiles(inputFile) {
+
+  var size = 0;
+  var format = $(inputFile).data('format').toUpperCase();
+  let extensao = inputFile.value.split('.')[1].toUpperCase();
+
+  console.log(extensao, format);
+
+  if (extensao != format) {
+    const animation = {
+      "in": "bounceIn",
+      "out": "fadeOutUpBig"
+    };
+    const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
+    Notification.create("<%= 'Alerta' %>", '<%= "Esse contrato não possui uma extensão permitida. Anexe um arquivo PDF!" %>', heart, animation, 2, 5);
+    $(inputFile).val('');
+  }
 }
 </script>

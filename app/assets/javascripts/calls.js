@@ -1,12 +1,11 @@
 // Show or hide form to create new call
-$("#create_call").click(function(){
+$("#create_call").click(function() {
   var id = 'create_call';
   var checked = $("#create_call:checked").length;
   if (checked) {
     $(".hidden").show(300);
     $(".search").hide();
-  }
-  else {
+  } else {
     $(".hidden").hide();
     $(".search").show(300);
   }
@@ -31,10 +30,10 @@ $("#create_call").click(function(){
     addOnBlur: true,
     maxTags: 5,
     maxChars: undefined,
-    confirmKeys: [13, 32, 188],
-    delimiter: ' ',
-    delimiterRegex: null,
-    cancelConfirmKeysOnEmpty: true,
+    confirmKeys: [44, 59],
+    delimiter: ';',
+    delimiterRegex: '/[\,][\;]/',
+    cancelConfirmKeysOnEmpty: false,
     onTagExists: function(item, $tag) {
       $tag.hide()
         .fadeIn();
@@ -509,7 +508,7 @@ $("#create_call").click(function(){
           // Only attempt to add a tag if there is data in the field
           if (text.length !== 0) {
             self.add(maxLengthReached ? text.substr(0, self.options.maxChars) : text);
-            $input.val('');
+            $input.val('')
           }
 
           // If the field is empty, let the event triggered fire as usual

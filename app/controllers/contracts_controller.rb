@@ -28,10 +28,10 @@ class ContractsController < ApplicationController
   def create
     @contract = Contract.new(contract_params)
     if hasOneCity # If there already is a city with this ID in the database
-      @contract.errors.add(:city_id, :blank, message: 'This city already have a contract linked to it')
+      @contract.errors.add(:city_id, :blank, message: 'Essa cidade já possui um contrato')
       render :new
     elsif !checkPDF
-      @contract.errors.add(:filename, :blank, message: 'You must insert a file and it MUST be in the PDF format')
+      @contract.errors.add(:filename, :blank, message: 'Você precisa inserir um contrato em formato PDF')
       render :new
     elsif @contract.save
       redirect_to @contract, notice: 'Contract was successfully created.'
@@ -43,13 +43,13 @@ class ContractsController < ApplicationController
   # PATCH/PUT /contracts/1
   def update
     if hasOneCityEdit(@contract.city_id) # If there already is a city with this ID in the database
-      @contract.errors.add(:city_id, :blank, message: 'This city already have a contract linked to it')
+      @contract.errors.add(:city_id, :blank, message: 'Essa cidade já possui um contrato')
       render :edit
     elsif !checkPDF
-      @contract.errors.add(:filename, :blank, message: 'You must insert a file and it MUST be in the PDF format')
+      @contract.errors.add(:filename, :blank, message: 'Você precisa inserir um contrato em formato PDF')
       render :edit
     elsif @contract.update(contract_params)
-      redirect_to @contract, notice: 'Contract was successfully updated.'
+      redirect_to @contract, notice: 'Contrato atualizado.'
     else
       render :edit
     end

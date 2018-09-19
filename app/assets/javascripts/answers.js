@@ -18,10 +18,10 @@
     addOnBlur: true,
     maxTags: 5,
     maxChars: undefined,
-    confirmKeys: [13, 32, 188],
-    delimiter: ' ',
-    delimiterRegex: null,
-    cancelConfirmKeysOnEmpty: true,
+    confirmKeys: [44, 59],
+    delimiter: ';',
+    delimiterRegex: '/[\,][\;]/',
+    cancelConfirmKeysOnEmpty: false,
     onTagExists: function(item, $tag) {
       $tag.hide()
         .fadeIn();
@@ -496,7 +496,7 @@
           // Only attempt to add a tag if there is data in the field
           if (text.length !== 0) {
             self.add(maxLengthReached ? text.substr(0, self.options.maxChars) : text);
-            $input.val('');
+            $input.val('')
           }
 
           // If the field is empty, let the event triggered fire as usual

@@ -80,11 +80,11 @@
 <hr/>
 
 <% if @call.open? || @call.reopened? %>
-  <button type="button" id="reply" class="btn btn-primary">Nova Resposta</button>
   <% if is_admin? || is_support_user? %>
-    <button type="button" id="faq-reply" class="btn btn-primary">Resposta do FAQ</button>
     <% if @call.support_user != nil %>
       <% if @my_call %>
+        <button type="button" id="reply" class="btn btn-primary">Nova resposta/button>
+        <button type="button" id="faq-reply" class="btn btn-primary">Resposta do FAQ</button>
         <a data-confirm="Tens certeza?" class="btn btn-danger right" rel="nofollow" data-method="post" href="/calls/unlink_call_support_user?call_options_id=<%= @call.id %>">
           Soltar Atendimento
         </a>
@@ -95,6 +95,8 @@
       <%= button_to 'Pegar atendimento', calls_link_call_support_user_path(:call_options_id => @call.id, :user_option_id => current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este atendimento' }, method: :post, class: "btn
       right", :style => "color:#FFF; background-color: #084B8A; margin-bottom: 1em;" %>
     <% end %>
+  <% else %>
+    <button type="button" id="reply" class="btn btn-primary">Nova resposta</button>
   <% end %>
 <% else %>
   <!-- Chamado fechado -->
@@ -367,6 +369,7 @@ function validateFiles(inputFile) {
 
 var size = 0;
 var maxFileSize = $(inputFile).data('max-file-size');
+var maxFileQuantity = $(inputFile).data('max-file-quantity');
 
 $.each(inputFile.files, function () {
 if (this.size) {
@@ -380,15 +383,15 @@ const animation = {
 "out": "fadeOutUpBig"
 };
 const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
-Notification.create("<%= 'Warning' %>", '<%= "This files exceeds the maximum allowed attachments size (20 MB)" %>', heart, animation, 2, 5);
+Notification.create("<%= 'Alerta' %>", '<%= "Esses anexos excedem o tamanho máximo permitido (20 MB)" %>', heart, animation, 2, 5);
 $(inputFile).val('');
-} else if (inputFile.files.length > 10) {
+} else if (inputFile.files.length > maxFileQuantity) {
 const animation = {
 "in": "bounceIn",
 "out": "fadeOutUpBig"
 };
 const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
-Notification.create("<%= 'Warning' %>", '<%= "This attachments exceed the maximum attachment quantity limit (10 files)" %>', heart, animation, 2, 5);
+Notification.create("<%= 'Alerta' %>", '<%= "Esses anexos excedem a quantidade máxima permitida (10 arquivos)" %>', heart, animation, 2, 5);
 $(inputFile).val('');
 };
 }
