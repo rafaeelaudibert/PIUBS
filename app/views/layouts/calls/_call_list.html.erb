@@ -43,7 +43,7 @@
       <tr>
         <td class="<%= $mark_call %>"><%= call.protocol %></td>
         <td class="<%= $mark_call %>"><%= call.title %></td>
-        <td class="<%= $mark_call %>"><%= call.status %></td>
+        <td class="<%= $mark_call %>"><%= t "activerecord.enums.call.status.#{call.status}" %></td>
         <td class="<%= $mark_call %>"><%= call.city.name %></td>
         <td class="<%= $mark_call %>"><%= call.category.name %></td>
         <td>

@@ -37,6 +37,22 @@ en:
           attributes:
             cpf:
               invalid_cpf: 'no formato inválido. Por favor, insira seus dados corretamente'
+    enums:
+      call:
+        status:
+          open: "Aberto"
+          reopened: "Reaberto"
+          closed: "Fechado"
+        severity:
+          low: "Baixa"
+          normal: "Normal"
+          high: "Alta"
+          huge: "Muito alta"
+    general:
+      ubs: "UBS"
+      city: "Cidade"
+      uf: "UF"
+      company: "Empresa"
     models:
       city:
         zero: "cidades"
@@ -55,9 +71,15 @@ en:
         other: "anexos"
       call:
         zero: "atendimentos"
-        one: "atendimento"
+        one: "Atendimento"
         few: "os atendimentos"
         other: "atendimentos"
+        description: "Descrição"
+        access_profile: "Perfil de acesso"
+        version: "Versão"
+        functional_detail: "Detalhe da funcionalidade"
+        severity: "Severidade"
+        category: "Categoria"
       category:
         zero: "categorias"
         one: "categoria"
