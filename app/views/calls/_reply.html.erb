@@ -28,7 +28,7 @@
     <%= form.file_field :file, class: 'form-control-file', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 20.megabytes}, style:"display: none"%>
     <%= form.text_field :file_text, class:"form-control", readonly: true %>
   </div>
-  <%= form.submit 'Send reply', class: 'btn btn-primary btn-sm' %>
+  <%= form.submit 'Enviar resposta', class: 'btn btn-primary btn-sm' %>
   <button id="cancel" type="button" class="btn btn-danger btn-sm">Cancel</button>
 </div>
 <script>

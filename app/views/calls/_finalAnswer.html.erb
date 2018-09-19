@@ -27,7 +27,7 @@
     </div>
 
     <div class="form-group input-group">
-      <%= form.label :file, class: "btn btn-secondary btn-file input-group-btn" %>
+      <%= form.label :file, 'Anexo(s)', class: "btn btn-secondary btn-file input-group-btn" %>
       <%= form.file_field :file, class: 'form-control-file', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 20.megabytes}, style:"display: none"%>
       <%= form.text_field :file_text, class:"form-control", readonly: true %>
     </div>
@@ -49,7 +49,7 @@
 
     <div class="form-check form-check-inline">
       <%= form.check_box :faq, class: "form-check-input" %>
-      <%= form.label :faq, value: 'Add to FAQ?', class: 'form-check-label' %>
+      <%= form.label :faq, value: 'Adicionar ao FAQ?', class: 'form-check-label' %>
     </div>
 
     <%= hidden_field_tag :question_id, @question.id, required: true %>
@@ -57,7 +57,7 @@
     <br/><br/>
 
     <div class="actions">
-      <%= form.submit 'Done', class: 'btn btn-primary' %>
+      <%= form.submit 'Salvar', class: 'btn btn-primary' %>
     </div>
   </div>
 <% end %>

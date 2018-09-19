@@ -39,7 +39,7 @@
   </div>
 
   <div class="form-group">
-    <%= form.label :file, 'Anexos (selecione todos os arquivos necessários pressionando a tecla CTRL)' %>
+    <%= form.label :file, 'Anexo(s) (selecione todos os arquivos necessários pressionando a tecla CTRL)' %>
     <%= form.file_field :file, class: 'form-control boxed', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 2.megabytes}%>
   </div>
 
@@ -66,7 +66,7 @@
     <% unless @reply && @reply.faq == true %>
       <div class="form-check form-check-inline" hidden>
         <%= form.check_box :faq, class: "form-check-input", checked: true %>
-        <%= form.label :faq, value: 'Add to FAQ?', class: 'form-check-label' %>
+        <%= form.label :faq, value: 'Adicionar ao FAQ?', class: 'form-check-label' %>
       </div>
       <br/>
     <% end %>
@@ -96,7 +96,7 @@
         "out": "fadeOutUpBig"
       };
       const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
-      Notification.create("<%= 'Warning' %>", '<%= "This file exceeds the maximum allowed file size (2 MB)" %>', heart, animation, 2, 5);
+      Notification.create("<%= 'Não permitido' %>", '<%= "Seus arquivos excedem o tamanho máximo (2Mb)" %>', heart, animation, 2, 5);
       $(inputFile).val('');
     };
   }
