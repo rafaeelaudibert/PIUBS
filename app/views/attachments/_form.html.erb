@@ -14,7 +14,7 @@
 
 <div class="form-group">
   <%= form.label :file, 'Anexo(s)*' %>
-  <%= form.file_field :file, class: 'form-control-file', required: true, multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 2.megabytes}%>
+  <%= form.file_field :file, class: 'form-control-file', required: true, multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 20.megabytes, max_file_quantity: 10}%>
 </div>
 
 <div class="form-group">
@@ -31,6 +31,7 @@ function validateFiles(inputFile) {
 
   var size = 0;
   var maxFileSize = $(inputFile).data('max-file-size');
+  var maxFileQuantity = $(inputFile).data('max-file-quantity');
 
   $.each(inputFile.files, function () {
     if (this.size) {
@@ -38,14 +39,21 @@ function validateFiles(inputFile) {
     }
   });
 
-  console.log(size)
   if (size && maxFileSize && size > parseInt(maxFileSize)) {
     const animation = {
       "in": "bounceIn",
       "out": "fadeOutUpBig"
     };
     const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
-    Notification.create("<%= 'Warning' %>", '<%= "This file exceeds the maximum allowed file size (2 MB)" %>', heart, animation, 2, 5);
+    Notification.create("<%= 'Alerta' %>", '<%= "Esses anexos excedem o tamanho máximo permitido (20 MB)" %>', heart, animation, 2, 5);
+    $(inputFile).val('');
+  } else if (inputFile.files.length > maxFileQuantity) {
+    const animation = {
+      "in": "bounceIn",
+      "out": "fadeOutUpBig"
+    };
+    const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
+    Notification.create("<%= 'Alerta' %>", '<%= "Esses anexos excedem a quantidade máxima permitida (10 arquivos)" %>', heart, animation, 2, 5);
     $(inputFile).val('');
   };
 }
