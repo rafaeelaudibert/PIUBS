@@ -14,6 +14,7 @@
   </div>
 <% end %>
 <div class="form" style="max-width: 700px">
+  <div class="required_info"></div><br />
   <div class="field">
     <%= form.label :question, 'Questão', class: 'required' %>
     <% if @question %>
@@ -38,7 +39,7 @@
   </div>
 
   <div class="form-group">
-    <%= form.label :file %>
+    <%= form.label :file, 'Arquivos (selecione todos os arquivos necessários pressionando a tecla CTRL)' %>
     <%= form.file_field :file, class: 'form-control boxed', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 2.megabytes}%>
   </div>
 
