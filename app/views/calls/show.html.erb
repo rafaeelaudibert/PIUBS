@@ -12,11 +12,11 @@
 <!-- Default panel contents -->
 <div class="card-header " style="color: white; font-weight: bold;">
   <em class="fa fa-bullhorn m-2"></em>
-  Requirer :
+  Requerente :
   <span class="badge badge-pill badge-dark m-2">
     <a><%= User.find(@call.user_id).email %></a>
   </span>
-  Creation Date :
+  Data de criação :
   <span class="badge badge-pill badge-dark m-2">
     <%= @call.created_at %>
   </span>
@@ -31,20 +31,20 @@
   <h4><%= @call.title %></h4>
   <hr/>
   <p>
-    <strong><%= t :call %>:</strong>
+    <strong><%= t 'activerecord.models.call.description' %>:</strong>
     <%= @call.description.html_safe %>
   </p>
   <p>
-    <strong><%= t :acess_profile_label %>:
+    <strong><%= t 'activerecord.models.call.access_profile' %>:
     </strong><%= @call.access_profile %>
   </p>
   <p>
-    <strong><%= t :version %>:
+    <strong><%= t 'activerecord.models.call.version' %>:
     </strong><%= @call.version %>
   </p>
   <% if @call.feature_detail != '' %>
     <p>
-      <strong><%= t :functional_detail %>:
+      <strong><%= t 'activerecord.models.call.functional_detail' %>:
       </strong><%= @call.feature_detail %>
     </p>
   <% end %>
@@ -65,24 +65,24 @@
 <% end %>
 
 <hr/>
-<%= t :ubs %>:
+<%= t "activerecord.general.ubs" %>:
 <span class="badge badge-pill badge-light m-2"><%= @call.unity.name %></span>
-<%= t :city %>:
+<%= t "activerecord.general.city" %>:
 <span class="badge badge-pill badge-light m-2"><%= @call.city.name %></span>
-<%= t :uf %>
+<%= t "activerecord.general.uf" %>
 <span class="badge badge-pill badge-light m-2"><%= @call.state.name %></span>
 <%= t :status %>
-<span class="badge badge-pill badge-light m-2"><%= @call.status %></span>
-<%= t :severity %>
-<span class="badge badge-pill badge-light m-2"><%= @call.severity %></span>
-<%= t :category %>
+<span class="badge badge-pill badge-light m-2"><%= t "activerecord.enums.call.status.#{@call.status}" %></span>
+<%= t "activerecord.models.call.severity" %>
+<span class="badge badge-pill badge-light m-2"><%= t "activerecord.enums.call.severity.#{@call.severity}" if @call.severity %></span>
+<%= t "activerecord.models.call.category" %>
 <span class="badge badge-pill badge-light m-2"><%= @call.category.name %></span>
 <hr/>
 
 <% if @call.open? || @call.reopened? %>
-  <button type="button" id="reply" class="btn btn-primary">New Reply</button>
+  <button type="button" id="reply" class="btn btn-primary">Nova Resposta</button>
   <% if is_admin? || is_support_user? %>
-    <button type="button" id="faq-reply" class="btn btn-primary">Reply from FAQ</button>
+    <button type="button" id="faq-reply" class="btn btn-primary">Resposta do FAQ</button>
     <% if @call.support_user != nil %>
       <% if @my_call %>
         <a data-confirm="Tens certeza?" class="btn btn-danger right" rel="nofollow" data-method="post" href="/calls/unlink_call_support_user?call_options_id=<%= @call.id %>">
@@ -117,7 +117,7 @@
 <div class="card-header pl-2">
 <div class="header-block">
 <p class="title" style="color: white;">
-  <i class="fa fa-mail-forward mr-2"></i>Reply Call</p>
+  <i class="fa fa-mail-forward mr-2"></i>Resposta ao atendimento</p>
 </div>
 </div>
 <div class="card-body">
@@ -129,7 +129,7 @@
 <div class="card-header pl-2">
 <div class="header-block">
 <p class="title" style="color: white;">
-  <i class="fa fa-mail-forward mr-2"></i>FAQ List:</p>
+  <i class="fa fa-mail-forward mr-2"></i>FAQ:</p>
 </div>
 
 </div>
@@ -145,7 +145,7 @@
 <div class="header-block">
   <p class="title" style="color: white">
     <i class="fa fa-comment-o mr-2"></i>
-    Replies</p>
+    Respostas</p>
 </div>
 </div>
 <div class="card-block">
@@ -163,7 +163,7 @@
         <strong class="m-2">
           <%= User.find(reply.user_id).name %>
         </strong>
-        added a reply.
+        Adicionou uma resposta.
 
       </div>
       <div class="card-body" style="padding: 5px 30px 15px">
@@ -200,12 +200,12 @@
       <span class="badge badge-pill badge-dark m-1">
         <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
       </span>
-      <span class="badge badge-pill badge-dark m-1">support</span>
+      <span class="badge badge-pill badge-dark m-1">suporte</span>
       -
       <strong class="m-2">
         <%= User.find(reply.user_id).name %>
       </strong>
-      added a support.
+      Adicionou uma resposta.
     </div>
     <div class="card-block">
       <span>
@@ -231,17 +231,17 @@
     <hr/>
     <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
       <% if @my_call %>
-        <%= link_to 'Mark as Final Answer', '#', onclick: 'toggleFinalAnswer(this)', class: 'btn btn-primary btn-sm' %>
+        <%= link_to 'Marcar como resposta final', '#', onclick: 'toggleFinalAnswer(this)', class: 'btn btn-primary btn-sm' %>
       <% end %>
     <% end %>
     <div style="float: right">
       <% if reply.faq == true %>
         <span class="badge badge-pill badge-dark">
-          ON FAQ
+          Resposta no FAQ
         </span>
       <% end %>
       <span class="badge badge-pill badge-dark">
-        <%= reply.status if reply.status%>
+        <%= t "activerecord.enums.call.status.#{reply.status}" if reply.status%>
       </span>
     </div>
   </div>
@@ -250,9 +250,9 @@
 <% end %>
 
 <% if @my_call %>
-<button type="button" id="reply-2" class="btn btn-primary">New Reply</button>
+<button type="button" id="reply-2" class="btn btn-primary">Nova Resposta</button>
 <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-<button type="button" id="faq-reply-2" class="btn btn-primary">Reply from FAQ</button>
+<button type="button" id="faq-reply-2" class="btn btn-primary">Resposta do FAQ</button>
 <% end %>
 <% end %>
 
@@ -275,7 +275,7 @@ Final Answer</p>
 <%= answer.created_at %></span>
 <span class="badge badge-pill badge-dark m-1">
 <%= User.find(answer.user_id).name %></span>
-<span class="badge badge-pill badge-dark m-1">support</span><hr/>
+<span class="badge badge-pill badge-dark m-1">suporte</span><hr/>
 <%= answer.answer.html_safe %>
 <% if answer.attachments.length > 0 %>
 <hr/>
@@ -423,7 +423,7 @@ log = numFiles + extraFilesFaq > 1
 if (input.length) {
 input.val(log);
 } else {
-if (log) 
+if (log)
   alert(log);
 }
 
