@@ -1,3 +1,5 @@
+<div class="required_info"></div><br />
+
 <%= form_with(model: state, local: true) do |form| %>
 <% if state.errors.any? %>
   <div id="error_explanation">
@@ -18,7 +20,7 @@
 </div>
 
 <div class="actions">
-  <%= form.submit 'Save', :class => 'btn btn-primary btn-sm' %>
-  <%= link_to 'Cancel', @state, :class => 'btn btn-danger btn-sm' %>
+  <%= form.submit 'Salvar', :class => 'btn btn-primary btn-sm' %>
+  <%= link_to 'Cancelar', @state, :class => 'btn btn-danger btn-sm' %>
 </div>
 <% end %>

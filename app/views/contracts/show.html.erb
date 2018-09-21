@@ -1,22 +1,22 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <strong>Contract number:</strong>
+  <strong>Número do contrato:</strong>
   <%= @contract.contract_number %>
 </p>
 
 <p>
-  <strong>City:</strong>
+  <strong>Cidade:</strong>
   <%= @contract.city.name %>
 </p>
 
 <p>
-  <strong>Sei:</strong>
+  <strong>SEI:</strong>
   <%= @contract.sei %>
 </p>
 
 <p>
-  <strong>Filename:</strong>
+  <strong>Anexo:</strong>
   <% if @contract.filename %>
     <%= @contract.filename %>
     <br/><br/>
@@ -26,6 +26,6 @@
   <% end %>
 </p>
 
-<%= link_to 'Edit', edit_contract_path(@contract), class: 'btn btn-primary btn-sm' %>
-<%= link_to 'Back', contracts_path, class: 'btn btn-primary btn-sm' %>
+<%= link_to 'Editar', edit_contract_path(@contract), class: 'btn btn-primary btn-sm' %>
+<%= link_to 'Voltar', contracts_path, class: 'btn btn-primary btn-sm' %>
 <br/><br/>

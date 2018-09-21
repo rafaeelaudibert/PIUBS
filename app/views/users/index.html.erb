@@ -2,6 +2,10 @@
 
   <h3>Usuários</h3>
 
+  <div class="create-new">
+  <%= link_to 'Convidar novo usuário', new_user_invitation_path, class: 'btn btn-primary' %>
+  </div>
+
   <%= form_for resource, :as => resource_name do |f| %>
   <%= devise_error_messages! %>
 
