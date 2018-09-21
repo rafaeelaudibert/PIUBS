@@ -72,7 +72,7 @@
 <%= t "activerecord.general.uf" %>
 <span class="badge badge-pill badge-light m-2"><%= @call.state.name %></span>
 <%= t :status %>
-<span class="badge badge-pill badge-light m-2"><%= t "activerecord.enums.call.status.#{@call.status}" %></span>
+<span class="badge badge-pill badge-light m-2" style="color:blue !important;"><%= t "activerecord.enums.call.status.#{@call.status}" %></span>
 <%= t "activerecord.models.call.severity" %>
 <span class="badge badge-pill badge-light m-2"><%= t "activerecord.enums.call.severity.#{@call.severity}" if @call.severity %></span>
 <%= t "activerecord.models.call.category" %>
@@ -83,13 +83,15 @@
   <% if is_admin? || is_support_user? %>
     <% if @call.support_user != nil %>
       <% if @my_call %>
-        <button type="button" id="reply" class="btn btn-primary">Nova resposta/button>
+        <button type="button" id="reply" class="btn btn-primary">Nova resposta</button>
         <button type="button" id="faq-reply" class="btn btn-primary">Resposta do FAQ</button>
         <a data-confirm="Tens certeza?" class="btn btn-danger right" rel="nofollow" data-method="post" href="/calls/unlink_call_support_user?call_options_id=<%= @call.id %>">
           Soltar Atendimento
         </a>
       <% else %>
-        <div style="color: red; font-weight: 400; margin-bottom:1em; background-color:#CCC; padding:20px;">Este atendimento já pertence a outro usuário do suporte.</div>
+        <% unless is_admin? %>
+          <div style="color: red; font-weight: 400; margin-bottom:1em; background-color:#CCC; padding:20px;">Este atendimento já pertence a outro usuário do suporte.</div>
+        <% end %>
       <% end %>
     <% else %>
       <%= button_to 'Pegar atendimento', calls_link_call_support_user_path(:call_options_id => @call.id, :user_option_id => current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este atendimento' }, method: :post, class: "btn
