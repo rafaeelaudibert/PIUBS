@@ -84,7 +84,7 @@ let stateSelect = document.getElementById('contract_state_id');
 let citySelect = document.getElementById('contract_city_id');
 
 stateSelect.addEventListener('change', () => jQuery.ajax({
-  url: '/cities/states/' + stateSelect.value,
+  url: '/apoioaempresas/cities/states/' + stateSelect.value,
   type: "GET",
   dataType: "json",
   success: insertData

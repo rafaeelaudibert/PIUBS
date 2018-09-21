@@ -41,7 +41,7 @@
         <td><%= contract.sei %></td>
         <td>
           <% if contract.filename %>
-            <%= link_to "Clique para fazer download", download_contract_path(id: contract.id), class: 'btn btn-primary btn-sm' %>
+            <%= link_to "Clique para fazer download", download_contracts_path(id: contract.id), class: 'btn btn-primary btn-sm' %>
           <% else %>
             <button class="btn btn-primary btn-sm" disabled="disabled">Não há arquivos anexados</button>
           <% end %>

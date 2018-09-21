@@ -86,11 +86,11 @@
           const ubsSelect = document.getElementById('call_cnes')
 
           const triggeredByCompany = () => {
-            jQuery.ajax({url: `/companies/${companySelect.value}/states`, type: "GET", dataType: "json", success: insertStatesData, error: console.log});
-            jQuery.ajax({url: `/companies/${companySelect.value}/users`, type: "GET", dataType: "json", success: insertUsersData, error: console.log});
+            jQuery.ajax({url: `/apoioaempresas/companies/${companySelect.value}/states`, type: "GET", dataType: "json", success: insertStatesData, error: console.log});
+            jQuery.ajax({url: `/apoioaempresas/companies/${companySelect.value}/users`, type: "GET", dataType: "json", success: insertUsersData, error: console.log});
           }
-          const triggeredByState = () => jQuery.ajax({url: `/companies/${companySelect.value}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
-          const triggeredByCity = () => jQuery.ajax({url: `/companies/${companySelect.value}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
+          const triggeredByState = () => jQuery.ajax({url: `/apoioaempresas/companies/${companySelect.value}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
+          const triggeredByCity = () => jQuery.ajax({url: `/apoioaempresas/companies/${companySelect.value}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
 
           companySelect.addEventListener('change', triggeredByCompany);
           stateSelect.addEventListener('change', triggeredByState);
@@ -200,8 +200,8 @@
           const stateSelect = document.getElementById('call_state_id');
           const citySelect = document.getElementById('call_city_id');
           const ubsSelect = document.getElementById('call_cnes')
-          const triggeredByState = () => jQuery.ajax({url: `/companies/${query.sei}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
-          const trigerredByCity = () => jQuery.ajax({url: `/companies/${query.sei}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
+          const triggeredByState = () => jQuery.ajax({url: `/apoioaempresas/companies/${query.sei}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
+          const trigerredByCity = () => jQuery.ajax({url: `/apoioaempresas/companies/${query.sei}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
           stateSelect.addEventListener('change', triggeredByState);
           citySelect.addEventListener('change', trigerredByCity);
 
@@ -231,7 +231,7 @@
       <div class="form-group input-group">
         <br/>
         <%= form.label :file, 'Anexar arquivos', class: "btn btn-secondary btn-file input-group-btn" %>
-        <%= form.file_field :file, class: 'form-control-file', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 2.megabytes}, style:"display: none"%>
+        <%= form.file_field :file, class: 'form-control-file', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 20.megabytes, max_file_quantity: 10}, style:"display: none"%>
         <%= form.text_field :file_text, class:"form-control", readonly: true %>
       </div>
       <%= form.submit 'Criar atendimento', :class => 'btn btn-primary btn-sm' %>
@@ -284,7 +284,7 @@
 
       if (arr.length >= 1) {
         jQuery.ajax({
-          url: '/answers/query/' + textField.value,
+          url: '/apoioaempresas/answers/query/' + textField.value,
           type: "GET",
           dataType: "json",
           success: data => {
@@ -314,10 +314,10 @@
 
 <script>
   function validateFiles(inputFile) {
-    console.log(inputFile);
 
     var size = 0;
     var maxFileSize = $(inputFile).data('max-file-size');
+    var maxFileQuantity = $(inputFile).data('max-file-quantity');
 
     $.each(inputFile.files, function () {
       if (this.size) {
@@ -325,23 +325,21 @@
       }
     });
 
-    console.log(inputFile.files)
-
     if (size && maxFileSize && size > parseInt(maxFileSize)) {
       const animation = {
         "in": "bounceIn",
         "out": "fadeOutUpBig"
       };
       const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
-      Notification.create("<%= 'Warning' %>", '<%= "This files exceeds the maximum allowed attachments size (20 MB)" %>', heart, animation, 2, 5);
+      Notification.create("<%= 'Alerta' %>", '<%= "Esses anexos excedem o tamanho máximo permitido (20 MB)" %>', heart, animation, 2, 5);
       $(inputFile).val('');
-    } else if (inputFile.files.length > 10) {
+    } else if (inputFile.files.length > maxFileQuantity) {
       const animation = {
         "in": "bounceIn",
         "out": "fadeOutUpBig"
       };
       const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
-      Notification.create("<%= 'Warning' %>", '<%= "This attachments exceed the maximum attachment quantity limit (10 files)" %>', heart, animation, 2, 5);
+      Notification.create("<%= 'Alerta' %>", '<%= "Esses anexos excedem a quantidade máxima permitida (10 arquivos)" %>', heart, animation, 2, 5);
       $(inputFile).val('');
     };
   }

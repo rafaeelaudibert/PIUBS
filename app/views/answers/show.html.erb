@@ -2,39 +2,41 @@
 <h4 class="display-5">Answer View</h4>
 <%end%>
 <div class="card card-primary">
-  <div class="card-header " style="color: white; font-weight: bold;">
-    <em class="fa fa-bullhorn m-2"></em>
-    Created by :
-    <span class="badge badge-pill badge-dark m-2">
-      <%= link_to @answer.user.email, user_path(@answer.user.id) %>
-    </span>
-    Creation Date :
-    <span class="badge badge-pill badge-dark m-2">
-      <%=  @answer.created_at %>
-    </span>
-    Category :
-    <span class="badge badge-pill badge-dark m-2">
-      <%= @answer.category.name %>
-    </span>
-  </div>
+<div class="card-header " style="color: white; font-weight: bold;">
+  <em class="fa fa-bullhorn m-2"></em>
+  Created by :
+  <span class="badge badge-pill badge-dark m-2">
+    <%= link_to @answer.user.email, user_path(@answer.user.id) %>
+  </span>
+  Creation Date :
+  <span class="badge badge-pill badge-dark m-2">
+    <%= @answer.created_at %>
+  </span>
+  Category :
+  <span class="badge badge-pill badge-dark m-2">
+    <%= @answer.category.name %>
+  </span>
+</div>
 
-  <div class="card-block">
-    <h4><%= @answer.question %></h4><hr/>
-    <p><%= @answer.answer.html_safe %></p>
+<div class="card-block">
+  <h4><%= @answer.question %></h4><hr/>
+  <p><%= @answer.answer.html_safe %></p>
 
-    <% if @answer.attachments.length > 0 %>
-        <hr/>
-        <strong class='m-2'>Attachments</strong> <br/>
-        <div class='mt-2'>
-          <% @answer.attachments.each do |_attachment| %>
-            <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
-            <i class="fa fa-file-text mr-1"></i>
-            <%= truncate(_attachment.filename, length: 10, omission: '...')%>
-            <% end %>
-          <% end %>
-        </div>
-      <% end %> <hr/>
-      <%= link_to 'Edit', edit_answer_path(@answer), class: 'btn btn-primary' %>
-      <%= link_to 'Back', faq_path, class: 'btn btn-primary' %>
+  <% if @answer.attachments.length > 0 %>
+    <hr/>
+    <strong class='m-2'>Attachments</strong>
+    <br/>
+    <div class='mt-2'>
+      <% @answer.attachments.each do |_attachment| %>
+        <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+        <i class="fa fa-file-text mr-1"></i>
+        <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+      <% end %>
+    <% end %>
   </div>
+<% end %>
+<hr/>
+<%= link_to 'Edit', edit_answer_path(@answer), class: 'btn btn-primary' %>
+<%= link_to 'Back', faq_path, class: 'btn btn-primary' %>
+</div>
 </div>
