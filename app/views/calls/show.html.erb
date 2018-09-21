@@ -57,7 +57,7 @@
     <br/>
     <br/>
     <% @call.attachments.each do |_attachment| %>
-      <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+      <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
       <i class="fa fa-file-text mr-1"></i>
       <%= truncate(_attachment.filename, length: 10, omission: '...')%>
     <%end%>
@@ -83,9 +83,9 @@
   <% if is_admin? || is_support_user? %>
     <% if @call.support_user != nil %>
       <% if @my_call %>
-        <button type="button" id="reply" class="btn btn-primary">Nova resposta</button>
+        <button type="button" id="reply" class="btn btn-primary">Nova Resposta</button>
         <button type="button" id="faq-reply" class="btn btn-primary">Resposta do FAQ</button>
-        <a data-confirm="Tens certeza?" class="btn btn-danger right" rel="nofollow" data-method="post" href="/calls/unlink_call_support_user?call_options_id=<%= @call.id %>">
+        <a data-confirm="Tens certeza?" class="btn btn-danger right" rel="nofollow" data-method="post" href="/apoioaempresas/calls/unlink_call_support_user?call_options_id=<%= @call.id %>">
           Soltar Atendimento
         </a>
       <% else %>
@@ -98,7 +98,7 @@
         <% end %>
       <% end %>
     <% else %>
-      <%= button_to 'Pegar atendimento', calls_link_call_support_user_path(:call_options_id => @call.id, :user_option_id => current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este atendimento' }, method: :post, class: "btn
+      <%= button_to 'Pegar atendimento', link_call_support_user_calls_path(:call_options_id => @call.id, :user_option_id => current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este atendimento' }, method: :post, class: "btn
       right", :style => "color:#FFF; background-color: #084B8A; margin-bottom: 1em;" %>
     <% end %>
   <% else %>
@@ -112,7 +112,7 @@
     <% else %>
       <p>Chamado fechado! Somente reabra caso a solução oferecida pela atendente não tenha resolvido o seu problema.</br>
     </p>
-    <a data-confirm="Tens certeza?" class="btn btn-danger btn-lg" rel="nofollow" data-method="post" href="/calls/reopen_call?call=<%= @call.id %>">
+    <a data-confirm="Tens certeza?" class="btn btn-danger btn-lg" rel="nofollow" data-method="post" href="/apoioaempresas/calls/reopen_call?call=<%= @call.id %>">
       Reabrir chamado
     </a>
   <% end %>
@@ -188,7 +188,7 @@
             <br/>
             <div>
               <% reply.attachments.each do |_attachment| %>
-                <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+                <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
                 <i class="fa fa-file-text mr-1"></i>
                 <%= truncate(_attachment.filename, length: 10, omission: '...')%>
               <%end%>
@@ -228,7 +228,7 @@
         <br/>
         <div>
           <% reply.attachments.each do |_attachment| %>
-            <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+            <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
             <i class="fa fa-file-text mr-1"></i>
             <%= truncate(_attachment.filename, length: 10, omission: '...')%>
           <%end%>
@@ -290,7 +290,7 @@ Final Answer</p>
 <strong class='m-2'>Attachments</strong><br/>
 <div class='mt-2'>
   <% answer.attachments.each do |_attachment| %>
-    <%= link_to download_attachment_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+    <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
     <i class="fa fa-file-text mr-1"></i>
     <%= truncate(_attachment.filename, length: 10, omission: '...')%>
   <%end%>

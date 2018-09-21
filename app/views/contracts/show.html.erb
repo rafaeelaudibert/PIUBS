@@ -20,9 +20,9 @@
   <% if @contract.filename %>
     <%= @contract.filename %>
     <br/><br/>
-    <strong><%= link_to "Link para download", download_contract_path, class: 'btn btn-primary btn-sm' %></strong>
+    <strong><%= link_to "Link para download", download_contracts_path, class: 'btn btn-primary btn-sm' %></strong>
   <% else %>
-    No file attached
+    Nenhum arquivo anexado
   <% end %>
 </p>
 

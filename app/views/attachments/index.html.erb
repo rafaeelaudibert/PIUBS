@@ -30,7 +30,7 @@
     <% @attachments.each do |attachment| %>
       <tr>
         <td><%= attachment.filename.capitalize %></td>
-        <td><%= link_to "Download", download_attachment_path(attachment.id), class: 'btn btn-primary btn-sm' %></td>
+        <td><%= link_to "Download", download_attachments_path(attachment.id), class: 'btn btn-primary btn-sm' %></td>
       </tr>
     <% end %>
   </tbody>
