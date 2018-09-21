@@ -72,7 +72,7 @@
 <%= t "activerecord.general.uf" %>
 <span class="badge badge-pill badge-light m-2"><%= @call.state.name %></span>
 <%= t :status %>
-<span class="badge badge-pill badge-light m-2"><%= t "activerecord.enums.call.status.#{@call.status}" %></span>
+<span class="badge badge-pill badge-light m-2" style="color:blue !important;"><%= t "activerecord.enums.call.status.#{@call.status}" %></span>
 <%= t "activerecord.models.call.severity" %>
 <span class="badge badge-pill badge-light m-2"><%= t "activerecord.enums.call.severity.#{@call.severity}" if @call.severity %></span>
 <%= t "activerecord.models.call.category" %>
@@ -89,7 +89,13 @@
           Soltar Atendimento
         </a>
       <% else %>
-        <div style="color: red; font-weight: 400; margin-bottom:1em; background-color:#CCC; padding:20px;">Este atendimento já pertence a outro usuário do suporte.</div>
+        <% unless is_admin? %>
+          <% unless current_user.try(:call_center_admin?) %>
+            <div style="color: red; font-weight: 400; margin-bottom:1em; background-color:#CCC; padding:20px;">Este atendimento já pertence a outro usuário do suporte.</div>
+          <% else %>
+            <div style="color: red; font-weight: 400; margin-bottom:1em; background-color:#CCC; padding:20px;">Este atendimento pertence ao usuário <%= "#{@user.name} #{@user.last_name}" %></div>
+          <% end %>
+        <% end %>
       <% end %>
     <% else %>
       <%= button_to 'Pegar atendimento', link_call_support_user_calls_path(:call_options_id => @call.id, :user_option_id => current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este atendimento' }, method: :post, class: "btn

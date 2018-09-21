@@ -36,6 +36,7 @@ class CallsController < ApplicationController
     else
       @my_call = false
     end
+    @user = User.find(@call.support_user)
   end
 
   # GET /calls/new
@@ -141,7 +142,7 @@ class CallsController < ApplicationController
 
         @answer.destroy # Destroi a resposta final anterior
       end
-      
+
       redirect_back(fallback_location: root_path, notice: 'Atendimento reaberto')
     else
       redirect_back(fallback_location: root_path, notice: 'Ocorreu um erro ao tentar reabrir o atendimento')
