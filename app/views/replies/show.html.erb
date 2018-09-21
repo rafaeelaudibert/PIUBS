@@ -1,19 +1,19 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <strong>Protocol:</strong>
+  <strong>Protocolo:</strong>
   <%= @reply.protocol %>
 </p>
 
 <p>
-  <strong>Description:</strong>
+  <strong>Descrição:</strong>
   <%= @reply.description %>
 </p>
 
 <p>
-  <strong>User:</strong>
-  <%= @reply.user %>
+  <strong>Usuário:</strong>
+  <%= @reply.user_id %>
 </p>
 
-<%= link_to 'Edit', edit_reply_path(@reply) %> |
-<%= link_to 'Back', replies_path %>
+<%= link_to 'Editar', edit_reply_path(@reply) %> |
+<%= link_to 'Voltar', replies_path %>
