@@ -36,7 +36,7 @@ class CallsController < ApplicationController
     else
       @my_call = false
     end
-    @user = User.find(@call.support_user)
+    @user = User.find(@call.support_user) if @call.support_user
   end
 
   # GET /calls/new
