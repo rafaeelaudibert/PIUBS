@@ -1,3 +1,5 @@
+<div class="required_info"></div><br />
+
 <%= form_with(model: reply, local: true) do |form| %>
 <% if reply.errors.any? %>
   <div id="error_explanation">
@@ -13,21 +15,21 @@
 <% end %>
 
 <div class="field">
-  <%= form.label :protocol, 'Nº de Protocolo*' %>
+  <%= form.label :protocol, 'Nº de Protocolo', class: 'required' %>
   <%= form.text_field :protocol, required: true %>
 </div>
 
 <div class="field">
-  <%= form.label :description, 'Descrição*' %>
+  <%= form.label :description, 'Descrição', class: 'required' %>
   <%= form.text_area :description, required: true %>
 </div>
 
 <div class="field">
-  <%= form.label :user_id, 'Usuário*' %>
+  <%= form.label :user_id, 'Usuário', class: 'required' %>
   <%= form.text_field :user_id, required: true %>
 </div>
 
 <div class="actions">
-  <%= form.submit %>
+  <%= form.submit "Criar resposta" %>
 </div>
 <% end %>

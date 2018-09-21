@@ -1,6 +1,6 @@
 <div class="required_info"></div><br/>
 <%= tinymce_assets %>
-<%= tinymce %>
+<%= tinymce language: 'pt_BR' %>
 <%= form_with(model: call, local: true) do |form| %>
 <% if call.errors.any? %>
   <div id="error_explanation">
@@ -368,7 +368,7 @@
         if (input.length) {
           input.val(log);
         } else {
-          if (log) 
+          if (log)
             alert(log);
           }
         });

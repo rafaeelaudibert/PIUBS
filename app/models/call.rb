@@ -11,6 +11,8 @@ class Call < ApplicationRecord
   has_many :attachment_links
   has_many :attachments, through: :attachment_links
 
+  ### SE ADICIONAR NOVO OU ALTERAR STATUS OU SEVERIDADE, LEMBRAR DE
+  ### ADICIONAR TAMBÉM NA TRADUÇÃO (config/locales/en.yml)
   enum status: [:open, :closed, :reopened]
   enum severity: [:low, :normal, :high, :huge]
 end

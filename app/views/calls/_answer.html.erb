@@ -3,9 +3,9 @@
   <input type="search" name="search_field" id="search_field" value="" class="form-control boxed faq" style="margin-right: 0.5rem">
   <label for="search_field">
     &nbsp;<i class="fa fa-search"></i>
-    &nbsp;Search for an answer on FAQ
+    &nbsp;Pesquisar por uma resposta no FAQ
   </label>
-  <input type="button" name="commit" value="Search" id="search_button" class="btn btn-primary" data-disable-with="Search">
+  <input type="button" name="commit" value="Pesquisar" id="search_button" class="btn btn-primary" data-disable-with="Search">
   <br/>
 
 </div>
@@ -34,16 +34,16 @@
             //Add the header row.
             let row = table.insertRow(-1);
             row.classList.add('thead-dark')
-            for (let header of["Id", "Question", "Answer", "Actions"]) 
+            for (let header of["Id", "Questão", "Resposta", "Ações"])
               row.appendChild(document.createElement("TH")).innerHTML = header;
-            
+
             //Add the data rows.
             for (let entry of data) {
               let row = table.insertRow(-1);
               row.insertCell(-1).innerHTML = entry.id;
               row.insertCell(-1).innerHTML = entry.question;
               row.insertCell(-1).innerHTML = entry.answer;
-              row.insertCell(-1).innerHTML = '<button onclick="faq_click(this)" type="button" class="btn btn-primary btn-sm">Select</button>'
+              row.insertCell(-1).innerHTML = '<button onclick="faq_click(this)" type="button" class="btn btn-primary btn-sm">Selecionar</button>'
             }
 
             //Add the table in the DOM

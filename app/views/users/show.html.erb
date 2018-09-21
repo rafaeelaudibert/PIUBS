@@ -1,4 +1,4 @@
-<h3>User</h3>
+<h3>Usuário</h3>
 <p>Nome:
   <%= @user.name + " #{@user.last_name}" if @user.name %></p>
 <p>E-mail:
@@ -10,5 +10,5 @@
 <p>Último login:
   <%= @user.current_sign_in_at.strftime("%d %b %y - %H:%M:%S") if @user.current_sign_in_at %></p>
 
-<%= link_to 'Back', users_path, class: 'btn btn-primary btn-sm' %>
+<%= link_to 'Voltar', users_path, class: 'btn btn-primary btn-sm' %>
 <br/><br/>
