@@ -1,4 +1,7 @@
 <h2>Convidar novo usuário</h2>
+
+<div class="required_info"></div><br />
+
 <div class="authform" style="float:left; width:50%;">
   <%= form_for resource, :as => resource_name, :url => invitation_path(resource_name), :html => {:method => :post} do |f| %>
   <%= devise_error_messages! %>
