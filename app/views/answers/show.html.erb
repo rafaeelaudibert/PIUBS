@@ -1,18 +1,18 @@
 <%= content_for :body_title do%>
-<h4 class="display-5">Answer View</h4>
+<h4 class="display-5">Questão</h4>
 <%end%>
 <div class="card card-primary">
   <div class="card-header " style="color: white; font-weight: bold;">
     <em class="fa fa-bullhorn m-2"></em>
-    Created by :
+    Criada pelo usuário :
     <span class="badge badge-pill badge-dark m-2">
       <%= link_to @answer.user.email, user_path(@answer.user.id) %>
     </span>
-    Creation Date :
+    Data da criação :
     <span class="badge badge-pill badge-dark m-2">
       <%=  @answer.created_at %>
     </span>
-    Category :
+    Categoria :
     <span class="badge badge-pill badge-dark m-2">
       <%= @answer.category.name %>
     </span>
@@ -34,7 +34,7 @@
           <% end %>
         </div>
       <% end %> <hr/>
-      <%= link_to 'Edit', edit_answer_path(@answer), class: 'btn btn-primary' %>
-      <%= link_to 'Back', faq_path, class: 'btn btn-primary' %>
+      <%= link_to 'Editar', edit_answer_path(@answer), class: 'btn btn-primary' %>
+      <%= link_to 'Voltar', faq_path, class: 'btn btn-primary' %>
   </div>
 </div>
