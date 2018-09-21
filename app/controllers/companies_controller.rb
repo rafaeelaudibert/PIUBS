@@ -102,7 +102,7 @@ class CompaniesController < ApplicationController
       pp params
       redirect_to denied_path unless is_admin? || is_support_user? || (is_company_user && params[:id].to_i == current_user.sei)
     elsif action == 'show'
-      redirect_to denied_path unless current_user.try(:company_admin?) && @company.sei == current_user.sei
+      redirect_to denied_path unless current_user.try(:company_admin?) && @company.sei == current_user.sei || is_admin?
     end
   end
 end
