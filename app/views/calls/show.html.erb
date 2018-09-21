@@ -90,7 +90,11 @@
         </a>
       <% else %>
         <% unless is_admin? %>
-          <div style="color: red; font-weight: 400; margin-bottom:1em; background-color:#CCC; padding:20px;">Este atendimento já pertence a outro usuário do suporte.</div>
+          <% unless current_user.try(:call_center_admin?) %>
+            <div style="color: red; font-weight: 400; margin-bottom:1em; background-color:#CCC; padding:20px;">Este atendimento já pertence a outro usuário do suporte.</div>
+          <% else %>
+            <div style="color: red; font-weight: 400; margin-bottom:1em; background-color:#CCC; padding:20px;">Este atendimento pertence ao usuário <%= "#{@user.name} #{@user.last_name}" %></div>
+          <% end %>
         <% end %>
       <% end %>
     <% else %>
