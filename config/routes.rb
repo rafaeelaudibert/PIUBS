@@ -1,44 +1,86 @@
 Rails.application.routes.draw do
   root to: 'visitors#index'
 
-  resources :attachments
-  get 'attachments/:id/download', to: 'attachments#download', as: 'download_attachment'
+  scope '/apoioaempresas' do
 
-  get 'faq', to: 'answers#faq', as: 'faq'
-  get 'answers/query/:search', to: 'answers#search', as: 'answers_search'
-  get 'answers/attachments/:id', to: 'answers#attachments', as: 'answers_attachments'
-  resources :answers
+    # /apoioaempresas
+    get '/', to: 'calls#index' # Apoio a Empresas root
 
-  get 'replies/attachments/:id', to: 'replies#attachments', as: 'replies_attachments'
-  resources :replies
+    # /apoioaempresas/attachments
+    resources :attachments do
+      collection do
+        get ':id/download', to: 'attachments#download', as: 'download'
+      end
+    end
 
-  post 'calls/link_call_support_user'
-  post 'calls/unlink_call_support_user'
-  post 'calls/reopen_call', to: 'calls#reopen_call', as: 'reopen_call'
-  resources :calls
+    # /apoioaempresas/answers
+    get 'faq', to: 'answers#faq', as: 'faq'
+    resources :answers do
+      collection do
+        get 'query/:search', to: 'answers#search'
+        get 'attachments/:id', to: 'answers#attachments'
+      end
+    end
 
-  get 'categories/all', to: 'categories#all', as: 'all_categories'
-  resources :categories
+    # /apoioaempresas/replies
+    resources :replies do
+      collection do
+        get 'attachments/:id', to: 'replies#attachments'
+      end
+    end
 
-  resources :contracts
-  get 'contracts/:id/download', to: 'contracts#download', as: 'download_contract'
-  resources :contracts
+    # /apoioaempresas/calls
+    resources :calls do
+      collection do
+        post 'link_call_support_user'
+        post 'unlink_call_support_user'
+        post 'reopen_call'
+      end
+    end
 
-  get 'companies/:id/states', to: 'companies#getStates', as: 'company_states_path'
-  get 'companies/:id/users', to: 'companies#getUsers', as: 'company_users_path'
-  get 'companies/:id/cities/:state_id', to: 'companies#getCities', as: 'company_cities_path'
-  get 'companies/:id/unities/:city_id', to: 'companies#getUnities', as: 'company_unities_path'
-  resources :companies, param: :sei
-  resources :unities, param: :cnes
+    # /apoioaempresas/categories
+    resources :categories do
+      collection do
+        get 'all'
+      end
+    end
 
-  get 'cities/states/:id', to: 'cities#states'
-  resources :cities
-  resources :states
+    # /apoioaempresas/contracts
+    resources :contracts do
+      collection do
+        get '/:id/download', to: 'contracts#download', as: 'download'
+      end
+    end
 
-  devise_for :users, controllers: { invitations: 'users/invitations', registrations: 'users/registrations' }
-  root to: 'visitors#index'
+    # /apoioaempresas/companies
+    resources :companies, param: :sei do
+      collection do
+        get ':id/states', to: 'companies#getStates', as: 'company_states'
+        get ':id/users', to: 'companies#getUsers', as: 'company_users'
+        get ':id/cities/:state_id', to: 'companies#getCities', as: 'company_cities'
+        get ':id/unities/:city_id', to: 'companies#getUnities', as: 'company_unities'
+      end
+    end
 
-  resources :users
+    # /apoioaempresas/unities
+    resources :unities, param: :cnes
+
+    # /apoioaempresas/cities
+    resources :cities do
+      collection do
+        get 'states/:id', to: 'cities#states', as: 'states'
+      end
+    end
+
+    # /apoioaempresas/states
+    resources :states
+
+    # /apoioaempresas/users
+    devise_for :users, controllers: { invitations: 'users/invitations', registrations: 'users/registrations' }
+    resources :users
+  end
+
+  # Errors
   get '404', to: 'application#page_not_found', as: 'not_found'
   get '422', to: 'application#acess_denied', as: 'denied'
 end

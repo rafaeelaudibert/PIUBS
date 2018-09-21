@@ -1,4 +1,4 @@
-<div class="required_info"></div><br />
+<div class="required_info"></div><br/>
 <%= form_with(model: unity, local: true) do |form| %>
 <% if unity.errors.any? %>
   <div id="error_explanation">
@@ -57,7 +57,7 @@
     let citySelect = document.getElementById('unity_city_id');
 
     stateSelect.addEventListener('change', () => jQuery.ajax({
-      url: '/cities/states/' + stateSelect.value,
+      url: '/apoioaempresas/cities/states/' + stateSelect.value,
       type: "GET",
       dataType: "json",
       success: insertData
