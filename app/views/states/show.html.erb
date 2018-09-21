@@ -44,9 +44,9 @@
 <% end %>
 <hr/>
 
-<%= link_to 'New City', new_city_path, class: 'btn btn-primary btn-sm' if current_user.try(:admin?) %>
-<%= link_to 'Edit', edit_state_path(@state), class: 'btn btn-primary btn-sm' if current_user.try(:admin?) %>
-<%= link_to 'Back', states_path, class: 'btn btn-primary btn-sm' %>
+<%= link_to 'Adicionar cidade', new_city_path, class: 'btn btn-primary btn-sm' if current_user.try(:admin?) %>
+<%= link_to 'Editar', edit_state_path(@state), class: 'btn btn-primary btn-sm' if current_user.try(:admin?) %>
+<%= link_to 'Voltar', states_path, class: 'btn btn-primary btn-sm' %>
 <br/><br/>
 <!-- <%= link_to 'Edit', edit_state_path(@state) %> -->
 
