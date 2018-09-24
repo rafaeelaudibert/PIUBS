@@ -1,4 +1,4 @@
-version: '3'
+version: '2'
 services:
   db:
     image: 'postgres:10.5'
@@ -22,4 +22,4 @@ services:
     links:
       - app
     ports:
-      - "8080:80"
+      - "8081:80"
