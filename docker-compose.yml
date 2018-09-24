@@ -3,7 +3,9 @@ services:
   db:
     image: 'postgres:10.5'
     volumes:
-      - /var/lib/postgresql/piubsdata:/var/lib/postgresql/data
+      - ~/piubs_data/postgresql:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
   app:
     build: .
     command: bundle exec puma -C config/puma.rb
