@@ -11,11 +11,15 @@ Rails.logger.level = Logger::INFO # Options for logger.level DEBUG < INFO < WARN
 
 # Creates the users, except company_admin and company_user ones
 def seed_users
-  if User.new(cpf: CPF.generate, name: 'Admin Master', email: 'admin@piubs.com', password: '19550410', password_confirmation: 'changeme', role: 'admin', sei: 0).save
-    Rails.logger.info('[INFO]   -- Created ADMIN MASTER USER!')
-  else
-    Rails.logger.fatal('[ERROR]  -- Error creating ADMIN MASTER USER!')
-    raise
+  if Company.new(sei: 0).save
+    admin = User.new(cpf: CPF.generate, name: 'Admin Master', email: 'admin@piubs.com', password: '19550410', password_confirmation: '19550410', role: 'admin', sei: 0)
+    if admin.save
+      Rails.logger.info('[INFO]   -- Created ADMIN MASTER USER!')
+    else
+      Rails.logger.fatal('[ERROR]  -- Error creating ADMIN MASTER USER!')
+      Rails.logger.error(admin.errors)
+      raise
+    end
   end
 end
 
@@ -39,7 +43,6 @@ def seed_cities
     city = City.new(name: row['NOME MUNIC'], state_id: row['COD UF'], id: row['CodMun'][0...-1])
     if city.save
       Rails.logger.debug("[DEBUG]  -- INSERTED a CITY in the database: #{city.id}")
-      seed_contract(city)
     else
       Rails.logger.error("[ERROR]  -- ERROR inserting CITY #{city[:name]}")
       Rails.logger.error(city.errors.full_messages)

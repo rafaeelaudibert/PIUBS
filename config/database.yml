@@ -16,7 +16,7 @@ development:
   adapter:  postgresql
   host:     db
   port:     5432
-  encoding: unicode
+  encoding: utf8
   database: piubs_development
   pool:     5
   username: postgres
@@ -45,7 +45,7 @@ test:
   adapter:  postgresql
   host:     db
   port:     5432
-  encoding: unicode
+  encoding: utf8
   database: piubs_test
   pool:     5
   username: postgres
@@ -56,10 +56,9 @@ production:
   adapter:  postgresql
   host:     db
   port:     5432
-  encoding: unicode
+  encoding: utf8
   database: piubs_production
   pool:     5
   username: postgres
   password: 19550410
   template: template0
-  adapter: mysql2
