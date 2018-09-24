@@ -1,0 +1,25 @@
+version: '3'
+services:
+  db:
+    image: 'postgres:10.5'
+    volumes:
+      - ~/piubs_data/postgresql:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+  app:
+    build: .
+    command: bundle exec puma -C config/puma.rb
+    volumes:
+      - .:/var/www/PIUBS
+    expose:
+      - "3000"
+    links:
+      - db
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile-nginx
+    links:
+      - app
+    ports:
+      - "8080:80"
