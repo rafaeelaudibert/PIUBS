@@ -98,8 +98,10 @@
         <% end %>
       <% end %>
     <% else %>
-      <%= button_to 'Pegar atendimento', link_call_support_user_calls_path(:call_options_id => @call.id, :user_option_id => current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este atendimento' }, method: :post, class: "btn
+      <% unless is_admin? %>
+        <%= button_to 'Pegar atendimento', link_call_support_user_calls_path(:call_options_id => @call.id, :user_option_id => current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este atendimento' }, method: :post, class: "btn
       right", :style => "color:#FFF; background-color: #084B8A; margin-bottom: 1em;" %>
+      <% end %>
     <% end %>
   <% else %>
     <button type="button" id="reply" class="btn btn-primary">Nova resposta</button>
