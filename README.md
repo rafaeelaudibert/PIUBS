@@ -74,7 +74,7 @@ We use [Gitmoji](https://gitmoji.carloscuesta.me/) :tada: in our commits, so ple
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
 
 ## :construction_worker: Authors
-* **Felipe Comerlatto** - *Initial work* - [felipefcomerlatto](https://github.com/felipefcomerlato)
+* **Felipe Comerlato** - *Initial work* - [felipefcomerlato](https://github.com/felipefcomerlato)
 * **Mario Figueiró** - *Initial work* - [mgfzemor](https://github.com/mgfzemor)
 * **Rafael Baldasso Audibert** - *Initial work* - [rafaeelaudibert](https://github.com/rafaeelaudibert)
 
