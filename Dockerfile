@@ -16,7 +16,7 @@ COPY Gemfile Gemfile
 COPY Gemfile.lock Gemfile.lock
 RUN gem install bundler
 RUN bundle install -j 20
-RUN RAILS_ENV=production rake assets:precompile
+RUN rake RAILS_ENV=production assets:precompile
 
 COPY config/puma.rb config/puma.rb
 
