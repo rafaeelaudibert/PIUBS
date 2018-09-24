@@ -32,6 +32,11 @@ group :development, :test do
   gem 'rspec-rails'
 end
 
+# mysql2 is required for production
+group :production do
+  gem 'mysql2'
+end
+
 # Default gems
 gem 'bootsnap', '>= 1.1.0', require: false
 gem 'bootstrap', '~> 4.1.2'
