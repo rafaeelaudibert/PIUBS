@@ -53,3 +53,4 @@ build-iPhoneSimulator/
 
 # database information
 database.yml
+.env

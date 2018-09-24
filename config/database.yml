@@ -62,3 +62,4 @@ production:
   username: postgres
   password: 19550410
   template: template0
+  adapter: mysql2

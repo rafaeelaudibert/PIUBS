@@ -16,6 +16,7 @@ COPY Gemfile Gemfile
 COPY Gemfile.lock Gemfile.lock
 RUN gem install bundler
 RUN bundle install -j 20
+RUN RAILS_ENV=production rake assets:precompile
 
 COPY config/puma.rb config/puma.rb
 
@@ -25,4 +26,4 @@ COPY . .
 EXPOSE 3000
 
 # The default command that gets ran will be to start the Puma server.
-CMD bundle exec puma -C config/puma.rb
+CMD bundle exec puma -C config/puma.rb -e production
