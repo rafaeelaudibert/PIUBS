@@ -61,5 +61,5 @@ gem 'data-confirm-modal'        # Modals for confimations
 gem 'pg_search'                 # Full-text search gem
 gem 'shog'                      # Colorized console logging
 gem 'tinymce-rails'             # WSYCWYG Text Editor
-gem 'tinymce-rails-langs'
+gem 'tinymce-rails-langs'       # Tinymce Translation
 gem 'will_paginate', '~> 3.1.0' # Pagination
