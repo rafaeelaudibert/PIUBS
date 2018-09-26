@@ -21,62 +21,62 @@
 
 <% if @calls.length > 0 %>
 <%= render './pagination', value: @calls %>
-<table class="table table-striped table-hover">
-  <thead class="thead-dark">
-    <tr>
-      <th>Protocolo</th>
-      <th>Questão</th>
-      <th>Status</th>
-      <th>Cidade</th>
-      <th>Categoria</th>
-      <th colspan="3">Ações</th>
-    </tr>
-  </thead>
+<div id="accordion">
+  <% @calls.each do |call| %>
+    <div class="card<%= call.support_user == current_user.id ? ' card-mine' : '' %>">
+      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#<%= call.protocol %>" aria-expanded="true" aria-controls="<%= call.protocol %>">
+        <div class="card-header" id="heading<%= call.protocol %>">
+          <div class="question">
+            <h5><%= call.title %></h5>
+          </div>
+          <div class="protocol">
+            <span>Protocolo: <%= call.protocol %></span>
+          </div>
 
-  <tbody>
-    <% @calls.each do |call| %>
-      <% if call.support_user == current_user.id %>
-        <% $mark_call = "mark-call" %>
-      <% else %>
-        <% $mark_call = "" %>
-      <% end %>
-      <tr>
-        <td class="<%= $mark_call %>"><%= call.protocol %></td>
-        <td class="<%= $mark_call %>"><%= call.title %></td>
-        <td class="<%= $mark_call %>"><%= t "activerecord.enums.call.status.#{call.status}" %></td>
-        <td class="<%= $mark_call %>"><%= call.city.name %></td>
-        <td class="<%= $mark_call %>"><%= call.category.name %></td>
-        <td>
-          <%= link_to 'Mostrar', call , class: 'btn btn-primary btn-sm'%>
-          <%= link_to(call, method: :delete, data: { confirm: 'Tens certeza?', verify: call.protocol, verify_text: 'Caso tenha, por favor digite o número do protocolo para continuar' }, class: 'btn btn-danger btn-sm') do %>
-          <i class="fa fa-trash-o"></i>
-        <%end%>
-        </td>
-      </tr>
+          <div class="company">
+            Empresa <%= call.sei %>
+          </div>
+          <div class="city">
+            <%= call.unity.name%><hr/><%= call.city.name %> - <%= call.city.state.name %>
+          </div>
+          <div class="info">
+            <span class="badge badge-pill badge-<%= call.open? ? 'success' : call.closed? ? 'dark' : 'warning'%>"><%= (t "activerecord.enums.call.status.#{call.status}").upcase %></span>
+          </div>
+        </div>
+      </button>
+
+      <div id="<%= call.protocol %>" class="collapse" aria-labelledby="header<%= call.protocol %>" data-parent="#accordion">
+        <div class="card-body">
+          <hr/>
+          <%= call.description.html_safe %>
+
+          <%= link_to 'Ir para atendimento', call , class: 'btn btn-primary right'%>
+        </div>
+      </div>
+    </div>
   <% end %>
-</tbody>
-</table>
-<%= render './pagination', value: @calls %>
+</div>
+  <%= render './pagination', value: @calls %>
 <% else %>
-<h3>
-Nenhum atendimento foi realizado ainda
-</h3>
+  <h3>
+    Nenhum atendimento foi realizado ainda
+  </h3>
 <% end %>
 <hr/>
 
 <script>
-$('document').ready(function () {
+  $('document').ready(function () {
 
-$('#call-form').on('focusout', function () {
-  changeState($(this));
-});
+    $('#call-form').on('focusout', function () {
+      changeState($(this));
+    });
 
-function changeState(form) {
-  if (form.val().length > 0) {
-    form.addClass('has-value');
-  } else {
-    form.removeClass('has-value');
-  }
-}
-});
+    function changeState(form) {
+      if (form.val().length > 0) {
+        form.addClass('has-value');
+      } else {
+        form.removeClass('has-value');
+      }
+    }
+  });
 </script>
