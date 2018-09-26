@@ -54,7 +54,20 @@
     <% else %>
       <div class="field">
         <%= form.label :category_id, 'Categoria', class: 'required' %>
-        <%= form.collection_select(:category_id, Category.all, :id, :name, {include_blank: "Selecione uma Categoria: "}, class: 'form-control boxed', required: true) %>
+        <select class="form-control boxed" required="required" name="answer[category_id]" id="answer_category_id">
+          <option value>Selecione uma categoria:</option>
+          <% Category.all.each do |_cat| %>
+            <% if _cat.parent %>
+              <option value="<%= _cat.id %>">
+                &nbsp;&nbsp;&nbsp;&nbsp;<%= _cat.name %>
+            <% else %>
+              <option disabled>──────────</option>
+              <option value="<%= _cat.id %>">
+              <%= _cat.name %>
+            <% end %>
+            </option>
+          <% end %>
+        </select>
       </div>
     <% end %>
 
