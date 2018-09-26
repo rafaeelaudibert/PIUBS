@@ -1,0 +1,1 @@
+pt_BR-32ccbdf38597b6d0239e8ba70d73ab75de0661bb06c86fc9a90d1c0a890bc31e.js

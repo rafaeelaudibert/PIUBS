@@ -146,3 +146,85 @@
     margin: 1rem 0 0.5rem;
   }
 }
+
+.digg_pagination {
+  margin-bottom: 1rem;
+}
+
+
+// Accordion
+#accordion {
+  button {
+    color: black;
+  }
+
+  h5 {
+    margin: 0;
+  }
+
+  .card-header {
+    display: grid;
+    grid-template-columns: 60% 12% 22%;
+    grid-column-gap: 10px;
+    grid-template-rows: 40% auto 3rem;
+    justify-content: space-between;
+    align-items: center;
+    overflow-wrap: break-word;
+    grid-template-areas:
+      'question company city'
+      'protocol company city'
+      '. . info';
+
+    word-wrap: break-word;
+    white-space: pre-line;
+
+    .question {
+      grid-area: question;
+      text-align: left;
+    }
+
+    .protocol {
+      display: grid;
+      align-items: center;
+      grid-area: protocol;
+      text-align: left;
+    }
+
+    .company {
+      grid-area: company;
+    }
+
+    .city {
+      grid-area: city;
+    }
+
+    .info {
+      display: grid;
+      align-items: center;
+      text-align: center;
+      grid-area: info;
+
+      span {
+        align-self: center;
+      }
+
+      .badge {
+        font-size: 16px;
+      }
+    }
+  }
+
+  .card-body {
+    a {
+      margin: 1.5rem 0;
+    }
+
+    hr {
+      margin-top: 0;
+    }
+  }
+
+  .card-mine {
+    border-left: 4px solid #85CE36;
+  }
+}
