@@ -13,3 +13,4 @@ Rails.application.config.assets.paths << Rails.root.join('node_modules')
 # folder are already added.
 Rails.application.config.assets.precompile += %w[vendor.js app.js bootstrap-toolkit.js]
 Rails.application.config.assets.precompile += %w[main.css]
+Rails.application.config.assets.precompile += %w( filterrific/filterrific-spinner.gif )

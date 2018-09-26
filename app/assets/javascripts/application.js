@@ -17,3 +17,4 @@
 //= require_tree .
 //= require tinymce
 //= require data-confirm-modal
+//= require filterrific/filterrific-jquery
