@@ -1,1 +1,24 @@
-<%= render 'layouts/calls/call_list' %>
+<div class="authform" style="float:left;">
+
+          <%= form_for_filterrific @filterrific do |f| %>
+            <div class="form-group">
+              <%= f.select(:sorted_by, @filterrific.select_options[:sorted_by], {:include_blank => "Filtro", :selected => nil}, {:class => "form-control", :style => "width:10%; float:left;"}) %>
+            </div>
+            <div class="form-group">
+              <%= f.submit "Mostrar", :class => 'btn btn-link', :style => 'color: #000d3d !important;' %>
+              <%= link_to(
+                'Desfazer filtro',
+                reset_filterrific_url,
+              ) %>
+            </div>
+            <%# add an automated spinner to your form when the list is refreshed %>
+            <%= render_filterrific_spinner %>
+
+          <% end %>
+
+          <%= render(
+            partial: 'layouts/calls/call_list',
+            locals: { calls: @calls }
+            ) %>
+
+</div>
