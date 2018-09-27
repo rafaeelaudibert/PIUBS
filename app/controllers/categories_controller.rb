@@ -24,6 +24,7 @@ class CategoriesController < ApplicationController
   # POST /categories
   # POST /categories.json
   def create
+    puts category_params
     @category = Category.new(category_params)
     if @category.save
       redirect_to @category, notice: 'Category was successfully created.'
@@ -65,7 +66,11 @@ class CategoriesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def category_params
-    params.require(:category).permit(:name)
+    puts params
+    parent_id = params[:category][:parent_id]
+    puts parent_id
+    params[:category][:parent_depth] = 1 + Category.find(parent_id).parent_depth if parent_id
+    params.require(:category).permit(:name, :parent_id, :parent_depth)
   end
 
   def filter_role

@@ -56,13 +56,8 @@
         <%= form.label :category_id, 'Categoria', class: 'required' %>
         <select class="form-control boxed" required="required" name="answer[category_id]" id="answer_category_id">
           <option value>Selecione uma categoria:</option>
-          <% Category.all.each do |_cat| %>
-            <!-- <% if !_cat.parent %>
-              <option disabled>──────────</option>
-            <% end %> -->
-            <option value="<%= _cat.id %>">
-              <%= (('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' * _cat.parent_depth) + _cat.name).html_safe %>
-            </option>
+          <%= inside_layout "categories/category_select", {categ: Category.all} do %>
+            <%= yield %>
           <% end %>
         </select>
       </div>
