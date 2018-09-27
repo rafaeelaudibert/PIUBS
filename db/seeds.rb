@@ -153,18 +153,18 @@ def seed_categories
     category = Category.new(name: 'Gerenciamento do cadastro do cidadão', severity: :medium).save!
     c_fichas = Category.new(name: 'Fichas do e-SUS AB', severity: :medium)
     c_fichas.save!
-    category = Category.new(name: 'Ficha Domiciliar', severity: :medium, parent: c_fichas).save!
-    category = Category.new(name: 'Ficha de Cadastro Individual', severity: :medium, parent: c_fichas).save!
-    category = Category.new(name: 'Ficha de Atendimento Odontológico Individual', severity: :medium, parent: c_fichas).save!
-    category = Category.new(name: 'Ficha de Atividade Coletiva', severity: :medium, parent: c_fichas).save!
-    category = Category.new(name: 'Ficha de Procedimentos', severity: :medium, parent: c_fichas).save!
+    category = Category.new(name: 'Ficha Domiciliar', severity: :medium, parent: c_fichas, parent_depth: 1 + c_fichas.parent_depth).save!
+    category = Category.new(name: 'Ficha de Cadastro Individual', severity: :medium, parent: c_fichas, parent_depth: 1 + c_fichas.parent_depth).save!
+    category = Category.new(name: 'Ficha de Atendimento Odontológico Individual', severity: :medium, parent: c_fichas, parent_depth: 1 + c_fichas.parent_depth).save!
+    category = Category.new(name: 'Ficha de Atividade Coletiva', severity: :medium, parent: c_fichas, parent_depth: 1 + c_fichas.parent_depth).save!
+    category = Category.new(name: 'Ficha de Procedimentos', severity: :medium, parent: c_fichas, parent_depth: 1 + c_fichas.parent_depth).save!
     category = Category.new(name: 'Coleta de Dados Simplificada (CDS)', severity: :high).save!
     category = Category.new(name: 'Relatório', severity: :high).save!
     category = Category.new(name: 'Transmissão dos Dados', severity: :high).save!
     catg_pec = Category.new(name: 'PEC', severity: :low)
     catg_pec.save!
-    category = Category.new(name: 'Agenda dos Profissionais', severity: :low, parent: catg_pec).save!
-    category = Category.new(name: 'Atendimentos', severity: :low, parent: catg_pec).save!
+    category = Category.new(name: 'Agenda dos Profissionais', severity: :low, parent: catg_pec, parent_depth: 1 + catg_pec.parent_depth).save!
+    category = Category.new(name: 'Atendimentos', severity: :low, parent: catg_pec, parent_depth: 1 + catg_pec.parent_depth).save!
   rescue
     Rails.logger.error('ERROR creating a CATEGORY')
     Rails.logger.error(category.errors.full_messages)
