@@ -1,0 +1,5 @@
+<div>
+  <h2><%= link_to answer.question, answer_path(answer) %></h2>
+
+  <p><%= truncate(strip_tags(answer.answer), length: 600) %></p>
+</div>
