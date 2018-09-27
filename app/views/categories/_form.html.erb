@@ -20,9 +20,14 @@
 </div>
 
 <div class="field">
+  <%= form.label :severity, 'Categoria', class: 'required' %>
+  <%= form.select :severity, Category.severities.keys.to_a.map { |key, value| [(t "activerecord.enums.category.severity.#{key}"), key] }, {include_blank: 'Selecione uma severidade'}, {class: 'form-control boxed'} %>
+</div>
+
+<div class="field">
   <%= form.label :parent_id, 'Categoria-pai', class: 'required' %>
   <select class="form-control boxed" required="required" name="category[parent_id]" id="category_parent_id">
-    <option value="0">Sem categoria-pai</option>
+    <option value>Sem categoria-pai</option>
     <%= inside_layout "categories/category_select", {categ: Category.all} do %>
       <%= yield %>
     <% end %>

@@ -70,7 +70,7 @@ class CategoriesController < ApplicationController
     parent_id = params[:category][:parent_id]
     puts parent_id
     params[:category][:parent_depth] = 1 + Category.find(parent_id).parent_depth if parent_id
-    params.require(:category).permit(:name, :parent_id, :parent_depth)
+    params.require(:category).permit(:name, :parent_id, :parent_depth, :severity)
   end
 
   def filter_role
