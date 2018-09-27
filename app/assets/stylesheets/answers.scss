@@ -100,3 +100,81 @@
   vertical-align: baseline;
   border-radius: .25em;
 }
+
+
+// Accordion
+#accordion-faq {
+  button {
+    color: black;
+  }
+
+  h5 {
+    margin: 0;
+  }
+
+  .card-header {
+    display: grid;
+    grid-template-columns: 60% 12% 22%;
+    grid-column-gap: 10px;
+    grid-template-rows: 40% 3rem;
+    justify-content: space-between;
+    align-items: center;
+    overflow-wrap: break-word;
+    grid-template-areas:
+      'question question .'
+      'tags tags info';
+
+    word-wrap: break-word;
+    white-space: pre-line;
+
+    .question {
+      grid-area: question;
+      text-align: left;
+    }
+
+    .tags {
+      text-align: left;
+      grid-area: tags;
+    }
+
+    .info {
+      display: grid;
+      align-items: center;
+      text-align: center;
+      grid-area: info;
+
+      span {
+        align-self: center;
+
+        word-wrap: break-word;
+        white-space: pre-line;
+      }
+
+      .badge {
+        padding: 0.6em 0.6em;
+      }
+    }
+  }
+
+  .card-body {
+    a {
+      margin: 1.5rem 0;
+    }
+
+    hr {
+      margin-top: 0;
+    }
+  }
+
+  .card-severity-low {
+    border-left: 4px solid #28a745 !important;
+  }
+
+  .card-severity-medium {
+    border-left: 4px solid #ffc107 !important;
+  }
+
+  .card-severity-high {
+    border-left: 4px solid #dc3545 !important;
+  }
+}

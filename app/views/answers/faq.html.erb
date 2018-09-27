@@ -20,8 +20,10 @@
 <hr class="under-header"/>
 
 <% if @answers.length > 0 %>
-  <div id="my-answers">
-    <%= render @answers %>
+  <div id="accordion-faq">
+    <div id="my-answers">
+      <%= render @answers %>
+    </div>
   </div>
 
   <div id="infinite-scrolling">

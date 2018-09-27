@@ -1,5 +1,27 @@
-<div>
-  <h2><%= link_to answer.question, answer_path(answer) %></h2>
+<div class="card card-severity-<%= answer.category.severity %>">
+  <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#<%= answer.id %>" aria-expanded="true" aria-controls="<%= answer.id %>">
+    <div class="card-header" id="heading<%= answer.id %>">
+      <div class="question">
+        <h5><%= answer.question %></h5>
+      </div>
+      <div class="tags">
+      </div>
+      <div class="info">
+        <span class="badge badge-pill badge-<%= answer.category.low? ? 'success' : answer.category.high? ? 'danger' : 'warning'%>"><%= answer.category.name %></span>
+      </div>
 
-  <p><%= truncate(strip_tags(answer.answer), length: 600) %></p>
+    </div>
+  </button>
+
+  <div id="<%= answer.id %>" class="collapse" aria-labelledby="header<%= answer.id %>" data-parent="#accordion">
+    <div class="card-body">
+      <hr/>
+      <%= answer.answer.html_safe %>
+
+      <%= link_to 'Ir para resposta', answer , class: 'btn btn-primary right'%>
+    </div>
+  </div>
 </div>
+<!-- <h2><%= link_to answer.question, answer_path(answer) %></h2>
+
+<p><%= truncate(strip_tags(answer.answer), length: 600) %></p> -->

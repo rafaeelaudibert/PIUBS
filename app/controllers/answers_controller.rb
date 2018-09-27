@@ -11,8 +11,7 @@ class AnswersController < ApplicationController
 
   # get /faq
   def faq
-    @answers = Answer.where('faq = true').order('id DESC').paginate(page: params[:page], per_page: 25)
-
+    @answers = Answer.where(faq: true).includes(:category).order('category_id ASC').paginate(page: params[:page], per_page: 25)
     respond_to do |format|
       format.html
       format.js
