@@ -57,14 +57,11 @@
         <select class="form-control boxed" required="required" name="answer[category_id]" id="answer_category_id">
           <option value>Selecione uma categoria:</option>
           <% Category.all.each do |_cat| %>
-            <% if _cat.parent %>
-              <option value="<%= _cat.id %>">
-                &nbsp;&nbsp;&nbsp;&nbsp;<%= _cat.name %>
-            <% else %>
+            <!-- <% if !_cat.parent %>
               <option disabled>──────────</option>
-              <option value="<%= _cat.id %>">
-              <%= _cat.name %>
-            <% end %>
+            <% end %> -->
+            <option value="<%= _cat.id %>">
+              <%= (('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' * _cat.parent_depth) + _cat.name).html_safe %>
             </option>
           <% end %>
         </select>
