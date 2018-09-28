@@ -101,7 +101,6 @@
   border-radius: .25em;
 }
 
-
 // Accordion
 .accordion-faq {
   button {
@@ -132,6 +131,10 @@
     word-wrap: break-word;
     white-space: pre-line;
 
+    .badge {
+      box-shadow: 3px 3px 5px rgba(126, 142, 159, 0.4) !important;
+    }
+
     .question {
       align-items: flex-start;
       grid-area: question;
@@ -151,6 +154,7 @@
       .tag {
         margin-right: 2px;
         color: white;
+        box-shadow: 3px 3px 5px rgba(126, 142, 159, 0.4) !important;
       }
     }
 
@@ -209,7 +213,7 @@
     padding: 0 1.25em !important;
 
     a {
-      margin: 1.5rem 0;
+      margin: 1rem 0;
     }
 
     hr {
