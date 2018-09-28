@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateUnities < ActiveRecord::Migration[5.2]
   def change
     create_table :unities, id: false do |t|

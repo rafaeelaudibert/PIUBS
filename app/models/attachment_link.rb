@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AttachmentLink < ApplicationRecord
   enum source: %i[answer call reply]
   belongs_to :attachment

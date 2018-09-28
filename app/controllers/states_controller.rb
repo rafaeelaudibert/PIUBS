@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class StatesController < ApplicationController
   before_action :set_state, only: %i[show edit update destroy]
   before_action :filter_role

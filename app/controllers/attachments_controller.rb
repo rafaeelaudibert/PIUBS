@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AttachmentsController < ApplicationController
   before_action :set_attachment, only: %i[show edit update destroy download]
   before_action :filter_role

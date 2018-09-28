@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Call < ApplicationRecord
   belongs_to :city
   belongs_to :category
@@ -13,6 +15,6 @@ class Call < ApplicationRecord
 
   ### SE ADICIONAR NOVO OU ALTERAR STATUS OU SEVERIDADE, LEMBRAR DE
   ### ADICIONAR TAMBÉM NA TRADUÇÃO (config/locales/en.yml)
-  enum status: [:open, :closed, :reopened]
-  enum severity: [:low, :normal, :high, :huge]
+  enum status: %i[open closed reopened]
+  enum severity: %i[low normal high huge]
 end
