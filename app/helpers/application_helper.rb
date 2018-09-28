@@ -39,6 +39,10 @@ module ApplicationHelper
     current_user.try(:city_admin?) || current_user.try(:city_user?)
   end
 
+  def is_faq_inserter?
+    current_user.try(:faq_inserter?)
+  end
+
   def is_company_user # TODO: DEPRECATE IN FAVOR OF IS_COMPANY_USER?
     current_user.try(:company_user?) || current_user.try(:company_admin?)
   end

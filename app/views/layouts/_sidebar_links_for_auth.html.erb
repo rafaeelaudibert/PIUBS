@@ -115,7 +115,7 @@
   <li <%= "class=active" if current_page?(faq_path) %> > <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ<%end%></li>
 <% end %>
 
-<!-- City user Sidebar-->
-<% if current_user.try(:city_user?) %><% end %>
-<!-- They have no acess at all to the Company support system -->
+<!-- Faq inserter Sidebar-->
+<% if current_user.try(:faq_inserter?) %><% end %>
+<li <%= "class=active" if current_page?(faq_path) %> > <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ<%end%></li>
 <hr/>

@@ -168,11 +168,11 @@ class AnswersController < ApplicationController
   def filter_role
     action = params[:action]
     if %w[index edit update].include? action
-      redirect_to denied_path unless is_admin?
+      redirect_to denied_path unless is_admin? || is_faq_inserter?
     elsif %w[new create destroy].include? action
-      redirect_to denied_path unless is_admin? || is_support_user?
+      redirect_to denied_path unless is_admin? || is_support_user? || is_faq_inserter?
     elsif action == 'show'
-      redirect_to denied_path unless @answer.faq
+      redirect_to denied_path unless @answer.faq || is_admin? || (is_support_user? && @answer.user_id == current_user.id) || is_faq_inserter?
     end
   end
 end

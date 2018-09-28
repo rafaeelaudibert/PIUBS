@@ -36,7 +36,7 @@ class Users::InvitationsController < Devise::InvitationsController
 
   def set_roles_allowed
     if current_user.admin?
-      $roles_allowed = %i[admin city_admin ubs_admin company_admin call_center_admin]
+      $roles_allowed = %i[faq_inserter admin city_admin ubs_admin company_admin call_center_admin]
     else
       if current_user.city_admin?
         $roles_allowed = [:ubs_admin]
