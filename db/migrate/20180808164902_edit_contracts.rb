@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EditContracts < ActiveRecord::Migration[5.2]
   def self.up
     remove_column :contracts, :files

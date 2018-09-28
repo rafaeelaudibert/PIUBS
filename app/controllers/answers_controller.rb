@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AnswersController < ApplicationController
   before_action :set_answer, only: %i[show edit update destroy]
   before_action :filter_role, except: %i[faq]
@@ -72,11 +74,9 @@ class AnswersController < ApplicationController
       end
 
       # "IMPORT" attachments from the reply to this answer
-      if reply_attachments_ids
-        reply_attachments_ids.each do |_id|
-          @link = AttachmentLink.new(attachment_id: _id, answer_id: @answer.id, source: 'answer')
-          raise 'Não consegui criar o link entre arquivo que veio da reply e essa resposta. Por favor tente mais tarde' unless @link.save
-        end
+      reply_attachments_ids&.each do |_id|
+        @link = AttachmentLink.new(attachment_id: _id, answer_id: @answer.id, source: 'answer')
+        raise 'Não consegui criar o link entre arquivo que veio da reply e essa resposta. Por favor tente mais tarde' unless @link.save
       end
 
       redirect_to (@call || faq_path || root_path), notice: 'Final answer was successfully set.'

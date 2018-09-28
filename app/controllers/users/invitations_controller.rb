@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Users::InvitationsController < Devise::InvitationsController
   before_action :admin_only, only: :new
   before_action :set_roles_allowed, only: :new

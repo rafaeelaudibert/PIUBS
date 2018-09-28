@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CallsController < ApplicationController
   before_action :set_call, only: %i[show edit update destroy]
   before_action :set_company, only: %i[create new]
@@ -31,11 +33,7 @@ class CallsController < ApplicationController
     @answer = Answer.new
     @reply = Reply.new
     @categories = Category.all
-    if @call.support_user == current_user.id
-      @my_call = true
-    else
-      @my_call = false
-    end
+    @my_call = @call.support_user == current_user.id
     @user = User.find(@call.support_user) if @call.support_user
   end
 
@@ -98,15 +96,15 @@ class CallsController < ApplicationController
   # POST calls/link_call_support_user
   def link_call_support_user
     @call = Call.find(params[:call_options_id])
-    unless @call.support_user
+    if @call.support_user
+      redirect_back(fallback_location: root_path, alert: 'Você não pode pegar um atendimento de outro usuário do suporte')
+    else
       @call.support_user = current_user.id
       if @call.save
         redirect_back(fallback_location: root_path, notice: 'Agora esse atendimento é seu')
       else
         redirect_back(fallback_location: root_path, notice: 'Ocorreu um erro ao tentar pegar o atendimento')
       end
-    else
-      redirect_back(fallback_location: root_path, alert: 'Você não pode pegar um atendimento de outro usuário do suporte')
     end
   end
 
@@ -114,7 +112,7 @@ class CallsController < ApplicationController
   def unlink_call_support_user
     @call = Call.find(params[:call_options_id])
     if @call.support_user == current_user.id
-      @call.support_user = ""
+      @call.support_user = ''
       if @call.save
         redirect_back(fallback_location: root_path, notice: 'Atendimento liberado')
       else

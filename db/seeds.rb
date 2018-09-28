@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Examples:
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
@@ -18,6 +20,7 @@ def seed_users
   if User.new(cpf: CPF.generate, name: 'Admin Master', email: 'admin@piubs.com', password: 'changeme', password_confirmation: 'changeme', role: 'admin', sei: 0).save
     User.roles.each do |_role|
       next if _role[0] == 'admin' || _role[0] == 'company_admin' || _role[0] == 'company_user' # Prevent from creating this, as they will be already created later or have already been created
+
       _role_name = _role[0]
       _role_id = _role[1]
       _email = _role_name + '@piubs.com'
