@@ -167,18 +167,21 @@
   }
 
   .card-header {
+    padding: 1.5em 2em !important;
     display: grid !important;
-    grid-template-columns: 60% 12% 22%;
+    grid-template-columns: 26% 24% 12% 22%;
     grid-column-gap: 10px;
     grid-template-rows: 40% auto 3rem;
     justify-content: space-between;
     align-items: center;
     overflow-wrap: break-word;
+    font-size: 1rem;
+    font-weight: 400;
+    text-align: center;
     grid-template-areas:
-      'question company city'
-      'protocol company city'
-      '. . info';
-
+      'question question company city'
+      'protocol protocol company city'
+      'info . . dropdown';
     word-wrap: break-word;
     white-space: pre-line;
 
@@ -217,11 +220,46 @@
         box-shadow: 3px 3px 5px rgba(126, 142, 159, 0.4) !important;
       }
     }
+
+    .dropdown {
+      grid-area: dropdown;
+      text-align: center;
+
+      span {
+        font-size: 3em;
+        color: rgba(0, 0, 0, 0.4);
+        grid-row-start: 1;
+        grid-row-end: 1;
+        align-self: flex-start;
+
+        word-wrap: break-word;
+        white-space: pre-line;
+      }
+
+      .badge {
+        padding: 0.6em 0.6em;
+        min-width: 8em;
+        transform: rotate(0deg) !important;
+        transition: transform 250ms ease-in;
+
+        i {
+          transform: rotate(0deg);
+          transition: transform 250ms ease-in;
+        }
+
+        .rotate {
+          transform: rotate(180deg);
+          transition: transform 250ms ease-in;
+        }
+      }
+    }
   }
 
   .card-body {
+    padding: 0 1.25em !important;
+
     a {
-      margin: 1.5rem 0;
+      margin: 1rem 0;
     }
 
     hr {

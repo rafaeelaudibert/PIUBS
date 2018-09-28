@@ -29,11 +29,11 @@
   <div id="infinite-scrolling">
     <%= will_paginate @answers %>
   </div>
-  <% else %>
-    <h3>
-      Não há perguntas no FAQ
-    </h3>
-  <% end %>
+<% else %>
+  <h3>
+    Não há perguntas no FAQ
+  </h3>
+<% end %>
 <hr/>
 
 <script>
@@ -58,7 +58,7 @@ $('document').ready(function () {
       $(e.target).toggleClass('rotate');
       $(e.target.children[0]).toggleClass('rotate');
     } catch {
-      
+
     }
   });
 
