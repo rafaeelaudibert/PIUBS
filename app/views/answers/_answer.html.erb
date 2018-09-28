@@ -24,7 +24,12 @@
       <hr/>
       <%= answer.answer.html_safe %>
 
-      <%= link_to 'Ir para resposta', answer , class: 'btn btn-primary right'%>
+      <div class="right">
+        <% if is_admin? || is_faq_inserter? || (is_support_user && answer.user_id == current_user.id )%>
+          <%= link_to 'Editar resposta', edit_answer_path(answer) , class: 'btn btn-primary'%>
+        <% end %>
+        <%= link_to 'Ir para resposta', answer , class: 'btn btn-primary'%>
+      </div>
     </div>
   </div>
 </div>

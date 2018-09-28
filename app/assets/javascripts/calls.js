@@ -32,7 +32,7 @@ $("#create_call").click(function() {
     maxChars: undefined,
     confirmKeys: [44, 59],
     delimiter: ';',
-    delimiterRegex: '/[\,][\;]/',
+    delimiterRegex: /[\,]|[\;]/,
     cancelConfirmKeysOnEmpty: false,
     onTagExists: function(item, $tag) {
       $tag.hide()

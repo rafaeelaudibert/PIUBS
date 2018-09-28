@@ -29,7 +29,7 @@ class CallsController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.js      
+      format.js
     end
   end
 
@@ -197,7 +197,7 @@ class CallsController < ApplicationController
     action = params[:action]
     if %w[edit update].include? action
       redirect_to denied_path unless is_admin?
-    elsif %w[new create destroy].include? action
+    elsif %w[new create destroy index].include? action
       redirect_to denied_path unless is_admin? || is_support_user? || is_company_user?
     elsif action == 'show'
       redirect_to denied_path unless (current_user.try(:company_admin?) && @call.sei == current_user.sei) || ((current_user.try(:company_user?) && @call.user_id == current_user.id)) || is_support_user? || is_admin?
