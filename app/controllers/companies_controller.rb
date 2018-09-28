@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CompaniesController < ApplicationController
   before_action :set_company, only: %i[show edit update destroy]
   before_action :filter_role

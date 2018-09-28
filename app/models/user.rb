@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   belongs_to :company, class_name: 'Company', foreign_key: :sei, optional: true
   belongs_to :unity, class_name: 'Unity', foreign_key: :cnes, optional: true

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CallMailer < ApplicationMailer
   def notify(call, current_user)
     @call = call

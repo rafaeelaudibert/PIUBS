@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AnswerMailer < ApplicationMailer
   def notify(call, answer, current_user)
     @call = call || Call.all.sample
