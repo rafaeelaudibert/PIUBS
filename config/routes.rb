@@ -1,10 +1,13 @@
 Rails.application.routes.draw do
-  root to: 'visitors#index'
+  root to: 'visitors#welcome'
 
   scope '/apoioaempresas' do
 
     # /apoioaempresas
     get '/', to: 'calls#index' # Apoio a Empresas root
+
+    # /apoioaempresas/login
+    get '/login', to: 'visitors#index'
 
     # /apoioaempresas/attachments
     resources :attachments do
