@@ -153,8 +153,12 @@
 
 
 // Accordion
-#accordion {
+.accordion-calls {
   button {
+    color: black;
+  }
+
+  button:hover {
     color: black;
   }
 
@@ -163,7 +167,7 @@
   }
 
   .card-header {
-    display: grid;
+    display: grid !important;
     grid-template-columns: 60% 12% 22%;
     grid-column-gap: 10px;
     grid-template-rows: 40% auto 3rem;

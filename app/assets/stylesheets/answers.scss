@@ -103,9 +103,13 @@
 
 
 // Accordion
-#accordion-faq {
+.accordion-faq {
   button {
     color: black;
+
+    &:hover {
+      color: black;
+    }
   }
 
   h5 {
@@ -113,7 +117,8 @@
   }
 
   .card-header {
-    display: grid;
+    padding: 1em !important;
+    display: grid !important;
     grid-template-columns: 60% 12% 22%;
     grid-column-gap: 10px;
     grid-template-rows: 40% 3rem;
@@ -121,13 +126,14 @@
     align-items: center;
     overflow-wrap: break-word;
     grid-template-areas:
-      'question question .'
-      'tags tags info';
+      'question question info'
+      'tags tags dropdown';
 
     word-wrap: break-word;
     white-space: pre-line;
 
     .question {
+      align-items: flex-start;
       grid-area: question;
       text-align: left;
     }
@@ -135,16 +141,28 @@
     .tags {
       text-align: left;
       grid-area: tags;
+      display: inline;
+      white-space: nowrap;
+
+      span {
+        display: inline-block;
+      }
+
+      .tag {
+        margin-right: 2px;
+        color: white;
+      }
     }
 
     .info {
-      display: grid;
-      align-items: center;
-      text-align: center;
       grid-area: info;
+      grid-template-rows: 10% 90%;
+      display: grid;
+      align-items: baseline;
+      text-align: center;
 
       span {
-        align-self: center;
+        font-size: 12px;
 
         word-wrap: break-word;
         white-space: pre-line;
@@ -154,9 +172,42 @@
         padding: 0.6em 0.6em;
       }
     }
+
+    .dropdown {
+      grid-area: dropdown;
+      text-align: center;
+
+      span {
+        grid-row-start: 1;
+        grid-row-end: 1;
+        align-self: flex-start;
+
+        word-wrap: break-word;
+        white-space: pre-line;
+      }
+
+      .badge {
+        padding: 0.6em 0.6em;
+        min-width: 8em;
+        transform: rotate(0deg) !important;
+        transition: transform 250ms ease-in;
+
+        i {
+          transform: rotate(0deg);
+          transition: transform 250ms ease-in;
+        }
+
+        .rotate {
+          transform: rotate(180deg);
+          transition: transform 250ms ease-in;
+        }
+      }
+    }
   }
 
   .card-body {
+    padding: 0 1.25em !important;
+
     a {
       margin: 1.5rem 0;
     }

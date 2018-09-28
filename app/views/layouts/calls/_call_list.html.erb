@@ -21,7 +21,7 @@
 
 <% if @calls.length > 0 %>
 <%= render './pagination', value: @calls %>
-<div id="accordion">
+<div id="accordion" class="accordion-calls">
   <% @calls.each do |call| %>
     <div class="card<%= call.support_user == current_user.id ? ' card-mine' : '' %>">
       <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#<%= call.protocol %>" aria-expanded="true" aria-controls="<%= call.protocol %>">

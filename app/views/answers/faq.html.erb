@@ -20,7 +20,7 @@
 <hr class="under-header"/>
 
 <% if @answers.length > 0 %>
-  <div id="accordion-faq">
+  <div id="accordion" class="accordion-faq">
     <div id="my-answers">
       <%= render @answers %>
     </div>
@@ -50,5 +50,21 @@ $('document').ready(function () {
       form.removeClass('has-value');
     }
   }
+
+  $('[data-toggle=collapse]').on('click', e => {
+    $('[data-toggle=collapse]').trigger('reset');
+    console.log($(e.target));
+    try {
+      $(e.target).toggleClass('rotate');
+      $(e.target.children[0]).toggleClass('rotate');
+    } catch {
+      
+    }
+  });
+
+  $('[data-toggle=collapse]').on('reset', e => {
+    $(e.target.children[0].children[0]).removeClass('rotate');
+  });
+
 });
 </script>

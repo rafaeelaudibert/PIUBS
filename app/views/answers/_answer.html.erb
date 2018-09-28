@@ -1,17 +1,23 @@
 <div class="card card-severity-<%= answer.category.severity %>">
-  <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#<%= answer.id %>" aria-expanded="true" aria-controls="<%= answer.id %>">
     <div class="card-header" id="heading<%= answer.id %>">
       <div class="question">
         <h5><%= answer.question %></h5>
       </div>
       <div class="tags">
+        <% answer.keywords.split(';').each do |_keyword| %>
+          <span class="tag label label-info"><%= _keyword %></span>
+        <% end %>
       </div>
       <div class="info">
         <span class="badge badge-pill badge-<%= answer.category.low? ? 'success' : answer.category.high? ? 'danger' : 'warning'%>"><%= answer.category.name %></span>
       </div>
+      <div class="dropdown">
+        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#<%= answer.id %>" aria-expanded="true" aria-controls="<%= answer.id %>">
+          <span class="badge badge-pill badge-dark"><i class="fa fa-arrow-down"></i></span>
+        </button>
+      </div>
 
     </div>
-  </button>
 
   <div id="<%= answer.id %>" class="collapse" aria-labelledby="header<%= answer.id %>" data-parent="#accordion">
     <div class="card-body">
@@ -22,6 +28,3 @@
     </div>
   </div>
 </div>
-<!-- <h2><%= link_to answer.question, answer_path(answer) %></h2>
-
-<p><%= truncate(strip_tags(answer.answer), length: 600) %></p> -->
