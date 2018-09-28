@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_180_917_164_101) do
+ActiveRecord::Schema.define(version: 2018_09_25_164101) do
   # These are extensions that must be enabled in order to support this database
   enable_extension 'fuzzystrmatch'
   enable_extension 'pg_trgm'
@@ -81,10 +81,13 @@ ActiveRecord::Schema.define(version: 20_180_917_164_101) do
     t.index ['user_id'], name: 'index_calls_on_user_id'
   end
 
-  create_table 'categories', force: :cascade do |t|
-    t.string 'name'
-    t.datetime 'created_at', null: false
-    t.datetime 'updated_at', null: false
+  create_table "categories", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "parent_id"
+    t.integer "parent_depth", default: 0
+    t.integer "severity"
   end
 
   create_table 'cities', force: :cascade do |t|

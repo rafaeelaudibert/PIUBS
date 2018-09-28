@@ -13,7 +13,11 @@ class AnswersController < ApplicationController
 
   # get /faq
   def faq
-    @answers = Answer.where('faq = true').order('id DESC').paginate(page: params[:page], per_page: 25)
+    @answers = Answer.where(faq: true).includes(:category).order('category_id ASC').paginate(page: params[:page], per_page: 25)
+    respond_to do |format|
+      format.html
+      format.js
+    end
   end
 
   # GET /answers/1
@@ -132,7 +136,7 @@ class AnswersController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def answer_params
-    params[:answer][:keywords] = params[:answer][:keywords].split(',').join(' ')
+    params[:answer][:keywords] = params[:answer][:keywords].split(',').join(' ; ')
     params.require(:answer).permit(:keywords, :question, :answer, :category_id, :user_id, :faq, :question_id, :reply_attachments, file: [])
   end
 

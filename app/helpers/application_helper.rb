@@ -13,6 +13,11 @@ module ApplicationHelper
     @devise_mapping ||= Devise.mappings[:user]
   end
 
+  def inside_layout(parent_layout, params)
+    view_flow.set :layout, capture { yield }
+    render "layouts/#{parent_layout}", params: params
+  end
+
   # User helper
   def is_admin?
     current_user.try(:admin?)

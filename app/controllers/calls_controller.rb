@@ -26,6 +26,11 @@ class CallsController < ApplicationController
     else
       @calls = []
     end
+
+    respond_to do |format|
+      format.html
+      format.js      
+    end
   end
 
   # GET /calls/1

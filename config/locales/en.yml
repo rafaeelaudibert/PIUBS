@@ -48,6 +48,11 @@ en:
           normal: "Normal"
           high: "Alta"
           huge: "Muito alta"
+      category:
+        severity:
+          low: "Baixa"
+          medium: "Normal"
+          high: "Alta"
     general:
       ubs: "UBS"
       city: "Cidade"

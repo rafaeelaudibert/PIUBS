@@ -100,3 +100,133 @@
   vertical-align: baseline;
   border-radius: .25em;
 }
+
+// Accordion
+.accordion-faq {
+  button {
+    color: black;
+
+    &:hover {
+      color: black;
+    }
+  }
+
+  h5 {
+    margin: 0;
+  }
+
+  .card-header {
+    padding: 1em !important;
+    display: grid !important;
+    grid-template-columns: 60% 12% 22%;
+    grid-column-gap: 10px;
+    grid-template-rows: 40% 3rem;
+    justify-content: space-between;
+    align-items: center;
+    overflow-wrap: break-word;
+    grid-template-areas:
+      'question question info'
+      'tags tags dropdown';
+
+    word-wrap: break-word;
+    white-space: pre-line;
+
+    .badge {
+      box-shadow: 3px 3px 5px rgba(126, 142, 159, 0.4) !important;
+    }
+
+    .question {
+      align-items: flex-start;
+      grid-area: question;
+      text-align: left;
+    }
+
+    .tags {
+      text-align: left;
+      grid-area: tags;
+      display: inline;
+      white-space: nowrap;
+
+      span {
+        display: inline-block;
+      }
+
+      .tag {
+        margin-right: 2px;
+        color: white;
+        box-shadow: 3px 3px 5px rgba(126, 142, 159, 0.4) !important;
+      }
+    }
+
+    .info {
+      grid-area: info;
+      grid-template-rows: 10% 90%;
+      display: grid;
+      align-items: baseline;
+      text-align: center;
+
+      span {
+        font-size: 12px;
+
+        word-wrap: break-word;
+        white-space: pre-line;
+      }
+
+      .badge {
+        padding: 0.6em 0.6em;
+      }
+    }
+
+    .dropdown {
+      grid-area: dropdown;
+      text-align: center;
+
+      span {
+        font-size: 3em;
+        color: rgba(0, 0, 0, 0.4);
+
+        grid-row-start: 1;
+        grid-row-end: 1;
+        align-self: flex-start;
+
+        word-wrap: break-word;
+        white-space: pre-line;
+
+        i {
+          transform: rotate(0deg);
+          transition: transform 250ms ease-in;
+        }
+
+        .rotate {
+          transform: rotate(180deg);
+          transition: transform 250ms ease-in;
+        }
+      }
+
+    }
+  }
+
+  .card-body {
+    padding: 0 1.25em !important;
+
+    a {
+      margin: 1rem 0;
+    }
+
+    hr {
+      margin-top: 0;
+    }
+  }
+
+  .card-severity-low {
+    border-left: 4px solid #28a745 !important;
+  }
+
+  .card-severity-medium {
+    border-left: 4px solid #ffc107 !important;
+  }
+
+  .card-severity-high {
+    border-left: 4px solid #dc3545 !important;
+  }
+}

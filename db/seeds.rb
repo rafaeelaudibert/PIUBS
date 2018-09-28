@@ -147,14 +147,30 @@ end
 
 def seed_categories
   Rails.logger.info('[START]  -- Categories insertion')
-  %w[Hardware Software Outro].each do |_category|
-    category = Category.new(name: _category)
-    if category.save
-      Rails.logger.debug("Inserted a new category: #{_category}")
-    else
-      Rails.logger.error('ERROR creating a CATEGORY')
-      Rails.logger.error(category.errors.full_messages)
-    end
+  category = Category.new() #placeholder
+
+  begin
+    category = Category.new(name: 'Orientações básicas sobre a estratégia e-SUS AB', severity: :low).save!
+    category = Category.new(name: 'Orientações básicas sobre a utilização do sistema', severity: :low).save!
+    category = Category.new(name: 'Instalação do Sistema', severity: :low).save!
+    category = Category.new(name: 'Gerenciamento do cadastro do cidadão', severity: :medium).save!
+    c_fichas = Category.new(name: 'Fichas do e-SUS AB', severity: :medium)
+    c_fichas.save!
+    category = Category.new(name: 'Ficha Domiciliar', severity: :medium, parent: c_fichas, parent_depth: 1 + c_fichas.parent_depth).save!
+    category = Category.new(name: 'Ficha de Cadastro Individual', severity: :medium, parent: c_fichas, parent_depth: 1 + c_fichas.parent_depth).save!
+    category = Category.new(name: 'Ficha de Atendimento Odontológico Individual', severity: :medium, parent: c_fichas, parent_depth: 1 + c_fichas.parent_depth).save!
+    category = Category.new(name: 'Ficha de Atividade Coletiva', severity: :medium, parent: c_fichas, parent_depth: 1 + c_fichas.parent_depth).save!
+    category = Category.new(name: 'Ficha de Procedimentos', severity: :medium, parent: c_fichas, parent_depth: 1 + c_fichas.parent_depth).save!
+    category = Category.new(name: 'Coleta de Dados Simplificada (CDS)', severity: :high).save!
+    category = Category.new(name: 'Relatório', severity: :high).save!
+    category = Category.new(name: 'Transmissão dos Dados', severity: :high).save!
+    catg_pec = Category.new(name: 'PEC', severity: :low)
+    catg_pec.save!
+    category = Category.new(name: 'Agenda dos Profissionais', severity: :low, parent: catg_pec, parent_depth: 1 + catg_pec.parent_depth).save!
+    category = Category.new(name: 'Atendimentos', severity: :low, parent: catg_pec, parent_depth: 1 + catg_pec.parent_depth).save!
+  rescue
+    Rails.logger.error('ERROR creating a CATEGORY')
+    Rails.logger.error(category.errors.full_messages)
   end
   Rails.logger.info('[FINISH] -- Categories insertion')
 end

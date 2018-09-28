@@ -1,5 +1,5 @@
 <%= tinymce_assets %>
-<%= tinymce %>
+<%= tinymce language: 'pt_BR' %>
 <%= form_with(model: answer, local: true) do |form| %>
 <% if answer.errors.any? %>
   <div id="error_explanation">
@@ -54,7 +54,12 @@
     <% else %>
       <div class="field">
         <%= form.label :category_id, 'Categoria', class: 'required' %>
-        <%= form.collection_select(:category_id, Category.all, :id, :name, {include_blank: "Selecione uma Categoria: "}, class: 'form-control boxed', required: true) %>
+        <select class="form-control boxed" required="required" name="answer[category_id]" id="answer_category_id">
+          <option value>Selecione uma categoria:</option>
+          <%= inside_layout "categories/category_select", {categ: Category.all} do %>
+            <%= yield %>
+          <% end %>
+        </select>
       </div>
     <% end %>
 
@@ -71,7 +76,7 @@
       <br/>
     <% end %>
 
-    <%= form.submit 'Salvar Resposta',:class => 'btn btn-primary btn-sm' %>
+    <%= form.submit 'Salvar Questão',:class => 'btn btn-primary btn-sm' %>
     <%= link_to 'Cancelar', faq_path, :class => 'btn btn-danger btn-sm' %>
 
   </div>
@@ -95,7 +100,7 @@
         "in": "bounceIn",
         "out": "fadeOutUpBig"
       };
-      const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
+      const heart = "/assets/icons/logo-ffea90fdc94f5f4a6d88ec21782b2433fe67e0a8883a9950c468a55cf8d53e00.png";
       Notification.create("<%= 'Alerta' %>", '<%= "Esses anexos excedem o tamanho máximo permitido (20 MB)" %>', heart, animation, 2, 5);
       $(inputFile).val('');
     } else if (inputFile.files.length > maxFileQuantity) {
@@ -103,7 +108,7 @@
         "in": "bounceIn",
         "out": "fadeOutUpBig"
       };
-      const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
+      const heart = "/assets/icons/logo-ffea90fdc94f5f4a6d88ec21782b2433fe67e0a8883a9950c468a55cf8d53e00.png";
       Notification.create("<%= 'Alerta' %>", '<%= "Esses anexos excedem a quantidade máxima permitida (10 arquivos)" %>', heart, animation, 2, 5);
       $(inputFile).val('');
     };
