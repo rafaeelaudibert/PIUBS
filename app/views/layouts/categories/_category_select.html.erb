@@ -1,11 +1,11 @@
 <% params[:categ].each do |_cat| %>
   <% if params[:isChildren] || !_cat.parent_id %>
-    <option value="<%= _cat.id %>">
+    <option value="<%= _cat.id %>" <%= "selected='selected'" if params[:selected] && params[:selected].id == _cat.id %> >
       <%= (('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' * _cat.parent_depth) + _cat.name).html_safe %>
     </option>
 
     <%# Recursivamente renderiza os filhos %>
-    <%= inside_layout "categories/category_select", {categ: Category.where(parent_id: _cat.id), isChildren: true} do %>
+    <%= inside_layout "categories/category_select", {selected: params[:selected], categ: Category.where(parent_id: _cat.id), isChildren: true} do %>
       <%= yield %>
     <% end %>
     <%# %>
