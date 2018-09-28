@@ -53,12 +53,12 @@ $('document').ready(function () {
 
   $('[data-toggle=collapse]').on('click', e => {
     $('[data-toggle=collapse]').trigger('reset');
-    console.log($(e.target));
     try {
       $(e.target).toggleClass('rotate');
       $(e.target.children[0]).toggleClass('rotate');
+      $(e.target.children[0].children[0]).toggleClass('rotate');
     } catch {
-
+      //Die silently
     }
   });
 

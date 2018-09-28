@@ -184,20 +184,13 @@
       span {
         font-size: 3em;
         color: rgba(0, 0, 0, 0.4);
-        
+
         grid-row-start: 1;
         grid-row-end: 1;
         align-self: flex-start;
 
         word-wrap: break-word;
         white-space: pre-line;
-      }
-
-      .badge {
-        padding: 0.6em 0.6em;
-        min-width: 8em;
-        transform: rotate(0deg) !important;
-        transition: transform 250ms ease-in;
 
         i {
           transform: rotate(0deg);
@@ -209,6 +202,7 @@
           transition: transform 250ms ease-in;
         }
       }
+
     }
   }
 

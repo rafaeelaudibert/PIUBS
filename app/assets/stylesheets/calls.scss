@@ -234,6 +234,16 @@
 
         word-wrap: break-word;
         white-space: pre-line;
+
+        i {
+          transform: rotate(0deg);
+          transition: transform 250ms ease-in;
+        }
+
+        .rotate {
+          transform: rotate(180deg);
+          transition: transform 250ms ease-in;
+        }
       }
 
       .badge {

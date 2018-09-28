@@ -51,5 +51,20 @@
         form.removeClass('has-value');
       }
     }
+
+    $('[data-toggle=collapse]').on('click', e => {
+      $('[data-toggle=collapse]').trigger('reset');
+      try {
+        $(e.target).toggleClass('rotate');
+        $(e.target.children[0]).toggleClass('rotate');
+        $(e.target.children[0].children[0]).toggleClass('rotate');
+      } catch {
+        //Die silently
+      }
+    });
+
+    $('[data-toggle=collapse]').on('reset', e => {
+      $(e.target.children[0].children[0]).removeClass('rotate');
+    });
   });
 </script>
