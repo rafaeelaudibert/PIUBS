@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  root to: 'visitors#welcome'
+  root to: 'welcome#index'
 
   scope '/apoioaempresas' do
 
