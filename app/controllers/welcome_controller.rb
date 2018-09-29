@@ -1,7 +1,8 @@
 class WelcomeController < ApplicationController
   def index
     if user_signed_in?
-      VisitorsController.index
+      redirect_to(login_path) and return
     end
+    render layout: 'welcome'
   end
 end
