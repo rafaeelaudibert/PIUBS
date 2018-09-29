@@ -113,6 +113,8 @@ Devise.setup do |config|
   # a value of 20 is already extremely slow: approx. 60 seconds for 1 calculation).
   config.stretches = Rails.env.test? ? 1 : 11
 
+  config.sign_out_via = Rails.env.test? ? :get : :delete
+
   # Set up a pepper to generate the hashed password.
   # config.pepper = 'dec6c4efa7804bf7ce0ae4bc4f3ca09a8bf78aec6523177b39f2bf7b19a8622216abc60a49c7da25a16e10b8b86c8a66156c4307cb5185a2fb691579cf80e7ed'
 
@@ -328,4 +330,7 @@ Devise.setup do |config|
   # When using OmniAuth, Devise cannot automatically set OmniAuth path,
   # so you need to do it manually. For the users scope, it would be:
   # config.omniauth_path_prefix = '/my_engine/users/auth'
+
+  # The default HTTP method used to sign out a resource. Default is :delete.
+
 end
