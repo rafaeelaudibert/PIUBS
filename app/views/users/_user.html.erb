@@ -29,6 +29,8 @@
         $mask_role = "Suporte[Adm]"
       elsif user.role == "call_center_user"
         $mask_role = "Suporte[Usu]"
+      elsif user.role == "faq_inserter"
+        $mask_role = 'Criador de FAQ'
       else
         $mask_role = "Não informado"
       end

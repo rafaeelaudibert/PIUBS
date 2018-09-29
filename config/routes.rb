@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   root to: 'welcome#index'
 
   scope '/apoioaempresas' do
-
     # /apoioaempresas
     get '/', to: 'calls#index' # Apoio a Empresas root
 

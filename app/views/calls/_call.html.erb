@@ -1,0 +1,34 @@
+<div class="card<%= call.support_user == current_user.id ? ' card-mine' : '' %>">
+  <div class="card-header" id="heading<%= call.protocol %>">
+    <div class="question">
+      <h5><%= call.title %></h5>
+    </div>
+    <div class="protocol">
+      <span>Protocolo: <%= call.protocol %></span>
+    </div>
+
+    <div class="company">
+      Empresa <%= call.sei %>
+    </div>
+    <div class="city">
+      <%= call.unity.name%><hr/><%= call.city.name %> - <%= call.city.state.name %>
+    </div>
+    <div class="info">
+      <span class="badge badge-pill badge-<%= call.open? ? 'success' : call.closed? ? 'dark' : 'warning'%>"><%= (t "activerecord.enums.call.status.#{call.status}").upcase %></span>
+    </div>
+    <div class="dropdown">
+      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#<%= call.protocol %>" aria-expanded="true" aria-controls="<%= call.protocol %>">
+        <span><i class="fa fa-angle-down"></i></span>
+      </button>
+    </div>
+  </div>
+
+  <div id="<%= call.protocol %>" class="collapse" aria-labelledby="header<%= call.protocol %>" data-parent="#accordion">
+    <div class="card-body">
+      <hr/>
+      <%= call.description.html_safe %>
+
+      <%= link_to 'Ir para atendimento', call , class: 'btn btn-primary right'%>
+    </div>
+  </div>
+</div>

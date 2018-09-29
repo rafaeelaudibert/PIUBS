@@ -14,7 +14,7 @@
 #
 development:
   adapter:  postgresql
-  host:     localhost
+  host:     db
   port:     5432
   encoding: unicode
   database: piubs_development

@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 # Preview all emails at http://localhost:3000/rails/mailers/reply
 class ReplyPreview < ActionMailer::Preview
-
   # Preview this email at http://localhost:3000/rails/mailers/reply/reply_mailer
   def reply_mailer
     ReplyMailer.reply_mailer
@@ -10,5 +11,4 @@ class ReplyPreview < ActionMailer::Preview
   def notification
     ReplyMailer.notification
   end
-
 end

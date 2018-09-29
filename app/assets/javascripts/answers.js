@@ -20,7 +20,7 @@
     maxChars: undefined,
     confirmKeys: [44, 59],
     delimiter: ';',
-    delimiterRegex: '/[\,][\;]/',
+    delimiterRegex: /[,]|[;]/,
     cancelConfirmKeysOnEmpty: false,
     onTagExists: function(item, $tag) {
       $tag.hide()
@@ -89,9 +89,13 @@
       if (self.isSelect && !self.multiple && self.itemsArray.length > 0)
         self.remove(self.itemsArray[0]);
 
+
+
+
       if (typeof item === "string" && this.$element[0].tagName === 'INPUT') {
         var delimiter = (self.options.delimiterRegex) ? self.options.delimiterRegex : self.options.delimiter;
         var items = item.split(delimiter);
+        console.log(delimiter);
         if (items.length > 1) {
           for (var i = 0; i < items.length; i++) {
             this.add(items[i], true);
@@ -453,6 +457,7 @@
           case 37:
             // Try to move the input before the previous tag
             var $prevTag = $inputWrapper.prev();
+            console.log('left');
             if ($input.val()
               .length === 0 && $prevTag[0]) {
               $prevTag.before($inputWrapper);

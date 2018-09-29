@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CompaniesController < ApplicationController
   before_action :set_company, only: %i[show edit update destroy]
   before_action :filter_role
@@ -98,8 +100,6 @@ class CompaniesController < ApplicationController
     if %w[index new create destroy edit update].include? action
       redirect_to denied_path unless is_admin?
     elsif %w[getStates getUsers getCities getUnities].include? action
-      pp current_user
-      pp params
       redirect_to denied_path unless is_admin? || is_support_user? || (is_company_user && params[:id].to_i == current_user.sei)
     elsif action == 'show'
       redirect_to denied_path unless current_user.try(:company_admin?) && @company.sei == current_user.sei || is_admin?

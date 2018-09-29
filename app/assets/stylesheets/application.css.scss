@@ -49,7 +49,6 @@ body,
 html {
   padding: 0;
   margin: 0;
-  height: 100%;
   min-height: 100%;
   font-family: 'Open Sans', sans-serif;
   color: #4f5f6f;
@@ -59,7 +58,7 @@ html {
 .main-wrapper {
   width: 100%;
   position: absolute;
-  height: 100%;
+  min-height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -145,7 +144,7 @@ div.required_info::before {
 .auth {
   position: absolute;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   left: 0;
   background-color: #667380;
   overflow-x: hidden;
@@ -2788,7 +2787,7 @@ span a {
 
 .flot-chart .flot-chart-content {
   width: 100%;
-  height: 100%;
+  min-height: 100%;
 }
 
 .flot-chart .flot-chart-pie-content {
@@ -4311,4 +4310,9 @@ span a {
     color: white;
     background-color: #3a4651 !important;
   }
+}
+
+//card override
+.card {
+  box-shadow: 1px 1px 5px rgba(126, 142, 159, 0.4) !important;
 }

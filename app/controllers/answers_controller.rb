@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AnswersController < ApplicationController
   before_action :set_answer, only: %i[show edit update destroy]
   before_action :filter_role, except: %i[faq]
@@ -11,7 +13,11 @@ class AnswersController < ApplicationController
 
   # get /faq
   def faq
-    @answers = Answer.where('faq = true').order('id DESC').paginate(page: params[:page], per_page: 25)
+    @answers = Answer.where(faq: true).includes(:category).order('category_id ASC').paginate(page: params[:page], per_page: 25)
+    respond_to do |format|
+      format.html
+      format.js
+    end
   end
 
   # GET /answers/1
@@ -72,11 +78,9 @@ class AnswersController < ApplicationController
       end
 
       # "IMPORT" attachments from the reply to this answer
-      if reply_attachments_ids
-        reply_attachments_ids.each do |_id|
-          @link = AttachmentLink.new(attachment_id: _id, answer_id: @answer.id, source: 'answer')
-          raise 'Não consegui criar o link entre arquivo que veio da reply e essa resposta. Por favor tente mais tarde' unless @link.save
-        end
+      reply_attachments_ids&.each do |_id|
+        @link = AttachmentLink.new(attachment_id: _id, answer_id: @answer.id, source: 'answer')
+        raise 'Não consegui criar o link entre arquivo que veio da reply e essa resposta. Por favor tente mais tarde' unless @link.save
       end
 
       redirect_to (@call || faq_path || root_path), notice: 'Final answer was successfully set.'
@@ -132,7 +136,7 @@ class AnswersController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def answer_params
-    params[:answer][:keywords] = params[:answer][:keywords].split(',').join(' ')
+    params[:answer][:keywords] = params[:answer][:keywords].split(',').join(' ; ')
     params.require(:answer).permit(:keywords, :question, :answer, :category_id, :user_id, :faq, :question_id, :reply_attachments, file: [])
   end
 
@@ -164,11 +168,11 @@ class AnswersController < ApplicationController
   def filter_role
     action = params[:action]
     if %w[index edit update].include? action
-      redirect_to denied_path unless is_admin?
+      redirect_to denied_path unless is_admin? || is_faq_inserter?
     elsif %w[new create destroy].include? action
-      redirect_to denied_path unless is_admin? || is_support_user?
+      redirect_to denied_path unless is_admin? || is_support_user? || is_faq_inserter?
     elsif action == 'show'
-      redirect_to denied_path unless @answer.faq
+      redirect_to denied_path unless @answer.faq || is_admin? || (is_support_user? && @answer.user_id == current_user.id) || is_faq_inserter?
     end
   end
 end

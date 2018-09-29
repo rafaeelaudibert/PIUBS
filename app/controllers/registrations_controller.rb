@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RegistrationsController < Devise::RegistrationsController
   before_action :admin_only
   skip_before_action :require_no_authentication, only: [:new]
