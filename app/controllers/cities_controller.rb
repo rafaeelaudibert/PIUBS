@@ -8,7 +8,7 @@ class CitiesController < ApplicationController
   # GET /cities
   # GET /cities.json
   def index
-    @cities = City.paginate(page: params[:page], per_page: 25)
+    @cities = City.includes(:state).order('state_id').paginate(page: params[:page], per_page: 25)
   end
 
   # GET /cities/1
@@ -30,7 +30,7 @@ class CitiesController < ApplicationController
   def create
     @city = City.new(city_params)
     if @city.save
-      redirect_to @city, notice: 'City was successfully created.'
+      redirect_to @city, notice: 'Cidade criada com sucesso.'
     else
       render :new
     end
@@ -39,7 +39,7 @@ class CitiesController < ApplicationController
   # PATCH/PUT /cities/1
   def update
     if @city.update(city_params)
-      redirect_to @city, notice: 'City was successfully updated.'
+      redirect_to @city, notice: 'Cidade atualizada com sucesso.'
     else
       render :edit
     end
@@ -48,7 +48,7 @@ class CitiesController < ApplicationController
   # DELETE /cities/1
   def destroy
     @city.destroy
-    redirect_to cities_url, notice: 'City was successfully destroyed.'
+    redirect_to cities_url, notice: 'Cidade apagada com sucesso.'
   end
 
   # GET /cities/states

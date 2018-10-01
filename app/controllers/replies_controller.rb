@@ -7,7 +7,7 @@ class RepliesController < ApplicationController
 
   # GET /replies
   def index
-    @replies = Reply.paginate(page: params[:page], per_page: 25)
+    @replies = Reply.order('created_at DESC').paginate(page: params[:page], per_page: 25)
   end
 
   # GET /replies/1

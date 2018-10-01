@@ -8,7 +8,7 @@ class CompaniesController < ApplicationController
   # GET /companies
   # GET /companies.json
   def index
-    @companies = Company.paginate(page: params[:page], per_page: 25)
+    @companies = Company.order('sei').paginate(page: params[:page], per_page: 25)
   end
 
   # GET /companies/1
@@ -47,8 +47,12 @@ class CompaniesController < ApplicationController
 
   # DELETE /companies/1
   def destroy
+    begin
     @company.destroy
-    redirect_to companies_url, notice: 'Company was successfully destroyed.'
+      redirect_to companies_url, notice: 'Company was successfully destroyed.'
+    rescue
+      redirect_back fallback_location: companies_url, alert: 'A empresa não pode ser apagada pois possui atendimentos/usuários cadastrados'
+    end
   end
 
   # GET /companies/1/states

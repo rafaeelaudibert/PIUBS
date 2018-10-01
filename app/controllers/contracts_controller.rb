@@ -7,7 +7,7 @@ class ContractsController < ApplicationController
 
   # GET /contracts
   def index
-    @contracts = Contract.paginate(page: params[:page], per_page: 25)
+    @contracts = Contract.joins(:city).order('sei').paginate(page: params[:page], per_page: 25)
   end
 
   # GET /contracts/1

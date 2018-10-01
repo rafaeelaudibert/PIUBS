@@ -7,7 +7,7 @@ class UnitiesController < ApplicationController
 
   # GET /unities
   def index
-    @unities = Unity.paginate(page: params[:page], per_page: 25)
+    @unities = Unity.order('name', 'city_id').paginate(page: params[:page], per_page: 25)
   end
 
   # GET /unities/1
