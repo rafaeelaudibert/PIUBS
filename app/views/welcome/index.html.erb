@@ -11,12 +11,12 @@
 				        <span class="icon-bar"></span>
 				        <span class="icon-bar"></span>
 				      </button>
-              <a class="navbar-brand" href="#"><!-- logo --></a>
+              <a class="navbar-brand" href="#"><img src="assets/icons/digisus.png"></img></a>
             </div>
             <div class="collapse navbar-collapse navbar-right" id="myNavbar">
               <ul class="nav navbar-nav">
                 <li class="active"><a href="#banner">Home</a></li>
-                <li class=""><a href="#service">Services</a></li>
+                <li class=""><a href="#service">Serviços</a></li>
               </ul>
             </div>
           </div>
@@ -26,13 +26,13 @@
         <div class="row">
           <div class="banner-info">
             <div class="banner-logo text-center">
-              <!-- logo -->
+
             </div>
             <div class="banner-text text-center">
               <h1 class="white">PIUBS</h1>
               <p>Programa de Informatização das Unidades Básicas de Saúde</p>
-              <%= link_to 'Apoio à empresas',login_path, class: 'btn btn-appoint'%>
-              <a href="#contact" class="btn btn-appoint">Solução de controvérsias</a>
+              <%= link_to 'Apoio à empresas',login_path, class: 'btn btn-appoint btn-lg'%>
+              <a href="#contact" disabled="disabled" class="btn btn-appoint btn-lg">Solução de controvérsias [Aguarde]</a>
             </div>
             <div class="overlay-detail text-center">
               <a href="#service"><i class="fa fa-angle-down"></i></a>
@@ -43,6 +43,7 @@
     </div>
   </section>
   <!--/ banner-->
+
   <!--service-->
   <section id="service" class="section-padding">
     <div class="container">
@@ -50,7 +51,7 @@
         <div class="col-md-4 col-sm-4">
           <h2 class="ser-title">nossos serviços</h2>
           <hr class="botm-line">
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris cillum.</p>
+        <p>No Portal piubs.inf.ufrgs.br você pode acessar os serviços de <b>Apoio a Empreas</b> e <b>Solução de Controvérsias</b></p>
         </div>
         <div class="col-md-8 col-sm-8">
           <div class="service-info">
@@ -59,7 +60,7 @@
             </div>
             <div class="icon-info">
               <h4>Apoio à empresas</h4>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+              <p>Aqui, você, empresa que coopera com o PIUBS, pode tirar suas dúvidas referentes a qualquer problema ocorrido durante a instalação, manutenção e/ou atualização de qualquer produto relacionado ao PIUBS.</p>
             </div>
           </div>
           <div class="service-info">
@@ -67,8 +68,8 @@
               <i class="fa fa-ambulance"></i>
             </div>
             <div class="icon-info">
-              <h4>Solução de controvérsias</h4>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+              <h4><i>EM BREVE</i> - Solução de controvérsias </h4>
+              <p>Em breve esse portal também oferecerá o serviço responsável por solucionar qualquer possível controvérsia que ocorrer entre a empresa e a UBS/Administração municipal.</p>
             </div>
           </div>
         </div>
@@ -82,7 +83,8 @@
       <div class="container">
         <div class="row">
           <div class="col-md-12 text-center">
-            © Copyright PIUBS. All Rights Reserved
+            © Copyright PIUBS. All Rights Reserved <br/>
+            <a href="http://www.brasil.gov.br/">Governo Federal</a> | <a href="http://www.ufrgs.br">UFRGS</a>
           </div>
         </div>
       </div>
