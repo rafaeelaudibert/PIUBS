@@ -16,7 +16,6 @@
 //= require jquery3
 //= require popper
 //= require bootstrap
-//= require tinymce
 //= require data-confirm-modal
 //= require answers
 //= require vendor
