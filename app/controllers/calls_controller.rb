@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CallsController < ApplicationController
   before_action :set_call, only: %i[show edit update destroy]
   before_action :set_company, only: %i[create new]
@@ -7,22 +9,31 @@ class CallsController < ApplicationController
   # GET /calls
   # GET /calls.json
   def index
-    if current_user.try(:call_center_user?)
-      @calls = Call.where(support_user: [current_user.id, nil]).order(created_at: :desc).paginate(page: params[:page], per_page: 25)
-    elsif current_user.try(:call_center_admin?)
-      children = [nil]
-      User.where(invited_by_id: current_user.id).each do |user|
-        children << user.id
+    if user_signed_in?
+      if current_user.try(:call_center_user?)
+        @calls = Call.where(support_user: [current_user.id, nil]).order(created_at: :desc).paginate(page: params[:page], per_page: 10)
+      elsif current_user.try(:call_center_admin?)
+        children = [nil]
+        User.where(invited_by_id: current_user.id).each do |user|
+          children << user.id
+        end
+        @calls = Call.where(support_user: children).order(created_at: :desc).paginate(page: params[:page], per_page: 10)
+      elsif current_user.try(:admin?)
+        @calls = Call.order(created_at: :desc).paginate(page: params[:page], per_page: 10)
+      elsif current_user.try(:company_admin?)
+        @calls = Call.where(sei: current_user.sei).order(created_at: :desc).paginate(page: params[:page], per_page: 10)
+      elsif current_user.try(:company_user?)
+        @calls = Call.where(user_id: current_user.id).order(created_at: :desc).paginate(page: params[:page], per_page: 10)
+      else
+        @calls = []
       end
-      @calls = Call.where(support_user: children).order(created_at: :desc).paginate(page: params[:page], per_page: 25)
-    elsif current_user.try(:admin?)
-      @calls = Call.order(created_at: :desc).paginate(page: params[:page], per_page: 25)
-    elsif current_user.try(:company_admin?)
-      @calls = Call.where(sei: current_user.sei).order(created_at: :desc).paginate(page: params[:page], per_page: 25)
-    elsif current_user.try(:company_user?)
-      @calls = Call.where(user_id: current_user.id).order(created_at: :desc).paginate(page: params[:page], per_page: 25)
     else
-      @calls = []
+      redirect_to login_path
+    end
+
+    respond_to do |format|
+      format.html
+      format.js
     end
   end
 
@@ -31,11 +42,7 @@ class CallsController < ApplicationController
     @answer = Answer.new
     @reply = Reply.new
     @categories = Category.all
-    if @call.support_user == current_user.id
-      @my_call = true
-    else
-      @my_call = false
-    end
+    @my_call = @call.support_user == current_user.id
     @user = User.find(@call.support_user) if @call.support_user
   end
 
@@ -98,15 +105,15 @@ class CallsController < ApplicationController
   # POST calls/link_call_support_user
   def link_call_support_user
     @call = Call.find(params[:call_options_id])
-    unless @call.support_user
+    if @call.support_user
+      redirect_back(fallback_location: root_path, alert: 'Você não pode pegar um atendimento de outro usuário do suporte')
+    else
       @call.support_user = current_user.id
       if @call.save
         redirect_back(fallback_location: root_path, notice: 'Agora esse atendimento é seu')
       else
         redirect_back(fallback_location: root_path, notice: 'Ocorreu um erro ao tentar pegar o atendimento')
       end
-    else
-      redirect_back(fallback_location: root_path, alert: 'Você não pode pegar um atendimento de outro usuário do suporte')
     end
   end
 
@@ -114,7 +121,7 @@ class CallsController < ApplicationController
   def unlink_call_support_user
     @call = Call.find(params[:call_options_id])
     if @call.support_user == current_user.id
-      @call.support_user = ""
+      @call.support_user = ''
       if @call.save
         redirect_back(fallback_location: root_path, notice: 'Atendimento liberado')
       else
@@ -194,7 +201,7 @@ class CallsController < ApplicationController
     action = params[:action]
     if %w[edit update].include? action
       redirect_to denied_path unless is_admin?
-    elsif %w[new create destroy].include? action
+    elsif %w[new create destroy index].include? action
       redirect_to denied_path unless is_admin? || is_support_user? || is_company_user?
     elsif action == 'show'
       redirect_to denied_path unless (current_user.try(:company_admin?) && @call.sei == current_user.sei) || ((current_user.try(:company_user?) && @call.user_id == current_user.id)) || is_support_user? || is_admin?

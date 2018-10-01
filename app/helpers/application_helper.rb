@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ApplicationHelper
   def resource_name
     :user
@@ -9,6 +11,11 @@ module ApplicationHelper
 
   def devise_mapping
     @devise_mapping ||= Devise.mappings[:user]
+  end
+
+  def inside_layout(parent_layout, params)
+    view_flow.set :layout, capture { yield }
+    render "layouts/#{parent_layout}", params: params
   end
 
   # User helper
@@ -30,6 +37,10 @@ module ApplicationHelper
 
   def is_city_user?
     current_user.try(:city_admin?) || current_user.try(:city_user?)
+  end
+
+  def is_faq_inserter?
+    current_user.try(:faq_inserter?)
   end
 
   def is_company_user # TODO: DEPRECATE IN FAVOR OF IS_COMPANY_USER?

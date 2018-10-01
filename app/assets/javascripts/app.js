@@ -1,4 +1,3 @@
-//= require bootstrap-sprockets
 var config = window.config = {};
 
 // Config reference element

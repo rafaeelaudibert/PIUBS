@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ContractsController < ApplicationController
   before_action :set_contract, only: %i[show edit update destroy download]
   before_action :filter_role
@@ -5,7 +7,7 @@ class ContractsController < ApplicationController
 
   # GET /contracts
   def index
-    @contracts = Contract.paginate(page: params[:page], per_page: 25)
+    @contracts = Contract.joins(:city).order('sei').paginate(page: params[:page], per_page: 25)
   end
 
   # GET /contracts/1
@@ -105,6 +107,7 @@ class ContractsController < ApplicationController
   def checkPDF
     file = params.require(:contract).require(:file)
     return file.content_type.split('/')[1].to_s == 'pdf' if file
+
     false
   end
 

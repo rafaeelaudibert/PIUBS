@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CategoriesController < ApplicationController
   before_action :set_category, only: %i[show edit update destroy]
   before_action :filter_role
@@ -6,7 +8,7 @@ class CategoriesController < ApplicationController
   # GET /categories
   # GET /categories.json
   def index
-    @categories = Category.paginate(page: params[:page], per_page: 25)
+    @categories = Category.order('id').paginate(page: params[:page], per_page: 25)
   end
 
   # GET /categories/1
@@ -24,6 +26,7 @@ class CategoriesController < ApplicationController
   # POST /categories
   # POST /categories.json
   def create
+    puts category_params
     @category = Category.new(category_params)
     if @category.save
       redirect_to @category, notice: 'Category was successfully created.'
@@ -65,7 +68,11 @@ class CategoriesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def category_params
-    params.require(:category).permit(:name)
+    puts params
+    parent_id = params[:category][:parent_id]
+    puts parent_id
+    params[:category][:parent_depth] = 1 + Category.find(parent_id).parent_depth if parent_id
+    params.require(:category).permit(:name, :parent_id, :parent_depth, :severity)
   end
 
   def filter_role

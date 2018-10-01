@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RepliesController < ApplicationController
   before_action :set_reply, only: %i[show edit update destroy]
   before_action :filter_role
@@ -5,7 +7,7 @@ class RepliesController < ApplicationController
 
   # GET /replies
   def index
-    @replies = Reply.paginate(page: params[:page], per_page: 25)
+    @replies = Reply.order('created_at DESC').paginate(page: params[:page], per_page: 25)
   end
 
   # GET /replies/1
@@ -26,7 +28,7 @@ class RepliesController < ApplicationController
     faq_attachments_ids = rep_params.delete(:faq_attachments).split(',') if rep_params[:faq_attachments]
     @reply = Reply.new(rep_params)
     @reply.user_id = current_user.id
-    @reply.status = @reply.call.status || 'Sem Status';
+    @reply.status = @reply.call.status || 'Sem Status'
     @reply.category = is_support_user || current_user.try(:admin?) ? 'support' : 'reply'
 
     if @reply.save
@@ -43,11 +45,9 @@ class RepliesController < ApplicationController
       end
 
       # "IMPORT" attachments from the faq answer to this reply
-      if faq_attachments_ids
-        faq_attachments_ids.each do |_id|
-          @link = AttachmentLink.new(attachment_id: _id, reply_id: @reply.id, source: 'reply')
-          raise 'Não consegui criar o link entre arquivo que veio do FAQ e a resposta. Por favor tente mais tarde' unless @link.save
-        end
+      faq_attachments_ids&.each do |_id|
+        @link = AttachmentLink.new(attachment_id: _id, reply_id: @reply.id, source: 'reply')
+        raise 'Não consegui criar o link entre arquivo que veio do FAQ e a resposta. Por favor tente mais tarde' unless @link.save
       end
 
       ReplyMailer.notify(@reply, current_user).deliver

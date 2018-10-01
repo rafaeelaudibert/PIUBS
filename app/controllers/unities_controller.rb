@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UnitiesController < ApplicationController
   before_action :set_unity, only: %i[show edit update destroy]
   before_action :filter_role
@@ -5,7 +7,7 @@ class UnitiesController < ApplicationController
 
   # GET /unities
   def index
-    @unities = Unity.paginate(page: params[:page], per_page: 25)
+    @unities = Unity.order('name', 'city_id').paginate(page: params[:page], per_page: 25)
   end
 
   # GET /unities/1

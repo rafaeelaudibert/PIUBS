@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ReplyMailer < ApplicationMailer
   def notify(reply, current_user)
     @reply = reply

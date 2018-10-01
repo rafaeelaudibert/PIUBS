@@ -1,1 +1,70 @@
-<%= render 'layouts/calls/call_list' %>
+<%= content_for :body_title do%>
+<h4 class="display-5">Atendimentos</h4>
+<%end%>
+
+<div class="float-right" style="display: inline-block !important">
+<form role="search">
+  <div class="input-group" style="margin: 0">
+    <input id="call-form" class="form-control mr-sm-2" type="search" aria-label="Search">
+    <label>
+      <i class="fa fa-search"></i>
+      &nbsp;Atendimento
+    </label>
+    <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
+  </div>
+</form>
+</div>
+<div class="float-left create-new">
+<%= link_to 'Solicitar novo atendimento', new_call_path(sei: current_user.sei), class: 'btn btn-primary' %>
+</div>
+<hr class="under-header"/>
+
+<% if @calls.length > 0 %>
+  <div id="accordion" class="accordion-calls">
+    <div id="my-calls">
+      <% puts @calls.length %>
+      <%= render @calls %>
+    </div>
+  </div>
+
+  <div id="infinite-scrolling">
+    <%= will_paginate @calls %>
+  </div>
+<% else %>
+  <h3>
+    Não há perguntas no FAQ
+  </h3>
+<% end %>
+<hr/>
+
+<script>
+  $('document').ready(function () {
+
+    $('#call-form').on('focusout', function () {
+      changeState($(this));
+    });
+
+    function changeState(form) {
+      if (form.val().length > 0) {
+        form.addClass('has-value');
+      } else {
+        form.removeClass('has-value');
+      }
+    }
+
+    $('[data-toggle=collapse]').on('click', e => {
+      $('[data-toggle=collapse]').trigger('reset');
+      try {
+        $(e.target).toggleClass('rotate');
+        $(e.target.children[0]).toggleClass('rotate');
+        $(e.target.children[0].children[0]).toggleClass('rotate');
+      } catch {
+        //Die silently
+      }
+    });
+
+    $('[data-toggle=collapse]').on('reset', e => {
+      $(e.target.children[0].children[0]).removeClass('rotate');
+    });
+  });
+</script>

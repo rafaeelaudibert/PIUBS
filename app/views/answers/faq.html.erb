@@ -20,35 +20,19 @@
 <hr class="under-header"/>
 
 <% if @answers.length > 0 %>
-<%= render './pagination', value: @answers, model:'faq' %>
-<table class="table table-striped table-hover">
-  <thead class="thead-dark">
-    <tr>
-      <th>Questão</th>
-      <th>Resposta</th>
-      <th>Categoria</th>
-      <th colspan="3">Ações</th>
-    </tr>
-  </thead>
+  <div id="accordion" class="accordion-faq">
+    <div id="my-answers">
+      <%= render @answers %>
+    </div>
+  </div>
 
-  <tbody>
-    <% @answers.each do |answer| %>
-      <tr>
-        <td><%= truncate strip_tags(answer.question), length: 40 %></td>
-        <td><%= truncate strip_tags(answer.answer), length: 40 %></td>
-        <td><%= answer.category.name %></td>
-        <td>
-          <%= link_to 'Mostrar', answer , class: 'btn btn-primary btn-sm'%>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-<%= render './pagination', value: @answers%>
+  <div id="infinite-scrolling">
+    <%= will_paginate @answers %>
+  </div>
 <% else %>
-<h3>
-  Nenhuma pergunta foi adicionada ao FAQ ainda!
-</h3>
+  <h3>
+    Não há perguntas no FAQ
+  </h3>
 <% end %>
 <hr/>
 
@@ -66,5 +50,21 @@ $('document').ready(function () {
       form.removeClass('has-value');
     }
   }
+
+  $('[data-toggle=collapse]').on('click', e => {
+    $('[data-toggle=collapse]').trigger('reset');
+    try {
+      $(e.target).toggleClass('rotate');
+      $(e.target.children[0]).toggleClass('rotate');
+      $(e.target.children[0].children[0]).toggleClass('rotate');
+    } catch {
+      //Die silently
+    }
+  });
+
+  $('[data-toggle=collapse]').on('reset', e => {
+    $(e.target.children[0].children[0]).removeClass('rotate');
+  });
+
 });
 </script>
