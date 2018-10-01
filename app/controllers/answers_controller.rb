@@ -8,7 +8,7 @@ class AnswersController < ApplicationController
   # GET /answers
   # GET /answers.json
   def index
-    @answers = Answer.paginate(page: params[:page], per_page: 25)
+    @answers = Answer.order('category_id ASC').paginate(page: params[:page], per_page: 25)
   end
 
   # get /faq
