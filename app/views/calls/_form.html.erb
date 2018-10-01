@@ -1,6 +1,6 @@
 <div class="required_info"></div><br/>
 <%= tinymce_assets %>
-<%= tinymce language: 'pt_BR' %>
+<%= tinymce %>
 <%= form_with(model: call, local: true) do |form| %>
 <% if call.errors.any? %>
   <div id="error_explanation">
@@ -137,7 +137,7 @@
 
       <div class="field">
         <%= form.label :description, 'Descrição (Descreva seu problema, o que estava fazendo quando ele aconteceu, quais procedimos já tentou, etc...)', class: 'required' %>
-        <%= form.text_area :description, id:'tinymce', class: 'tinymce', :rows => 30, :cols => 120, style: 'height:250px'%>
+        <%= form.text_area :description, class: 'tinymce', :rows => 30, :cols => 120, style: 'height:250px'%>
       </div>
 
       <div class="field">
