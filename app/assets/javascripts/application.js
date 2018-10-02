@@ -19,6 +19,6 @@
 //= require data-confirm-modal
 //= require answers
 //= require vendor
-//= require cable
 //= require calls
+//= require cable
 //= require app
