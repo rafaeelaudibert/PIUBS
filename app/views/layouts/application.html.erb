@@ -8,6 +8,7 @@
     <meta name="description" content="<%= content_for?(:description) ? yield(:description) : "Apoio Piubs" %>">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <%= favicon_link_tag asset_path('icon.png'), :rel => 'icon', :type => 'image/png' %>
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'jquery', 'data-turbolinks-track': 'reload' %>
 
@@ -21,9 +22,9 @@
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
     <%= yield :javascript %>
     <script>
-      $(document).ready(function() {
+      $(document).ready(function () {
         $(".dropdown-toggle").dropdown();
       });
     </script>
-</body>
+  </body>
 </html>
