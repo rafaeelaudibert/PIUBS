@@ -1,7 +1,3 @@
-<%= content_for :body_title do%>
-<h4 class="display-5">Atendimentos</h4>
-<%end%>
-
 <div class="float-right" style="display: inline-block !important">
 <form role="search">
   <div class="input-group" style="margin: 0">
@@ -14,10 +10,13 @@
   </div>
 </form>
 </div>
+
 <div class="float-left create-new">
 <%= link_to 'Solicitar novo atendimento', new_call_path(sei: current_user.sei), class: 'btn btn-primary' %>
 </div>
 <hr class="under-header"/>
+
+<div id="filterrific_results">
 
 <% if @calls.length > 0 %>
 <%= render './pagination', value: @calls %>
@@ -34,26 +33,26 @@
   </thead>
 
   <tbody>
-    <% @calls.each do |call| %>
-      <% if call.support_user == current_user.id %>
-        <% $mark_call = "mark-call" %>
-      <% else %>
-        <% $mark_call = "" %>
-      <% end %>
-      <tr>
-        <td class="<%= $mark_call %>"><%= call.protocol %></td>
-        <td class="<%= $mark_call %>"><%= call.title %></td>
-        <td class="<%= $mark_call %>"><%= t "activerecord.enums.call.status.#{call.status}" %></td>
-        <td class="<%= $mark_call %>"><%= call.city.name %></td>
-        <td class="<%= $mark_call %>"><%= call.category.name %></td>
-        <td>
-          <%= link_to 'Mostrar', call , class: 'btn btn-primary btn-sm'%>
-          <%= link_to(call, method: :delete, data: { confirm: 'Tens certeza?', verify: call.protocol, verify_text: 'Caso tenha, por favor digite o número do protocolo para continuar' }, class: 'btn btn-danger btn-sm') do %>
-          <i class="fa fa-trash-o"></i>
-        <%end%>
-        </td>
-      </tr>
-  <% end %>
+        <% @calls.each do |call| %>
+          <% if call.support_user == current_user.id %>
+            <% $mark_call = "mark-call" %>
+          <% else %>
+            <% $mark_call = "" %>
+          <% end %>
+          <tr>
+            <td class="<%= $mark_call %>"><%= call.protocol %></td>
+            <td class="<%= $mark_call %>"><%= call.title %></td>
+            <td class="<%= $mark_call %>"><%= t "activerecord.enums.call.status.#{call.status}" %></td>
+            <td class="<%= $mark_call %>"><%= call.city.name %></td>
+            <td class="<%= $mark_call %>"><%= call.category.name %></td>
+            <td>
+              <%= link_to 'Mostrar', call , class: 'btn btn-primary btn-sm'%>
+              <%= link_to(call, method: :delete, data: { confirm: 'Tens certeza?', verify: call.protocol, verify_text: 'Caso tenha, por favor digite o número do protocolo para continuar' }, class: 'btn btn-danger btn-sm') do %>
+              <i class="fa fa-trash-o"></i>
+            <%end%>
+            </td>
+          </tr>
+        <% end %>
 </tbody>
 </table>
 <%= render './pagination', value: @calls %>
@@ -63,6 +62,8 @@ Nenhum atendimento foi realizado ainda
 </h3>
 <% end %>
 <hr/>
+
+</div>
 
 <script>
 $('document').ready(function () {
