@@ -20,19 +20,19 @@
 <hr class="under-header"/>
 
 <% if @answers.length > 0 %>
-  <div id="accordion" class="accordion-faq">
-    <div id="my-answers">
-      <%= render @answers %>
-    </div>
+<div id="accordion" class="accordion-faq">
+  <div id="my-answers">
+    <%= render @answers %>
   </div>
+</div>
 
-  <div id="infinite-scrolling">
-    <%= will_paginate @answers %>
-  </div>
+<div id="infinite-scrolling">
+  <%= will_paginate @answers %>
+</div>
 <% else %>
-  <h3>
-    Não há perguntas no FAQ
-  </h3>
+<h3>
+  Não há perguntas no FAQ
+</h3>
 <% end %>
 <hr/>
 
@@ -51,20 +51,15 @@ $('document').ready(function () {
     }
   }
 
-  $('[data-toggle=collapse]').on('click', e => {
-    $('[data-toggle=collapse]').trigger('reset');
-    try {
-      $(e.target).toggleClass('rotate');
-      $(e.target.children[0]).toggleClass('rotate');
-      $(e.target.children[0].children[0]).toggleClass('rotate');
-    } catch {
-      //Die silently
-    }
-  });
-
-  $('[data-toggle=collapse]').on('reset', e => {
-    $(e.target.children[0].children[0]).removeClass('rotate');
-  });
+  // $('[data-toggle=collapse]').on('click', e => {
+  //
+  //    Previne de resetarx   $(e.target).attr('chosen', true);   $(e.target.parentNode).attr('chosen', true);   $('[data-toggle=collapse]:not([chosen=true])').trigger('reset');
+  //
+  //    Retira a flag   $(e.target).attr('chosen', false);   $(e.target.parentNode).attr('chosen', false);
+  //
+  //   try {     $(e.target).toggleClass('rotate');     $(e.target.children[0]).toggleClass('rotate');   } catch (e) {     Die silently   } });
+  //
+  // $('[data-toggle=collapse]').on('reset', e => {   $(e.target.children[0]).removeClass('rotate'); });
 
 });
 </script>

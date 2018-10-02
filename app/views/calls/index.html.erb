@@ -20,9 +20,9 @@
 <hr class="under-header"/>
 
 <% if @calls.length > 0 %>
-  <div id="accordion" class="accordion-calls">
-    <div id="my-calls">
-      <% puts @calls.length %>
+<div id="accordion" class="accordion-calls">
+  <div id="my-calls">
+    <% puts @calls.length %>
       <%= render @calls %>
     </div>
   </div>
@@ -52,19 +52,5 @@
       }
     }
 
-    $('[data-toggle=collapse]').on('click', e => {
-      $('[data-toggle=collapse]').trigger('reset');
-      try {
-        $(e.target).toggleClass('rotate');
-        $(e.target.children[0]).toggleClass('rotate');
-        $(e.target.children[0].children[0]).toggleClass('rotate');
-      } catch {
-        //Die silently
-      }
-    });
-
-    $('[data-toggle=collapse]').on('reset', e => {
-      $(e.target.children[0].children[0]).removeClass('rotate');
-    });
   });
 </script>

@@ -4,21 +4,25 @@
       <h5><%= call.title %></h5>
     </div>
     <div class="protocol">
-      <span>Protocolo: <%= call.protocol %></span>
+      <span>Protocolo:
+        <%= call.protocol %></span>
     </div>
 
     <div class="company">
-      Empresa <%= call.sei %>
+      Empresa
+      <%= call.sei %>
     </div>
     <div class="city">
-      <%= call.unity.name%><hr/><%= call.city.name %> - <%= call.city.state.name %>
+      <%= call.unity.name%><hr/><%= call.city.name %>
+      -
+      <%= call.city.state.name %>
     </div>
     <div class="info">
       <span class="badge badge-pill badge-<%= call.open? ? 'success' : call.closed? ? 'dark' : 'warning'%>"><%= (t "activerecord.enums.call.status.#{call.status}").upcase %></span>
     </div>
     <div class="dropdown">
       <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#<%= call.protocol %>" aria-expanded="true" aria-controls="<%= call.protocol %>">
-        <span><i class="fa fa-angle-down"></i></span>
+        <i class="fa fa-angle-down"></i>
       </button>
     </div>
   </div>
