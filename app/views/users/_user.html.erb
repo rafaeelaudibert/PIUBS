@@ -37,13 +37,12 @@
       $mask_role
     %>
   </td>
-<% else %>
-  <td class="user">
-    <% if (user.current_sign_in_at) %>
-      <%= user.current_sign_in_at.strftime('%d %b %y - %H:%M:%S') %>
-    <% end %>
-  </td>
 <% end %>
+<td class="user">
+  <% if (user.current_sign_in_at) %>
+    <%= user.current_sign_in_at.strftime('%d %b %y - %H:%M:%S') %>
+  <% end %>
+</td>
 <td class="user user-status">
   <% if user.invitation_accepted_at != nil %>
     Cadastrado
