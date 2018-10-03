@@ -1,5 +1,25 @@
 <%= content_for :body_title do%>
 <h4 class="display-5">FAQ</h4>
+
+<%= form_for_filterrific @filterrific do |f| %>
+  <div style="width:100%; margin:0 auto; float:right; ">
+    <div class="form-group" style="width:10%; float:right;">
+      <%= f.select(:with_category, @filterrific.select_options[:with_category], {multiple: true, include_blank: "Categoria"}, {:class => "form-control", :style => "width:100%;"}) %>
+    </div>
+  </div>
+  <div>
+    <div class="form-group">
+      <%= f.submit "Mostrar", :class => 'btn btn-link', :style => 'color: blue !important; float:right' %>
+      <%= link_to(
+        'Desfazer filtro',
+        reset_filterrific_url, :class => 'btn btn-link', :style => 'color: #AAA !important; float:right;'
+      ) %>
+    </div>
+  </div>
+  <%# add an automated spinner to your form when the list is refreshed %>
+  <%= render_filterrific_spinner %>
+<% end %>
+
 <%end%>
 
 <div class="float-right" style="display: inline-block !important">
@@ -19,33 +39,38 @@
 </div>
 <hr class="under-header"/>
 
-<% if @answers.length > 0 %>
-<%= render './pagination', value: @answers, model:'faq' %>
-<table class="table table-striped table-hover">
-  <thead class="thead-dark">
-    <tr>
-      <th>Questão</th>
-      <th>Resposta</th>
-      <th>Categoria</th>
-      <th colspan="3">Ações</th>
-    </tr>
-  </thead>
+<div id="filterrific_results">
 
-  <tbody>
-    <% @answers.each do |answer| %>
+  <% if @answers.length > 0 %>
+  <%= render './pagination', value: @answers, model:'faq' %>
+  <table class="table table-striped table-hover">
+    <thead class="thead-dark">
       <tr>
-        <td><%= truncate strip_tags(answer.question), length: 40 %></td>
-        <td><%= truncate strip_tags(answer.answer), length: 40 %></td>
-        <td><%= answer.category.name %></td>
-        <td>
-          <%= link_to 'Mostrar', answer , class: 'btn btn-primary btn-sm'%>
-        </td>
+        <th>Questão</th>
+        <th>Resposta</th>
+        <th>Categoria</th>
+        <th colspan="3">Ações</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
-<%= render './pagination', value: @answers%>
-<% end %>
+    </thead>
+
+    <tbody>
+      <% @answers.each do |answer| %>
+        <tr>
+          <td><%= truncate strip_tags(answer.question), length: 40 %></td>
+          <td><%= truncate strip_tags(answer.answer), length: 40 %></td>
+          <td><%= answer.category.name %></td>
+          <td>
+            <%= link_to 'Mostrar', answer , class: 'btn btn-primary btn-sm'%>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= render './pagination', value: @answers%>
+  <% end %>
+
+</div>
+
 <hr/>
 
 <script>

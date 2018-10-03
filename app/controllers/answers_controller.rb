@@ -11,7 +11,16 @@ class AnswersController < ApplicationController
 
   # get /faq
   def faq
-    @answers = Answer.where('faq = true').order('id DESC').paginate(page: params[:page], per_page: 25)
+    @filterrific = initialize_filterrific(
+       Answer,
+       params[:filterrific],
+       select_options: {
+         with_category: Category.all.map { |a| [a.name, a.id] },
+       },
+       :persistence_id => false,
+     ) or return
+    @answers = Answer.filterrific_find(@filterrific).page(params[:page])
+    # @answers = Answer.where('faq = true').order('id DESC').paginate(page: params[:page], per_page: 25)
   end
 
   # GET /answers/1

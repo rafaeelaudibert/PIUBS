@@ -30,7 +30,6 @@ class Call < ApplicationRecord
   scope :filtered_by, lambda { |filter_key|
     filter = (filter_key =~ /open$/) ? 'open' : (filter_key =~ /reopened$/) ? 'reopened' : (filter_key =~ /closed$/) ? 'closed' : 'any'
     @status_i = (filter == 'open') ? 0 : (filter == 'reopened') ? 2 : (filter == 'closed') ? 1 : 4
-    puts @status_i
     case filter_key.to_s
     when /^status_/
         if(@status_i != 4)
