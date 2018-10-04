@@ -1,5 +1,71 @@
 <%= content_for :body_title do%>
-<h4 class="display-5">Atendimentos</h4>
+  <div class="display-5" style="float:left;">Atendimentos</div>
+    <%= form_for_filterrific @filterrific do |f| %>
+    <div style="width:100%; margin:0 auto; float:right; ">
+
+      <% if current_user.try(:admin?) %>
+        <div class="form-group" style="width:10%; float:right;">
+          <%= f.select(:with_city, @filterrific.select_options[:with_city], {multiple: true}, {:class => "form-control", :style => "width:100%;"}) %>
+        </div>
+        <div class="form-group" style="width:15%; float:right;">
+          <%= f.select(:with_state, @filterrific.select_options[:with_state], {multiple: true, include_blank: "Estado"}, {:class => "form-control", :style => "width:100%;"}) %>
+        </div>
+      <% end %>
+
+      <% if current_user.try(:call_center_admin?) || current_user.try(:call_center_user?) %>
+        <div class="form-group" style="width:15%; float:right;">
+          <%= f.select(:with_company, @filterrific.select_options[:with_company], {multiple: true, include_blank: "Empresa"}, {:class => "form-control", :style => "width:100%;"}) %>
+        </div>
+      <% end %>
+
+      <% if current_user.try(:company_admin?) || current_user.try(:company_user) %>
+        <div class="form-group" style="width:15%; float:right;">
+          <%= f.select(:with_ubs, @filterrific.select_options[:with_ubs], {multiple: true, include_blank: "UBS"}, {:class => "form-control", :style => "width:100%;"}) %>
+        </div>
+      <% end %>
+
+      <div class="form-group" style="width:10%; float:right;">
+        <%= f.select(:with_status, @filterrific.select_options[:with_status], {multiple: true}, {:class => "form-control", :style => "width:100%;"}) %>
+      </div>
+
+      <div class="form-group" style="width:12%; float:right;">
+        <%= f.select(:sorted_by_creation, @filterrific.select_options[:sorted_by_creation], {multiple: true}, {:class => "form-control", :style => "width:100%;"}) %>
+      </div>
+
+
+    </div>
+    <div>
+      <div class="form-group">
+        <%= f.submit "Mostrar", :class => 'btn btn-link', :style => 'color: blue !important; float:right' %>
+        <%= link_to(
+          'Desfazer filtro',
+          reset_filterrific_url, :class => 'btn btn-link', :style => 'color: #AAA !important; float:right;'
+        ) %>
+      </div>
+    </div>
+      <%# add an automated spinner to your form when the list is refreshed %>
+      <%= render_filterrific_spinner %>
+    <% end %>
+
+  <script>
+
+    const stateSelect = document.getElementById('filterrific_with_state');
+    const citySelect = document.getElementById('filterrific_with_city');
+
+    const triggeredByState = () => jQuery.ajax({url: `/apoioaempresas/cities/states/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
+
+    stateSelect.addEventListener('change', triggeredByState);
+
+    function insertCitiesData(cities) {
+      let innerHTML = '<option value="0"> Cidade </option>';
+      for (city of cities) {
+        innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
+      }
+      citySelect.innerHTML = innerHTML;
+    }
+
+  </script>
+
 <%end%>
 
 <div class="float-right" style="display: inline-block !important">
