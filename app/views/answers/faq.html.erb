@@ -40,37 +40,22 @@
 <hr class="under-header"/>
 
 <div id="filterrific_results">
-
   <% if @answers.length > 0 %>
-  <%= render './pagination', value: @answers, model:'faq' %>
-  <table class="table table-striped table-hover">
-    <thead class="thead-dark">
-      <tr>
-        <th>Questão</th>
-        <th>Resposta</th>
-        <th>Categoria</th>
-        <th colspan="3">Ações</th>
-      </tr>
-    </thead>
+  <div id="accordion" class="accordion-faq">
+    <div id="my-answers">
+      <%= render @answers %>
+    </div>
+  </div>
 
-    <tbody>
-      <% @answers.each do |answer| %>
-        <tr>
-          <td><%= truncate strip_tags(answer.question), length: 40 %></td>
-          <td><%= truncate strip_tags(answer.answer), length: 40 %></td>
-          <td><%= answer.category.name %></td>
-          <td>
-            <%= link_to 'Mostrar', answer , class: 'btn btn-primary btn-sm'%>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-  <%= render './pagination', value: @answers%>
+  <div id="infinite-scrolling">
+    <%= will_paginate @answers %>
+  </div>
+  <% else %>
+  <h3>
+    Não há perguntas no FAQ
+  </h3>
   <% end %>
-
 </div>
-
 <hr/>
 
 <script>
@@ -87,5 +72,16 @@ $('document').ready(function () {
       form.removeClass('has-value');
     }
   }
+
+  // $('[data-toggle=collapse]').on('click', e => {
+  //
+  //    Previne de resetarx   $(e.target).attr('chosen', true);   $(e.target.parentNode).attr('chosen', true);   $('[data-toggle=collapse]:not([chosen=true])').trigger('reset');
+  //
+  //    Retira a flag   $(e.target).attr('chosen', false);   $(e.target.parentNode).attr('chosen', false);
+  //
+  //   try {     $(e.target).toggleClass('rotate');     $(e.target.children[0]).toggleClass('rotate');   } catch (e) {     Die silently   } });
+  //
+  // $('[data-toggle=collapse]').on('reset', e => {   $(e.target.children[0]).removeClass('rotate'); });
+
 });
 </script>

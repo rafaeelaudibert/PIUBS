@@ -9,12 +9,17 @@
 //
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
-//
+
+//= require_self
+//= require rails-ujs
+//= require activestorage
 //= require jquery3
 //= require popper
-//= require rails-ujs
-//= require bootstrap-sprockets
-//= require_tree .
-//= require tinymce
-//= require data-confirm-modal
 //= require filterrific/filterrific-jquery
+//= require bootstrap
+//= require data-confirm-modal
+//= require answers
+//= require vendor
+//= require calls
+//= require cable
+//= require app

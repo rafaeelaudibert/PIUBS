@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Welcome page</title>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag    'welcome', 'data-turbolinks-track': 'reload' %>
+
+  </head>
+  <body>
+    <%= yield %>
+    <%= javascript_include_tag 'welcome', 'data-turbolinks-track': 'reload' %>
+  </body>
+</html>

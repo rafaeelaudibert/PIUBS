@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :any_admin_only, only: %i[index]
@@ -5,7 +7,7 @@ class UsersController < ApplicationController
 
   def index
     if current_user.try(:admin?)
-      @users = User.all.where("invitation_created_at IS NOT NULL").order(invitation_accepted_at: :desc)
+      @users = User.all.where('invitation_created_at IS NOT NULL').order(invitation_accepted_at: :desc)
     elsif current_user.try(:call_center_admin?) || current_user.try(:city_admin?) || current_user.try(:company_admin?) || current_user.try(:ubs_admin?)
       @users = User.where(invited_by_id: current_user.id).order(invitation_accepted_at: :asc)
     end

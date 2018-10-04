@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CallsController < ApplicationController
   before_action :set_call, only: %i[show edit update destroy]
   before_action :set_company, only: %i[create new]
@@ -23,25 +25,27 @@ class CallsController < ApplicationController
      ) or return
 
      # @calls = Call.filterrific_find(@filterrific).page(params[:page])
-
-     if current_user.try(:call_center_user?)
-       @calls = @filterrific.find.page(params[:page]).where(support_user: [current_user.id, nil])
-     elsif current_user.try(:call_center_admin?)
-       children = [nil]
-       User.where(invited_by_id: current_user.id).each do |user|
-         children << user.id
+     if user_signed_in?
+       if current_user.try(:call_center_user?)
+         @calls = @filterrific.find.page(params[:page]).where(support_user: [current_user.id, nil])
+       elsif current_user.try(:call_center_admin?)
+         children = [nil]
+         User.where(invited_by_id: current_user.id).each do |user|
+           children << user.id
+         end
+         @calls = @filterrific.find.page(params[:page]).where(support_user: children)
+       elsif current_user.try(:company_admin?)
+         @calls = @filterrific.find.page(params[:page]).where(sei: current_user.sei)
+       elsif current_user.try(:company_user?)
+         @calls = @filterrific.find.page(params[:page]).where(user_id: current_user.id)
+       elsif current_user.try(:admin?)
+         @calls = @filterrific.find.page(params[:page])
+       else
+         @calls = []
        end
-       @calls = @filterrific.find.page(params[:page]).where(support_user: children)
-     elsif current_user.try(:company_admin?)
-       @calls = @filterrific.find.page(params[:page]).where(sei: current_user.sei)
-     elsif current_user.try(:company_user?)
-       @calls = @filterrific.find.page(params[:page]).where(user_id: current_user.id)
-     elsif current_user.try(:admin?)
-       @calls = @filterrific.find.page(params[:page])
      else
-       @calls = []
+       redirect_to login_path
      end
-
      # puts params[:filterrific].require(:filtered_by)
      respond_to do |format|
        format.html
@@ -54,11 +58,7 @@ class CallsController < ApplicationController
     @answer = Answer.new
     @reply = Reply.new
     @categories = Category.all
-    if @call.support_user == current_user.id
-      @my_call = true
-    else
-      @my_call = false
-    end
+    @my_call = @call.support_user == current_user.id
     @user = User.find(@call.support_user) if @call.support_user
   end
 
@@ -121,15 +121,15 @@ class CallsController < ApplicationController
   # POST calls/link_call_support_user
   def link_call_support_user
     @call = Call.find(params[:call_options_id])
-    unless @call.support_user
+    if @call.support_user
+      redirect_back(fallback_location: root_path, alert: 'Você não pode pegar um atendimento de outro usuário do suporte')
+    else
       @call.support_user = current_user.id
       if @call.save
         redirect_back(fallback_location: root_path, notice: 'Agora esse atendimento é seu')
       else
         redirect_back(fallback_location: root_path, notice: 'Ocorreu um erro ao tentar pegar o atendimento')
       end
-    else
-      redirect_back(fallback_location: root_path, alert: 'Você não pode pegar um atendimento de outro usuário do suporte')
     end
   end
 
@@ -137,7 +137,7 @@ class CallsController < ApplicationController
   def unlink_call_support_user
     @call = Call.find(params[:call_options_id])
     if @call.support_user == current_user.id
-      @call.support_user = ""
+      @call.support_user = ''
       if @call.save
         redirect_back(fallback_location: root_path, notice: 'Atendimento liberado')
       else
@@ -221,6 +221,8 @@ class CallsController < ApplicationController
       redirect_to denied_path unless is_admin? || is_support_user? || is_company_user?
     elsif action == 'show'
       redirect_to denied_path unless (current_user.try(:company_admin?) && @call.sei == current_user.sei) || ((current_user.try(:company_user?) && @call.user_id == current_user.id)) || is_support_user? || is_admin?
+    elsif action == 'index'
+      redirect_to faq_path unless is_admin? || is_support_user? || is_company_user?
     end
   end
 end

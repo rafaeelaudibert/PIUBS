@@ -8,7 +8,9 @@ services:
       - "5433:5432"
   app:
     build: .
-    command: bundle exec puma -C config/puma.rb
+    command: bundle exec puma -C config/puma.rb -e production
+    env_file:
+      - config/.env
     volumes:
       - .:/var/www/PIUBS
     expose:

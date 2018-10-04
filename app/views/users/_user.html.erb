@@ -29,19 +29,20 @@
         $mask_role = "Suporte[Adm]"
       elsif user.role == "call_center_user"
         $mask_role = "Suporte[Usu]"
+      elsif user.role == "faq_inserter"
+        $mask_role = 'Criador de FAQ'
       else
         $mask_role = "Não informado"
       end
       $mask_role
     %>
   </td>
-<% else %>
-  <td class="user">
-    <% if (user.current_sign_in_at) %>
-      <%= user.current_sign_in_at.strftime('%d %b %y - %H:%M:%S') %>
-    <% end %>
-  </td>
 <% end %>
+<td class="user">
+  <% if (user.current_sign_in_at) %>
+    <%= user.current_sign_in_at.strftime('%d %b %y - %H:%M:%S') %>
+  <% end %>
+</td>
 <td class="user user-status">
   <% if user.invitation_accepted_at != nil %>
     Cadastrado

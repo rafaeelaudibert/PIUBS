@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AttachmentsController < ApplicationController
   before_action :set_attachment, only: %i[show edit update destroy download]
   before_action :filter_role
@@ -6,7 +8,7 @@ class AttachmentsController < ApplicationController
   # GET /attachments
   # GET /attachments.json
   def index
-    @attachments = Attachment.paginate(page: params[:page], per_page: 25)
+    @attachments = Attachment.order('id').paginate(page: params[:page], per_page: 25)
   end
 
   # GET /attachments/1

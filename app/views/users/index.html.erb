@@ -18,9 +18,8 @@
                 <th>E-mail</th>
                 <% if current_user.try(:admin?) %>
                   <th>Perfil</th>
-                <% else %>
-                  <th>Último login</th>
                 <% end %>
+                <th>Último login</th>
                 <th>Status</th>
                 <th colspan="2"></th>
               </tr>

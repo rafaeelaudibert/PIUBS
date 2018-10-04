@@ -1,4 +1,7 @@
-<% js = escape_javascript(
-  render(partial: 'layouts/calls/calls_list', locals: { calls: @calls })
-) %>
-$("#filterrific_results").html("<%= js %>");
+$('#my-calls').append('<%= j render @calls %>');
+<% if @calls.next_page %>
+  $('.pagination').replaceWith('<%= j will_paginate @calls %>');
+<% else %>
+  $(window).off('scroll');
+  $('.pagination').remove();
+<% end %>

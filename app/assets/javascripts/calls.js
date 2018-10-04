@@ -1,15 +1,3 @@
-// Show or hide form to create new call
-$("#create_call").click(function() {
-  var id = 'create_call';
-  var checked = $("#create_call:checked").length;
-  if (checked) {
-    $(".hidden").show(300);
-    $(".search").hide();
-  } else {
-    $(".hidden").hide();
-    $(".search").show(300);
-  }
-});
 (function($) {
   "use strict";
 
@@ -32,7 +20,7 @@ $("#create_call").click(function() {
     maxChars: undefined,
     confirmKeys: [44, 59],
     delimiter: ';',
-    delimiterRegex: '/[\,][\;]/',
+    delimiterRegex: /[\,]|[\;]/,
     cancelConfirmKeysOnEmpty: false,
     onTagExists: function(item, $tag) {
       $tag.hide()

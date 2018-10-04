@@ -53,3 +53,5 @@ build-iPhoneSimulator/
 
 # database information
 database.yml
+
+#precompiled assets

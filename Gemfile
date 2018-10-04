@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.5.1'
@@ -26,15 +28,20 @@ end
 
 # Development + Tests only gems
 group :development, :test do
-  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'rspec-rails'
 end
 
+# mysql2 is required for production
+group :production do
+  gem 'mysql2'
+end
+
 # Default gems
 gem 'bootsnap', '>= 1.1.0', require: false
-gem 'bootstrap', '~> 4.1.2'
+gem 'bootstrap', '~> 4.1.3'
 gem 'carrierwave'
 gem 'coffee-rails', '~> 4.2'
 gem 'devise'
@@ -48,19 +55,23 @@ gem 'puma', '~> 3.11'
 gem 'rails', '~> 5.2.1'
 gem 'sass-rails', '~> 5.0'
 gem 'sqlite3'
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 gem 'uglifier', '>= 1.3.0'
 
 # PIUBS specific gems
-gem "cpf_cnpj"                  # CPF/CNPJ validations/management
-gem "font-awesome-rails"        # Icons
-gem "mail_form", ">= 1.3.0"     # Mailer gem
-gem "mini_racer"                # Fix "Autoprefixer doesn’t support Node v4.2.6"
-gem "validators"                # Validators, such as CPF/e-mail
+gem 'backup'
+gem 'cpf_cnpj'                  # CPF/CNPJ validations/management
 gem 'data-confirm-modal'        # Modals for confimations
+gem 'font-awesome-rails'        # Icons
+gem 'mail_form', '>= 1.3.0'     # Mailer gem
+gem 'mini_racer'                # Fix "Autoprefixer doesn’t support Node v4.2.6"
+gem 'net-ssh', '= 5.0.2'
 gem 'pg_search'                 # Full-text search gem
 gem 'shog'                      # Colorized console logging
 gem 'tinymce-rails'             # WSYCWYG Text Editor
 gem 'tinymce-rails-langs'       # Translate tinymce
-gem 'will_paginate', '~> 3.1.0' # Pagination
 gem 'filterrific', '~> 5.1.0'     # Filtering
+gem 'validators'                # Validators, such as CPF/e-mail
+gem 'will_paginate', '~> 3.1.0' # Pagination
+gem 'turbolinks', '~> 5.2.0'
+gem 'popper_js', '~> 1.14.3'
