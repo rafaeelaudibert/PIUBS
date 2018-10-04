@@ -121,6 +121,7 @@ GEM
     faker (1.9.1)
       i18n (>= 0.7)
     ffi (1.9.25)
+    filterrific (5.1.0)
     font-awesome-rails (4.7.0.4)
       railties (>= 3.2, < 6.0)
     globalid (0.4.1)
@@ -318,6 +319,7 @@ DEPENDENCIES
   devise_invitable
   factory_bot_rails
   faker
+  filterrific (~> 5.1.0)
   font-awesome-rails
   high_voltage
   jbuilder (~> 2.5)

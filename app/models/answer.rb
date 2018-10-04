@@ -13,6 +13,20 @@ class Answer < ApplicationRecord
   validates :faq, inclusion: { in: [true, false],
                                message: 'this one is not allowed. Choose from True or False' }
 
+   filterrific(
+    default_filter_params: { with_category: 'category_any'},
+    available_filters: [
+      :with_category,
+    ]
+  )
+
+  scope :with_category, lambda { |category_id|
+    return nil if category_id == "category_any"
+      if category_id != "category_id"
+        where(faq: true, category_id: category_id)
+      end
+  }
+
   # PgSearch stuff
   include PgSearch
   pg_search_scope :search_for,

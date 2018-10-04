@@ -69,7 +69,8 @@ gem 'net-ssh', '= 5.0.2'
 gem 'pg_search'                 # Full-text search gem
 gem 'shog'                      # Colorized console logging
 gem 'tinymce-rails'             # WSYCWYG Text Editor
-gem 'tinymce-rails-langs'
+gem 'tinymce-rails-langs'       # Translate tinymce
+gem 'filterrific', '~> 5.1.0'     # Filtering
 gem 'validators'                # Validators, such as CPF/e-mail
 gem 'will_paginate', '~> 3.1.0' # Pagination
 gem 'turbolinks', '~> 5.2.0'

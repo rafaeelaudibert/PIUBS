@@ -13,7 +13,17 @@ class AnswersController < ApplicationController
 
   # get /faq
   def faq
-    @answers = Answer.where(faq: true).includes(:category).order('category_id ASC').paginate(page: params[:page], per_page: 25)
+    @filterrific = initialize_filterrific(
+       Answer,
+       params[:filterrific],
+       select_options: {
+         with_category: Category.all.map { |a| [a.name, a.id] },
+       },
+       :persistence_id => false,
+     ) or return
+    @answers = Answer.filterrific_find(@filterrific).includes(:category).page(params[:page])
+    # A linha abaixo é backup do que tinha antes de add o filterrific
+    # @answers = Answer.where(faq: true).includes(:category).order('category_id ASC').paginate(page: params[:page], per_page: 25)
     respond_to do |format|
       format.html
       format.js

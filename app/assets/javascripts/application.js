@@ -15,6 +15,7 @@
 //= require activestorage
 //= require jquery3
 //= require popper
+//= require filterrific/filterrific-jquery
 //= require bootstrap
 //= require data-confirm-modal
 //= require answers
