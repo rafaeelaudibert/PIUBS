@@ -52,7 +52,7 @@ class AnswersController < ApplicationController
 
           # Atualiza o answer_id
           @call.answer_id = @answer.id
-          AnswerMailer.notify(@call, @answer, current_user).deliver_now
+          AnswerMailer.notify(@call, @answer, current_user).deliver_later
           raise 'We could not set the call answer_id properly. Please check it' unless @call.save
 
           # Destroi a anterior
@@ -60,7 +60,7 @@ class AnswersController < ApplicationController
         else
           # Atualiza o answer_id
           @call.answer_id = @answer.id
-          AnswerMailer.notify(@call, @answer, current_user).deliver_now
+          AnswerMailer.notify(@call, @answer, current_user).deliver_later
           raise 'We could not set the call answer_id properly. Please check it' unless @call.save
         end
 
