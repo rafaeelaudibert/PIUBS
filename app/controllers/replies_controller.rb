@@ -50,7 +50,7 @@ class RepliesController < ApplicationController
         raise 'Não consegui criar o link entre arquivo que veio do FAQ e a resposta. Por favor tente mais tarde' unless @link.save
       end
 
-      ReplyMailer.notify(@reply, current_user).deliver
+      ReplyMailer.notify(@reply, current_user).deliver_later
       redirect_to call_path(@reply.protocol), notice: 'Reply was successfully created.'
     else
       render :new

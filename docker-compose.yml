@@ -15,13 +15,26 @@ services:
       - .:/var/www/PIUBS
     expose:
       - "3000"
-    links:
+    depends_on:
       - db
+      - redis
+  redis:
+    image: redis:latest
+  sidekiq:
+    build: .
+    command: bundle exec sidekiq -C config/sidekiq.yml --environment production
+    env_file:
+      - config/.env
+    depends_on:
+      - redis
+    volumes:
+      - .:/var/www/PIUBS
+
   web:
     build:
       context: .
       dockerfile: Dockerfile-nginx
-    links:
+    depends_on:
       - app
     ports:
       - "8081:80"

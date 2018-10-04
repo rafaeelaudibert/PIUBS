@@ -95,7 +95,7 @@ class CallsController < ApplicationController
         end
       end
 
-      CallMailer.notify(@call, @call.user).deliver
+      CallMailer.notify(@call, @call.user).deliver_later
       redirect_to @call, notice: 'Call was successfully created.'
     else
       render :new
