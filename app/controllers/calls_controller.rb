@@ -12,7 +12,8 @@ class CallsController < ApplicationController
        Call,
        params[:filterrific],
        select_options: {
-         filtered_by: Call.options_for_filtered_by(),
+         sorted_by_creation: Call.options_for_sorted_by_creation(),
+         with_status: Call.options_for_with_status(),
          with_state: State.all.map { |s| [s.name, s.id] },
          with_city: Call.options_for_with_city(),
          with_ubs: Unity.where(city_id: @contracts.map { |c| c.city_id}).map { |u| [u.name, u.cnes] },

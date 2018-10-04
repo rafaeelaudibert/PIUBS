@@ -17,9 +17,10 @@ class Call < ApplicationRecord
   enum severity: [:low, :normal, :high, :huge]
 
   filterrific(
-   default_filter_params: { filtered_by: 'status_any'},
+   default_filter_params: { with_status: 'status_any'},
    available_filters: [
-     :filtered_by,
+     :sorted_by_creation,
+     :with_status,
      :with_ubs,
      :with_company,
      :with_state,
@@ -27,7 +28,17 @@ class Call < ApplicationRecord
    ]
  )
 
-  scope :filtered_by, lambda { |filter_key|
+   scope :sorted_by_creation, lambda { |sort_key|
+     sort = (sort_key =~ /asc$/) ? 'asc' : 'desc'
+     case sort_key.to_s
+     when /^creation_/
+       order(created_at: sort)
+     else
+       raise(ArgumentError, "Invalid filter option")
+     end
+   }
+
+  scope :with_status, lambda { |filter_key|
     filter = (filter_key =~ /open$/) ? 'open' : (filter_key =~ /reopened$/) ? 'reopened' : (filter_key =~ /closed$/) ? 'closed' : 'any'
     @status_i = (filter == 'open') ? 0 : (filter == 'reopened') ? 2 : (filter == 'closed') ? 1 : 4
     case filter_key.to_s
@@ -67,7 +78,14 @@ class Call < ApplicationRecord
     end
   }
 
-  def self.options_for_filtered_by()
+  def self.options_for_sorted_by_creation()
+    [
+      ['Mais recentes', 'creation_desc'],
+      ['Mais antigos', 'creation_asc']
+    ]
+  end
+
+  def self.options_for_with_status()
     [
       ['Status', 'status_any'],
       ['Abertos', 'status_open'],
