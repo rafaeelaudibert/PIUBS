@@ -19,8 +19,6 @@ class Answer < ApplicationRecord
   )
 
   scope :with_category, lambda { |category_id|
-    puts category_id
-    puts "hmmm"
     return nil if category_id == "category_any"
       if category_id != "category_id"
         where(faq: true, category_id: category_id)
