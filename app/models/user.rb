@@ -14,5 +14,9 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :invitable, :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+         :recoverable, :rememberable, :trackable, :validatable, :async
+
+  def send_devise_notification(notification, *args)
+     DeviseWorker.perform_async(devise_mailer, notification, id, *args)
+  end
 end
