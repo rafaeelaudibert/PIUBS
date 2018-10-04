@@ -13,17 +13,20 @@ class AnswersController < ApplicationController
 
   # get /faq
   def faq
-    @filterrific = initialize_filterrific(
-       Answer,
-       params[:filterrific],
-       select_options: {
-         with_category: Category.all.map { |a| [a.name, a.id] },
-       },
-       :persistence_id => false,
-     ) or return
+    (@filterrific = initialize_filterrific(
+      Answer,
+      params[:filterrific],
+      select_options: {
+        with_category: Category.all.map { |a| [a.name, a.id] }
+      },
+      persistence_id: false
+    )) || return
     @answers = Answer.filterrific_find(@filterrific).includes(:category).page(params[:page])
-    # A linha abaixo é backup do que tinha antes de add o filterrific
-    # @answers = Answer.where(faq: true).includes(:category).order('category_id ASC').paginate(page: params[:page], per_page: 25)
+
+    # As linha abaixo sao backup do que tinha antes de add o filterrific
+    # @answers = Answer.where(faq: true).includes(:category)
+    # .order('category_id ASC').paginate(page: params[:page], per_page: 25)
+
     respond_to do |format|
       format.html
       format.js
@@ -55,7 +58,7 @@ class AnswersController < ApplicationController
         @call = Call.find(params[:question_id])
         @call.closed!
 
-        # Retira a última answer caso ela não esteja no FAQ, e exclui seus attachment_links
+        # Retira a answer caso ela nao esteja no FAQ + attach_links
         if @call.answer_id && @call.answer.faq == false
           @oldAnswer = Answer.find(@call.answer_id)
           @oldAnswer.attachment_links.each(&:destroy)
@@ -63,7 +66,7 @@ class AnswersController < ApplicationController
           # Atualiza o answer_id
           @call.answer_id = @answer.id
           AnswerMailer.notify(@call, @answer, current_user).deliver_later
-          raise 'We could not set the call answer_id properly. Please check it' unless @call.save
+          raise 'Não conseguimos setar a answer de maneira correta.' unless @call.save
 
           # Destroi a anterior
           @oldAnswer.destroy
@@ -71,15 +74,15 @@ class AnswersController < ApplicationController
           # Atualiza o answer_id
           @call.answer_id = @answer.id
           AnswerMailer.notify(@call, @answer, current_user).deliver_later
-          raise 'We could not set the call answer_id properly. Please check it' unless @call.save
+          raise 'Não conseguimos setar a answer de maneira correta.' unless @call.save
         end
 
       end
 
       if files
         parsed_params = attachment_params files
-        parsed_params[:filename].each_with_index do |_filename, _index|
-          @attachment = Attachment.new(eachAttachment(parsed_params, _index))
+        parsed_params[:filename].each_with_index do |_filename, index|
+          @attachment = Attachment.new(eachAttachment(parsed_params, index))
           raise 'Não consegui anexar o arquivo. Por favor tente mais tarde' unless @attachment.save
 
           @link = AttachmentLink.new(attachment_id: @attachment.id, answer_id: @answer.id, source: 'answer')
@@ -88,8 +91,8 @@ class AnswersController < ApplicationController
       end
 
       # "IMPORT" attachments from the reply to this answer
-      reply_attachments_ids&.each do |_id|
-        @link = AttachmentLink.new(attachment_id: _id, answer_id: @answer.id, source: 'answer')
+      reply_attachments_ids&.each do |id|
+        @link = AttachmentLink.new(attachment_id: id, answer_id: @answer.id, source: 'answer')
         raise 'Não consegui criar o link entre arquivo que veio da reply e essa resposta. Por favor tente mais tarde' unless @link.save
       end
 
@@ -133,7 +136,7 @@ class AnswersController < ApplicationController
   # GET /answers/attachments/:id
   def attachments
     respond_to do |format|
-      format.js { render json: Answer.find(params[:id]).attachments.map { |_attachment| { filename: _attachment.filename, id: _attachment.id } } }
+      format.js { render json: Answer.find(params[:id]).attachments.map { |attachment| { filename: attachment.filename, id: attachment.id } } }
     end
   end
 
@@ -144,34 +147,35 @@ class AnswersController < ApplicationController
     @answer = Answer.find(params[:id])
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
+  # Never trust parameters from internet, only allow the white list through.
   def answer_params
     params[:answer][:keywords] = params[:answer][:keywords].split(',').join(' ; ')
-    params.require(:answer).permit(:keywords, :question, :answer, :category_id, :user_id, :faq, :question_id, :reply_attachments, file: [])
+    params.require(:answer).permit(:keywords, :question, :answer, :category_id,
+                                   :user_id, :faq, :question_id,
+                                   :reply_attachments, file: [])
   end
 
   ## ATTACHMENTS STUFF
-  # Never trust parameters from the scary internet, only allow the white list through.
   def attachment_params(file)
     parameters = {}
     if file
       parameters[:filename] = []
       parameters[:content_type] = []
       parameters[:file_contents] = []
-      file.each do |_file|
-        parameters[:filename].append(File.basename(_file.original_filename))
-        parameters[:content_type].append(_file.content_type)
-        parameters[:file_contents].append(_file.read)
+      file.each do |f|
+        parameters[:filename].append(File.basename(f.original_filename))
+        parameters[:content_type].append(f.content_type)
+        parameters[:file_contents].append(f.read)
       end
     end
     parameters
   end
 
-  def eachAttachment(_parsed_params, _index)
+  def eachAttachment(parsed_params, index)
     new_params = {}
-    new_params[:filename] = _parsed_params[:filename][_index]
-    new_params[:content_type] = _parsed_params[:content_type][_index]
-    new_params[:file_contents] = _parsed_params[:file_contents][_index]
+    new_params[:filename] = parsed_params[:filename][index]
+    new_params[:content_type] = parsed_params[:content_type][index]
+    new_params[:file_contents] = parsed_params[:file_contents][index]
     new_params
   end
 

@@ -14,7 +14,7 @@ module ApplicationHelper
   end
 
   def inside_layout(parent_layout, params)
-    view_flow.set :layout, capture { yield }
+    view_flow.set :layout, (capture { yield })
     render "layouts/#{parent_layout}", params: params
   end
 
@@ -43,11 +43,13 @@ module ApplicationHelper
     current_user.try(:faq_inserter?)
   end
 
-  def is_company_user # TODO: DEPRECATE IN FAVOR OF IS_COMPANY_USER?
+  # TODO: DEPRECATE IN FAVOR OF IS_COMPANY_USER?
+  def is_company_user
     current_user.try(:company_user?) || current_user.try(:company_admin?)
   end
 
-  def is_support_user # TODO: DEPRECATE IN FAVOR OF IS_SUPPORT_USER?
+  # TODO: DEPRECATE IN FAVOR OF IS_SUPPORT_USER?
+  def is_support_user
     current_user.try(:call_center_user?) || current_user.try(:call_center_admin?)
   end
 end

@@ -15,13 +15,7 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
-    unless current_user.id == @user.invited_by_id
-      unless current_user.admin?
-        unless @user == current_user
-          redirect_to root_path, alert: 'Access denied.'
-        end
-      end
-    end
+    redirect_to root_path, alert: 'Acesso Negado!' unless current_user.id == @user.invited_by_id || current_user.admin? || @user == current_user
   end
 
   def update
@@ -48,47 +42,35 @@ class UsersController < ApplicationController
   ### Functions to restrict user content
 
   def any_admin_only
-    unless current_user.admin? || current_user.city_admin? || current_user.company_admin? || current_user.ubs_admin? || current_user.call_center_admin?
-      redirect_to root_path, alert: 'Access denied.'
-    end
+    redirect_to root_path, alert: 'Acesso Negado!' unless current_user.admin? || current_user.city_admin? || current_user.company_admin? || current_user.ubs_admin? || current_user.call_center_admin?
   end
 
   def admin_only
-    redirect_to root_path, alert: 'Access denied.' unless current_user.admin?
+    redirect_to root_path, alert: 'Acesso Negado!' unless current_user.admin?
   end
 
   def city_admin_only
-    unless current_user.city_admin?
-      redirect_to root_path, alert: 'Access denied.'
-    end
+    redirect_to root_path, alert: 'Acesso Negado!' unless current_user.city_admin?
   end
 
   def city_user_only
-    unless current_user.city_user?
-      redirect_to root_path, alert: 'Access denied.'
-    end
+    redirect_to root_path, alert: 'Acesso Negado!' unless current_user.city_user?
   end
 
   def ubs_admin_only
-    unless current_user.ubs_admin?
-      redirect_to root_path, alert: 'Access denied.'
-    end
+    redirect_to root_path, alert: 'Acesso Negado!' unless current_user.ubs_admin?
   end
 
   def ubs_user_only
-    redirect_to root_path, alert: 'Access denied.' unless current_user.ubs_user?
+    redirect_to root_path, alert: 'Acesso Negado!' unless current_user.ubs_user?
   end
 
   def company_admin_only
-    unless current_user.company_admin?
-      redirect_to root_path, alert: 'Access denied.'
-    end
+    redirect_to root_path, alert: 'Acesso Negado!' unless current_user.company_admin?
   end
 
   def company_user_only
-    unless current_user.company_user?
-      redirect_to root_path, alert: 'Access denied.'
-    end
+    redirect_to root_path, alert: 'Acesso Negado!' unless current_user.company_user?
   end
 
   def secure_params

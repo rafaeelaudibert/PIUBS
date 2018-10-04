@@ -37,43 +37,42 @@ class Users::InvitationsController < Devise::InvitationsController
   def set_roles_allowed
     if current_user.admin?
       $roles_allowed = %i[faq_inserter admin city_admin ubs_admin company_admin call_center_admin]
+    elsif current_user.city_admin?
+      $roles_allowed = [:ubs_admin]
+    elsif current_user.ubs_admin?
+      $roles_allowed = [:ubs_user]
+    elsif current_user.company_admin?
+      $roles_allowed = [:company_user]
+    elsif current_user.call_center_admin?
+      $roles_allowed = [:call_center_user]
     else
-      if current_user.city_admin?
-        $roles_allowed = [:ubs_admin]
-      else
-        if current_user.ubs_admin?
-          $roles_allowed = [:ubs_user]
-        else
-          $roles_allowed = current_user.company_admin? ? [:company_user] : current_user.call_center_admin? ? [:call_center_user] : []
-        end
-      end
+      $roles_allowed = []
     end
   end
 
   def set_unities_allowed
-    if current_user.city_admin?
-      $unities_allowed = {}
-      Unity.where(['city_id = ?', current_user.city_id]).each do |_unity|
-        $unities_allowed[_unity.name] = _unity.cnes
-      end
+    return unless current_user.city_admin?
+
+    $unities_allowed = {}
+    Unity.where([city_id: current_user.city_id]).each do |unity|
+      $unities_allowed[unity.name] = unity.cnes
     end
   end
 
   def set_cities
-    if current_user.admin?
-      $cities = {}
-      City.all.each do |_city|
-        $cities[_city.name] = _city.id
-      end
+    return unless current_user.admin?
+
+    $cities = {}
+    City.all.each do |city|
+      $cities[city.name] = city.id
     end
   end
 
   def set_companies
-    if current_user.admin?
-      $companies = []
-      Company.all.each do |_company|
-        $companies << _company.sei
-      end
+    return unless current_user.admin?
+    $companies = []
+    Company.all.each do |company|
+      $companies << company.sei
     end
   end
 
@@ -96,7 +95,8 @@ class Users::InvitationsController < Devise::InvitationsController
       params.require(:user).require(:last_name)
       params.require(:user).require(:cpf)
     rescue StandardError
-      redirect_back fallback_location: not_found_path, alert: 'Por favor, preencha todos os campos.'
+      redirect_back fallback_location: not_found_path,
+                    alert: 'Por favor, preencha todos os campos.'
     end
   end
 
@@ -105,8 +105,6 @@ class Users::InvitationsController < Devise::InvitationsController
   end
 
   def admin_only
-    unless current_user.admin? || current_user.ubs_admin? || current_user.company_admin? || current_user.call_center_admin? || current_user.city_admin?
-      redirect_to root_path, alert: 'Access denied.'
-    end
+    redirect_to root_path, alert: 'Access denied.' unless current_user.admin? || current_user.ubs_admin? || current_user.company_admin? || current_user.call_center_admin? || current_user.city_admin?
   end
 end

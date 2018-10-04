@@ -14,91 +14,82 @@ class Call < ApplicationRecord
   has_many :attachments, through: :attachment_links
 
   ### SE ADICIONAR NOVO OU ALTERAR STATUS OU SEVERIDADE, LEMBRAR DE
-  ### ADICIONAR TAMBÉM NA TRADUÇÃO (config/locales/en.yml)
+  ### ADICIONAR TAMBEM NA TRADUCAO (config/locales/en.yml)
   enum status: %i[open closed reopened]
   enum severity: %i[low normal high huge]
 
   filterrific(
-   default_filter_params: { with_status: 'status_any', sorted_by_creation: 'creation_desc'},
-   available_filters: [
-     :sorted_by_creation,
-     :with_status,
-     :with_ubs,
-     :with_company,
-     :with_state,
-     :with_city
-   ]
- )
+    default_filter_params: { with_status: 'status_any',
+                             sorted_by_creation: 'creation_desc' },
+    available_filters: %i[
+      sorted_by_creation
+      with_status
+      with_ubs
+      with_company
+      with_state
+      with_city
+    ]
+  )
 
-   scope :sorted_by_creation, lambda { |sort_key|
-     sort = (sort_key =~ /asc$/) ? 'asc' : 'desc'
-     case sort_key.to_s
-     when /^creation_/
-       order(id: sort)
-     else
-       raise(ArgumentError, "Invalid filter option")
-     end
-   }
+  scope :sorted_by_creation, lambda { |sort_key|
+    sort = /asc$/.match?(sort_key) ? 'asc' : 'desc'
+    case sort_key.to_s
+    when /^creation_/
+      order(id: sort)
+    else
+      raise(ArgumentError, 'Invalid filter option')
+    end
+  }
 
   scope :with_status, lambda { |filter_key|
-    filter = (filter_key =~ /open$/) ? 'open' : (filter_key =~ /reopened$/) ? 'reopened' : (filter_key =~ /closed$/) ? 'closed' : 'any'
-    @status_i = (filter == 'open') ? 0 : (filter == 'reopened') ? 2 : (filter == 'closed') ? 1 : 4
+    filter = /open$/.match?(filter_key) ? 'open' : /reopened$/.match?(filter_key) ? 'reopened' : /closed$/.match?(filter_key) ? 'closed' : 'any'
+    @status_i = filter == 'open' ? 0 : filter == 'reopened' ? 2 : filter == 'closed' ? 1 : 4
     case filter_key.to_s
     when /^status_/
-        if(@status_i != 4)
-            where(status: @status_i)
-        end
+      where(status: @status_i) if @status_i != 4
     else
-      raise(ArgumentError, "Invalid filter option")
+      raise(ArgumentError, 'Invalid filter option')
     end
   }
 
   scope :with_ubs, lambda { |cnes|
-    return nil if cnes == [""]
-      if cnes != [""]
-        where(cnes: cnes)
-      end
+    return nil if cnes == ['']
+    where(cnes: cnes) if cnes != ['']
   }
 
   scope :with_company, lambda { |sei|
-    return nil if sei == [""]
-      if sei != [""]
-        where(sei: sei)
-      end
+    return nil if sei == ['']
+    where(sei: sei) if sei != ['']
   }
 
   scope :with_state, lambda { |state|
-    return [] if state == [""]
-      if state != [""]
-        where(state_id: state)
-      end
+    return [] if state == ['']
+    where(state_id: state) if state != ['']
   }
 
   scope :with_city, lambda { |city|
-    unless (city == 0)
-      where(city_id: city)
-    end
+    where(city_id: city) unless city.zero?
   }
 
-  def self.options_for_sorted_by_creation()
+  def self.options_for_sorted_by_creation
     [
       ['Mais recentes', 'creation_desc'],
       ['Mais antigos', 'creation_asc']
     ]
   end
 
-  def self.options_for_with_status()
+  def self.options_for_with_status
     [
-      ['Status', 'status_any'],
-      ['Abertos', 'status_open'],
-      ['Fechados', 'status_closed'],
-      ['Reabertos', 'status_reopened'],
+      %w[Status status_any],
+      %w[Abertos status_open],
+      %w[Fechados status_closed],
+      %w[Reabertos status_reopened]
     ]
   end
 
-  def self.options_for_with_city()
+  def self.options_for_with_city
     [
-      ['Cidade', 0],
+      ['Cidade', 0]
     ]
   end
 end

@@ -29,29 +29,31 @@ class RepliesController < ApplicationController
     @reply = Reply.new(rep_params)
     @reply.user_id = current_user.id
     @reply.status = @reply.call.status || 'Sem Status'
-    @reply.category = is_support_user || current_user.try(:admin?) ? 'support' : 'reply'
+    @reply.category = (is_support_user? || current_user.try(:admin?)) ? 'support' : 'reply'
 
     if @reply.save
       # CREATE an attachment
       if files
         parsed_params = attachment_params files
-        parsed_params[:filename].each_with_index do |_filename, _index|
-          @attachment = Attachment.new(eachAttachment(parsed_params, _index))
+        parsed_params[:filename].each_with_index do |_filename, index|
+          @attachment = Attachment.new(eachAttachment(parsed_params, index))
           raise 'Não consegui anexar o arquivo. Por favor tente mais tarde' unless @attachment.save
 
-          @link = AttachmentLink.new(attachment_id: @attachment.id, reply_id: @reply.id, source: 'reply')
+          @link = AttachmentLink.new(attachment_id: @attachment.id,
+                                     reply_id: @reply.id, source: 'reply')
           raise 'Não consegui criar o link entre arquivo e a resposta. Por favor tente mais tarde' unless @link.save
         end
       end
 
       # "IMPORT" attachments from the faq answer to this reply
-      faq_attachments_ids&.each do |_id|
-        @link = AttachmentLink.new(attachment_id: _id, reply_id: @reply.id, source: 'reply')
+      faq_attachments_ids&.each do |id|
+        @link = AttachmentLink.new(attachment_id: id, reply_id: @reply.id, source: 'reply')
         raise 'Não consegui criar o link entre arquivo que veio do FAQ e a resposta. Por favor tente mais tarde' unless @link.save
       end
 
       ReplyMailer.notify(@reply, current_user).deliver_later
-      redirect_to call_path(@reply.protocol), notice: 'Reply was successfully created.'
+      redirect_to call_path(@reply.protocol),
+                  notice: 'Reply was successfully created.'
     else
       render :new
     end
@@ -75,7 +77,7 @@ class RepliesController < ApplicationController
   # GET /replies/attachments/:id
   def attachments
     respond_to do |format|
-      format.js { render json: Reply.find(params[:id]).attachments.map { |_attachment| { filename: _attachment.filename, id: _attachment.id } } }
+      format.js { render json: Reply.find(params[:id]).attachments.map { |attachment| { filename: attachment.filename, id: attachment.id } } }
     end
   end
 
@@ -86,17 +88,10 @@ class RepliesController < ApplicationController
     @reply = Reply.find(params[:id])
   end
 
-  def is_company_user
-    current_user.try(:company_user?) || current_user.try(:company_admin?)
-  end
-
-  def is_support_user
-    current_user.try(:call_center_user?) || current_user.try(:call_center_admin?)
-  end
-
-  # Never trust parameters from the scary internet, only allow the white list through.
+  # Never trust parameters from internet, only allow the white list through.
   def reply_params
-    params.require(:reply).permit(:faq_attachments, :protocol, :description, :user_id, :faq, file: [])
+    params.require(:reply).permit(:faq_attachments, :protocol,
+                                  :description, :user_id, :faq, file: [])
   end
 
   def filter_role
@@ -109,27 +104,26 @@ class RepliesController < ApplicationController
   end
 
   ## ATTACHMENTS STUFF
-  # Never trust parameters from the scary internet, only allow the white list through.
   def attachment_params(file)
     parameters = {}
     if file
       parameters[:filename] = []
       parameters[:content_type] = []
       parameters[:file_contents] = []
-      file.each do |_file|
-        parameters[:filename].append(File.basename(_file.original_filename))
-        parameters[:content_type].append(_file.content_type)
-        parameters[:file_contents].append(_file.read)
+      file.each do |f|
+        parameters[:filename].append(File.basename(f.original_filename))
+        parameters[:content_type].append(f.content_type)
+        parameters[:file_contents].append(f.read)
       end
     end
     parameters
   end
 
-  def eachAttachment(_parsed_params, _index)
+  def eachAttachment(parsed_params, index)
     new_params = {}
-    new_params[:filename] = _parsed_params[:filename][_index]
-    new_params[:content_type] = _parsed_params[:content_type][_index]
-    new_params[:file_contents] = _parsed_params[:file_contents][_index]
+    new_params[:filename] = parsed_params[:filename][index]
+    new_params[:content_type] = parsed_params[:content_type][index]
+    new_params[:file_contents] = parsed_params[:file_contents][index]
     new_params
   end
 end

@@ -57,7 +57,7 @@ class UnitiesController < ApplicationController
     @unity = Unity.find(params[:cnes])
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
+  # Never trust parameters from internet, only allow the white list through.
   def unity_params
     params.require(:unity).permit(:cnes, :name, :city_id)
   end

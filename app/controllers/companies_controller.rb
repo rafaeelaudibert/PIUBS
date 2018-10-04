@@ -14,8 +14,8 @@ class CompaniesController < ApplicationController
   # GET /companies/1
   # GET /companies/1.json
   def show
-    @contracts = Contract.where('sei = ?', @company.sei).paginate(page: params[:page], per_page: 25)
-    @users = User.where('sei = ?', @company.sei)
+    @contracts = Contract.where(sei: @company.sei).paginate(page: params[:page], per_page: 25)
+    @users = User.where(sei: @company.sei)
   end
 
   # GET /companies/new
@@ -30,7 +30,9 @@ class CompaniesController < ApplicationController
   def create
     @company = Company.new(company_params)
     if @company.save
-      redirect_to new_user_invitation_path(sei: @company.sei, role: 'company_admin'), notice: 'Company was successfully created. Please add its admin'
+      redirect_to new_user_invitation_path(sei: @company.sei,
+                                           role: 'company_admin'),
+                  notice: 'Company successfully created. Please add its admin'
     else
       render :new
     end
@@ -47,12 +49,11 @@ class CompaniesController < ApplicationController
 
   # DELETE /companies/1
   def destroy
-    begin
     @company.destroy
-      redirect_to companies_url, notice: 'Company was successfully destroyed.'
-    rescue
-      redirect_back fallback_location: companies_url, alert: 'A empresa não pode ser apagada pois possui atendimentos/usuários cadastrados'
-    end
+    redirect_to companies_url, notice: 'Company was successfully destroyed.'
+  rescue StandardError
+    redirect_back fallback_location: companies_url,
+                  alert: 'A empresa não pode ser apagada pois possui atendimentos/usuários cadastrados'
   end
 
   # GET /companies/1/states
@@ -94,7 +95,7 @@ class CompaniesController < ApplicationController
     @company = Company.find(params[:sei])
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
+  # Never trust parameters from internet, only allow the white list through.
   def company_params
     params.require(:company).permit(:sei)
   end

@@ -45,7 +45,7 @@ gem 'bootstrap', '~> 4.1.3'
 gem 'carrierwave'
 gem 'coffee-rails', '~> 4.2'
 gem 'devise'
-gem "devise-async"
+gem 'devise-async'
 gem 'devise_invitable'
 gem 'high_voltage'
 gem 'jbuilder', '~> 2.5'
@@ -70,7 +70,7 @@ gem 'data-confirm-modal'        # Modals for confimations
 gem 'filterrific', '~> 5.1.0'   # Filtering
 gem 'font-awesome-rails'        # Icons
 gem 'mail_form', '>= 1.3.0'     # Mailer gem
-gem 'mini_racer'                # Fix "Autoprefixer doesn’t support Node v4.2.6"
+gem 'mini_racer'                # Fix "Autoprefixer doesn't support Node v4.2.6"
 gem 'pg_search'                 # Full-text search gem
 gem 'shog'                      # Colorized console logging
 gem 'tinymce-rails'             # WSYCWYG Text Editor
