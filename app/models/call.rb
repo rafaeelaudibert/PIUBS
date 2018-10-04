@@ -17,7 +17,7 @@ class Call < ApplicationRecord
   enum severity: [:low, :normal, :high, :huge]
 
   filterrific(
-   default_filter_params: { with_status: 'status_any'},
+   default_filter_params: { with_status: 'status_any', sorted_by_creation: 'creation_desc'},
    available_filters: [
      :sorted_by_creation,
      :with_status,
@@ -32,7 +32,7 @@ class Call < ApplicationRecord
      sort = (sort_key =~ /asc$/) ? 'asc' : 'desc'
      case sort_key.to_s
      when /^creation_/
-       order(created_at: sort)
+       order(id: sort)
      else
        raise(ArgumentError, "Invalid filter option")
      end
