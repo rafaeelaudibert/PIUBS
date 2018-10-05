@@ -12,7 +12,7 @@
         </div>
       <% end %>
 
-      <% if current_user.try(:call_center_admin?) || current_user.try(:call_center_user?) %>
+      <% if current_user.try(:admin?) || current_user.try(:call_center_admin?) || current_user.try(:call_center_user?) %>
         <div class="form-group" style="width:15%; float:right;">
           <%= f.select(:with_company, @filterrific.select_options[:with_company], {multiple: true, include_blank: "Empresa"}, {:class => "form-control", :style => "width:100%;"}) %>
         </div>
