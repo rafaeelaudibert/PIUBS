@@ -14,9 +14,12 @@
           <%= f.select(:with_state, @filterrific.select_options[:with_state], {multiple: true, include_blank: "Estado"}, {:class => "form-control", :style => "width:100%;"}) %>
         </div>
         <div class="form-group" style="width:15%; float:right;">
-          <%= f.select(:with_company, @filterrific.select_options[:with_company], {multiple: true, include_blank: "Estado"}, {:class => "form-control", :style => "width:100%;"}) %>
+          <%= f.select(:with_company, @filterrific.select_options[:with_company], {multiple: true, include_blank: "Empresa"}, {:class => "form-control", :style => "width:100%;"}) %>
         </div>
-        <div class="form-group" style="width:10%; float:right;">
+        <div class="form-group" style="width:15%; float:right;">
+          <%= f.select(:with_role, @filterrific.select_options[:with_role], {multiple: true, include_blank: "Perfil"}, {:class => "form-control", :style => "width:100%;"}) %>
+        </div>
+        <div class="form-group" style="width:12%; float:right;">
           <%= f.select(:with_status_adm, @filterrific.select_options[:with_status_adm], {multiple: true, include_blank: "Todos"}, {:class => "form-control", :style => "width:100%;"}) %>
         </div>
       <% end %>
@@ -26,6 +29,10 @@
           <%= f.select(:with_status, @filterrific.select_options[:with_status], {multiple: true, include_blank: "Todos"}, {:class => "form-control", :style => "width:100%;"}) %>
         </div>
       <% end %>
+
+      <div class="form-group" style="width:12%; float: right;">
+        <%= f.select(:sorted_by_name, @filterrific.select_options[:sorted_by_name], {multiple: true}, {:class => "form-control", :style => "width:100%;"}) %>
+      </div>
 
     </div>
     <div>

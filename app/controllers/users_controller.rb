@@ -11,21 +11,21 @@ class UsersController < ApplicationController
        User,
        params[:filterrific],
        select_options: {
-         sorted_by_name: User.options_for_sorted_by_name(),
-         with_role: User.options_for_with_role(),
+         sorted_by_name: User.all.options_for_sorted_by_name(),
+         with_role: User.all.options_for_with_role(),
          with_status_adm: User.options_for_with_status_adm(),
-         with_status: User.options_for_with_status(),
+         with_status: User.all.options_for_with_status(),
          with_state: State.all.map { |s| [s.name, s.id] },
-         with_city: User.options_for_with_city(),
+         with_city: User.all.options_for_with_city(),
          with_company: Company.all.map { |c| c.sei }
        },
        :persistence_id => false,
      ) or return
 
     if current_user.try(:admin?)
-      @users = @filterrific.find.page(params[:page])
+      @users = @filterrific.find.page(params[:page]).limit(999999)
     elsif current_user.try(:call_center_admin?) || current_user.try(:city_admin?) || current_user.try(:company_admin?) || current_user.try(:ubs_admin?)
-      @users = @filterrific.find.page(params[:page]).where(invited_by_id: current_user.id)
+      @users = @filterrific.find.page(params[:page]).where(invited_by_id: current_user.id).limit(999999)
     end
   end
 

@@ -47,14 +47,15 @@ class User < ApplicationRecord
   }
 
   scope :with_status_adm, lambda { |status|
-    return nil if status == ""
-      if status == "registered"
-        where("invitation_accepted_at IS NOT NULL")
-      elsif status == "invited"
-        where("invitation_sent_at IS NOT NULL AND invitation_accepted_at IS NULL")
-      elsif status == "bot"
-        where("invitation_sent_at IS NULL AND invitation_accepted_at IS NULL")
-      end
+    if status == "" || status == "all"
+      return nil
+    elsif status == "registered"
+      where("invitation_accepted_at IS NOT NULL")
+    elsif status == "invited"
+      where("invitation_sent_at IS NOT NULL AND invitation_accepted_at IS NULL")
+    elsif status == "bot"
+      where("invitation_sent_at IS NULL AND invitation_accepted_at IS NULL")
+    end
   }
 
   scope :with_status, lambda { |status|
@@ -69,6 +70,12 @@ class User < ApplicationRecord
   scope :with_city, lambda { |city|
     unless (city == 0)
       where(city_id: city)
+    end
+  }
+
+  scope :with_company, lambda { |sei|
+    unless (sei == "")
+      where(sei: sei)
     end
   }
 
