@@ -66,16 +66,15 @@ class CategoriesController < ApplicationController
     @category = Category.find(params[:id])
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
+  # Never trust parameters from internet, only allow the white list through.
   def category_params
-    puts params
     parent_id = params[:category][:parent_id]
-    puts parent_id
     params[:category][:parent_depth] = 1 + Category.find(parent_id).parent_depth if parent_id
-    params.require(:category).permit(:name, :parent_id, :parent_depth, :severity)
+    params.require(:category).permit(:name, :parent_id,
+                                     :parent_depth, :severity)
   end
 
   def filter_role
-    redirect_to denied_path unless is_admin?
+    redirect_to denied_path unless admin?
   end
 end

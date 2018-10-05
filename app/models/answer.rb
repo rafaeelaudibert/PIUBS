@@ -11,20 +11,20 @@ class Answer < ApplicationRecord
   validates :category_id, presence: true
   validates :user_id, presence: true
   validates :faq, inclusion: { in: [true, false],
-                               message: 'this one is not allowed. Choose from True or False' }
+                               message: 'this one is not allowed.
+                                          Choose from True or False' }
 
-   filterrific(
-    default_filter_params: { with_category: 'category_any'},
+  filterrific(
+    default_filter_params: { with_category: 'category_any' },
     available_filters: [
-      :with_category,
+      :with_category
     ]
   )
 
   scope :with_category, lambda { |category_id|
-    return nil if category_id == "category_any"
-      if category_id != "category_id"
-        where(faq: true, category_id: category_id)
-      end
+    return nil if category_id == 'category_any'
+
+    where(faq: true, category_id: category_id) if category_id != 'category_id'
   }
 
   # PgSearch stuff
