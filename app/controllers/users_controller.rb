@@ -6,10 +6,26 @@ class UsersController < ApplicationController
   include ApplicationHelper
 
   def index
+
+    @filterrific = initialize_filterrific(
+       User,
+       params[:filterrific],
+       select_options: {
+         sorted_by_name: User.options_for_sorted_by_name(),
+         with_role: User.options_for_with_role(),
+         with_status_adm: User.options_for_with_status_adm(),
+         with_status: User.options_for_with_status(),
+         with_state: State.all.map { |s| [s.name, s.id] },
+         with_city: User.options_for_with_city(),
+         with_company: Company.all.map { |c| c.sei }
+       },
+       :persistence_id => false,
+     ) or return
+
     if current_user.try(:admin?)
-      @users = User.all.where('invitation_created_at IS NOT NULL').order(invitation_accepted_at: :desc)
+      @users = @filterrific.find.page(params[:page])
     elsif current_user.try(:call_center_admin?) || current_user.try(:city_admin?) || current_user.try(:company_admin?) || current_user.try(:ubs_admin?)
-      @users = User.where(invited_by_id: current_user.id).order(invitation_accepted_at: :asc)
+      @users = @filterrific.find.page(params[:page]).where(invited_by_id: current_user.id)
     end
   end
 
