@@ -75,6 +75,6 @@ class CategoriesController < ApplicationController
   end
 
   def filter_role
-    redirect_to denied_path unless is_admin?
+    redirect_to denied_path unless admin?
   end
 end

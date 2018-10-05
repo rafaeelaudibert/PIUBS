@@ -26,7 +26,7 @@ class AttachmentsController < ApplicationController
   def create
     parsed_params = attachment_params
     parsed_params[:filename].each_with_index do |_filename, index|
-      @attachment = Attachment.new(eachAttachment(parsed_params, index))
+      @attachment = Attachment.new(each_attachment(parsed_params, index))
       raise 'Não consegui anexar o arquivo. Por favor tente mais tarde' unless @attachment.save
     end
 
@@ -87,7 +87,7 @@ class AttachmentsController < ApplicationController
     parameters
   end
 
-  def eachAttachment(parsed_params, index)
+  def each_attachment(parsed_params, index)
     new_params = {}
     new_params[:filename] = parsed_params[:filename][index]
     new_params[:content_type] = parsed_params[:content_type][index]
@@ -98,21 +98,40 @@ class AttachmentsController < ApplicationController
   def filter_role
     action = params[:action]
     if %w[index show edit update].include? action
-      redirect_to denied_path unless is_admin?
+      redirect_to denied_path unless admin?
     elsif action == 'download'
       sei = current_user.sei
       links = @attachment.attachmentlinks
-      unless is_admin? || is_support_user?
-        if is_company_user
+      unless admin? || support_user?
+        if company_user?
           links.each do |link|
             # Answer check
-            redirect_to denied_path if link.answer? && !link.answer.faq && ((current_user.try(:company_admin?) && Call.where(answer_id: link.answer_id).first.sei != sei) || (current_user.try(:company_user?) && Call.where(answer_id: link.answer_id).first.user_id != id))
+            if link.answer? &&
+               !link.answer.faq &&
+               ((current_user.try(:company_admin?) &&
+                 Call.where(answer_id: link.answer_id).first.sei != sei) ||
+                (current_user.try(:company_user?) &&
+                 Call.where(answer_id: link.answer_id).first.user_id != id))
+              redirect_to denied_path
+            end
 
             # Reply check
-            redirect_to denied_path if link.reply? && ((current_user.try(:company_admin?) && Call.find(link.reply.protocol).sei != sei) || (current_user.try(:company_user?) && Call.find(link.reply.protocol).user_id != id))
+            if link.reply? &&
+               ((current_user.try(:company_admin?) &&
+                 Call.find(link.reply.protocol).sei != sei) ||
+                (current_user.try(:company_user?) &&
+                 Call.find(link.reply.protocol).user_id != id))
+              redirect_to denied_path
+            end
 
             # Call check
-            redirect_to denied_path if link.call? && ((current_user.try(:company_admin?) && link.call.sei != sei) || (current_user.try(:company_user?) && link.call.user_id != id))
+            next unless link.call? &&
+                        ((current_user.try(:company_admin?) &&
+                          link.call.sei != sei) ||
+                         (current_user.try(:company_user?) &&
+                          link.call.user_id != id))
+
+            redirect_to denied_path
           end
         else
           redirect_to denied_path

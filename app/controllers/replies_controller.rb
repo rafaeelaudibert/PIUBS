@@ -25,30 +25,38 @@ class RepliesController < ApplicationController
   def create
     rep_params = reply_params
     files = rep_params.delete(:file) if rep_params[:file]
-    faq_attachments_ids = rep_params.delete(:faq_attachments).split(',') if rep_params[:faq_attachments]
+    attach = rep_params[:faq_attachments]
+    faq_attachments_ids = rep_params.delete(:faq_attachments).split(',') if attach
+    support_or_admin = support_user? || current_user.try(:admin?)
     @reply = Reply.new(rep_params)
     @reply.user_id = current_user.id
     @reply.status = @reply.call.status || 'Sem Status'
-    @reply.category = (is_support_user? || current_user.try(:admin?)) ? 'support' : 'reply'
+    @reply.category = support_or_admin ? 'support' : 'reply'
 
     if @reply.save
       # CREATE an attachment
       if files
         parsed_params = attachment_params files
         parsed_params[:filename].each_with_index do |_filename, index|
-          @attachment = Attachment.new(eachAttachment(parsed_params, index))
+          @attachment = Attachment.new(each_attachment(parsed_params, index))
           raise 'Não consegui anexar o arquivo. Por favor tente mais tarde' unless @attachment.save
 
           @link = AttachmentLink.new(attachment_id: @attachment.id,
                                      reply_id: @reply.id, source: 'reply')
-          raise 'Não consegui criar o link entre arquivo e a resposta. Por favor tente mais tarde' unless @link.save
+          unless @link.save
+            raise 'Não consegui criar o link entre arquivo e a resposta.'\
+                  ' Por favor tente mais tarde'
+          end
         end
       end
 
       # "IMPORT" attachments from the faq answer to this reply
       faq_attachments_ids&.each do |id|
         @link = AttachmentLink.new(attachment_id: id, reply_id: @reply.id, source: 'reply')
-        raise 'Não consegui criar o link entre arquivo que veio do FAQ e a resposta. Por favor tente mais tarde' unless @link.save
+        unless @link.save
+          raise 'Não consegui criar o link entre arquivo que veio do FAQ e a resposta.'\
+                ' Por favor tente mais tarde'
+        end
       end
 
       ReplyMailer.notify(@reply, current_user).deliver_later
@@ -77,7 +85,14 @@ class RepliesController < ApplicationController
   # GET /replies/attachments/:id
   def attachments
     respond_to do |format|
-      format.js { render json: Reply.find(params[:id]).attachments.map { |attachment| { filename: attachment.filename, id: attachment.id } } }
+      format.js do
+        render(json: Reply.find(params[:id])
+                                    .attachments
+                                    .map do |attachment|
+                       { filename: attachment.filename,
+                         id: attachment.id }
+                     end)
+      end
     end
   end
 
@@ -97,9 +112,9 @@ class RepliesController < ApplicationController
   def filter_role
     action = params[:action]
     if %w[index destroy edit update show].include? action
-      redirect_to denied_path unless is_admin?
+      redirect_to denied_path unless admin?
     elsif %w[attachments].include? action
-      redirect_to denied_path unless is_admin? || is_support_user
+      redirect_to denied_path unless admin? || support_user?
     end
   end
 
@@ -119,7 +134,7 @@ class RepliesController < ApplicationController
     parameters
   end
 
-  def eachAttachment(parsed_params, index)
+  def each_attachment(parsed_params, index)
     new_params = {}
     new_params[:filename] = parsed_params[:filename][index]
     new_params[:content_type] = parsed_params[:content_type][index]

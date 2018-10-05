@@ -22,18 +22,13 @@ def seed_users
               email: 'admin@piubs.com', role: 'admin', sei: 0,
               password: 'changeme', password_confirmation: 'changeme').save
     User.roles.each do |role|
-      # Prevent from creating this, as they will be already created later or have already been created
+      # Prevent from creating this, as they will be/have already been handled
       next if %w[admin company_admin company_user].include? role[0]
 
-      role_name = role[0]
-      email = role_name + '@piubs.com'
-      passwd = 'changeme'
-      user = User.new(cpf: CPF.generate,
-                      name: role_name.capitalize,
-                      email: email,
-                      password: passwd,
-                      password_confirmation: passwd,
-                      role: role_name)
+      email = role[0] + '@piubs.com'
+      user = User.new(cpf: CPF.generate, name: role[0].capitalize,
+                      email: email, role: role[0],
+                      password: 'changeme', password_confirmation: 'changeme')
       if user.save
         Rails.logger.debug("User #{email} was created successfuly!")
       else
@@ -240,11 +235,10 @@ def seed_categories
 end
 
 def seed_answers
-  size = 2_000
   categories = Category.all
   allowed_users = User.where(role: %w[call_center_admin call_center_user])
   Rails.logger.info('[START]  -- Answers (and FAQ) insertion')
-  (1..size).each do |_|
+  (1..2_000).each do |_|
     answer = Answer.new(question: Faker::Lorem.sentence(50, true, 6),
                         answer: Faker::Lorem.sentence(50, true, 6),
                         category_id: categories.sample.id,
@@ -262,12 +256,12 @@ def seed_answers
 end
 
 def seed_calls
-  size = 300
   unities = Unity.all
   categories = Category.all
   acess_profiles = %w[Médico Enfermeiro Administrador Secretário]
+
   Rails.logger.info('[START]  -- Calls insertion')
-  (1..size).each do |_|
+  (1..300).each do |_|
     ubs = unities.sample
     city = City.find(ubs.city_id)
     contract = Contract.where(city_id: city.id).first
@@ -299,18 +293,21 @@ def seed_calls
 end
 
 def seed_replies
-  quantity = 2000
   calls = Call.all
+  call_center_users = User.where(role: %w[call_center_admin call_center_user])
+  company_users = User.where(role: %w[company_admin company_user])
+
   Rails.logger.info('[START]  -- Replies (and FAQ) insertion')
-  (1..quantity).each do |_|
-    user = Random.rand > 0.7 ? User.where(role: %w[call_center_admin call_center_user]).sample : User.where(role: %w[company_admin company_user]).sample
+  (1..2000).each do |_|
+    random = Random.rand
+    user = random > 0.60 ? call_center_users.sample : company_users.sample
     call = calls.sample
     reply = Reply.new(protocol: call.protocol,
                       description: Faker::Lorem.sentence(25, true, 0),
                       user_id: user.id,
                       status: [0, 1, 2].sample,
-                      category: %w[company_admin company_user].include?(user.role) ? 'reply' : 'support',
-                      faq: %w[company_admin company_user].include?(user.role) ? false : Random.rand > 0.90)
+                      category: random > 0.60 ? 'support' : 'reply',
+                      faq: random > 0.90)
     if reply.save
       Rails.logger.debug("Inserted a new reply to the protocol #{reply.protocol}")
       seed_faq_from_replies(call, reply) if reply.faq
@@ -352,3 +349,9 @@ def main
 end
 
 main
+
+private
+
+def company_user?(user)
+  %w[company_admin company_user].include?(user.role)
+end

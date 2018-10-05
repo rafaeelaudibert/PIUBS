@@ -35,19 +35,19 @@ class Users::InvitationsController < Devise::InvitationsController
   private
 
   def set_roles_allowed
-    if current_user.admin?
-      $roles_allowed = %i[faq_inserter admin city_admin ubs_admin company_admin call_center_admin]
-    elsif current_user.city_admin?
-      $roles_allowed = [:ubs_admin]
-    elsif current_user.ubs_admin?
-      $roles_allowed = [:ubs_user]
-    elsif current_user.company_admin?
-      $roles_allowed = [:company_user]
-    elsif current_user.call_center_admin?
-      $roles_allowed = [:call_center_user]
-    else
-      $roles_allowed = []
-    end
+    $roles_allowed = if current_user.admin?
+                       %i[faq_inserter admin city_admin ubs_admin company_admin call_center_admin]
+                     elsif current_user.city_admin?
+                       [:ubs_admin]
+                     elsif current_user.ubs_admin?
+                       [:ubs_user]
+                     elsif current_user.company_admin?
+                       [:company_user]
+                     elsif current_user.call_center_admin?
+                       [:call_center_user]
+                     else
+                       []
+                     end
   end
 
   def set_unities_allowed
@@ -70,6 +70,7 @@ class Users::InvitationsController < Devise::InvitationsController
 
   def set_companies
     return unless current_user.admin?
+
     $companies = []
     Company.all.each do |company|
       $companies << company.sei
@@ -89,7 +90,9 @@ class Users::InvitationsController < Devise::InvitationsController
   end
 
   def update_sanitized_params
-    devise_parameter_sanitizer.permit(:accept_invitation, keys: %i[name last_name password password_confirmation invitation_token cpf])
+    devise_parameter_sanitizer.permit(:accept_invitation,
+                                      keys: %i[name last_name password
+                                               password_confirmation invitation_token cpf])
     begin
       params.require(:user).require(:name)
       params.require(:user).require(:last_name)
@@ -105,6 +108,12 @@ class Users::InvitationsController < Devise::InvitationsController
   end
 
   def admin_only
-    redirect_to root_path, alert: 'Access denied.' unless current_user.admin? || current_user.ubs_admin? || current_user.company_admin? || current_user.call_center_admin? || current_user.city_admin?
+    unless current_user.admin? ||
+           current_user.ubs_admin? ||
+           current_user.company_admin? ||
+           current_user.call_center_admin? ||
+           current_user.city_admin?
+      redirect_to root_path, alert: 'Acesso negado.'
+    end
   end
 end

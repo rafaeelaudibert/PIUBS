@@ -65,9 +65,9 @@ class UnitiesController < ApplicationController
   def filter_role
     action = params[:action]
     if %w[new create destroy edit update show].include? action
-      redirect_to denied_path unless is_admin?
+      redirect_to denied_path unless admin?
     elsif %w[index show].include? action
-      redirect_to denied_path unless is_admin? || is_support_user
+      redirect_to denied_path unless admin? || support_user?
     end
   end
 end

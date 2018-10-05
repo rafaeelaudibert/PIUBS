@@ -87,11 +87,16 @@ class CallsController < ApplicationController
       if files
         parsed_params = attachment_params files
         parsed_params[:filename].each_with_index do |_filename, index|
-          @attachment = Attachment.new(eachAttachment(parsed_params, index))
+          @attachment = Attachment.new(each_attachment(parsed_params, index))
           raise 'Não consegui anexar o arquivo. Por favor tente mais tarde' unless @attachment.save
 
-          @link = AttachmentLink.new(attachment_id: @attachment.id, call_id: @call.id, source: 'call')
-          raise 'Não consegui criar o link entre arquivo e o atendimento. Por favor tente mais tarde' unless @link.save
+          @link = AttachmentLink.new(attachment_id: @attachment.id,
+                                     call_id: @call.id,
+                                     source: 'call')
+          unless @link.save
+            raise 'Não consegui criar o link entre arquivo e o atendimento.'\
+                  ' Por favor tente mais tarde'
+          end
         end
       end
 
@@ -161,14 +166,17 @@ class CallsController < ApplicationController
 
     if @call.save
 
-      # Retira a ultima answer caso ela não esteja no FAQ,
+      # Retira a ultima answer caso ela nao esteja no FAQ,
       # e exclui seus attachment_links
       if @call.answer_id && @call.answer.faq == false
         @answer = Answer.find(@call.answer_id)
         @answer.attachment_links.each(&:destroy)
 
         @call.answer_id = nil # Retira o answer_id
-        raise 'Não conseguimos remover a call_id corretamente, ao tentar reabri-la. Por favor, verifique' unless @call.save
+        unless @call.save
+          raise 'Não conseguimos remover a call_id corretamente, ao tentar reabri-la.'\
+                ' Por favor, verifique'
+        end
 
         @answer.destroy # Destroi a resposta final anterior
       end
@@ -218,7 +226,7 @@ class CallsController < ApplicationController
     parameters
   end
 
-  def eachAttachment(parsed_params, index)
+  def each_attachment(parsed_params, index)
     new_params = {}
     new_params[:filename] = parsed_params[:filename][index]
     new_params[:content_type] = parsed_params[:content_type][index]
@@ -229,13 +237,18 @@ class CallsController < ApplicationController
   def filter_role
     action = params[:action]
     if %w[edit update].include? action
-      redirect_to denied_path unless is_admin?
+      redirect_to denied_path unless admin?
     elsif %w[new create destroy].include? action
-      redirect_to denied_path unless is_admin? || is_support_user? || is_company_user?
+      redirect_to denied_path unless admin? || support_user? || company_user?
     elsif action == 'show'
-      redirect_to denied_path unless (current_user.try(:company_admin?) && @call.sei == current_user.sei) || ((current_user.try(:company_user?) && @call.user_id == current_user.id)) || is_support_user? || is_admin?
+      unless (current_user.try(:company_admin?) && @call.sei == current_user.sei) ||
+             (current_user.try(:company_user?) && @call.user_id == current_user.id) ||
+             support_user? ||
+             admin?
+        redirect_to denied_path
+      end
     elsif action == 'index'
-      redirect_to faq_path unless is_admin? || is_support_user? || is_company_user?
+      redirect_to faq_path unless admin? || support_user? || company_user?
     end
   end
 end

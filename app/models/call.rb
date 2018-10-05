@@ -42,28 +42,39 @@ class Call < ApplicationRecord
   }
 
   scope :with_status, lambda { |filter_key|
-    filter = /open$/.match?(filter_key) ? 'open' : /reopened$/.match?(filter_key) ? 'reopened' : /closed$/.match?(filter_key) ? 'closed' : 'any'
-    @status_i = filter == 'open' ? 0 : filter == 'reopened' ? 2 : filter == 'closed' ? 1 : 4
+    @status_i = if /open$/.match?(filter_key)
+                  0
+                elsif /closed$/.match?(filter_key)
+                  1
+                elsif /reopened$/.match?(filter_key)
+                  2
+                else
+                  4
+                end
+
     case filter_key.to_s
     when /^status_/
       where(status: @status_i) if @status_i != 4
     else
-      raise(ArgumentError, 'Invalid filter option')
+      raise(ArgumentError, 'Opção de filtro inválida')
     end
   }
 
   scope :with_ubs, lambda { |cnes|
     return nil if cnes == ['']
+
     where(cnes: cnes) if cnes != ['']
   }
 
   scope :with_company, lambda { |sei|
     return nil if sei == ['']
+
     where(sei: sei) if sei != ['']
   }
 
   scope :with_state, lambda { |state|
     return [] if state == ['']
+
     where(state_id: state) if state != ['']
   }
 

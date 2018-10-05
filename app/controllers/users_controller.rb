@@ -7,15 +7,22 @@ class UsersController < ApplicationController
 
   def index
     if current_user.try(:admin?)
-      @users = User.all.where('invitation_created_at IS NOT NULL').order(invitation_accepted_at: :desc)
-    elsif current_user.try(:call_center_admin?) || current_user.try(:city_admin?) || current_user.try(:company_admin?) || current_user.try(:ubs_admin?)
+      @users = User.where('invitation_created_at IS NOT NULL').order(invitation_accepted_at: :desc)
+    elsif current_user.try(:call_center_admin?) ||
+          current_user.try(:city_admin?) ||
+          current_user.try(:company_admin?) ||
+          current_user.try(:ubs_admin?)
       @users = User.where(invited_by_id: current_user.id).order(invitation_accepted_at: :asc)
     end
   end
 
   def show
     @user = User.find(params[:id])
-    redirect_to root_path, alert: 'Acesso Negado!' unless current_user.id == @user.invited_by_id || current_user.admin? || @user == current_user
+    unless current_user.id == @user.invited_by_id ||
+           current_user.admin? ||
+           @user == current_user
+      redirect_to root_path, alert: 'Acesso Negado!'
+    end
   end
 
   def update
@@ -32,17 +39,24 @@ class UsersController < ApplicationController
     redirect_to users_path, notice: 'User deleted.'
   end
 
-  def get_invitation_role
-    $selected_role = params.require(:user).require(:role)
-    redirect_to new_user_invitation_path
-  end
+  # RafaAudibert 5/10/18 - Removido para evitar erros do rubocop. Nao aparece em nenhum outro lugar
+  # def get_invitation_role
+  #   $selected_role = params.require(:user).require(:role)
+  #   redirect_to new_user_invitation_path
+  # end
 
   private
 
   ### Functions to restrict user content
 
   def any_admin_only
-    redirect_to root_path, alert: 'Acesso Negado!' unless current_user.admin? || current_user.city_admin? || current_user.company_admin? || current_user.ubs_admin? || current_user.call_center_admin?
+    unless current_user.admin? ||
+           current_user.city_admin? ||
+           current_user.company_admin? ||
+           current_user.ubs_admin? ||
+           current_user.call_center_admin?
+      redirect_to root_path, alert: 'Acesso Negado!'
+    end
   end
 
   def admin_only

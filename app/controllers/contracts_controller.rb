@@ -29,12 +29,12 @@ class ContractsController < ApplicationController
   # POST /contracts
   def create
     @contract = Contract.new(contract_params)
-    if hasOneCity # If there already is a city with this ID in the database
+    if one_city? # If there already is a city with this ID in the database
       @contract.errors.add(:city_id,
                            :blank,
                            message: 'Essa cidade já possui um contrato')
       render :new
-    elsif !checkPDF
+    elsif !check_pdf
       @contract.errors.add(:filename,
                            :blank,
                            message: 'Você precisa inserir um contrato em formato PDF')
@@ -49,11 +49,11 @@ class ContractsController < ApplicationController
   # PATCH/PUT /contracts/1
   def update
     # If there already is a city with this ID in the database
-    if hasOneCityEdit(@contract.city_id)
+    if one_city_edit?(@contract.city_id)
       @contract.errors.add(:city_id, :blank,
                            message: 'Essa cidade já possui um contrato')
       render :edit
-    elsif !checkPDF
+    elsif !check_pdf
       @contract.errors.add(:filename, :blank,
                            message: 'Você precisa inserir um contrato em formato PDF')
       render :edit
@@ -104,13 +104,13 @@ class ContractsController < ApplicationController
   end
 
   # Try to see if the city already have a contract
-  def hasOneCity
+  def one_city?
     ans = Contract.where(city_id: params.require(:contract).require(:city_id)).first
     !ans.nil? # Returns true if there already is a city with this
   end
 
   # Try to see if the city already have a contract during the edit
-  def hasOneCityEdit(id)
+  def one_city_edit?(id)
     city_id = params.require(:contract).require(:city_id)
     ans = Contract.where(city_id: city_id).first
 
@@ -120,7 +120,7 @@ class ContractsController < ApplicationController
   end
 
   # Checks if the file is a PDF
-  def checkPDF
+  def check_pdf
     file = params.require(:contract).require(:file)
     return file.content_type.split('/')[1].to_s == 'pdf' if file
 
@@ -130,9 +130,12 @@ class ContractsController < ApplicationController
   def filter_role
     action = params[:action]
     if %w[index new create destroy edit update].include? action
-      redirect_to denied_path unless is_admin?
+      redirect_to denied_path unless admin?
     elsif %w[show download].include? action
-      redirect_to denied_path unless is_admin? || (current_user.try(:company_admin?) && @contract.sei == current_user.sei)
+      unless admin? ||
+             (current_user.try(:company_admin?) && @contract.sei == current_user.sei)
+        redirect_to denied_path
+      end
     end
   end
 end

@@ -19,37 +19,27 @@ module ApplicationHelper
   end
 
   # User helper
-  def is_admin?
+  def admin?
     current_user.try(:admin?)
   end
 
-  def is_ubs_user?
+  def ubs_user?
     current_user.try(:ubs_admin?) || current_user.try(:ubs_user?)
   end
 
-  def is_company_user?
+  def company_user?
     current_user.try(:company_user?) || current_user.try(:company_admin?)
   end
 
-  def is_support_user?
+  def support_user?
     current_user.try(:call_center_user?) || current_user.try(:call_center_admin?)
   end
 
-  def is_city_user?
-    current_user.try(:city_admin?) || current_user.try(:city_user?)
+  def city_user?
+    current_user.try(:city_admin?)
   end
 
-  def is_faq_inserter?
+  def faq_inserter?
     current_user.try(:faq_inserter?)
-  end
-
-  # TODO: DEPRECATE IN FAVOR OF IS_COMPANY_USER?
-  def is_company_user
-    current_user.try(:company_user?) || current_user.try(:company_admin?)
-  end
-
-  # TODO: DEPRECATE IN FAVOR OF IS_SUPPORT_USER?
-  def is_support_user
-    current_user.try(:call_center_user?) || current_user.try(:call_center_admin?)
   end
 end
