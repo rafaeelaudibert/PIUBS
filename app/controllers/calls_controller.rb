@@ -10,47 +10,47 @@ class CallsController < ApplicationController
   # GET /calls.json
   def index
     @contracts = Contract.where(sei: current_user.sei)
-    @filterrific = initialize_filterrific(
-       Call,
-       params[:filterrific],
-       select_options: {
-         sorted_by_creation: Call.options_for_sorted_by_creation(),
-         with_status: Call.options_for_with_status(),
-         with_state: State.all.map { |s| [s.name, s.id] },
-         with_city: Call.options_for_with_city(),
-         with_ubs: Unity.where(city_id: @contracts.map { |c| c.city_id}).map { |u| [u.name, u.cnes] },
-         with_company: Company.all.map { |c| c.sei }
-       },
-       :persistence_id => false,
-     ) or return
+    (@filterrific = initialize_filterrific(
+      Call,
+      params[:filterrific],
+      select_options: {
+        sorted_by_creation: Call.options_for_sorted_by_creation,
+        with_status: Call.options_for_with_status,
+        with_state: State.all.map { |s| [s.name, s.id] },
+        with_city: Call.options_for_with_city,
+        with_ubs: Unity.where(city_id: @contracts.map(&:city_id)).map { |u| [u.name, u.cnes] },
+        with_company: Company.all.map(&:sei)
+      },
+      persistence_id: false
+    )) || return
 
-     # @calls = Call.filterrific_find(@filterrific).page(params[:page])
-     if user_signed_in?
-       if current_user.try(:call_center_user?)
-         @calls = @filterrific.find.page(params[:page]).where(support_user: [current_user.id, nil])
-       elsif current_user.try(:call_center_admin?)
-         children = [nil]
-         User.where(invited_by_id: current_user.id).each do |user|
-           children << user.id
-         end
-         @calls = @filterrific.find.page(params[:page]).where(support_user: children)
-       elsif current_user.try(:company_admin?)
-         @calls = @filterrific.find.page(params[:page]).where(sei: current_user.sei)
-       elsif current_user.try(:company_user?)
-         @calls = @filterrific.find.page(params[:page]).where(user_id: current_user.id)
-       elsif current_user.try(:admin?)
-         @calls = @filterrific.find.page(params[:page])
-       else
-         @calls = []
-       end
-     else
-       redirect_to login_path
-     end
-     # puts params[:filterrific].require(:filtered_by)
-     respond_to do |format|
-       format.html
-       format.js
-     end
+    # @calls = Call.filterrific_find(@filterrific).page(params[:page])
+    if user_signed_in?
+      if current_user.try(:call_center_user?)
+        @calls = @filterrific.find.page(params[:page]).where(support_user: [current_user.id, nil])
+      elsif current_user.try(:call_center_admin?)
+        children = [nil]
+        User.where(invited_by_id: current_user.id).each do |user|
+          children << user.id
+        end
+        @calls = @filterrific.find.page(params[:page]).where(support_user: children)
+      elsif current_user.try(:company_admin?)
+        @calls = @filterrific.find.page(params[:page]).where(sei: current_user.sei)
+      elsif current_user.try(:company_user?)
+        @calls = @filterrific.find.page(params[:page]).where(user_id: current_user.id)
+      elsif current_user.try(:admin?)
+        @calls = @filterrific.find.page(params[:page])
+      else
+        @calls = []
+      end
+    else
+      redirect_to login_path
+    end
+    # puts params[:filterrific].require(:filtered_by)
+    respond_to do |format|
+      format.html
+      format.js
+    end
   end
 
   # GET /calls/1
@@ -86,12 +86,17 @@ class CallsController < ApplicationController
     if @call.save
       if files
         parsed_params = attachment_params files
-        parsed_params[:filename].each_with_index do |_filename, _index|
-          @attachment = Attachment.new(eachAttachment(parsed_params, _index))
+        parsed_params[:filename].each_with_index do |_filename, index|
+          @attachment = Attachment.new(each_attachment(parsed_params, index))
           raise 'Não consegui anexar o arquivo. Por favor tente mais tarde' unless @attachment.save
 
-          @link = AttachmentLink.new(attachment_id: @attachment.id, call_id: @call.id, source: 'call')
-          raise 'Não consegui criar o link entre arquivo e o atendimento. Por favor tente mais tarde' unless @link.save
+          @link = AttachmentLink.new(attachment_id: @attachment.id,
+                                     call_id: @call.id,
+                                     source: 'call')
+          unless @link.save
+            raise 'Não consegui criar o link entre arquivo e o atendimento.'\
+                  ' Por favor tente mais tarde'
+          end
         end
       end
 
@@ -122,13 +127,16 @@ class CallsController < ApplicationController
   def link_call_support_user
     @call = Call.find(params[:call_options_id])
     if @call.support_user
-      redirect_back(fallback_location: root_path, alert: 'Você não pode pegar um atendimento de outro usuário do suporte')
+      redirect_back(fallback_location: root_path,
+                    alert: 'Você não pode pegar um atendimento de outro usuário do suporte')
     else
       @call.support_user = current_user.id
       if @call.save
-        redirect_back(fallback_location: root_path, notice: 'Agora esse atendimento é seu')
+        redirect_back(fallback_location: root_path,
+                      notice: 'Agora esse atendimento é seu')
       else
-        redirect_back(fallback_location: root_path, notice: 'Ocorreu um erro ao tentar pegar o atendimento')
+        redirect_back(fallback_location: root_path,
+                      notice: 'Ocorreu um erro ao tentar pegar o atendimento')
       end
     end
   end
@@ -139,12 +147,15 @@ class CallsController < ApplicationController
     if @call.support_user == current_user.id
       @call.support_user = ''
       if @call.save
-        redirect_back(fallback_location: root_path, notice: 'Atendimento liberado')
+        redirect_back(fallback_location: root_path,
+                      notice: 'Atendimento liberado')
       else
-        redirect_back(fallback_location: root_path, notice: 'Ocorreu um erro ao tentar liberar o atendimento')
+        redirect_back(fallback_location: root_path,
+                      notice: 'Ocorreu um erro ao tentar liberar o atendimento')
       end
     else
-      redirect_back(fallback_location: root_path, alert: 'Esse atendimento pertence a outro usuário do suporte')
+      redirect_back(fallback_location: root_path,
+                    alert: 'Esse atendimento pertence a outro usuário do suporte')
     end
   end
 
@@ -155,20 +166,26 @@ class CallsController < ApplicationController
 
     if @call.save
 
-      # Retira a última answer caso ela não esteja no FAQ, e exclui seus attachment_links
+      # Retira a ultima answer caso ela nao esteja no FAQ,
+      # e exclui seus attachment_links
       if @call.answer_id && @call.answer.faq == false
         @answer = Answer.find(@call.answer_id)
         @answer.attachment_links.each(&:destroy)
 
         @call.answer_id = nil # Retira o answer_id
-        raise 'We could not remove the call answer_id properly, when trying to reopen it. Please check it' unless @call.save
+        unless @call.save
+          raise 'Não conseguimos remover a call_id corretamente, ao tentar reabri-la.'\
+                ' Por favor, verifique'
+        end
 
         @answer.destroy # Destroi a resposta final anterior
       end
 
-      redirect_back(fallback_location: root_path, notice: 'Atendimento reaberto')
+      redirect_back(fallback_location: root_path,
+                    notice: 'Atendimento reaberto')
     else
-      redirect_back(fallback_location: root_path, notice: 'Ocorreu um erro ao tentar reabrir o atendimento')
+      redirect_back(fallback_location: root_path,
+                    notice: 'Ocorreu um erro ao tentar reabrir o atendimento')
     end
   end
 
@@ -183,46 +200,55 @@ class CallsController < ApplicationController
     @company = Company.find(current_user.sei) if current_user.sei
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
+  # Never trust parameters from internet, only allow the white list through.
   def call_params
-    params.require(:call).permit(:sei, :user_id, :title, :description, :finished_at, :version, :access_profile, :feature_detail, :answer_summary, :severity, :protocol, :city_id, :category_id, :state_id, :company_id, :cnes, file: [])
+    params.require(:call).permit(:sei, :user_id, :title,
+                                 :description, :finished_at, :version,
+                                 :access_profile, :feature_detail,
+                                 :answer_summary, :severity, :protocol,
+                                 :city_id, :category_id, :state_id,
+                                 :company_id, :cnes, file: [])
   end
 
   ## ATTACHMENTS STUFF
-  # Never trust parameters from the scary internet, only allow the white list through.
   def attachment_params(file)
     parameters = {}
     if file
       parameters[:filename] = []
       parameters[:content_type] = []
       parameters[:file_contents] = []
-      file.each do |_file|
-        parameters[:filename].append(File.basename(_file.original_filename))
-        parameters[:content_type].append(_file.content_type)
-        parameters[:file_contents].append(_file.read)
+      file.each do |f|
+        parameters[:filename].append(File.basename(f.original_filename))
+        parameters[:content_type].append(f.content_type)
+        parameters[:file_contents].append(f.read)
       end
     end
     parameters
   end
 
-  def eachAttachment(_parsed_params, _index)
+  def each_attachment(parsed_params, index)
     new_params = {}
-    new_params[:filename] = _parsed_params[:filename][_index]
-    new_params[:content_type] = _parsed_params[:content_type][_index]
-    new_params[:file_contents] = _parsed_params[:file_contents][_index]
+    new_params[:filename] = parsed_params[:filename][index]
+    new_params[:content_type] = parsed_params[:content_type][index]
+    new_params[:file_contents] = parsed_params[:file_contents][index]
     new_params
   end
 
   def filter_role
     action = params[:action]
     if %w[edit update].include? action
-      redirect_to denied_path unless is_admin?
+      redirect_to denied_path unless admin?
     elsif %w[new create destroy].include? action
-      redirect_to denied_path unless is_admin? || is_support_user? || is_company_user?
+      redirect_to denied_path unless admin? || support_user? || company_user?
     elsif action == 'show'
-      redirect_to denied_path unless (current_user.try(:company_admin?) && @call.sei == current_user.sei) || ((current_user.try(:company_user?) && @call.user_id == current_user.id)) || is_support_user? || is_admin?
+      unless (current_user.try(:company_admin?) && @call.sei == current_user.sei) ||
+             (current_user.try(:company_user?) && @call.user_id == current_user.id) ||
+             support_user? ||
+             admin?
+        redirect_to denied_path
+      end
     elsif action == 'index'
-      redirect_to faq_path unless is_admin? || is_support_user? || is_company_user?
+      redirect_to faq_path unless admin? || support_user? || company_user?
     end
   end
 end

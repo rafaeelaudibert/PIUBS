@@ -14,7 +14,7 @@
 <% end %>
 <div style="max-width: 850px">
   <%= form.text_field :protocol, type: 'hidden', class: 'form-control', required: true %>
-  <% if is_support_user || current_user.try(:admin?) %>
+  <% if support_user? || current_user.try(:admin?) %>
     <%= form.check_box :faq, checked: false, id:'on-faq', style: "display: none;" %>
     <%= form.text_field :faq_attachments, type: 'hidden', class: 'form-control' %>
   <% end %>
