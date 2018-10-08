@@ -7,14 +7,16 @@ class User < ApplicationRecord
   has_many :calls
   has_many :answer
 
-  enum role: %i[admin city_admin faq_inserter ubs_admin ubs_user company_admin company_user call_center_admin call_center_user]
+  enum role: %i[admin city_admin faq_inserter
+                ubs_admin ubs_user
+                company_admin company_user
+                call_center_admin call_center_user]
   validates_cpf_format_of :cpf, options: { allow_blank: true, allow_nil: true }
   validates :cpf, presence: true, uniqueness: true
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :invitable, :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+  devise :invitable, :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable, :async
 
    filterrific(
     default_filter_params: { sorted_by_name: 'name_asc'},
@@ -120,7 +122,9 @@ class User < ApplicationRecord
       ['Cidade', 0],
     ]
   end
+         
 
-
-
+  def send_devise_notification(notification, *args)
+    DeviseWorker.perform_async(devise_mailer, notification, id, *args)
+  end
 end

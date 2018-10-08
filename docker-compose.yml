@@ -8,20 +8,33 @@ services:
       - "5433:5432"
   app:
     build: .
-    command: bundle exec puma -C config/puma.rb -e production
+    command: bundle exec puma -C config/puma.rb
     env_file:
       - config/.env
     volumes:
       - .:/var/www/PIUBS
     expose:
       - "3000"
-    links:
+    depends_on:
       - db
+      - redis
+  redis:
+    image: redis:latest
+  sidekiq:
+    build: .
+    command: bundle exec sidekiq -C config/sidekiq.yml
+    env_file:
+      - config/.env
+    depends_on:
+      - redis
+    volumes:
+      - .:/var/www/PIUBS
+
   web:
     build:
       context: .
       dockerfile: Dockerfile-nginx
-    links:
+    depends_on:
       - app
     ports:
       - "8081:80"

@@ -45,16 +45,21 @@ gem 'bootstrap', '~> 4.1.3'
 gem 'carrierwave'
 gem 'coffee-rails', '~> 4.2'
 gem 'devise'
+gem 'devise-async'
 gem 'devise_invitable'
 gem 'high_voltage'
 gem 'jbuilder', '~> 2.5'
 gem 'jquery-rails'
 gem 'json'
+gem 'net-ssh', '= 5.0.2'
 gem 'pg'
+gem 'popper_js', '~> 1.14.3'
 gem 'puma', '~> 3.11'
 gem 'rails', '~> 5.2.1'
 gem 'sass-rails', '~> 5.0'
+gem 'sidekiq'
 gem 'sqlite3'
+gem 'turbolinks', '~> 5.2.0'
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 gem 'uglifier', '>= 1.3.0'
 
@@ -62,16 +67,13 @@ gem 'uglifier', '>= 1.3.0'
 gem 'backup'
 gem 'cpf_cnpj'                  # CPF/CNPJ validations/management
 gem 'data-confirm-modal'        # Modals for confimations
+gem 'filterrific', '~> 5.1.0'   # Filtering
 gem 'font-awesome-rails'        # Icons
 gem 'mail_form', '>= 1.3.0'     # Mailer gem
-gem 'mini_racer'                # Fix "Autoprefixer doesn’t support Node v4.2.6"
-gem 'net-ssh', '= 5.0.2'
+gem 'mini_racer'                # Fix "Autoprefixer doesn't support Node v4.2.6"
 gem 'pg_search'                 # Full-text search gem
 gem 'shog'                      # Colorized console logging
 gem 'tinymce-rails'             # WSYCWYG Text Editor
-gem 'tinymce-rails-langs'       # Translate tinymce
-gem 'filterrific', '~> 5.1.0'     # Filtering
+gem 'tinymce-rails-langs'       # Language packs for TinyMCE Text Editor
 gem 'validators'                # Validators, such as CPF/e-mail
 gem 'will_paginate', '~> 3.1.0' # Pagination
-gem 'turbolinks', '~> 5.2.0'
-gem 'popper_js', '~> 1.14.3'

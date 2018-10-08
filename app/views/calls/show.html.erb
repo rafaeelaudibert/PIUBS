@@ -80,7 +80,7 @@
 <hr/>
 
 <% if @call.open? || @call.reopened? %>
-  <% if is_admin? || is_support_user? %>
+  <% if admin? || support_user? %>
     <% if @call.support_user != nil %>
       <% if @my_call %>
         <button type="button" id="reply" class="btn btn-primary">Nova Resposta</button>
@@ -89,7 +89,7 @@
           Soltar Atendimento
         </a>
       <% else %>
-        <% unless is_admin? %>
+        <% unless admin? %>
           <% unless current_user.try(:call_center_admin?) %>
             <div style="color: red; font-weight: 400; margin-bottom:1em; background-color:#CCC; padding:20px;">Este atendimento já pertence a outro usuário do suporte.</div>
           <% else %>
@@ -98,7 +98,7 @@
         <% end %>
       <% end %>
     <% else %>
-      <% unless is_admin? %>
+      <% unless admin? %>
         <%= button_to 'Pegar atendimento', link_call_support_user_calls_path(:call_options_id => @call.id, :user_option_id => current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este atendimento' }, method: :post, class: "btn
       right", :style => "color:#FFF; background-color: #084B8A; margin-bottom: 1em;" %>
       <% end %>
@@ -109,7 +109,7 @@
 <% else %>
   <!-- Chamado fechado -->
   <div class="closed-call">
-    <% if is_admin? || is_support_user? %>
+    <% if admin? || support_user? %>
       <p>Chamado fechado</p>
     <% else %>
       <p>Chamado fechado! Somente reabra caso a solução oferecida pela atendente não tenha resolvido o seu problema.</br>
