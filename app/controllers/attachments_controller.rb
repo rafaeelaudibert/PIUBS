@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 class AttachmentsController < ApplicationController
+  protect_from_forgery
   before_action :set_attachment, only: %i[show edit update destroy download]
   before_action :filter_role
   include ApplicationHelper
+
 
   # GET /attachments
   # GET /attachments.json
@@ -24,16 +26,12 @@ class AttachmentsController < ApplicationController
 
   # POST /attachments
   def create
-    parsed_params = attachment_params
-    parsed_params[:filename].each_with_index do |_filename, index|
-      @attachment = Attachment.new(each_attachment(parsed_params, index))
-      raise 'Não consegui anexar o arquivo. Por favor tente mais tarde' unless @attachment.save
-    end
+    @attachment = Attachment.new(attachment_params)
 
     if @attachment.save
-      redirect_to @attachment, notice: 'Attachment was successfully created.'
+      render json: { message: "success", attachmentID: @attachment.id }, :status => 200
     else
-      render :new
+      render json: { message: "error", error: @attachment.errors }, :status => 501
     end
   end
 
@@ -48,6 +46,8 @@ class AttachmentsController < ApplicationController
 
   # DELETE /attachments/1
   def destroy
+    puts params
+    puts @attachment
     @attachment.destroy
     redirect_to attachments_url,
                 notice: 'Attachment was successfully destroyed.'
@@ -72,27 +72,12 @@ class AttachmentsController < ApplicationController
 
   # Never trust parameters from internet, only allow the white list through.
   def attachment_params
-    parameters = params.require(:attachment).permit(:id, :source, file: [])
-    file = parameters.delete(:file) if parameters
-    if file
-      parameters[:filename] = []
-      parameters[:content_type] = []
-      parameters[:file_contents] = []
-      file.each do |f|
-        parameters[:filename].append(File.basename(f.original_filename))
-        parameters[:content_type].append(f.content_type)
-        parameters[:file_contents].append(f.read)
-      end
-    end
+    parameters = {}
+    parameters[:id] = SecureRandom.uuid
+    parameters[:filename] = params[:file].original_filename
+    parameters[:content_type] = params[:file].content_type
+    parameters[:file_contents] = params[:file].read
     parameters
-  end
-
-  def each_attachment(parsed_params, index)
-    new_params = {}
-    new_params[:filename] = parsed_params[:filename][index]
-    new_params[:content_type] = parsed_params[:content_type][index]
-    new_params[:file_contents] = parsed_params[:file_contents][index]
-    new_params
   end
 
   def filter_role
@@ -101,7 +86,7 @@ class AttachmentsController < ApplicationController
       redirect_to denied_path unless admin?
     elsif action == 'download'
       sei = current_user.sei
-      links = @attachment.attachmentlinks
+      links = @attachment.attachment_links
       unless admin? || support_user?
         if company_user?
           links.each do |link|
