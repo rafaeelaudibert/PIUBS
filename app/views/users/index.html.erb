@@ -2,6 +2,49 @@
 
   <h3>Usuários</h3>
 
+  <%= form_for_filterrific @filterrific do |f| %>
+    <div style="width:100%; margin:0 auto; float:right; ">
+
+
+      <% if current_user.try(:admin?) %>
+        <div class="form-group" style="width:10%; float:right;">
+          <%= f.select(:with_city, @filterrific.select_options[:with_city], {multiple: true}, {:class => "form-control", :style => "width:100%;"}) %>
+        </div>
+        <div class="form-group" style="width:15%; float:right;">
+          <%= f.select(:with_state, @filterrific.select_options[:with_state], {multiple: true, include_blank: "Estado"}, {:class => "form-control", :style => "width:100%;"}) %>
+        </div>
+        <div class="form-group" style="width:15%; float:right;">
+          <%= f.select(:with_company, @filterrific.select_options[:with_company], {multiple: true, include_blank: "Empresa"}, {:class => "form-control", :style => "width:100%;"}) %>
+        </div>
+        <div class="form-group" style="width:15%; float:right;">
+          <%= f.select(:with_role, @filterrific.select_options[:with_role], {multiple: true, include_blank: "Perfil"}, {:class => "form-control", :style => "width:100%;"}) %>
+        </div>
+        <div class="form-group" style="width:12%; float:right;">
+          <%= f.select(:with_status_adm, @filterrific.select_options[:with_status_adm], {multiple: true, include_blank: "Todos"}, {:class => "form-control", :style => "width:100%;"}) %>
+        </div>
+      <% end %>
+
+      <% unless current_user.try(:admin?) %>
+        <div class="form-group" style="width:12%; float:right;">
+          <%= f.select(:with_status, @filterrific.select_options[:with_status], {multiple: true, include_blank: "Todos"}, {:class => "form-control", :style => "width:100%;"}) %>
+        </div>
+      <% end %>
+
+      <div class="form-group" style="width:12%; float: right;">
+        <%= f.select(:sorted_by_name, @filterrific.select_options[:sorted_by_name], {multiple: true}, {:class => "form-control", :style => "width:100%;"}) %>
+      </div>
+
+    </div>
+    <div>
+      <div class="form-group">
+        <%= f.submit "Mostrar", :class => 'btn btn-link', :style => 'color: blue !important; float:right' %>
+        <%= link_to(
+          'Desfazer filtro',
+          reset_filterrific_url, :class => 'btn btn-link', :style => 'color: #AAA !important; float:right;'
+        ) %>
+      </div>
+    </div>
+  <%end%>
   <div class="create-new">
   <%= link_to 'Convidar novo usuário', new_user_invitation_path, class: 'btn btn-primary' %>
   </div>
