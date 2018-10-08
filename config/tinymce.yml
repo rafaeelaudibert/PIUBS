@@ -12,3 +12,4 @@ plugins:
   - preview
   - textcolor
 link_assume_external_targets: true
+default_link_target: _blank
