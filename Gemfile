@@ -63,8 +63,8 @@ gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 gem 'uglifier', '>= 1.3.0'
 
 # PIUBS specific gems
-gem 'backup'
-gem 'whenever', require: false
+
+
 gem 'cpf_cnpj'                  # CPF/CNPJ validations/management
 gem 'data-confirm-modal'        # Modals for confimations
 gem 'filterrific', '~> 5.1.0'   # Filtering
@@ -77,3 +77,5 @@ gem 'tinymce-rails'             # WSYCWYG Text Editor
 gem 'tinymce-rails-langs'       # Language packs for TinyMCE Text Editor
 gem 'validators'                # Validators, such as CPF/e-mail
 gem 'will_paginate', '~> 3.1.0' # Pagination
+gem 'whenever', require: false
+gem 'backup'
