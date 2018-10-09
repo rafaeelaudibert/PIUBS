@@ -4,7 +4,7 @@
   <% elsif user.invitation_sent_at != nil %>
     <span class='user-name'></span>
   <% else %>
-    <span class='user-name'>[User Bot]</span>
+    <span class='user-name'><%= user.name %></span>
   <% end %>
 </td>
 <td class="user">

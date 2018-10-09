@@ -8,6 +8,7 @@ class AnswerMailer < ApplicationMailer
     @answer = answer
     @link = call ? "#{root_url}calls/#{call.protocol}" : root_url
 
-    mail(to: @call_user.email, subject: "[PIUBS] - Resposta final para o atendimento #{@call.protocol}")
+    mail to: @call_user.email,
+         subject: "[PIUBS] - Resposta final para o atendimento #{@call.protocol}"
   end
 end

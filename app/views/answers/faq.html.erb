@@ -1,5 +1,25 @@
 <%= content_for :body_title do%>
 <h4 class="display-5">FAQ</h4>
+
+<%= form_for_filterrific @filterrific do |f| %>
+  <div style="width:100%; margin:0 auto; float:right; ">
+    <div class="form-group" style="width:10%; float:right;">
+      <%= f.select(:with_category, @filterrific.select_options[:with_category], {multiple: true, include_blank: "Categoria"}, {:class => "form-control", :style => "width:100%;"}) %>
+    </div>
+  </div>
+  <div>
+    <div class="form-group">
+      <%= f.submit "Mostrar", :class => 'btn btn-link', :style => 'color: blue !important; float:right' %>
+      <%= link_to(
+        'Desfazer filtro',
+        reset_filterrific_url, :class => 'btn btn-link', :style => 'color: #AAA !important; float:right;'
+      ) %>
+    </div>
+  </div>
+  <%# add an automated spinner to your form when the list is refreshed %>
+  <%= render_filterrific_spinner %>
+<% end %>
+
 <%end%>
 
 <div class="float-right" style="display: inline-block !important">
@@ -19,21 +39,23 @@
 </div>
 <hr class="under-header"/>
 
-<% if @answers.length > 0 %>
-<div id="accordion" class="accordion-faq">
-  <div id="my-answers">
-    <%= render @answers %>
+<div id="filterrific_results">
+  <% if @answers.length > 0 %>
+  <div id="accordion" class="accordion-faq">
+    <div id="my-answers">
+      <%= render @answers %>
+    </div>
   </div>
-</div>
 
-<div id="infinite-scrolling">
-  <%= will_paginate @answers %>
+  <div id="infinite-scrolling">
+    <%= will_paginate @answers %>
+  </div>
+  <% else %>
+  <h3>
+    Não há perguntas no FAQ
+  </h3>
+  <% end %>
 </div>
-<% else %>
-<h3>
-  Não há perguntas no FAQ
-</h3>
-<% end %>
 <hr/>
 
 <script>
