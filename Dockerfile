@@ -20,7 +20,6 @@ RUN bundle install -j 20
 # Configure backup
 RUN backup generate:model --trigger PIUBS_production --archives --storages='local' --compressors='gzip' --notifiers='mail' --databases='postgresql'
 COPY db/backup_config.rb ~/Backup/models/PIUBS_production.rb
-COPY db/backup_scheduler.rb ~/Backup/config/schedule.rb
 RUN wheneverize .
 
 # Copy the main application.
