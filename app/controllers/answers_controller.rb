@@ -49,10 +49,7 @@ class AnswersController < ApplicationController
   # POST /answers
   def create
     ans_params = answer_params
-    puts ans_params
     files = ans_params.delete(:files).split(',') if ans_params[:files]
-    puts '---------------------'
-    puts files
     @answer = Answer.new(ans_params)
 
     if @answer.save
