@@ -165,7 +165,6 @@ class AnswersController < ApplicationController
 
   # Never trust parameters from internet, only allow the white list through.
   def answer_params
-    puts params
     params[:answer][:keywords] = params[:answer][:keywords].split(',').join(' ; ')
     params.require(:answer).permit(:keywords, :question, :answer, :category_id,
                                    :user_id, :faq, :question_id,
