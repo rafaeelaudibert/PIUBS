@@ -6,7 +6,6 @@ class AttachmentsController < ApplicationController
   before_action :filter_role
   include ApplicationHelper
 
-
   # GET /attachments
   # GET /attachments.json
   def index
@@ -29,9 +28,9 @@ class AttachmentsController < ApplicationController
     @attachment = Attachment.new(attachment_params)
 
     if @attachment.save
-      render json: { message: "success", attachmentID: @attachment.id }, :status => 200
+      render json: { message: 'success', attachmentID: @attachment.id }, status: 200
     else
-      render json: { message: "error", error: @attachment.errors }, :status => 501
+      render json: { message: 'error', error: @attachment.errors }, status: 501
     end
   end
 
@@ -46,11 +45,11 @@ class AttachmentsController < ApplicationController
 
   # DELETE /attachments/1
   def destroy
-    puts params
-    puts @attachment
-    @attachment.destroy
-    redirect_to attachments_url,
-                notice: 'Attachment was successfully destroyed.'
+    unless @attachment.attachment_links.length
+      @attachment.destroy
+      render json: { message: 'success' }, status: 200
+    end
+    render json: { message: 'Não será apagado, pois tem links' }, status: 200
   end
 
   # GET /attachment/:id/download
@@ -68,6 +67,9 @@ class AttachmentsController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_attachment
     @attachment = Attachment.find(params[:id])
+  rescue
+    puts '[DEBUG] TENTANDO APAGAR ARQUIVO RETIRADO ATRAVÉS DE FAQ, NÃO POSSUI LINK!'
+    render status: 200, json: @controller.to_json
   end
 
   # Never trust parameters from internet, only allow the white list through.

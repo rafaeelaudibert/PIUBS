@@ -12,7 +12,6 @@
 <div id="table"></div>
 
 <script>
-  let extraFilesFaq = 0;
   let textField = document.getElementById('search_field');
   let button = document.getElementById('search_button');
   let tableDiv = document.getElementById('table');
@@ -72,11 +71,24 @@
       type: "GET",
       dataType: "json",
       success: data => {
-        tinyMCE.get(0).setContent(`${answer}<br/><br><b>Essa resposta foi retirada do FAQ. Ela estava disponível <a href="/answers/${id}" target='_blank'>aqui</a></b>`);
+        tinyMCE.get(0).setContent(`${answer}<br/><br>Essa resposta foi retirada do FAQ. Ela estava disponível <a href="/answers/${id}" target='_blank'>aqui</a></b>`);
 
-        extraFilesFaq = data.length;
-        $('#reply_file').trigger('change', 'answer');
-        $('#reply_faq_attachments')[0].value = data.map(val => val.id);
+        // Set the ids
+        fileIds = data.map(val => val.id).reduce((acc, val) => acc.concat(val), [])
+        $('#uuid-files').val(fileIds);
+
+        // Fake their adittion in the reply-dropzone
+        data.forEach( val => {
+          let mockFile = {
+                    name: val.filename,
+                    size: val.bytes,
+                    type: val.type,
+                    accepted: true            // required if using 'MaxFiles' option
+                };
+          $('#reply-dropzone')[0].dropzone.files.push(mockFile);
+          $('#reply-dropzone')[0].dropzone.emit('addedfile', mockFile);
+          $('#reply-dropzone')[0].dropzone.emit('complete', mockFile);
+        })
       }
     });
   }

@@ -150,8 +150,16 @@ class AnswersController < ApplicationController
                                       .attachments
                                       .map do |attachment|
                        { filename: attachment.filename,
-                         id: attachment.id }
-                     end)
+                         type: attachment.content_type,
+                         id: attachment.id,
+                         bytes: Answer.connection
+                                      .select_all(Answer.sanitize_sql_array(
+                                                    ["SELECT octet_length(file_contents) FROM "\
+                                                     "attachments WHERE attachments.id = ?",
+                                                      attachment.id]))[0]['octet_length']
+                       }
+                     end
+               )
       end
     end
   end
