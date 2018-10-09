@@ -78,8 +78,6 @@ class AnswersController < ApplicationController
 
       end
 
-      puts '-----------------------------------'
-      puts files
       if files
         files.each do |file_uuid|
           @link = AttachmentLink.new(attachment_id: file_uuid,
