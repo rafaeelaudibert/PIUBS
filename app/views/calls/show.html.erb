@@ -445,59 +445,71 @@ if (log)
 </script>
 
 <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-<script>
-let extraFilesReply = 0;
-function toggleFinalAnswer(button) {
+  <script>
+    let extraFilesReply = 0;
+    function toggleFinalAnswer(button) {
 
-const finalAnswer = $('#final-answer')[0];
-const parent = button.parentNode;
+      const finalAnswer = $('#final-answer')[0];
+      const parent = button.parentNode;
 
-if (parent.lastChild == finalAnswer) {
-$('#final-answer').toggle(200);
-} else {
-$('#final-answer').hide();
-parent.appendChild(finalAnswer);
-$('#final-answer').show(200);
-}
+      if (parent.lastChild == finalAnswer) {
+        $('#final-answer').toggle(200);
+      } else {
+        $('#final-answer').hide();
+        parent.appendChild(finalAnswer);
+        $('#final-answer').show(200);
+      }
 
-const formChildren = finalAnswer.children[3].children;
-const answerDivField = formChildren[2].children[1];
-const answerField = answerDivField.children[1];
-answerField.innerHTML = parent.parentNode.children[1].children[0].innerText;
+      const formChildren = finalAnswer.children[3].children;
+      const answerDivField = formChildren[2].children[1];
+      const answerField = answerDivField.children[1];
+      answerField.innerHTML = parent.parentNode.children[1].children[0].innerText;
 
-const float = parent.children[3].children
-const faqField = formChildren[2].children[6];
-faqField.style.display = float.length == 0
-? parent.children[7].children.length == 2
-? 'none'
-: 'inline-flex'
-: float.length == 2
-? 'none'
-: 'inline-flex';
+      const float = parent.children[3].children
+      const faqField = formChildren[2].children[6];
+      faqField.style.display = float.length == 0 ?
+                                  parent.children[7].children.length == 2 ? 'none' : 'inline-flex'
+                                : float.length == 2 ? 'none' : 'inline-flex';
+      const replyId = parent.parentNode.children[0].children[1].innerText.split('#')[1];
 
-const replyId = parent.parentNode.children[0].children[1].innerText.split('#')[1];
-$.ajax({
-url: '/replies/attachments/' + replyId,
-type: "GET",
-dataType: "json",
-success: data => {
-extraFilesReply = data.length;
-$('#answer_file').trigger('change', 'reply');
-$('#reply_attachments')[0].value = data.map(val => val.id);
-}
-});
-}
-</script>
+      $.ajax({
+        url: '/apoioaempresas/replies/attachments/' + replyId,
+        type: "GET",
+        dataType: "json",
+        success: data => {
+
+          // Set the ids
+          answerFileIds = data.map(val => val.id).reduce((acc, val) => acc.concat(val), [])
+          $('#uuid-files-answer').val(answerFileIds);
+
+          // Fake their adittion in the reply-dropzone
+          data.forEach( val => {
+            let mockFile = {
+                      name: val.filename,
+                      size: val.bytes,
+                      type: val.type,
+                      accepted: true            // required if using 'MaxFiles' option
+                  };
+            $('#answer-dropzone')[0].dropzone.files.push(mockFile);
+            $('#answer-dropzone')[0].dropzone.emit('addedfile', mockFile);
+            $('#answer-dropzone')[0].dropzone.emit('complete', mockFile);
+          })
+        }
+      });
+    }
+  </script>
 <% end %>
-<style>
-#reply_description_ifr {
-height: 250px !important;
-}
 
-#mceu_30 {
-display: none;
-}
-.btn.btn-oval {
-border-radius: 25px !important;
-}
+<style>
+  #reply_description_ifr {
+    height: 250px !important;
+  }
+
+  #mceu_30 {
+    display: none;
+  }
+
+  .btn.btn-oval {
+    border-radius: 25px !important;
+  }
 </style>
