@@ -75,12 +75,22 @@
       <%= form.text_field :user_id, value: current_user.id, required: true %>
     </div>
 
-    <% unless @reply && @reply.faq == true %>
-      <div class="form-check form-check-inline" hidden="hidden">
-        <%= form.check_box :faq, class: "form-check-input", checked: true %>
-        <%= form.label :faq, value: 'Adicionar ao FAQ?', class: 'form-check-label' %>
+    <% if action_name == 'edit' && current_user.role == 'admin' %>
+      <div class="form-check form-check-inline">
+        <%= form.check_box :faq, class: "form-check-input" %>
+        <%= form.label :faq, value: "#{@answer.faq ? 'Manter no' : 'Adicionar ao'} FAQ?",
+                             class: 'form-check-label' %>
       </div>
       <br/>
+      <br/>
+    <% else %>
+      <% unless @reply && @reply.faq == true %>
+        <div class="form-check form-check-inline" hidden="hidden">
+          <%= form.check_box :faq, class: "form-check-input", checked: true %>
+          <%= form.label :faq, value: 'Adicionar ao FAQ?', class: 'form-check-label' %>
+        </div>
+        <br/>
+      <% end %>
     <% end %>
 
     <%= form.submit 'Salvar Questão',:class => 'btn btn-primary btn-sm' %>
