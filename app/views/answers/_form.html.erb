@@ -38,9 +38,16 @@
     <%= form.text_field :keywords, 'data-role': 'tagsinput', placeholder: ' ' %>
   </div>
 
+
+
   <div class="form-group">
-    <%= form.label :file, 'Arquivos (selecione todos os arquivos necessários pressionando a tecla CTRL)' %>
-    <%= form.file_field :file, class: 'form-control boxed', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 20.megabytes, max_file_quantity: 10}%>
+    <%= form.label :files, 'Arquivos (selecione todos os arquivos necessários pressionando a tecla CTRL)' %>
+    <%= form.text_field :files, id:'uuid-files', class: 'hidden'%>
+    <div id="dropzone" class="future-dropzone">
+      <div class="dz-default dz-message">
+        Arraste arquivos aqui para adicioná-los
+      </div>
+    </div>
   </div>
 
   <% text = 'display: none' %>
@@ -82,35 +89,69 @@
   </div>
 <% end %>
 
-<script>
-  function validateFiles(inputFile) {
+<script type="text/javascript">
 
-    var size = 0;
-    var maxFileSize = $(inputFile).data('max-file-size');
-    var maxFileQuantity = $(inputFile).data('max-file-quantity');
+  let fileIds = []
+  $(document).ready(function(){
+      // Adds the actual class, to prevent errors
+      document.querySelector('.future-dropzone').classList.add('dropzone');
 
-    $.each(inputFile.files, function () {
-      if (this.size) {
-        size += this.size;
-      }
-    });
+        // grap our upload form by its id
+      $('#dropzone').dropzone({
+          url: '/apoioaempresas/attachments',
 
-    if (size && maxFileSize && size > parseInt(maxFileSize)) {
-      const animation = {
-        "in": "bounceIn",
-        "out": "fadeOutUpBig"
-      };
-      const heart = "/assets/icons/logo-ffea90fdc94f5f4a6d88ec21782b2433fe67e0a8883a9950c468a55cf8d53e00.png";
-      Notification.create("<%= 'Alerta' %>", '<%= "Esses anexos excedem o tamanho máximo permitido (20 MB)" %>', heart, animation, 2, 5);
-      $(inputFile).val('');
-    } else if (inputFile.files.length > maxFileQuantity) {
-      const animation = {
-        "in": "bounceIn",
-        "out": "fadeOutUpBig"
-      };
-      const heart = "/assets/icons/logo-ffea90fdc94f5f4a6d88ec21782b2433fe67e0a8883a9950c468a55cf8d53e00.png";
-      Notification.create("<%= 'Alerta' %>", '<%= "Esses anexos excedem a quantidade máxima permitida (10 arquivos)" %>', heart, animation, 2, 5);
-      $(inputFile).val('');
-    };
-  }
+          // restrict image size to a maximum 20MB
+          maxFilesize: 20,
+
+          // restrict to the maximum of 5 files
+          maxFiles: 10,
+
+          // Translations
+          dictCancelUpload: 'Cancelar Upload',
+          dictCancelUploadConfirmation: 'Deseja mesmo cancelar o Upload?',
+          dictRemoveFile: 'Remover arquivo',
+          dictDefaultMessage: 'Arraste arquivos aqui para adicioná-los',
+          dictFallbackMessage: 'Esse browser não suporta o anexo de arquivos.',
+          dictFileTooBig: 'Tamanho dos anexos excedido',
+          dictInvalidFileType: 'Extensão de arquivo Inválida',
+          dictMaxFilesExceeded: 'Quantidade de arquivos excedida',
+
+          // show remove links on each image upload
+          addRemoveLinks: true,
+
+          // if the upload was successful
+          success: (file, response) => {
+              // find the remove button link of the uploaded file and give it an id
+              // based of the attachmentID response from the server
+              $(file.previewTemplate).find('.dz-remove').attr('id', response.attachmentID);
+
+              // Add to array
+              fileIds.push(response.attachmentID);
+              $('#uuid-files').val(fileIds);
+
+              // add the dz-success class (the green tick sign)
+              $(file.previewElement).addClass("dz-success");
+
+          },
+          //when the remove button is clicked
+          removedfile: file => {
+
+              // grap the id of the uploaded file we set earlier
+              let id = $(file.previewTemplate).find('.dz-remove').attr('id');
+
+              // Remove from array
+              fileIds = fileIds.filter(uuid => uuid != id)
+              $('#uuid-files').val(fileIds);
+
+              // make a DELETE ajax request to delete the file
+              $.ajax({
+                  type: 'DELETE',
+                  url: '/apoioaempresas/attachments/' + id,
+                  success: () => $(file.previewTemplate).fadeOut(),
+                  error: e => console.error(e)
+              });
+          }
+      });
+  });
+
 </script>

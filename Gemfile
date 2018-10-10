@@ -51,7 +51,6 @@ gem 'high_voltage'
 gem 'jbuilder', '~> 2.5'
 gem 'jquery-rails'
 gem 'json'
-gem 'net-ssh', '= 5.0.2'
 gem 'pg'
 gem 'popper_js', '~> 1.14.3'
 gem 'puma', '~> 3.11'
@@ -64,9 +63,11 @@ gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 gem 'uglifier', '>= 1.3.0'
 
 # PIUBS specific gems
-gem 'backup'
+
+
 gem 'cpf_cnpj'                  # CPF/CNPJ validations/management
 gem 'data-confirm-modal'        # Modals for confimations
+gem 'dropzonejs-rails'          # Attachments drag n'drop functionality
 gem 'filterrific', '~> 5.1.0'   # Filtering
 gem 'font-awesome-rails'        # Icons
 gem 'mail_form', '>= 1.3.0'     # Mailer gem
@@ -77,3 +78,5 @@ gem 'tinymce-rails'             # WSYCWYG Text Editor
 gem 'tinymce-rails-langs'       # Language packs for TinyMCE Text Editor
 gem 'validators'                # Validators, such as CPF/e-mail
 gem 'will_paginate', '~> 3.1.0' # Pagination
+gem 'whenever', require: false
+gem 'backup'

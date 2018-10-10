@@ -18,6 +18,7 @@
 //= require filterrific/filterrific-jquery
 //= require bootstrap
 //= require data-confirm-modal
+//= require dropzone
 //= require answers
 //= require vendor
 //= require calls
