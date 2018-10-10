@@ -152,6 +152,39 @@
               });
           }
       });
+
+
+      <% if action_name == 'edit' %>
+      const l = location.href.split('/')
+      $.ajax({
+        url: '/apoioaempresas/answers/attachments/' + l[l.length-2],
+        type: "GET",
+        dataType: "json",
+        success: data => {
+
+          // Set the ids
+          fileIds = data.map(val => val.id).reduce((acc, val) => acc.concat(val), [])
+          $('#uuid-files').val(fileIds);
+
+          // Fake their adittion in the reply-dropzone
+          data.forEach( val => {
+            let mockFile = {
+                      name: val.filename,
+                      size: val.bytes,
+                      type: val.type,
+                      accepted: true            // required if using 'MaxFiles' option
+                  };
+            dropzone = $('#dropzone')[0].dropzone
+            dropzone.files.push(mockFile);
+            dropzone.emit('addedfile', mockFile);
+            dropzone.emit('complete', mockFile);
+            $(dropzone.files[dropzone.files.length - 1]
+                                            .previewElement).find('.dz-remove').attr('id', val.id);
+          })
+        }
+      });
+
+      <% end %>
   });
 
 </script>

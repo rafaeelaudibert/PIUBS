@@ -78,17 +78,15 @@ class AnswersController < ApplicationController
 
       end
 
-      if files
-        files.each do |file_uuid|
-          @link = AttachmentLink.new(attachment_id: file_uuid,
-                                     answer_id: @answer.id,
-                                     source: 'answer')
-          unless @link.save
-             raise 'Não consegui criar o link entre arquivo e resposta final.'\
-                   ' Por favor tente mais tarde'
-          end
+      files.each do |file_uuid|
+        @link = AttachmentLink.new(attachment_id: file_uuid,
+                                   answer_id: @answer.id,
+                                   source: 'answer')
+        unless @link.save
+           raise 'Não consegui criar o link entre arquivo e resposta final.'\
+                 ' Por favor tente mais tarde'
         end
-      end      
+      end
 
       redirect_to (@call || faq_path || root_path), notice: 'Resposta final marcada com sucesso.'
     else
@@ -100,9 +98,37 @@ class AnswersController < ApplicationController
   # PATCH/PUT /answers/1.json
   def update
     respond_to do |format|
-      if @answer.update(answer_params)
-        format.html { redirect_to @answer, notice: 'Resposta atualizada com sucesso.' }
-        format.json { render :show, status: :ok, location: @answer }
+      ans_params = answer_params
+      files = ans_params.delete(:files).split(',') if ans_params[:files]
+
+      # Remove todos os links que foram removidos
+      @answer.attachment_links.each do |link|
+        unless files.include?(link)
+          link.destroy
+          files.delete(link)
+        end
+      end
+
+      # Cria novos links
+      files.each do |file_uuid|
+        @link = AttachmentLink.new(attachment_id: file_uuid,
+                                   answer_id: @answer.id,
+                                   source: 'answer')
+        unless @link.save
+           raise 'Não consegui criar o link entre arquivo e resposta final.'\
+                 ' Por favor tente mais tarde'
+        end
+      end
+
+      if @answer.save
+
+        if @answer.update(ans_params)
+          format.html { redirect_to @answer, notice: 'Resposta atualizada com sucesso.' }
+          format.json { render :show, status: :ok, location: @answer }
+        else
+          format.html { render :edit }
+          format.json { render json: @answer.errors, status: :unprocessable_entity }
+        end
       else
         format.html { render :edit }
         format.json { render json: @answer.errors, status: :unprocessable_entity }
