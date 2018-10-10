@@ -67,9 +67,6 @@ class AttachmentsController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_attachment
     @attachment = Attachment.find(params[:id])
-  rescue
-    puts '[DEBUG] TENTANDO APAGAR ARQUIVO RETIRADO ATRAVÉS DE FAQ, NÃO POSSUI LINK!'
-    render status: 200, json: @controller.to_json
   end
 
   # Never trust parameters from internet, only allow the white list through.

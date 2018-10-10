@@ -490,9 +490,12 @@ if (log)
                       type: val.type,
                       accepted: true            // required if using 'MaxFiles' option
                   };
-            $('#answer-dropzone')[0].dropzone.files.push(mockFile);
-            $('#answer-dropzone')[0].dropzone.emit('addedfile', mockFile);
-            $('#answer-dropzone')[0].dropzone.emit('complete', mockFile);
+            dropzone = $('#answer-dropzone')[0].dropzone
+            dropzone.files.push(mockFile);
+            dropzone.emit('addedfile', mockFile);
+            dropzone.emit('complete', mockFile);
+            $(dropzone.files[dropzone.files.length - 1]
+                                            .previewElement).find('.dz-remove').attr('id', val.id);
           })
         }
       });
