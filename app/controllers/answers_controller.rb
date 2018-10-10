@@ -88,18 +88,7 @@ class AnswersController < ApplicationController
                    ' Por favor tente mais tarde'
           end
         end
-      end
-
-      # "IMPORT" attachments from the reply to this answer
-      # Commented while creating new attachments drag n' drop with dragzone.js - RBAUDIBERT @ 09/10/2018
-
-      # reply_attachments_ids&.each do |id|
-      #   @link = AttachmentLink.new(attachment_id: id, answer_id: @answer.id, source: 'answer')
-      #   unless @link.save
-      #     raise 'Não consegui criar o link entre arquivo que veio da reply e essa resposta.'\
-      #           ' Por favor tente mais tarde'
-      #   end
-      # end
+      end      
 
       redirect_to (@call || faq_path || root_path), notice: 'Resposta final marcada com sucesso.'
     else

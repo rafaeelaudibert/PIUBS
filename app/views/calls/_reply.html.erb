@@ -25,7 +25,7 @@
 
   <div class="form-group">
     <%= form.label :files, 'Arquivos (selecione todos os arquivos necessários pressionando a tecla CTRL)' %>
-    <%= form.text_field :files, id:'uuid-files', style: 'display: none'%>
+    <%= form.text_field :files, id:'uuid-files-reply', style: 'display: none'%>
     <div id="reply-dropzone" class="future-dropzone">
       <div class="dz-default dz-message">
         Arraste arquivos aqui para adicioná-los
@@ -37,7 +37,7 @@
   <button id="cancel" type="button" class="btn btn-danger btn-sm">Cancelar</button>
 </div>
 <script>
-  let fileIds = [];
+  let replyFileIds = [];
   let dropReply;
   $(document).ready(function () {
     var protocol = "<%= escape_javascript @call.protocol %>";
@@ -45,7 +45,7 @@
     $("#reply_protocol").hide();
 
     // Adds the actual class, to prevent errors
-    document.querySelector('.future-dropzone').classList.add('dropzone');
+    document.querySelectorAll('.future-dropzone').forEach(d => d.classList.add('dropzone'));
 
       // grap our upload form by its id
     dropReply = $('#reply-dropzone').dropzone({
@@ -72,14 +72,13 @@
 
         // if the upload was successful
         success: (file, response) => {
-          console.log(response)
             // find the remove button link of the uploaded file and give it an id
             // based of the attachmentID response from the server
             $(file.previewTemplate).find('.dz-remove').attr('id', response.attachmentID);
 
             // Add to array
-            fileIds.push(response.attachmentID);
-            $('#uuid-files').val(fileIds);
+            replyFileIds.push(response.attachmentID);
+            $('#uuid-files-reply').val(replyFileIds);
 
             // add the dz-success class (the green tick sign)
             $(file.previewElement).addClass("dz-success");
@@ -92,8 +91,8 @@
             let id = $(file.previewTemplate).find('.dz-remove').attr('id');
 
             // Remove from array
-            fileIds = fileIds.filter(uuid => uuid != id)
-            $('#uuid-files').val(fileIds);
+            replyFileIds = replyFileIds.filter(uuid => uuid != id)
+            $('#uuid-files-reply').val(replyFileIds);
 
             // make a DELETE ajax request to delete the file
             $.ajax({

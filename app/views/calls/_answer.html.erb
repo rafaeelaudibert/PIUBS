@@ -74,8 +74,8 @@
         tinyMCE.get(0).setContent(`${answer}<br/><br>Essa resposta foi retirada do FAQ. Ela estava disponível <a href="/answers/${id}" target='_blank'>aqui</a></b>`);
 
         // Set the ids
-        fileIds = data.map(val => val.id).reduce((acc, val) => acc.concat(val), [])
-        $('#uuid-files').val(fileIds);
+        replyFileIds = data.map(val => val.id).reduce((acc, val) => acc.concat(val), [])
+        $('#uuid-files-reply').val(replyFileIds);
 
         // Fake their adittion in the reply-dropzone
         data.forEach( val => {

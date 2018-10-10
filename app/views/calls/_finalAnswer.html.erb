@@ -26,10 +26,14 @@
       <%= form.text_area :answer, class: 'form-control boxed', rows: '8', required: true %>
     </div>
 
-    <div class="form-group input-group">
-      <%= form.label :file, 'Adicionar Anexos (Opcional)', class: "btn btn-secondary btn-file input-group-btn" %>
-      <%= form.file_field :file, class: 'form-control-file', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 20.megabytes, max_file_quantity: 10}, style:"display: none"%>
-      <%= form.text_field :file_text, class:"form-control", readonly: true %>
+    <div class="form-group">
+      <%= form.label :files, 'Arquivos (selecione todos os arquivos necessários pressionando a tecla CTRL)' %>
+      <%= form.text_field :files, id:'uuid-files-answer', style: 'display: none'%>
+      <div id="answer-dropzone" class="future-dropzone">
+        <div class="dz-default dz-message">
+          Arraste arquivos aqui para adicioná-los
+        </div>
+      </div>
     </div>
 
     <div class="field">
@@ -61,3 +65,71 @@
     </div>
   </div>
 <% end %>
+
+<script>
+  let answerFileIds = [];
+  let dropAnswer;
+  $(document).ready(function () {
+
+    // Adds the actual class, to prevent errors
+    document.querySelectorAll('.future-dropzone').forEach(d => d.classList.add('dropzone'));
+
+      // grap our upload form by its id
+    dropAnswer = $('#answer-dropzone').dropzone({
+        url: '/apoioaempresas/attachments',
+
+        // restrict image size to a maximum 20MB
+        maxFilesize: 20,
+
+        // restrict to the maximum of 3 files
+        maxFiles: 3,
+
+        // Translations
+        dictCancelUpload: 'Cancelar Upload',
+        dictCancelUploadConfirmation: 'Deseja mesmo cancelar o Upload?',
+        dictRemoveFile: 'Remover arquivo',
+        dictDefaultMessage: 'Arraste arquivos aqui para adicioná-los',
+        dictFallbackMessage: 'Esse browser não suporta o anexo de arquivos.',
+        dictFileTooBig: 'Tamanho dos anexos excedido',
+        dictInvalidFileType: 'Extensão de arquivo Inválida',
+        dictMaxFilesExceeded: 'Quantidade de arquivos excedida',
+
+        // show remove links on each image upload
+        addRemoveLinks: true,
+
+        // if the upload was successful
+        success: (file, response) => {
+            // find the remove button link of the uploaded file and give it an id
+            // based of the attachmentID response from the server
+            $(file.previewTemplate).find('.dz-remove').attr('id', response.attachmentID);
+
+            // Add to array
+            answerFileIds.push(response.attachmentID);
+            $('#uuid-files-answer').val(answerFileIds);
+
+            // add the dz-success class (the green tick sign)
+            $(file.previewElement).addClass("dz-success");
+
+        },
+        //when the remove button is clicked
+        removedfile: file => {
+
+            // grap the id of the uploaded file we set earlier
+            let id = $(file.previewTemplate).find('.dz-remove').attr('id');
+
+            // Remove from array
+            answerFileIds = answerFileIds.filter(uuid => uuid != id)
+            $('#uuid-files-answer').val(answerFileIds);
+
+            // make a DELETE ajax request to delete the file
+            $.ajax({
+                type: 'DELETE',
+                url: '/apoioaempresas/attachments/' + id,
+                success: () => $(file.previewTemplate).fadeOut(),
+                error: e => console.error(e)
+            });
+        }
+    });
+  });
+
+</script>

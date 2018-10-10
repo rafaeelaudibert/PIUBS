@@ -26,11 +26,6 @@ class RepliesController < ApplicationController
     rep_params = reply_params
     files = rep_params.delete(:files).split(',') if rep_params[:files]
 
-    # TODO: TO BE REPLACED IN THE NEXT COMMITS WITH FURTHER DROPZONE IMPLEMENTATION
-    attach = rep_params[:faq_attachments]
-    faq_attachments_ids = rep_params.delete(:faq_attachments).split(',') if attach
-    ###
-
     @reply = Reply.new(rep_params)
     @reply.user_id = current_user.id
     @reply.status = @reply.call.status || 'Sem Status'
@@ -47,18 +42,9 @@ class RepliesController < ApplicationController
         end
       end
 
-      # "IMPORT" attachments from the faq answer to this reply
-      faq_attachments_ids&.each do |id|
-        @link = AttachmentLink.new(attachment_id: id, reply_id: @reply.id, source: 'reply')
-        unless @link.save
-          raise 'Não consegui criar o link entre arquivo que veio do FAQ e a resposta.'\
-                ' Por favor tente mais tarde'
-        end
-      end
-
       ReplyMailer.notify(@reply, current_user).deliver_later
       redirect_to call_path(@reply.protocol),
-                  notice: 'Reply was successfully created.'
+                  notice: 'Resposta adicionada com sucesso.'
     else
       render :new
     end
@@ -87,8 +73,16 @@ class RepliesController < ApplicationController
                                     .attachments
                                     .map do |attachment|
                        { filename: attachment.filename,
-                         id: attachment.id }
-                     end)
+                         type: attachment.content_type,
+                         id: attachment.id,
+                         bytes: Reply.connection
+                                      .select_all(Reply.sanitize_sql_array(
+                                                    ["SELECT octet_length(file_contents) FROM "\
+                                                     "attachments WHERE attachments.id = ?",
+                                                      attachment.id]))[0]['octet_length']
+                      }
+                     end
+              )
       end
     end
   end
