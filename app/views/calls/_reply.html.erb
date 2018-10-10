@@ -16,26 +16,94 @@
   <%= form.text_field :protocol, type: 'hidden', class: 'form-control', required: true %>
   <% if support_user? || current_user.try(:admin?) %>
     <%= form.check_box :faq, checked: false, id:'on-faq', style: "display: none;" %>
-    <%= form.text_field :faq_attachments, type: 'hidden', class: 'form-control' %>
   <% end %>
 
   <div class="field">
     <%= form.label :description, 'Descrição', class: 'required' %>
     <%= form.text_area :description, id:'tinymce', class: 'tinymce', :rows => 40, :cols => 120%>
   </div>
-  <div class="form-group input-group">
-    <%= form.label :file, 'Anexar arquivos', class: "btn btn-secondary btn-file input-group-btn" %>
-    <%= form.file_field :file, class: 'form-control-file', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 20.megabytes}, style:"display: none"%>
-    <%= form.text_field :file_text, class:"form-control", readonly: true %>
+
+  <div class="form-group">
+    <%= form.label :files, 'Arquivos (selecione todos os arquivos necessários pressionando a tecla CTRL)' %>
+    <%= form.text_field :files, id:'uuid-files-reply', style: 'display: none'%>
+    <div id="reply-dropzone" class="future-dropzone">
+      <div class="dz-default dz-message">
+        Arraste arquivos aqui para adicioná-los
+      </div>
+    </div>
   </div>
+
   <%= form.submit 'Enviar resposta', class: 'btn btn-primary btn-sm' %>
   <button id="cancel" type="button" class="btn btn-danger btn-sm">Cancelar</button>
 </div>
 <script>
+  let replyFileIds = [];
+  let dropReply;
   $(document).ready(function () {
     var protocol = "<%= escape_javascript @call.protocol %>";
     $("#reply_protocol").val(protocol);
     $("#reply_protocol").hide();
+
+    // Adds the actual class, to prevent errors
+    document.querySelectorAll('.future-dropzone').forEach(d => d.classList.add('dropzone'));
+
+      // grap our upload form by its id
+    dropReply = $('#reply-dropzone').dropzone({
+        url: '/apoioaempresas/attachments',
+
+        // restrict image size to a maximum 20MB
+        maxFilesize: 20,
+
+        // restrict to the maximum of 3 files
+        maxFiles: 3,
+
+        // Translations
+        dictCancelUpload: 'Cancelar Upload',
+        dictCancelUploadConfirmation: 'Deseja mesmo cancelar o Upload?',
+        dictRemoveFile: 'Remover arquivo',
+        dictDefaultMessage: 'Arraste arquivos aqui para adicioná-los',
+        dictFallbackMessage: 'Esse browser não suporta o anexo de arquivos.',
+        dictFileTooBig: 'Tamanho dos anexos excedido',
+        dictInvalidFileType: 'Extensão de arquivo Inválida',
+        dictMaxFilesExceeded: 'Quantidade de arquivos excedida',
+
+        // show remove links on each image upload
+        addRemoveLinks: true,
+
+        // if the upload was successful
+        success: (file, response) => {
+            // find the remove button link of the uploaded file and give it an id
+            // based of the attachmentID response from the server
+            $(file.previewTemplate).find('.dz-remove').attr('id', response.attachmentID);
+
+            // Add to array
+            replyFileIds.push(response.attachmentID);
+            $('#uuid-files-reply').val(replyFileIds);
+
+            // add the dz-success class (the green tick sign)
+            $(file.previewElement).addClass("dz-success");
+
+        },
+        //when the remove button is clicked
+        removedfile: file => {
+
+            // grap the id of the uploaded file we set earlier
+            let id = $(file.previewTemplate).find('.dz-remove').attr('id');
+
+            // Remove from array
+            replyFileIds = replyFileIds.filter(uuid => uuid != id)
+            $('#uuid-files-reply').val(replyFileIds);
+
+            // make a DELETE ajax request to delete the file
+            $.ajax({
+                type: 'DELETE',
+                url: '/apoioaempresas/attachments/' + id,
+                success: () => $(file.previewTemplate).fadeOut(),
+                error: e => console.error(e)
+            });
+        }
+    });
   });
+
 </script>
 <% end %>
