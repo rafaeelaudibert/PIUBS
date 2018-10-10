@@ -241,7 +241,7 @@
     <hr/>
     <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
       <% if @my_call %>
-        <%= link_to 'Marcar como resposta final', '#', onclick: 'toggleFinalAnswer(this)', class: 'btn btn-primary btn-sm' %>
+        <a style="color: white" onclick="toggleFinalAnswer(this)" class="btn btn-primary btn-sm">Marcar como resposta final</a>
       <% end %>
     <% end %>
     <div style="float: right">
