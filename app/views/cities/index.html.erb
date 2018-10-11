@@ -3,7 +3,6 @@
 <%end%>
 
 <div class="float-right" style="display: inline-block !important">
-  <%= form_for_filterrific @filterrific do |f| %>
     <form role="search">
       <div class="input-group" style="margin: 0">
         <input name="filterrific[search_query]" id="filterrific_search_query" class="form-control mr-sm-2" type="search" aria-label="Search">
@@ -14,7 +13,6 @@
         <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
       </div>
     </form>
-  <%end%>
 </div>
 <div class="float-left create-new">
 <%= link_to 'Adicionar nova cidade', new_city_path, class: 'btn btn-primary' %>
