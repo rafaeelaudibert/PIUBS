@@ -8,7 +8,14 @@ class StatesController < ApplicationController
   # GET /states
   # GET /states.json
   def index
-    @states = State.paginate(page: params[:page], per_page: 27).order('name ASC')
+    (@filterrific = initialize_filterrific(
+      State,
+      params[:filterrific],
+      select_options: { # em breve
+      },
+      persistence_id: false
+    )) || return
+    @states = @filterrific.find.page(params[:page]).order('name ASC')
   end
 
   # GET /states/1
