@@ -7,7 +7,14 @@ class RepliesController < ApplicationController
 
   # GET /replies
   def index
-    @replies = Reply.order('created_at DESC').paginate(page: params[:page], per_page: 25)
+    (@filterrific = initialize_filterrific(
+      Reply,
+      params[:filterrific],
+      select_options: { # em breve
+      },
+      persistence_id: false
+    )) || return
+    @replies = @filterrific.find.page(params[:page]).order('created_at DESC')
   end
 
   # GET /replies/1

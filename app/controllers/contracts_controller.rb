@@ -7,7 +7,14 @@ class ContractsController < ApplicationController
 
   # GET /contracts
   def index
-    @contracts = Contract.joins(:city).order('sei').paginate(page: params[:page], per_page: 25)
+    (@filterrific = initialize_filterrific(
+      Contract,
+      params[:filterrific],
+      select_options: { # em breve
+      },
+      persistence_id: false
+    )) || return
+    @contracts = @filterrific.find.page(params[:page]).joins(:city).order('sei')
   end
 
   # GET /contracts/1

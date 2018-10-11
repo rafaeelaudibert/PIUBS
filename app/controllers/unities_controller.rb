@@ -7,7 +7,14 @@ class UnitiesController < ApplicationController
 
   # GET /unities
   def index
-    @unities = Unity.order('name', 'city_id').paginate(page: params[:page], per_page: 25)
+    (@filterrific = initialize_filterrific(
+      Unity,
+      params[:filterrific],
+      select_options: { # em breve
+      },
+      persistence_id: false
+    )) || return
+    @unities = @filterrific.find.page(params[:page]).order('name', 'city_id')
   end
 
   # GET /unities/1

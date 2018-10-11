@@ -8,7 +8,14 @@ class AnswersController < ApplicationController
   # GET /answers
   # GET /answers.json
   def index
-    @answers = Answer.order('category_id ASC').paginate(page: params[:page], per_page: 25)
+    (@filterrific = initialize_filterrific(
+      Answer,
+      params[:filterrific],
+      select_options: { # em breve
+      },
+      persistence_id: false
+    )) || return
+    @answers = @filterrific.find.page(params[:page]).order('category_id ASC')
   end
 
   # get /faq

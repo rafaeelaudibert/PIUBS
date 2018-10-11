@@ -8,7 +8,14 @@ class CategoriesController < ApplicationController
   # GET /categories
   # GET /categories.json
   def index
-    @categories = Category.order('id').paginate(page: params[:page], per_page: 25)
+    (@filterrific = initialize_filterrific(
+      Category,
+      params[:filterrific],
+      select_options: { # em breve
+      },
+      persistence_id: false
+    )) || return
+    @categories = @filterrific.find.page(params[:page]).order('id')
   end
 
   # GET /categories/1
