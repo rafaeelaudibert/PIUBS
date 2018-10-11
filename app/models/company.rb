@@ -20,6 +20,7 @@ class Company < ApplicationRecord
 
   scope :search_query, lambda { |query|
     return nil  if query.blank?
-    where(sei: query)
+    query_search_i = query.to_i
+    where("sei = ?", query_search_i)
   }
 end
