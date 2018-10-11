@@ -8,7 +8,14 @@ class CompaniesController < ApplicationController
   # GET /companies
   # GET /companies.json
   def index
-    @companies = Company.order('sei').paginate(page: params[:page], per_page: 25)
+    (@filterrific = initialize_filterrific(
+      Company,
+      params[:filterrific],
+      select_options: { # em breve
+      },
+      persistence_id: false
+    )) || return
+    @companies = @filterrific.find.page(params[:page]).order('sei')
   end
 
   # GET /companies/1
