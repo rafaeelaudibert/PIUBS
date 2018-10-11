@@ -18,7 +18,7 @@ class Unity < ApplicationRecord
 
   scope :search_query, lambda { |query|
     return nil  if query.blank?
-    query_search = query.to_i
-    where("cnes = ?", query_search)
+    return find(query) if query.class == Integer
+    where("name ILIKE :search", search: "%#{query}%")
   }
 end
