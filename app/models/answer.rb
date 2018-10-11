@@ -17,9 +17,16 @@ class Answer < ApplicationRecord
   filterrific(
     default_filter_params: { with_category: 'category_any' },
     available_filters: [
-      :with_category
+      :with_category,
+      :search_query
     ]
   )
+
+  scope :search_query, lambda { |query|
+    return nil  if query.blank?
+    query_search = "%#{query}%"
+    where("question ILIKE :search OR answer ILIKE :search", search: query_search)
+  }
 
   scope :with_category, lambda { |category_id|
     return nil if category_id == 'category_any'
