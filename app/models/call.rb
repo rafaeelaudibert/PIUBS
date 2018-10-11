@@ -28,8 +28,15 @@ class Call < ApplicationRecord
       with_company
       with_state
       with_city
+      search_query
     ]
   )
+
+  scope :search_query, lambda { |query|
+    return nil  if query.blank?
+    query_search = "%#{query}%"
+    where("title ILIKE :search", search: query_search)
+  }
 
   scope :sorted_by_creation, lambda { |sort_key|
     sort = /asc$/.match?(sort_key) ? 'asc' : 'desc'
