@@ -73,18 +73,20 @@
 <%= form_for_filterrific @filterrific do |f| %>
     <form role="search">
       <div class="input-group" style="margin: 0">
-        <%= f.text_field(:search_query, class: 'form-control mr-sm-2', type: 'search') %>
-        <%= f.submit "Pesquisar", :class => 'btn-primary my-2 my-sm-0', :style => 'color: blue !important; float:right' %>
-        <!-- <label>
+        <input name="filterrific[search_query]" id="filterrific_search_query" class="form-control mr-sm-2" type="search" aria-label="Search">
+
+        <label>
           <i class="fa fa-search"></i>
           &nbsp;Atendimento
-        </label> -->
-        <!-- <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button> -->
+        </label>
+         <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
       </div>
     </form>
 <%end%>
 
 </div>
+
+
 <div class="float-left create-new">
 <%= link_to 'Solicitar novo atendimento', new_call_path(sei: current_user.sei), class: 'btn btn-primary' %>
 </div>
