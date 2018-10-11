@@ -18,6 +18,7 @@ class Answer < ApplicationRecord
     default_filter_params: { with_category: 'category_any' },
     available_filters: [
       :with_category,
+      :search_query_faq,
       :search_query
     ]
   )
@@ -26,6 +27,12 @@ class Answer < ApplicationRecord
     return nil  if query.blank?
     query_search = "%#{query}%"
     where("question ILIKE :search OR answer ILIKE :search", search: query_search)
+  }
+
+  scope :search_query_faq, lambda { |query|
+    return nil  if query.blank?
+    query_search_faq = "%#{query}%"
+    where("question ILIKE :search OR answer ILIKE :search", search: query_search_faq)
   }
 
   scope :with_category, lambda { |category_id|
