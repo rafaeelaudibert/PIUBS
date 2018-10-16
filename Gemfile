@@ -15,6 +15,7 @@ group :development do
   gem 'spring-commands-rspec'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'web-console', '>= 3.3.0'
+  gem 'github_changelog_generator'
 end
 
 # Tests only gems
@@ -67,6 +68,7 @@ gem 'uglifier', '>= 1.3.0'
 
 gem 'cpf_cnpj'                  # CPF/CNPJ validations/management
 gem 'data-confirm-modal'        # Modals for confimations
+gem 'dropzonejs-rails'          # Attachments drag n'drop functionality
 gem 'filterrific', '~> 5.1.0'   # Filtering
 gem 'font-awesome-rails'        # Icons
 gem 'mail_form', '>= 1.3.0'     # Mailer gem

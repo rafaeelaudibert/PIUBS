@@ -8,7 +8,14 @@ class AnswersController < ApplicationController
   # GET /answers
   # GET /answers.json
   def index
-    @answers = Answer.order('category_id ASC').paginate(page: params[:page], per_page: 25)
+    (@filterrific = initialize_filterrific(
+      Answer,
+      params[:filterrific],
+      select_options: { # em breve
+      },
+      persistence_id: false
+    )) || return
+    @answers = @filterrific.find.page(params[:page]).order('category_id ASC')
   end
 
   # get /faq
@@ -49,8 +56,7 @@ class AnswersController < ApplicationController
   # POST /answers
   def create
     ans_params = answer_params
-    files = ans_params.delete(:file) if ans_params[:file]
-    reply_attachments_ids = params[:reply_attachments].split(',') if params[:reply_attachments]
+    files = ans_params.delete(:files).split(',') if ans_params[:files]
     @answer = Answer.new(ans_params)
 
     if @answer.save
@@ -79,28 +85,13 @@ class AnswersController < ApplicationController
 
       end
 
-      if files
-        parsed_params = attachment_params files
-        parsed_params[:filename].each_with_index do |_filename, index|
-          @attachment = Attachment.new(each_attachment(parsed_params, index))
-          raise 'Não consegui anexar o arquivo. Por favor tente mais tarde' unless @attachment.save
-
-          @link = AttachmentLink.new(attachment_id: @attachment.id,
-                                     answer_id: @answer.id,
-                                     source: 'answer')
-          unless @link.save
-            raise 'Não consegui criar o link entre arquivo e resposta final.'\
-                  ' Por favor tente mais tarde'
-          end
-        end
-      end
-
-      # "IMPORT" attachments from the reply to this answer
-      reply_attachments_ids&.each do |id|
-        @link = AttachmentLink.new(attachment_id: id, answer_id: @answer.id, source: 'answer')
+      files.each do |file_uuid|
+        @link = AttachmentLink.new(attachment_id: file_uuid,
+                                   answer_id: @answer.id,
+                                   source: 'answer')
         unless @link.save
-          raise 'Não consegui criar o link entre arquivo que veio da reply e essa resposta.'\
-                ' Por favor tente mais tarde'
+           raise 'Não consegui criar o link entre arquivo e resposta final.'\
+                 ' Por favor tente mais tarde'
         end
       end
 
@@ -114,9 +105,37 @@ class AnswersController < ApplicationController
   # PATCH/PUT /answers/1.json
   def update
     respond_to do |format|
-      if @answer.update(answer_params)
-        format.html { redirect_to @answer, notice: 'Resposta atualizada com sucesso.' }
-        format.json { render :show, status: :ok, location: @answer }
+      ans_params = answer_params
+      files = ans_params.delete(:files).split(',') if ans_params[:files]
+
+      # Remove todos os links que foram removidos
+      @answer.attachment_links.each do |link|
+        unless files.include?(link)
+          link.destroy
+          files.delete(link)
+        end
+      end
+
+      # Cria novos links
+      files.each do |file_uuid|
+        @link = AttachmentLink.new(attachment_id: file_uuid,
+                                   answer_id: @answer.id,
+                                   source: 'answer')
+        unless @link.save
+           raise 'Não consegui criar o link entre arquivo e resposta final.'\
+                 ' Por favor tente mais tarde'
+        end
+      end
+
+      if @answer.save
+
+        if @answer.update(ans_params)
+          format.html { redirect_to @answer, notice: 'Resposta atualizada com sucesso.' }
+          format.json { render :show, status: :ok, location: @answer }
+        else
+          format.html { render :edit }
+          format.json { render json: @answer.errors, status: :unprocessable_entity }
+        end
       else
         format.html { render :edit }
         format.json { render json: @answer.errors, status: :unprocessable_entity }
@@ -153,8 +172,16 @@ class AnswersController < ApplicationController
                                       .attachments
                                       .map do |attachment|
                        { filename: attachment.filename,
-                         id: attachment.id }
-                     end)
+                         type: attachment.content_type,
+                         id: attachment.id,
+                         bytes: Answer.connection
+                                      .select_all(Answer.sanitize_sql_array(
+                                                    ["SELECT octet_length(file_contents) FROM "\
+                                                     "attachments WHERE attachments.id = ?",
+                                                      attachment.id]))[0]['octet_length']
+                       }
+                     end
+               )
       end
     end
   end
@@ -171,31 +198,7 @@ class AnswersController < ApplicationController
     params[:answer][:keywords] = params[:answer][:keywords].split(',').join(' ; ')
     params.require(:answer).permit(:keywords, :question, :answer, :category_id,
                                    :user_id, :faq, :question_id,
-                                   :reply_attachments, file: [])
-  end
-
-  ## ATTACHMENTS STUFF
-  def attachment_params(file)
-    parameters = {}
-    if file
-      parameters[:filename] = []
-      parameters[:content_type] = []
-      parameters[:file_contents] = []
-      file.each do |f|
-        parameters[:filename].append(File.basename(f.original_filename))
-        parameters[:content_type].append(f.content_type)
-        parameters[:file_contents].append(f.read)
-      end
-    end
-    parameters
-  end
-
-  def each_attachment(parsed_params, index)
-    new_params = {}
-    new_params[:filename] = parsed_params[:filename][index]
-    new_params[:content_type] = parsed_params[:content_type][index]
-    new_params[:file_contents] = parsed_params[:file_contents][index]
-    new_params
+                                   :reply_attachments, :files)
   end
 
   def filter_role

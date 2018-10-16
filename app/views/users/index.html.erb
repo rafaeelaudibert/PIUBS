@@ -1,6 +1,6 @@
-<div class="container">
+<%= content_for :body_title do%>
 
-  <h3>Usuários</h3>
+  <div class="display-5" style="float:left;">Usuários</div>
 
   <%= form_for_filterrific @filterrific do |f| %>
     <div style="width:100%; margin:0 auto; float:right; ">
@@ -45,38 +45,48 @@
       </div>
     </div>
   <%end%>
+<% end %>
+
+  <div class="float-right" style="display: inline-block !important">
+      <form role="search">
+        <div class="input-group" style="margin: 0">
+          <input name="filterrific[search_query]" id="filterrific_search_query" class="form-control mr-sm-2" type="search" aria-label="Search">
+          <label>
+            <i class="fa fa-search"></i>
+            &nbsp;Usuário
+          </label>
+          <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
+        </div>
+      </form>
+  </div>
   <div class="create-new">
   <%= link_to 'Convidar novo usuário', new_user_invitation_path, class: 'btn btn-primary' %>
   </div>
 
-  <%= form_for resource, :as => resource_name do |f| %>
-  <%= devise_error_messages! %>
+  <hr />
 
-      <div class="row">
-        <div class="col">
-          <table class="table table-bordered table-striped table-hover table-users">
-            <thead class="thead-dark">
-              <tr>
-                <th>Nome</th>
-                <th>E-mail</th>
-                <% if current_user.try(:admin?) %>
-                  <th>Perfil</th>
-                <% end %>
-                <th>Último login</th>
-                <th>Status</th>
-                <th colspan="2"></th>
-              </tr>
-            </thead>
-              <tbody>
-                <% @users.each do |user| %>
-                  <tr>
-                    <%= render user %>
-                  </tr>
-                <% end %>
-              </tbody>
-          </table>
-        </div>
-      </div>
+  <div id="filterrific_results">
 
-    <% end %>
+    <table class="table table-bordered table-striped table-hover table-users">
+      <thead class="thead-dark">
+        <tr>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <% if current_user.try(:admin?) %>
+            <th>Perfil</th>
+          <% end %>
+          <th>Último login</th>
+          <th>Status</th>
+          <th colspan="2"></th>
+        </tr>
+      </thead>
+        <tbody>
+          <% @users.each do |user| %>
+            <tr>
+              <%= render user %>
+            </tr>
+          <% end %>
+        </tbody>
+    </table>
+
   </div>

@@ -73,7 +73,7 @@ class CallsController < ApplicationController
   # POST /calls
   def create
     call_parameters = call_params
-    files = call_parameters.delete(:file) if call_parameters[:file]
+    files = call_parameters.delete(:files).split(',') if call_parameters[:files]
     @call = Call.new(call_parameters)
     # status, severity, protocol, company_id
     @call.protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
@@ -85,12 +85,8 @@ class CallsController < ApplicationController
 
     if @call.save
       if files
-        parsed_params = attachment_params files
-        parsed_params[:filename].each_with_index do |_filename, index|
-          @attachment = Attachment.new(each_attachment(parsed_params, index))
-          raise 'Não consegui anexar o arquivo. Por favor tente mais tarde' unless @attachment.save
-
-          @link = AttachmentLink.new(attachment_id: @attachment.id,
+        files.each do |file_uuid|
+          @link = AttachmentLink.new(attachment_id: file_uuid,
                                      call_id: @call.id,
                                      source: 'call')
           unless @link.save
@@ -207,31 +203,7 @@ class CallsController < ApplicationController
                                  :access_profile, :feature_detail,
                                  :answer_summary, :severity, :protocol,
                                  :city_id, :category_id, :state_id,
-                                 :company_id, :cnes, file: [])
-  end
-
-  ## ATTACHMENTS STUFF
-  def attachment_params(file)
-    parameters = {}
-    if file
-      parameters[:filename] = []
-      parameters[:content_type] = []
-      parameters[:file_contents] = []
-      file.each do |f|
-        parameters[:filename].append(File.basename(f.original_filename))
-        parameters[:content_type].append(f.content_type)
-        parameters[:file_contents].append(f.read)
-      end
-    end
-    parameters
-  end
-
-  def each_attachment(parsed_params, index)
-    new_params = {}
-    new_params[:filename] = parsed_params[:filename][index]
-    new_params[:content_type] = parsed_params[:content_type][index]
-    new_params[:file_contents] = parsed_params[:file_contents][index]
-    new_params
+                                 :company_id, :cnes, :files)
   end
 
   def filter_role

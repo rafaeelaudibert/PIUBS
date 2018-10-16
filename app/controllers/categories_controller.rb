@@ -8,7 +8,14 @@ class CategoriesController < ApplicationController
   # GET /categories
   # GET /categories.json
   def index
-    @categories = Category.order('id').paginate(page: params[:page], per_page: 25)
+    (@filterrific = initialize_filterrific(
+      Category,
+      params[:filterrific],
+      select_options: { # em breve
+      },
+      persistence_id: false
+    )) || return
+    @categories = @filterrific.find.page(params[:page]).order('id')
   end
 
   # GET /categories/1
@@ -68,8 +75,9 @@ class CategoriesController < ApplicationController
 
   # Never trust parameters from internet, only allow the white list through.
   def category_params
+    puts params
     parent_id = params[:category][:parent_id]
-    params[:category][:parent_depth] = 1 + Category.find(parent_id).parent_depth if parent_id
+    params[:category][:parent_depth] = 1 + Category.find(parent_id).parent_depth if parent_id != ""
     params.require(:category).permit(:name, :parent_id,
                                      :parent_depth, :severity)
   end

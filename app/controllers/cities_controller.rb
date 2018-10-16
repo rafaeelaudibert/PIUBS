@@ -8,7 +8,14 @@ class CitiesController < ApplicationController
   # GET /cities
   # GET /cities.json
   def index
-    @cities = City.includes(:state).order('state_id').paginate(page: params[:page], per_page: 25)
+    (@filterrific = initialize_filterrific(
+      City,
+      params[:filterrific],
+      select_options: { # em breve
+      },
+      persistence_id: false
+    )) || return
+    @cities = @filterrific.find.page(params[:page]).includes(:state).order('state_id')
   end
 
   # GET /cities/1

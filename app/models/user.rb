@@ -27,9 +27,16 @@ class User < ApplicationRecord
       :with_status,
       :with_company,
       :with_state,
-      :with_city
+      :with_city,
+      :search_query
     ]
   )
+
+  scope :search_query, lambda { |query|
+    return nil  if query.blank?
+    query_search = "%#{query}%"
+    where("name ILIKE :search OR last_name ILIKE :search OR email ILIKE :search", search: query_search)
+  }
 
   scope :sorted_by_name, lambda { |sort_key|
     sort = (sort_key =~ /asc$/) ? 'asc' : 'desc'
@@ -122,7 +129,7 @@ class User < ApplicationRecord
       ['Cidade', 0],
     ]
   end
-         
+
 
   def send_devise_notification(notification, *args)
     DeviseWorker.perform_async(devise_mailer, notification, id, *args)

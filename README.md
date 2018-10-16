@@ -52,7 +52,7 @@ It's done! You are ready to find your app running at `localhost:8081` with a dat
 
 If you want to enter in a container you can run `docker-compose ps` and see what is the name of your container according to `piubs_<name_of_container>_1`. After you only need to run the following, to enter in a bash inside the container, so you are able to run whatever you want:
 ```bash
-$ docker-compose exec -it <name_of_container> /bin/bash
+$ docker-compose exec <name_of_container> /bin/bash
 ```
 
 

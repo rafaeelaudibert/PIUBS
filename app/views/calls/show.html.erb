@@ -59,7 +59,7 @@
     <% @call.attachments.each do |_attachment| %>
       <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
       <i class="fa fa-file-text mr-1"></i>
-      <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+      <%= truncate(_attachment.filename, length: 30, omission: '...')%>
     <%end%>
   <% end %>
 <% end %>
@@ -241,7 +241,7 @@
     <hr/>
     <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
       <% if @my_call %>
-        <%= link_to 'Marcar como resposta final', '#', onclick: 'toggleFinalAnswer(this)', class: 'btn btn-primary btn-sm' %>
+        <a style="color: white" onclick="toggleFinalAnswer(this)" class="btn btn-primary btn-sm">Marcar como resposta final</a>
       <% end %>
     <% end %>
     <div style="float: right">
@@ -445,59 +445,74 @@ if (log)
 </script>
 
 <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-<script>
-let extraFilesReply = 0;
-function toggleFinalAnswer(button) {
+  <script>
+    let extraFilesReply = 0;
+    function toggleFinalAnswer(button) {
 
-const finalAnswer = $('#final-answer')[0];
-const parent = button.parentNode;
+      const finalAnswer = $('#final-answer')[0];
+      const parent = button.parentNode;
 
-if (parent.lastChild == finalAnswer) {
-$('#final-answer').toggle(200);
-} else {
-$('#final-answer').hide();
-parent.appendChild(finalAnswer);
-$('#final-answer').show(200);
-}
+      if (parent.lastChild == finalAnswer) {
+        $('#final-answer').toggle(200);
+      } else {
+        $('#final-answer').hide();
+        parent.appendChild(finalAnswer);
+        $('#final-answer').show(200);
+      }
 
-const formChildren = finalAnswer.children[3].children;
-const answerDivField = formChildren[2].children[1];
-const answerField = answerDivField.children[1];
-answerField.innerHTML = parent.parentNode.children[1].children[0].innerText;
+      const formChildren = finalAnswer.children[3].children;
+      const answerDivField = formChildren[2].children[1];
+      const answerField = answerDivField.children[1];
+      answerField.innerHTML = parent.parentNode.children[1].children[0].innerText;
 
-const float = parent.children[3].children
-const faqField = formChildren[2].children[6];
-faqField.style.display = float.length == 0
-? parent.children[7].children.length == 2
-? 'none'
-: 'inline-flex'
-: float.length == 2
-? 'none'
-: 'inline-flex';
+      const float = parent.children[3].children
+      const faqField = formChildren[2].children[6];
+      faqField.style.display = float.length == 0 ?
+                                  parent.children[7].children.length == 2 ? 'none' : 'inline-flex'
+                                : float.length == 2 ? 'none' : 'inline-flex';
+      const replyId = parent.parentNode.children[0].children[1].innerText.split('#')[1];
 
-const replyId = parent.parentNode.children[0].children[1].innerText.split('#')[1];
-$.ajax({
-url: '/replies/attachments/' + replyId,
-type: "GET",
-dataType: "json",
-success: data => {
-extraFilesReply = data.length;
-$('#answer_file').trigger('change', 'reply');
-$('#reply_attachments')[0].value = data.map(val => val.id);
-}
-});
-}
-</script>
+      $.ajax({
+        url: '/apoioaempresas/replies/attachments/' + replyId,
+        type: "GET",
+        dataType: "json",
+        success: data => {
+
+          // Set the ids
+          answerFileIds = data.map(val => val.id).reduce((acc, val) => acc.concat(val), [])
+          $('#uuid-files-answer').val(answerFileIds);
+
+          // Fake their adittion in the reply-dropzone
+          data.forEach( val => {
+            let mockFile = {
+                      name: val.filename,
+                      size: val.bytes,
+                      type: val.type,
+                      accepted: true            // required if using 'MaxFiles' option
+                  };
+            dropzone = $('#answer-dropzone')[0].dropzone
+            dropzone.files.push(mockFile);
+            dropzone.emit('addedfile', mockFile);
+            dropzone.emit('complete', mockFile);
+            $(dropzone.files[dropzone.files.length - 1]
+                                            .previewElement).find('.dz-remove').attr('id', val.id);
+          })
+        }
+      });
+    }
+  </script>
 <% end %>
-<style>
-#reply_description_ifr {
-height: 250px !important;
-}
 
-#mceu_30 {
-display: none;
-}
-.btn.btn-oval {
-border-radius: 25px !important;
-}
+<style>
+  #reply_description_ifr {
+    height: 250px !important;
+  }
+
+  #mceu_30 {
+    display: none;
+  }
+
+  .btn.btn-oval {
+    border-radius: 25px !important;
+  }
 </style>

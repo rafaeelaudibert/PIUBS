@@ -5,10 +5,10 @@
 <div class="float-right" style="display: inline-block !important">
 <form role="search">
   <div class="input-group" style="margin: 0">
-    <input id="contract-form" class="form-control mr-sm-2" type="search" aria-label="Search">
+    <input name="filterrific[search_query]" id="filterrific_search_query" class="form-control mr-sm-2" type="search" aria-label="Search">
     <label>
       <i class="fa fa-search"></i>
-      &nbsp;Contrato
+      &nbsp;Nº do Contrato
     </label>
     <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
   </div>
@@ -19,40 +19,43 @@
 </div>
 <hr class="under-header"/>
 
-<% if @contracts.length > 0 %>
-<%= render './pagination', value: @contracts %>
-<table class="table table-striped table-hover">
-  <thead class="thead-dark">
-    <tr>
-      <th>Nº do Contrato</th>
-      <th>Cidade</th>
-      <th>Estado</th>
-      <th>SEI</th>
-      <th colspan="3">Ações</th>
-    </tr>
-  </thead>
+<div id="filterrific_results">
 
-  <tbody>
-    <% @contracts.each do |contract| %>
-      <tr>
-        <td><%= contract.contract_number %></td>
-        <td><%= contract.city.name %></td>
-        <td><%= contract.city.state.name %></td>
-        <td><%= contract.sei %></td>
-        <td>
-          <% if contract.filename %>
-            <%= link_to "Clique para fazer download", download_contracts_path(id: contract.id), class: 'btn btn-primary btn-sm' %>
-          <% else %>
-            <button class="btn btn-primary btn-sm" disabled="disabled">Não há arquivos anexados</button>
-          <% end %>
-          <%= link_to(contract, method: :delete, data: { confirm: 'Tens certeza?', verify: contract.contract_number, verify_text: 'Caso tenha, por favor digite o número do contrato para continuar' }, class: 'btn btn-danger btn-sm') do %>
-          <i class="fa fa-trash-o"></i>
-        <%end%>
-      <% end %>
-    </tbody>
-  </table>
+  <% if @contracts.length > 0 %>
   <%= render './pagination', value: @contracts %>
-<% end %>
+  <table class="table table-striped table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th>Nº do Contrato</th>
+        <th>Cidade</th>
+        <th>Estado</th>
+        <th>SEI</th>
+        <th colspan="3">Ações</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @contracts.each do |contract| %>
+        <tr>
+          <td><%= contract.contract_number %></td>
+          <td><%= contract.city.name %></td>
+          <td><%= contract.city.state.name %></td>
+          <td><%= contract.sei %></td>
+          <td>
+            <% if contract.filename %>
+              <%= link_to "Clique para fazer download", download_contracts_path(id: contract.id), class: 'btn btn-primary btn-sm' %>
+            <% else %>
+              <button class="btn btn-primary btn-sm" disabled="disabled">Não há arquivos anexados</button>
+            <% end %>
+            <%= link_to(contract, method: :delete, data: { confirm: 'Tens certeza?', verify: contract.contract_number, verify_text: 'Caso tenha, por favor digite o número do contrato para continuar' }, class: 'btn btn-danger btn-sm') do %>
+            <i class="fa fa-trash-o"></i>
+          <%end%>
+        <% end %>
+      </tbody>
+    </table>
+    <%= render './pagination', value: @contracts %>
+  <% end %>
+</div>
 <hr/>
 
 <script>
