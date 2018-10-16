@@ -9,7 +9,7 @@
 </hr>
 
 <%= form_for_filterrific @filterrific do |f| %>
-  <div class="left form-group" style="width:40%;">
+  <div class="left form-group" style="width:50%;">
     <%= f.label :filterrific_with_category, 'Filtro de Categorias'%>
     <select name="filterrific[with_category]" id="filterrific_with_category" class="form-control">
       <option value>Todas categorias</option>
@@ -36,8 +36,7 @@
   </div>
   <%= f.submit "Mostrar",
                id: 'mostrar-filter',
-               class: 'btn btn-link invisible',
-               style: 'color: blue !important; float:right' %>
+               class: 'btn btn-link invisible right' %>
 
   <%# add an automated spinner to your form when the list is refreshed %>
   <%= render_filterrific_spinner %>
