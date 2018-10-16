@@ -1,4 +1,5 @@
 //btn
+
 .btn {
   border-radius: 0.1rem !important;
 
@@ -6,14 +7,15 @@
     color: #050805;
   }
 }
-
 //form
+
 .form-control.boxed.faq {
   box-shadow: inset -0.5px -0.5px 3px rgba(0, 0, 0, 0.6);
 }
 
 .form-control {
   border-radius: 0.1rem !important;
+
   &:focus {
     box-shadow: none;
   }
@@ -25,7 +27,7 @@
   border-bottom: 1px solid #CC2222 !important;
 }
 
-label.hidden{
+label.hidden {
   display: none;
 }
 
@@ -121,7 +123,8 @@ tr {
 }
 
 hr.under-header {
-  margin-top: 5em;
+  margin-top: 6em;
+  margin-bottom: 2em;
 }
 // PAGINATION \\
 
@@ -199,9 +202,8 @@ table.table {
     }
   }
 }
-
-
 // FORM ERRORS
+
 #error_explanation {
   border: 2px solid rgba(120, 120, 120, 0.1);
   min-height: 50px;

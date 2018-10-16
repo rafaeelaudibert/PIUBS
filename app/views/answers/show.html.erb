@@ -6,7 +6,11 @@
     <em class="fa fa-bullhorn m-2"></em>
     Criada pelo usuário :
     <span class="badge badge-pill badge-dark m-2">
-      <%= link_to @answer.user.email, user_path(@answer.user.id) %>
+      <% if admin? %>
+        <%= link_to @answer.user.name || @answer.user.email, user_path(@answer.user.id), style: 'color: white' %>
+      <% else %>
+        <%= @answer.user.name || @answer.user.email %>
+      <% end %>
     </span>
     Data da criação :
     <span class="badge badge-pill badge-dark m-2">
@@ -30,7 +34,7 @@
           <% @answer.attachments.each do |_attachment| %>
             <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
             <i class="fa fa-file-text mr-1"></i>
-            <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+            <%= truncate(_attachment.filename, length: 30, omission: '...')%>
             <% end %>
           <% end %>
         </div>
