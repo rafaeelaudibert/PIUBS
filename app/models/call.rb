@@ -98,7 +98,7 @@ class Call < ApplicationRecord
 
   def self.options_for_with_status
     [
-      %w[Status status_any],
+      ['Todos Status', 'status_any'],
       %w[Abertos status_open],
       %w[Fechados status_closed],
       %w[Reabertos status_reopened]

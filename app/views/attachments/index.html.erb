@@ -14,7 +14,7 @@
   </div>
 </form>
 </div>
-<hr class="under-header"/>
+<hr class="under-header" style="margin-top: <%= params[:filterrific] ? '8em' : '5em'%>"/>
 
 <% if @attachments.length > 0 %>
 <%= render './pagination', value: @attachments %>

@@ -15,7 +15,7 @@ class CitiesController < ApplicationController
       },
       persistence_id: false
     )) || return
-    @cities = @filterrific.find.page(params[:page]).includes(:state).order('state_id')
+    @cities = @filterrific.find.page(params[:page]).order('state_id, name')
   end
 
   # GET /cities/1
