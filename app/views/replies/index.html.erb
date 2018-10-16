@@ -44,6 +44,10 @@
     </tbody>
   </table>
   <%= render './pagination', value: @replies %>
+  <% else %>
+    <h3>
+      Não existe nenhuma resposta com o termo pesquisado
+    </h3>
   <% end %>
 </div>
 <hr/>
