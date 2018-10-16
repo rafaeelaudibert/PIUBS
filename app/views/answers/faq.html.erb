@@ -72,7 +72,7 @@ $('document').ready(function () {
     $('#mostrar-filter').click();
   })
 
-  $('#answer-form').on('focusout', function () {
+  $('#filterrific_search_query_faq').on('focusout', function () {
     changeState($(this));
   });
 
@@ -83,16 +83,6 @@ $('document').ready(function () {
       form.removeClass('has-value');
     }
   }
-
-  // $('[data-toggle=collapse]').on('click', e => {
-  //
-  //    Previne de resetarx   $(e.target).attr('chosen', true);   $(e.target.parentNode).attr('chosen', true);   $('[data-toggle=collapse]:not([chosen=true])').trigger('reset');
-  //
-  //    Retira a flag   $(e.target).attr('chosen', false);   $(e.target.parentNode).attr('chosen', false);
-  //
-  //   try {     $(e.target).toggleClass('rotate');     $(e.target.children[0]).toggleClass('rotate');   } catch (e) {     Die silently   } });
-  //
-  // $('[data-toggle=collapse]').on('reset', e => {   $(e.target.children[0]).removeClass('rotate'); });
 
 });
 </script>

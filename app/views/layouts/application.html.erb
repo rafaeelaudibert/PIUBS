@@ -21,6 +21,7 @@
     <% end %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
     <%= yield :javascript %>
+    <%= yield :java %>
     <script>
       $(document).ready(function () {
         $(".dropdown-toggle").dropdown();
