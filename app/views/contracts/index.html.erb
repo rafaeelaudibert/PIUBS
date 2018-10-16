@@ -1,23 +1,25 @@
 <%= content_for :body_title do%>
-<h4 class="display-5">Contratos</h4>
+<div class="left">
+  <h4 class="display-5">Contratos</h4>
+</div>
+<div class="right create-new">
+  <%= link_to 'Criar novo contrato', new_contract_path, class: 'btn btn-primary btn-lg' %>
+</div>
 <%end%>
 
-<div class="float-right" style="display: inline-block !important">
-<form role="search">
-  <div class="input-group" style="margin: 0">
-    <input name="filterrific[search_query]" id="filterrific_search_query" class="form-control mr-sm-2" type="search" aria-label="Search">
-    <label>
-      <i class="fa fa-search"></i>
-      &nbsp;Nº do Contrato
-    </label>
-    <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
-  </div>
-</form>
+<div class="right" style="display: inline-block !important">
+  <form role="search">
+    <div class="right input-group" style="margin: 15px auto !important">
+      <input name="filterrific[search_query]" id="filterrific_search_query" class="form-control mr-sm-2" type="search" aria-label="Search">
+      <label>
+        <i class="fa fa-search"></i>
+        &nbsp;Nº do Contrato
+      </label>
+      <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
+    </div>
+  </form>
 </div>
-<div class="float-left create-new">
-<%= link_to 'Criar novo contrato', new_contract_path, class: 'btn btn-primary' %>
-</div>
-<hr class="under-header"/>
+<hr class="under-header" style="margin-top: <%= params[:filterrific] ? '8em' : '5em'%>"/>
 
 <div id="filterrific_results">
 
@@ -54,14 +56,18 @@
       </tbody>
     </table>
     <%= render './pagination', value: @contracts %>
-  <% end %>
+    <% else %>
+      <h3>
+        Não existe nenhum contrato com o número inserido no campo de pesquisa
+      </h3>
+    <% end %>
 </div>
 <hr/>
 
 <script>
   $('document').ready(function () {
 
-    $('#contract-form').on('focusout', function () {
+    $('#filterrific_search_query').on('focusout', function () {
       changeState($(this));
     });
 
