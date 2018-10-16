@@ -24,26 +24,30 @@
 <div id="filterrific_results">
 
   <% if @cities.length > 0 %>
-  <%= render './pagination', value: @cities %>
-  <table class="table table-striped table-hover">
-    <thead class="thead-dark">
-      <tr>
-        <th>Nome</th>
-        <th>Estado</th>
-        <th colspan="3">Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @cities.each do |city| %>
+    <%= render './pagination', value: @cities %>
+    <table class="table table-striped table-hover">
+      <thead class="thead-dark">
         <tr>
-          <td><%= city.name %></td>
-          <td><%= city.state.name %></td>
-          <td><%= link_to 'Mostrar', city , class: 'btn btn-primary btn-sm' %></td>
+          <th>Nome</th>
+          <th>Estado</th>
+          <th colspan="3">Ações</th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
-  <%= render './pagination', value: @cities %>
+      </thead>
+      <tbody>
+        <% @cities.each do |city| %>
+          <tr>
+            <td><%= city.name %></td>
+            <td><%= city.state.name %></td>
+            <td><%= link_to 'Mostrar', city , class: 'btn btn-primary btn-sm' %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <%= render './pagination', value: @cities %>
+  <% else %>
+    <h3>
+      Não existe nenhuma cidade com a pesquisa realizada
+    </h3>
   <% end %>
 </div>
 <hr/>
