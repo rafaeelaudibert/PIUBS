@@ -1,43 +1,50 @@
 <%= content_for :body_title do%>
-<h4 class="display-5">FAQ</h4>
+<div class="left">
+  <h4 class="display-5">FAQ</h4>
+</div>
+<div class="right create-new">
+  <%= link_to 'Cadastrar nova questão', new_answer_path, class: 'btn btn-primary btn-lg' %>
+</div>
+<%end%>
 
+
+</hr>
 <%= form_for_filterrific @filterrific do |f| %>
-  <div style="width:100%; margin:0 auto; float:right; ">
-    <div class="form-group" style="width:10%; float:right;">
-      <%= f.select(:with_category, @filterrific.select_options[:with_category], {multiple: true, include_blank: "Categoria"}, {:class => "form-control", :style => "width:100%;"}) %>
-    </div>
+  <div class="left form-group" style="width:40%;">
+    <%= f.label :filterrific_with_category, 'Filtro de Categorias'%>
+    <select name="filterrific[with_category]" id="filterrific_with_category" class="form-control">
+      <option value>Todas categorias</option>
+      <%= inside_layout "categories/category_select",
+                        {categ: Category.all,
+                         selected: params[:filterrific] &&
+                                   params[:filterrific][:with_category].to_i != 0 &&
+                                   Category.find(params[:filterrific][:with_category].to_i)} do %>
+        <%= yield %>
+      <% end %>
+    </select>
+    <%= (link_to 'Desfazer filtros',
+                 reset_filterrific_url,
+                 class: 'btn btn-danger',
+                 style: 'margin-top: 0.375em') if params[:filterrific] %>
   </div>
-  <div>
-    <div class="form-group">
-      <%= f.submit "Mostrar", :class => 'btn btn-link', :style => 'color: blue !important; float:right' %>
-      <%= link_to(
-        'Desfazer filtro',
-        reset_filterrific_url, :class => 'btn btn-link', :style => 'color: #AAA !important; float:right;'
-      ) %>
-    </div>
+  <div class="right input-group" style="width: 40%; margin: 15px auto !important">
+    <input name="filterrific[search_query_faq]" id="filterrific_search_query_faq" class="form-control mr-sm-2" type="search" aria-label="Search">
+    <label>
+      <i class="fa fa-search"></i>
+      &nbsp;Pesquise no FAQ
+    </label>
+    <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
   </div>
+  <%= f.submit "Mostrar",
+               id: 'mostrar-filter',
+               class: 'btn btn-link invisible',
+               style: 'color: blue !important; float:right' %>
+
   <%# add an automated spinner to your form when the list is refreshed %>
   <%= render_filterrific_spinner %>
 <% end %>
 
-<%end%>
-
-<div class="float-right" style="display: inline-block !important">
-<form role="search">
-  <div class="input-group" style="margin: 0">
-    <input name="filterrific[search_query_faq]" id="filterrific_search_query_faq" class="form-control mr-sm-2" type="search" aria-label="Search">
-    <label>
-      <i class="fa fa-search"></i>
-      &nbsp;FAQ
-    </label>
-    <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
-  </div>
-</form>
-</div>
-<div class="float-left create-new">
-<%= link_to 'Cadastrar nova questão', new_answer_path, class: 'btn btn-primary' %>
-</div>
-<hr class="under-header"/>
+<hr class="under-header" style="margin-top: <%= params[:filterrific] ? '8em' : '5em'%>"/>
 
 <div id="filterrific_results">
   <% if @answers.length > 0 %>
@@ -61,7 +68,11 @@
 <script>
 $('document').ready(function () {
 
-  $('#answer-form').on('focusout', function () {
+  $('#filterrific_with_category').on('change', () => {
+    $('#mostrar-filter').click();
+  })
+
+  $('#filterrific_search_query_faq').on('focusout', function () {
     changeState($(this));
   });
 
@@ -72,16 +83,6 @@ $('document').ready(function () {
       form.removeClass('has-value');
     }
   }
-
-  // $('[data-toggle=collapse]').on('click', e => {
-  //
-  //    Previne de resetarx   $(e.target).attr('chosen', true);   $(e.target.parentNode).attr('chosen', true);   $('[data-toggle=collapse]:not([chosen=true])').trigger('reset');
-  //
-  //    Retira a flag   $(e.target).attr('chosen', false);   $(e.target.parentNode).attr('chosen', false);
-  //
-  //   try {     $(e.target).toggleClass('rotate');     $(e.target.children[0]).toggleClass('rotate');   } catch (e) {     Die silently   } });
-  //
-  // $('[data-toggle=collapse]').on('reset', e => {   $(e.target.children[0]).removeClass('rotate'); });
 
 });
 </script>

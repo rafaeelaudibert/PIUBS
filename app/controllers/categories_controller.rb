@@ -75,8 +75,9 @@ class CategoriesController < ApplicationController
 
   # Never trust parameters from internet, only allow the white list through.
   def category_params
+    puts params
     parent_id = params[:category][:parent_id]
-    params[:category][:parent_depth] = 1 + Category.find(parent_id).parent_depth if parent_id
+    params[:category][:parent_depth] = 1 + Category.find(parent_id).parent_depth if parent_id != ""
     params.require(:category).permit(:name, :parent_id,
                                      :parent_depth, :severity)
   end
