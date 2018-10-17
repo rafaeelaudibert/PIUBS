@@ -7,12 +7,14 @@ services:
     ports:
       - "5433:5432"
   app:
-    build: .
+    build:
+      context: .
     command: bundle exec puma -C config/puma.rb -e production
     env_file:
       - config/.env
     volumes:
       - .:/var/www/PIUBS
+      - ~/backups:/root/backups
     expose:
       - "3000"
     depends_on:
