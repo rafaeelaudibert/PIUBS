@@ -7,7 +7,14 @@ class UnitiesController < ApplicationController
 
   # GET /unities
   def index
-    @unities = Unity.order('name', 'city_id').paginate(page: params[:page], per_page: 25)
+    (@filterrific = initialize_filterrific(
+      Unity,
+      params[:filterrific],
+      select_options: { # em breve
+      },
+      persistence_id: false
+    )) || return
+    @unities = @filterrific.find.page(params[:page]).order('name', 'city_id')
   end
 
   # GET /unities/1
@@ -57,7 +64,7 @@ class UnitiesController < ApplicationController
     @unity = Unity.find(params[:cnes])
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
+  # Never trust parameters from internet, only allow the white list through.
   def unity_params
     params.require(:unity).permit(:cnes, :name, :city_id)
   end
@@ -65,9 +72,9 @@ class UnitiesController < ApplicationController
   def filter_role
     action = params[:action]
     if %w[new create destroy edit update show].include? action
-      redirect_to denied_path unless is_admin?
+      redirect_to denied_path unless admin?
     elsif %w[index show].include? action
-      redirect_to denied_path unless is_admin? || is_support_user
+      redirect_to denied_path unless admin? || support_user?
     end
   end
 end

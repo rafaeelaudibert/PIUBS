@@ -15,6 +15,7 @@ group :development do
   gem 'spring-commands-rspec'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'web-console', '>= 3.3.0'
+  gem 'github_changelog_generator'
 end
 
 # Tests only gems
@@ -45,7 +46,7 @@ gem 'bootstrap', '~> 4.1.3'
 gem 'carrierwave'
 gem 'coffee-rails', '~> 4.2'
 gem 'devise'
-gem "devise-async"
+gem 'devise-async'
 gem 'devise_invitable'
 gem 'high_voltage'
 gem 'jbuilder', '~> 2.5'
@@ -67,10 +68,11 @@ gem 'uglifier', '>= 1.3.0'
 
 gem 'cpf_cnpj'                  # CPF/CNPJ validations/management
 gem 'data-confirm-modal'        # Modals for confimations
+gem 'dropzonejs-rails'          # Attachments drag n'drop functionality
 gem 'filterrific', '~> 5.1.0'   # Filtering
 gem 'font-awesome-rails'        # Icons
 gem 'mail_form', '>= 1.3.0'     # Mailer gem
-gem 'mini_racer'                # Fix "Autoprefixer doesn’t support Node v4.2.6"
+gem 'mini_racer'                # Fix "Autoprefixer doesn't support Node v4.2.6"
 gem 'pg_search'                 # Full-text search gem
 gem 'shog'                      # Colorized console logging
 gem 'tinymce-rails'             # WSYCWYG Text Editor

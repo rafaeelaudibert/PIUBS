@@ -8,7 +8,14 @@ class CitiesController < ApplicationController
   # GET /cities
   # GET /cities.json
   def index
-    @cities = City.includes(:state).order('state_id').paginate(page: params[:page], per_page: 25)
+    (@filterrific = initialize_filterrific(
+      City,
+      params[:filterrific],
+      select_options: { # em breve
+      },
+      persistence_id: false
+    )) || return
+    @cities = @filterrific.find.page(params[:page]).order('state_id, name')
   end
 
   # GET /cities/1
@@ -65,7 +72,7 @@ class CitiesController < ApplicationController
     @city = City.find(params[:id])
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
+  # Never trust parameters from internet, only allow the white list through.
   def city_params
     params.require(:city).permit(:name, :state_id)
   end
@@ -73,9 +80,9 @@ class CitiesController < ApplicationController
   def filter_role
     action = params[:action]
     if %w[new create destroy edit update show].include? action
-      redirect_to denied_path unless is_admin?
+      redirect_to denied_path unless admin?
     elsif %w[index show states].include? action
-      redirect_to denied_path unless is_admin? || is_support_user
+      redirect_to denied_path unless admin? || support_user?
     end
   end
 end

@@ -8,14 +8,21 @@ class CompaniesController < ApplicationController
   # GET /companies
   # GET /companies.json
   def index
-    @companies = Company.order('sei').paginate(page: params[:page], per_page: 25)
+    (@filterrific = initialize_filterrific(
+      Company,
+      params[:filterrific],
+      select_options: { # em breve
+      },
+      persistence_id: false
+    )) || return
+    @companies = @filterrific.find.page(params[:page]).order('sei')
   end
 
   # GET /companies/1
   # GET /companies/1.json
   def show
-    @contracts = Contract.where('sei = ?', @company.sei).paginate(page: params[:page], per_page: 25)
-    @users = User.where('sei = ?', @company.sei)
+    @contracts = Contract.where(sei: @company.sei).order('city_id').paginate(page: params[:page], per_page: 25)
+    @users = User.where(sei: @company.sei)
   end
 
   # GET /companies/new
@@ -30,7 +37,9 @@ class CompaniesController < ApplicationController
   def create
     @company = Company.new(company_params)
     if @company.save
-      redirect_to new_user_invitation_path(sei: @company.sei, role: 'company_admin'), notice: 'Company was successfully created. Please add its admin'
+      redirect_to new_user_invitation_path(sei: @company.sei,
+                                           role: 'company_admin'),
+                  notice: 'Company successfully created. Please add its admin'
     else
       render :new
     end
@@ -47,16 +56,16 @@ class CompaniesController < ApplicationController
 
   # DELETE /companies/1
   def destroy
-    begin
     @company.destroy
-      redirect_to companies_url, notice: 'Company was successfully destroyed.'
-    rescue
-      redirect_back fallback_location: companies_url, alert: 'A empresa não pode ser apagada pois possui atendimentos/usuários cadastrados'
-    end
+    redirect_to companies_url, notice: 'Company was successfully destroyed.'
+  rescue StandardError
+    redirect_back fallback_location: companies_url,
+                  alert: 'A empresa não pode ser apagada pois possui'\
+                         ' atendimentos/usuários cadastrados'
   end
 
   # GET /companies/1/states
-  def getStates
+  def states
     @company = Company.find(params[:id])
     respond_to do |format|
       format.js { render json: State.where(id: @company.state_ids).order('id ASC') }
@@ -64,7 +73,7 @@ class CompaniesController < ApplicationController
   end
 
   # GET /companies/1/users
-  def getUsers
+  def users
     @company = Company.find(params[:id])
     respond_to do |format|
       format.js { render json: User.where(sei: @company.sei).order('id ASC') }
@@ -72,15 +81,19 @@ class CompaniesController < ApplicationController
   end
 
   # GET /companies/1/cities/1
-  def getCities
+  def cities
     @company = Company.find(params[:id])
     respond_to do |format|
-      format.js { render json: City.where(id: @company.city_ids, state_id: params[:state_id]).order('id ASC') }
+      format.js do
+        render(json: City.where(id: @company.city_ids,
+                                state_id: params[:state_id])
+                                   .order('id ASC'))
+      end
     end
   end
 
   # GET /companies/1/unities/1
-  def getUnities
+  def unities
     @company = Company.find(params[:id])
     respond_to do |format|
       format.js { render json: Unity.where(city_id: params[:city_id]).order('cnes ASC') }
@@ -94,7 +107,7 @@ class CompaniesController < ApplicationController
     @company = Company.find(params[:sei])
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
+  # Never trust parameters from internet, only allow the white list through.
   def company_params
     params.require(:company).permit(:sei)
   end
@@ -102,11 +115,18 @@ class CompaniesController < ApplicationController
   def filter_role
     action = params[:action]
     if %w[index new create destroy edit update].include? action
-      redirect_to denied_path unless is_admin?
-    elsif %w[getStates getUsers getCities getUnities].include? action
-      redirect_to denied_path unless is_admin? || is_support_user? || (is_company_user && params[:id].to_i == current_user.sei)
+      redirect_to denied_path unless admin?
+    elsif %w[states users cities unities].include? action
+      unless admin? ||
+             support_user? ||
+             (company_user? && params[:id].to_i == current_user.sei)
+        redirect_to denied_path
+      end
     elsif action == 'show'
-      redirect_to denied_path unless current_user.try(:company_admin?) && @company.sei == current_user.sei || is_admin?
+      unless (current_user.try(:company_admin?) && @company.sei == current_user.sei) ||
+             admin?
+        redirect_to denied_path
+      end
     end
   end
 end

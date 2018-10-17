@@ -1,39 +1,161 @@
-<div class="container">
-
-  <h3>Usuários</h3>
-
-  <div class="create-new">
-  <%= link_to 'Convidar novo usuário', new_user_invitation_path, class: 'btn btn-primary' %>
+<%= content_for :body_title do%>
+  <div class="left">
+    <div class="display-5" style="float:left;">Usuários</div>
   </div>
+  <div class="right create-new">
+    <%= link_to 'Convidar novo usuário', new_user_invitation_path, class: 'btn btn-primary btn-lg' %>
+  </div>
+<% end %>
 
-  <%= form_for resource, :as => resource_name do |f| %>
-  <%= devise_error_messages! %>
-
-      <div class="row">
-        <div class="col">
-          <table class="table table-bordered table-striped table-hover table-users">
-            <thead class="thead-dark">
-              <tr>
-                <th>Nome</th>
-                <th>E-mail</th>
-                <% if current_user.try(:admin?) %>
-                  <th>Perfil</th>
-                <% end %>
-                <th>Último login</th>
-                <th>Status</th>
-                <th colspan="2"></th>
-              </tr>
-            </thead>
-              <tbody>
-                <% @users.each do |user| %>
-                  <tr>
-                    <%= render user %>
-                  </tr>
-                <% end %>
-              </tbody>
-          </table>
-        </div>
+<%= form_for_filterrific @filterrific do |f| %>
+  <div class="left form-group" style="width:64%; display:inline-block">
+    <% if current_user.try(:admin?) %>
+      <div class="form-group" style="display: inline-block; margin-bottom: 0.5em">
+        <%= f.label :filterrific_with_company, 'Filtro por Empresa' %>
+        <%= f.select(:with_company, @filterrific.select_options[:with_company], {multiple: true, include_blank: "Empresa"}, class: 'form-control filterrific') %>
       </div>
-
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <div class="form-group" style="display: inline-block; margin-bottom: 0.5em">
+        <%= f.label :filterrific_with_state, 'Filtro por Estado' %>
+        <%= f.select(:with_state, @filterrific.select_options[:with_state], {multiple: true, include_blank: "Estado"}, class: 'form-control filterrific') %>
+      </div>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <div class="form-group" style="display: inline-block; margin-bottom: 0.5em">
+        <%= f.label :filterrific_with_city, 'Filtro por Cidade' %>
+        <%= f.select(:with_city, @filterrific.select_options[:with_city], {multiple: true}, class: 'form-control filterrific') %>
+      </div>
+      &nbsp;&nbsp;<br/>
+      <div class="form-group" style="display: inline-block; margin-bottom: 0.5em">
+        <%= f.label :filterrific_with_role, 'Filtro por Role' %>
+        <%= f.select(:with_role, @filterrific.select_options[:with_role], {multiple: true, include_blank: "Perfil"}, class: 'form-control filterrific') %>
+      </div>
+      &nbsp;&nbsp;
+      <div class="form-group" style="display: inline-block; margin-bottom: 0.5em">
+        <%= f.label :filterrific_with_status_adm, 'Filtro por Status' %>
+        <%= f.select(:with_status_adm, @filterrific.select_options[:with_status_adm], {multiple: true, include_blank: "Todos"}, class: 'form-control filterrific') %>
+      </div>
+      &nbsp;&nbsp;
     <% end %>
+
+    <% unless current_user.try(:admin?) %>
+      <div class="form-group" style="display: inline-block; margin-bottom: 0.5em">
+        <%= f.label :filterrific_with_status, 'Filtro por Status' %>
+        <%= f.select(:with_status, @filterrific.select_options[:with_status], {multiple: true, include_blank: "Todos"}, class: 'form-control filterrific') %>
+      </div>
+      &nbsp;&nbsp;
+    <% end %>
+
+    <div class="form-group" style="display: inline-block; margin-bottom: 0.5em">
+      <%= f.label :filterrific_sorted_by_name, 'Filtro por Nome' %>
+      <%= f.select(:sorted_by_name, @filterrific.select_options[:sorted_by_name], {multiple: true}, class: 'form-control filterrific') %>
+    </div>
+
+    <br/>
+    <%= (link_to 'Desfazer filtros',
+                 reset_filterrific_url,
+                 class: 'btn btn-danger',
+                 style: 'margin-top: 0.375em') if params[:filterrific] %>
   </div>
+
+
+  <div class="right input-group" style="width: 35%; margin: 6.5em auto 0 !important">
+    <input name="filterrific[search_query]" id="filterrific_search_query"
+           class="form-control mr-sm-2" type="search" aria-label="Search">
+    <label>
+      <i class="fa fa-search"></i>
+      &nbsp;Pesquisar Usuários
+    </label>
+     <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
+  </div>
+  <%= f.submit "Mostrar",
+               id: 'mostrar-filter',
+               class: 'btn btn-link invisible right' %>
+<%end%>
+  <hr class="under-header" style="margin-top: <%= params[:filterrific] ? '15em' : '11em'%>"/>
+
+
+  <div id="filterrific_results">
+    <% if @users.length > 0 %>
+      <table class="table table-bordered table-striped table-hover table-users">
+        <thead class="thead-dark">
+          <tr>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <% if current_user.try(:admin?) %>
+              <th>Perfil</th>
+            <% end %>
+            <th>Último login</th>
+            <th>Status</th>
+            <th colspan="2"></th>
+          </tr>
+        </thead>
+          <tbody>
+            <% @users.each do |user| %>
+              <tr>
+                <%= render user %>
+              </tr>
+            <% end %>
+          </tbody>
+      </table>
+    <% else %>
+      <h3> Não existem usuários com os filtros selecionados </h3>
+    <% end %>
+
+  </div>
+
+  <script>
+
+    $('document').ready(function () {
+
+      const parseQuery = () => {
+        const queryString = decodeURIComponent((window.location.href+'').replace(/\+/g, '%20'));
+        const query = {};
+        const pairs = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&');
+        for (let piece of pairs) {
+            const pair = piece.split('=');
+            query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
+        }
+
+        return query;
+      }
+
+      const stateSelect = document.getElementById('filterrific_with_state');
+      const citySelect = document.getElementById('filterrific_with_city');
+      const triggeredByState = () => jQuery.ajax({url: `/apoioaempresas/cities/states/${stateSelect.value}`,
+                                                  type: "GET",
+                                                  dataType: "json",
+                                                  success: insertCitiesData})
+
+      stateSelect.addEventListener('change', triggeredByState);
+
+      function insertCitiesData(cities) {
+        let queried_city = parseQuery()['filterrific[with_city]']
+        let innerHTML = '<option value>Todas Cidades</option>';
+        for (let city of cities) {
+          innerHTML += `<option ${queried_city == city.id ? 'selected="selected"' : ''} value=${city.id}>
+                          ${city.name}
+                        </option>`
+        }
+        citySelect.innerHTML = innerHTML;
+      }
+
+      triggeredByState();
+
+      $('#filterrific_search_query').on('focusout', function () {
+        changeState($(this));
+      });
+
+      function changeState(form) {
+        if (form.val().length > 0) {
+          form.addClass('has-value');
+        } else {
+          form.removeClass('has-value');
+        }
+      }
+
+      $('.filterrific').on('change', () => {
+        $('#mostrar-filter').click();
+      })
+
+    });
+  </script>

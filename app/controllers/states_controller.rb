@@ -8,7 +8,14 @@ class StatesController < ApplicationController
   # GET /states
   # GET /states.json
   def index
-    @states = State.paginate(page: params[:page], per_page: 27).order('name ASC')
+    (@filterrific = initialize_filterrific(
+      State,
+      params[:filterrific],
+      select_options: { # em breve
+      },
+      persistence_id: false
+    )) || return
+    @states = @filterrific.find.page(params[:page]).order('name ASC')
   end
 
   # GET /states/1
@@ -57,7 +64,7 @@ class StatesController < ApplicationController
     @state = State.find(params[:id])
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
+  # Never trust parameters from the internet, only allow the white list through.
   def state_params
     params.require(:state).permit(:name)
   end
@@ -65,9 +72,9 @@ class StatesController < ApplicationController
   def filter_role
     action = params[:action]
     if %w[new create destroy edit update show].include? action
-      redirect_to denied_path unless is_admin?
+      redirect_to denied_path unless admin?
     elsif %w[index show].include? action
-      redirect_to denied_path unless is_admin? || is_support_user
+      redirect_to denied_path unless admin? || support_user?
     end
   end
 end

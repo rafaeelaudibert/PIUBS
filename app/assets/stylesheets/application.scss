@@ -12,10 +12,12 @@
  *
  *= require_self
  *= require font-awesome
+ *= require dropzone/dropzone
+
  */
 @import "bootstrap";
-@import "1st_load_framework.css.scss";
-@import "animate.min.css";
+@import "1st_load_framework.scss";
+@import "animate.min.scss";
 @import "answers.scss";
 @import "calls.scss";
 @import "index.scss";
@@ -1061,7 +1063,7 @@ pre {
 }
 
 .btn.btn-oval {
-  border-radius: 25px;
+  border-radius: 25px !important;
 }
 
 .btn.btn-link {

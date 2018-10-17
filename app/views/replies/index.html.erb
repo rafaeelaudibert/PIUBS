@@ -1,51 +1,61 @@
 <%= content_for :body_title do%>
-<h4 class="display-5">Respostas</h4>
-<%end%>
-<div class="float-right" style="display: inline-block !important">
-<form role="search">
-  <div class="input-group" style="margin: 0">
-    <input id="reply-form" class="form-control mr-sm-2" type="search" aria-label="Search">
-    <label>
-      <i class="fa fa-search"></i>
-      &nbsp;Resposta
-    </label>
-    <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
-  </div>
-</form>
+<div class="left">
+  <h4 class="display-5">Respostas</h4>
 </div>
-<hr class="under-header"/>
+<%end%>
 
-<% if @replies.length > 0 %>
-<%= render './pagination', value: @replies %>
-<table class="table table-striped table-hover">
-  <thead class="thead-dark">
-    <tr>
-      <th>Protocolo</th>
-      <th>Descrição</th>
-      <th>Usuário</th>
-      <th colspan="3">Ações</th>
-    </tr>
-  </thead>
+<div class="right" style="display: inline-block !important">
+  <form role="search">
+    <div class="right input-group" style="margin: 15px auto !important">
+      <input name="filterrific[search_query]" id="filterrific_search_query" class="form-control mr-sm-2" type="search" aria-label="Search">
+      <label>
+        <i class="fa fa-search"></i>
+        &nbsp;Pesquisar resposta
+      </label>
+      <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
+    </div>
+  </form>
+</div>
+<hr class="under-header" style="margin-top: <%= params[:filterrific] ? '8em' : '5em'%>"/>
 
-  <tbody>
-    <% @replies.each do |reply| %>
+
+<div id="filterrific_results">
+  <% if @replies.length > 0 %>
+  <%= render './pagination', value: @replies %>
+  <table class="table table-striped table-hover">
+    <thead class="thead-dark">
       <tr>
-        <td><%= reply.protocol %></td>
-        <td><%= truncate strip_tags(reply.description), length: 40 %></td>
-        <td><%= reply.user.name %></td>
-        <td><%= link_to 'Mostrar', reply , class: 'btn btn-primary btn-sm'%></td>
+        <th>Protocolo</th>
+        <th>Descrição</th>
+        <th>Usuário</th>
+        <th colspan="3">Ações</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
-<%= render './pagination', value: @replies %>
-<% end %>
+    </thead>
+
+    <tbody>
+      <% @replies.each do |reply| %>
+        <tr>
+          <td><%= reply.protocol %></td>
+          <td><%= truncate strip_tags(reply.description), length: 40 %></td>
+          <td><%= reply.user.name %></td>
+          <td><%= link_to 'Mostrar', reply , class: 'btn btn-primary btn-sm'%></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= render './pagination', value: @replies %>
+  <% else %>
+    <h3>
+      Não existe nenhuma resposta com o termo pesquisado
+    </h3>
+  <% end %>
+</div>
 <hr/>
 
 <script>
 $('document').ready(function () {
 
-  $('#reply-form').on('focusout', function () {
+  $('#filterrific_search_query').on('focusout', function () {
     changeState($(this));
   });
 

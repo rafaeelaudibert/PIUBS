@@ -5,7 +5,7 @@
     </div>
     <div class="protocol">
       <span>Protocolo:
-        <%= call.protocol %></span>
+        <b><%= call.protocol %></b></span>
     </div>
 
     <div class="company">
@@ -13,8 +13,7 @@
       <%= call.sei %>
     </div>
     <div class="city">
-      <%= call.unity.name%><hr/><%= call.city.name %>
-      -
+      <b><%= call.unity.name%><hr/><%= call.city.name %></b>
       <%= call.city.state.name %>
     </div>
     <div class="info">
@@ -32,6 +31,14 @@
       <hr/>
       <%= call.description.html_safe %>
 
+      <div class="left">
+        <% call.attachments.each do |_attachment| %>
+          <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+            <i class="fa fa-file-text mr-1"></i>
+            <%= truncate(_attachment.filename, length: 30, omission: '...')%>
+          <% end %>
+        <% end %>
+      </div>
       <%= link_to 'Ir para atendimento', call , class: 'btn btn-primary right'%>
     </div>
   </div>
