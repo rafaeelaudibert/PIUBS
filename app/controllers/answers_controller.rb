@@ -2,6 +2,7 @@
 
 class AnswersController < ApplicationController
   before_action :set_answer, only: %i[show edit update destroy]
+  before_action :authenticate_user!
   before_action :filter_role, except: %i[faq]
   include ApplicationHelper
 
@@ -208,12 +209,14 @@ class AnswersController < ApplicationController
     elsif %w[new create destroy].include? action
       redirect_to denied_path unless admin? || support_user? || faq_inserter?
     elsif action == 'show'
-      unless @answer.faq ||
+      unless (@answer.faq && !city_user? && !unity_user?) ||
              admin? ||
              (support_user? && @answer.user_id == current_user.id) ||
              faq_inserter?
         redirect_to denied_path
       end
+    elsif action == 'faq'
+      redirect_to denied_path if city_user? || unity_user?
     end
   end
 end
