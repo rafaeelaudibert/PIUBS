@@ -1,3 +1,3 @@
-every :day, at: '1:00 am' do
+every :day, at: '16:35 pm' do
   command "backup perform --trigger PIUBS_production"
 end
