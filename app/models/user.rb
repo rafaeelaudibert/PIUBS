@@ -88,14 +88,14 @@ class User < ApplicationRecord
     end
   }
 
-  def self.options_for_with_status()
+  def self.options_for_with_status
     [
       ['Cadastrados', 'registered'],
       ['Convidados', 'invited'],
     ]
   end
 
-  def self.options_for_with_status_adm()
+  def self.options_for_with_status_adm
     [
       ['Cadastrados', 'registered'],
       ['Convidados', 'invited'],
@@ -103,14 +103,14 @@ class User < ApplicationRecord
     ]
   end
 
-  def self.options_for_sorted_by_name()
+  def self.options_for_sorted_by_name
     [
       ['Nome [A-Z]', 'name_asc'],
       ['Nome [Z-A]', 'name_desc'],
     ]
   end
 
-  def self.options_for_with_role()
+  def self.options_for_with_role
     [
       ['Administradores', 0],
       ['FAQ', 2],
@@ -124,14 +124,49 @@ class User < ApplicationRecord
     ]
   end
 
-  def self.options_for_with_city()
+  def self.options_for_with_city
     [
       ['Cidade', 0],
     ]
   end
 
+  def self.admins
+    User.where(role: :admin).order(:id)
+  end
 
-  def send_devise_notification(notification, *args)
+  def self.company_accounts
+    User.where(role: [:company_admin, :company_user]).order(:id)
+  end
+
+  def self.support_accounts
+    User.where(role: [:call_center_admin, :call_center_user]).order(:id)
+  end
+
+  def self.faq_inserters
+    User.where(role: :faq_inserter).order(:id)
+  end
+
+  def self.city_accounts
+    User.where(role: :city_admin).order(:id)
+  end
+
+  def self.unity_accounts
+    User.where(role: [:ubs_admin, :ubs_user]).order(:id)
+  end
+
+  def self.by_role
+    {
+      'Admin'     => User.admins,
+      'Company'   => User.company_accounts,
+      'Support'   => User.support_accounts,
+      'FAQ'       => User.faq_inserters,
+      'City'      => User.city_accounts,
+      'UBS'       => User.unity_accounts
+    }
+  end
+
+  def self.send_devise_notification(notification, *args)
     DeviseWorker.perform_async(devise_mailer, notification, id, *args)
   end
+
 end
