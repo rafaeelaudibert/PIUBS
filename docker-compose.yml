@@ -13,6 +13,7 @@ services:
       - config/.env
     volumes:
       - .:/var/www/PIUBS
+      - ~/backups:/root/backups
     expose:
       - "3000"
     depends_on:
