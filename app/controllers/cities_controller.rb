@@ -2,6 +2,7 @@
 
 class CitiesController < ApplicationController
   before_action :set_city, only: %i[show edit update destroy]
+  before_action :authenticate_user!
   before_action :filter_role
   include ApplicationHelper
 

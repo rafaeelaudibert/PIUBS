@@ -2,6 +2,7 @@
 
 class ContractsController < ApplicationController
   before_action :set_contract, only: %i[show edit update destroy download]
+  before_action :authenticate_user!
   before_action :filter_role
   include ApplicationHelper
 
