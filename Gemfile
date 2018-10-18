@@ -6,16 +6,17 @@ ruby '2.5.1'
 
 # Development only gems
 group :development do
+  gem 'any_login'
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'brakeman'
+  gem 'github_changelog_generator'
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'rails_layout'
   gem 'spring'
   gem 'spring-commands-rspec'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'web-console', '>= 3.3.0'
-  gem 'github_changelog_generator'
 end
 
 # Tests only gems
