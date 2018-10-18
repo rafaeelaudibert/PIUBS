@@ -22,6 +22,7 @@ Backup::Model.new(:PIUBS_production, 'Daily Backup') do
     db.name               = "piubs_production"
     db.username           = "postgres"
     db.host               = "db"
+    db.password           = "19550410"
     db.port               = 5432
   end
 
