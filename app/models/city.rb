@@ -2,7 +2,7 @@
 
 class City < ApplicationRecord
   belongs_to :state
-  has_many :unity
+  has_many :unities
   has_many :users
   has_one :contract
   validates :name, presence: true
