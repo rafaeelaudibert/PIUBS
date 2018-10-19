@@ -9,7 +9,7 @@ class Reply < ApplicationRecord
   enum status: %i[open closed reopened]
 
   filterrific(
-    default_filter_params: { }, # em breve
+    default_filter_params: {}, # em breve
     available_filters: %i[search_query]
   )
 

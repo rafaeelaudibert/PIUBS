@@ -37,17 +37,15 @@ class RepliesController < ApplicationController
     @reply = Reply.new(rep_params)
     @reply.user_id = current_user.id
     @reply.status = @reply.call.status || 'Sem Status'
-    @reply.category = support_user? || current_user.try(:admin?) ? 'support' : 'reply'
+    @reply.category = (support_user? || current_user.try(:admin?)) ? 'support' : 'reply'
 
     if @reply.save
-      if files
-        files.each do |file_uuid|
-          @link = AttachmentLink.new(attachment_id: file_uuid,
-                                     reply_id: @reply.id, source: 'reply')
+      files.each do |file_uuid|
+        @link = AttachmentLink.new(attachment_id: file_uuid,
+                                   reply_id: @reply.id, source: 'reply')
 
-          raise 'Não consegui criar o link entre arquivo e a resposta.'\
-                ' Por favor tente mais tarde' unless @link.save
-        end
+        raise 'Não consegui criar o link entre arquivo e a resposta.'\
+              ' Por favor tente mais tarde' unless @link.save
       end
 
       ReplyMailer.notify(@reply, current_user).deliver_later
@@ -85,8 +83,8 @@ class RepliesController < ApplicationController
                          id: attachment.id,
                          bytes: Reply.connection
                                       .select_all(Reply.sanitize_sql_array(
-                                                    ["SELECT octet_length(file_contents) FROM "\
-                                                     "attachments WHERE attachments.id = ?",
+                                                    ['SELECT octet_length(file_contents) FROM '\
+                                                     'attachments WHERE attachments.id = ?',
                                                       attachment.id]))[0]['octet_length']
                       }
                      end

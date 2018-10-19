@@ -16,7 +16,8 @@ class User < ApplicationRecord
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :invitable, :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable, :async
+  devise :invitable, :database_authenticatable, :registerable, :recoverable,
+         :rememberable, :trackable, :validatable, :async
 
   filterrific(
     default_filter_params: { sorted_by_name: 'name_asc' },
@@ -34,6 +35,7 @@ class User < ApplicationRecord
 
   scope :search_query, lambda { |query|
     return nil if query.blank?
+
     query_search = "%#{query}%"
     where('name ILIKE :search OR last_name ILIKE :search OR email ILIKE :search',
           search: query_search)
@@ -51,6 +53,7 @@ class User < ApplicationRecord
 
   scope :with_role, lambda { |role|
     return nil if role == ['']
+
     where(role: role)
   }
 
@@ -68,6 +71,7 @@ class User < ApplicationRecord
 
   scope :with_status, lambda { |status|
     return nil if status == ['']
+    
     if status == ['registered']
       where('invitation_accepted_at' != nil)
     elsif status == ['invited']

@@ -49,7 +49,7 @@ class Answer < ApplicationRecord
 
   scope :with_category, lambda { |category_id|
     return nil if category_id == 'category_any'
-    
+
     where(faq: true, category_id: category_id) if category_id != 'category_id'
   }
 end

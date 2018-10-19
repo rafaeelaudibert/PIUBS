@@ -8,12 +8,11 @@ class ContractsController < ApplicationController
 
   # GET /contracts
   def index
-    (@filterrific = initialize_filterrific(
-      Contract,
-      params[:filterrific],
-      select_options: { }, # em breve
-      persistence_id: false
-    )) || return
+    (@filterrific = initialize_filterrific(Contract,
+                                           params[:filterrific],
+                                           select_options: {}, # em breve
+                                           persistence_id: false
+                                          )) || return
     @contracts = @filterrific.find.page(params[:page]).joins(:city).order('sei')
   end
 
@@ -37,8 +36,7 @@ class ContractsController < ApplicationController
   def create
     @contract = Contract.new(contract_params)
     if one_city? # If there already is a city with this ID in the database
-      @contract.errors.add(:city_id, :blank,
-                           message: 'Essa cidade já possui um contrato')
+      @contract.errors.add(:city_id, :blank, message: 'Essa cidade já possui um contrato')
       render :new
     elsif !check_pdf
       @contract.errors.add(:filename, :blank,
@@ -55,12 +53,11 @@ class ContractsController < ApplicationController
   def update
     # If there already is a city with this ID in the database
     if one_city_edit?(@contract.city_id)
-      @contract.errors.add(:city_id, :blank,
-                           message: 'Essa cidade já possui um contrato')
+      @contract.errors.add(:city_id, :blank, message: 'Essa cidade já possui um contrato')
       render :edit
     elsif !check_pdf
       @contract.errors.add(:filename, :blank,
-                           message: 'Você precisa inserir um contrato em formato PDF')
+                            message: 'Você precisa inserir um contrato em formato PDF')
       render :edit
     elsif @contract.update(contract_params)
       redirect_to @contract, notice: 'Contrato atualizado.'
@@ -132,8 +129,7 @@ class ContractsController < ApplicationController
     if %w[index new create destroy edit update].include? action
       redirect_to denied_path unless admin?
     elsif %w[show download].include? action
-      unless admin? ||
-             (current_user.try(:company_admin?) && @contract.sei == current_user.sei)
+      unless admin? || (current_user.try(:company_admin?) && @contract.sei == current_user.sei)
         redirect_to denied_path
       end
     end

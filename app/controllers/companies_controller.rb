@@ -40,8 +40,7 @@ class CompaniesController < ApplicationController
   def create
     @company = Company.new(company_params)
     if @company.save
-      redirect_to new_user_invitation_path(sei: @company.sei,
-                                           role: 'company_admin'),
+      redirect_to new_user_invitation_path(sei: @company.sei, role: 'company_admin'),
                   notice: 'Company successfully created. Please add its admin'
     else
       render :new
@@ -89,8 +88,7 @@ class CompaniesController < ApplicationController
     respond_to do |format|
       format.js do
         render(json: City.where(id: @company.city_ids,
-                                state_id: params[:state_id])
-                                   .order('id ASC'))
+                                state_id: params[:state_id]).order('id ASC'))
       end
     end
   end
