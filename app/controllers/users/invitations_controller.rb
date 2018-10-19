@@ -14,11 +14,14 @@ class Users::InvitationsController < Devise::InvitationsController
 
   def new
     @role = params[:role] if params[:role]
+    @role ||= $roles_allowed[0] if $roles_allowed.length == 1
     @sei = params[:sei].to_i if params[:sei]
+    @city_id = params[:city_id].to_i if params[:city_id]
     super
   end
 
   def create
+    params[:user][:cnes] = '' if params[:user] && params[:user][:role] == 'city_admin'
     super
   end
 
@@ -54,7 +57,7 @@ class Users::InvitationsController < Devise::InvitationsController
     return unless current_user.city_admin?
 
     $unities_allowed = {}
-    Unity.where([city_id: current_user.city_id]).each do |unity|
+    Unity.where(city_id: current_user.city_id).each do |unity|
       $unities_allowed[unity.name] = unity.cnes
     end
   end
