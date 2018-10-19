@@ -37,12 +37,12 @@
     <% elsif @role == 'company_admin' || @role == 'company_user' %>
       <div class="form-group" id='sei_group'>
         <%= f.label "Escolha a empresa (sei)" %>
-        <%= f.select(:sei, $companies, {:include_blank => "Selecione", :selected => nil}, {:class => "form-control"})%>
+        <%= f.select(:sei, Company.all.map { |company| company.sei }, {:include_blank => "Selecione", :selected => nil}, {:class => "form-control"})%>
       </div>
     <% else %>
       <div class="form-group" id='sei_group' style="display: none">
         <%= f.label "Escolha a empresa (sei)" %>
-        <%= f.select(:sei, $companies, {:include_blank => "Selecione", :selected => nil}, {:class => "form-control"})%>
+        <%= f.select(:sei, Company.all.map { |company| company.sei }, {:include_blank => "Selecione", :selected => nil}, {:class => "form-control"})%>
       </div>
 
       <div id="city_state_group" style="display: none">
@@ -148,17 +148,18 @@
   <% if current_user.city_admin? %>
     <div class="form-group">
       <%= f.label "Escolha a UBS" %>
-      <%= f.select(:cnes, $unities_allowed, {:include_blank => "Selecione", :selected => nil}, {:class => "form-control"})%>
-      <%= f.hidden_field :city_id, :value => $current_user_city %>
+      <%= f.select(:cnes, City.find(current_user.city_id).unities.map { |unity| [unity.name, unity.cnes]}, {:include_blank => "Selecione", :selected => nil}, {:class => "form-control"})%>
+      <%= f.hidden_field :city_id, value: current_user.city_id %>
     </div>
   <% end %>
 
   <% if current_user.company_admin? %>
-    <%= f.hidden_field :sei, :value => $current_user_sei %>
+    <%= f.hidden_field :sei, value: current_user.sei %>
   <% end %>
 
   <% if current_user.ubs_admin? %>
-    <%= f.hidden_field :cnes, :value => $current_user_cnes %>
+    <%= f.hidden_field :city_id, value: current_user.city_id %>
+    <%= f.hidden_field :cnes, value: current_user.cnes %>
   <% end %>
 
   <p><%= f.submit "Enviar convite", :class => 'btn btn-primary' %></p>
