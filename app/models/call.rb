@@ -33,9 +33,10 @@ class Call < ApplicationRecord
   )
 
   scope :search_query, lambda { |query|
-    return nil  if query.blank?
+    return nil if query.blank?
+
     query_search = "%#{query}%"
-    where("title ILIKE :search OR description ILIKE :search", search: query_search)
+    where('title ILIKE :search OR description ILIKE :search', search: query_search)
   }
 
   scope :sorted_by_creation, lambda { |sort_key|

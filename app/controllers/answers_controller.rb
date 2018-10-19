@@ -91,8 +91,8 @@ class AnswersController < ApplicationController
                                    answer_id: @answer.id,
                                    source: 'answer')
         unless @link.save
-           raise 'Não consegui criar o link entre arquivo e resposta final.'\
-                 ' Por favor tente mais tarde'
+          raise 'Não consegui criar o link entre arquivo e resposta final.'\
+                ' Por favor tente mais tarde'
         end
       end
 
@@ -123,20 +123,14 @@ class AnswersController < ApplicationController
                                    answer_id: @answer.id,
                                    source: 'answer')
         unless @link.save
-           raise 'Não consegui criar o link entre arquivo e resposta final.'\
-                 ' Por favor tente mais tarde'
+          raise 'Não consegui criar o link entre arquivo e resposta final.'\
+                ' Por favor tente mais tarde'
         end
       end
 
-      if @answer.save
-
-        if @answer.update(ans_params)
-          format.html { redirect_to @answer, notice: 'Resposta atualizada com sucesso.' }
-          format.json { render :show, status: :ok, location: @answer }
-        else
-          format.html { render :edit }
-          format.json { render json: @answer.errors, status: :unprocessable_entity }
-        end
+      if @answer.update(ans_params)
+        format.html { redirect_to @answer, notice: 'Resposta atualizada com sucesso.' }
+        format.json { render :show, status: :ok, location: @answer }
       else
         format.html { render :edit }
         format.json { render json: @answer.errors, status: :unprocessable_entity }
@@ -177,12 +171,10 @@ class AnswersController < ApplicationController
                          id: attachment.id,
                          bytes: Answer.connection
                                       .select_all(Answer.sanitize_sql_array(
-                                                    ["SELECT octet_length(file_contents) FROM "\
-                                                     "attachments WHERE attachments.id = ?",
-                                                      attachment.id]))[0]['octet_length']
-                       }
-                     end
-               )
+                                                    ['SELECT octet_length(file_contents) FROM '\
+                                                     'attachments WHERE attachments.id = ?',
+                                                      attachment.id]))[0]['octet_length'] }
+                     end)
       end
     end
   end

@@ -85,15 +85,13 @@ class CallsController < ApplicationController
     @call.severity = 'normal' # Call has a normal severity by default
 
     if @call.save
-      if files
-        files.each do |file_uuid|
-          @link = AttachmentLink.new(attachment_id: file_uuid,
-                                     call_id: @call.id,
-                                     source: 'call')
-          unless @link.save
-            raise 'Não consegui criar o link entre arquivo e o atendimento.'\
-                  ' Por favor tente mais tarde'
-          end
+      files.each do |file_uuid|
+        @link = AttachmentLink.new(attachment_id: file_uuid,
+                                   call_id: @call.id,
+                                   source: 'call')
+        unless @link.save
+          raise 'Não consegui criar o link entre arquivo e o atendimento.'\
+                ' Por favor tente mais tarde'
         end
       end
 
