@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # Backup Generated: PIUBS_production
 # Once configured, you can run the backup with the following command:
@@ -50,7 +52,9 @@ Backup::Model.new(:PIUBS_production, 'Daily Backup') do
     mail.on_failure           = true
 
     mail.from                 = 'backup@piubs.com'
-    mail.to                   = 'mario.ufrgs.inf@gmail.com, rbaudibert@inf.ufrgs.br, felipe.fischer@inf.ufrgs.br'
+    mail.to                   = 'mario.ufrgs.inf@gmail.com, '\
+                                'rbaudibert@inf.ufrgs.br, '\
+                                'felipe.fischer@inf.ufrgs.br'
     mail.address              = 'smtp.gmail.com'
     mail.port                 = 587
     mail.domain               = 'localhost:3000'

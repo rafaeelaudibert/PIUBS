@@ -6,7 +6,6 @@ class UsersController < ApplicationController
   include ApplicationHelper
 
   def index
-
     @filterrific = initialize_filterrific(User,
                                           params[:filterrific],
                                           select_options: {
@@ -18,8 +17,7 @@ class UsersController < ApplicationController
                                             with_city: User.all.options_for_with_city,
                                             with_company: Company.all.map(&:sei)
                                           },
-                                          persistence_id: false
-                                         ) || return
+                                          persistence_id: false) || return
 
     if current_user.try(:admin?)
       @users = @filterrific.find.page(params[:page])

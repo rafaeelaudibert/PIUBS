@@ -11,8 +11,7 @@ class ContractsController < ApplicationController
     (@filterrific = initialize_filterrific(Contract,
                                            params[:filterrific],
                                            select_options: {}, # em breve
-                                           persistence_id: false
-                                          )) || return
+                                           persistence_id: false)) || return
     @contracts = @filterrific.find.page(params[:page]).joins(:city).order('sei')
   end
 
@@ -57,7 +56,7 @@ class ContractsController < ApplicationController
       render :edit
     elsif !check_pdf
       @contract.errors.add(:filename, :blank,
-                            message: 'Você precisa inserir um contrato em formato PDF')
+                           message: 'Você precisa inserir um contrato em formato PDF')
       render :edit
     elsif @contract.update(contract_params)
       redirect_to @contract, notice: 'Contrato atualizado.'

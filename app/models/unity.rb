@@ -9,7 +9,7 @@ class Unity < ApplicationRecord
   self.primary_key = 'cnes'
 
   filterrific(
-    default_filter_params: {},  # em breve
+    default_filter_params: {}, # em breve
     available_filters: %i[search_query]
   )
 

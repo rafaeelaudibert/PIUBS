@@ -44,8 +44,10 @@ class RepliesController < ApplicationController
         @link = AttachmentLink.new(attachment_id: file_uuid,
                                    reply_id: @reply.id, source: 'reply')
 
-        raise 'Não consegui criar o link entre arquivo e a resposta.'\
-              ' Por favor tente mais tarde' unless @link.save
+        unless @link.save
+          raise 'Não consegui criar o link entre arquivo e a resposta.'\
+                ' Por favor tente mais tarde'
+        end
       end
 
       ReplyMailer.notify(@reply, current_user).deliver_later
@@ -85,10 +87,8 @@ class RepliesController < ApplicationController
                                       .select_all(Reply.sanitize_sql_array(
                                                     ['SELECT octet_length(file_contents) FROM '\
                                                      'attachments WHERE attachments.id = ?',
-                                                      attachment.id]))[0]['octet_length']
-                      }
-                     end
-              )
+                                                      attachment.id]))[0]['octet_length'] }
+                    end)
       end
     end
   end

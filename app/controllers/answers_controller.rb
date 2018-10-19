@@ -128,15 +128,9 @@ class AnswersController < ApplicationController
         end
       end
 
-      if @answer.save
-
-        if @answer.update(ans_params)
-          format.html { redirect_to @answer, notice: 'Resposta atualizada com sucesso.' }
-          format.json { render :show, status: :ok, location: @answer }
-        else
-          format.html { render :edit }
-          format.json { render json: @answer.errors, status: :unprocessable_entity }
-        end
+      if @answer.update(ans_params)
+        format.html { redirect_to @answer, notice: 'Resposta atualizada com sucesso.' }
+        format.json { render :show, status: :ok, location: @answer }
       else
         format.html { render :edit }
         format.json { render json: @answer.errors, status: :unprocessable_entity }
@@ -179,10 +173,8 @@ class AnswersController < ApplicationController
                                       .select_all(Answer.sanitize_sql_array(
                                                     ['SELECT octet_length(file_contents) FROM '\
                                                      'attachments WHERE attachments.id = ?',
-                                                      attachment.id]))[0]['octet_length']
-                       }
-                     end
-              )
+                                                      attachment.id]))[0]['octet_length'] }
+                     end)
       end
     end
   end

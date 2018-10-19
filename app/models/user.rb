@@ -71,7 +71,7 @@ class User < ApplicationRecord
 
   scope :with_status, lambda { |status|
     return nil if status == ['']
-    
+
     if status == ['registered']
       where('invitation_accepted_at' != nil)
     elsif status == ['invited']
