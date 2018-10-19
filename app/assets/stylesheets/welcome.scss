@@ -55,7 +55,7 @@ a, a:hover, a:focus, a:active{
 }
 
 .section-padding{
-	padding: 60px 0px;
+	padding: 60px 0;
 
 }
 h2 {
@@ -71,32 +71,23 @@ hr.botm-line {
     background: #ffb737;
     position: relative;
     border: 0;
-    margin: 20px 0 20px 0;
+    margin: 20px 0;
 }
 
 /***************************************
 banner
 ***************************************/
 .navbar {
-    margin-bottom: 0px;
-    border: 0px;
-}
-.navbar {
-    border-radius: 0px;
+    margin-bottom: 0;
+    border: 0;
+		border-radius: 0;
 }
 .navbar-default {
-    background-color: #fff;
     padding: 20px 0;
     transition: all 0.3s;
+		background-color: transparent;
+		border: 0;
 }
-.navbar-default {
-    background-color: transparent;
-    border: 0px;
-}
-.navbar {
-    border-radius: 0px;
-}
-
 .navbar-brand
 {
 	font-family: 'Chewy', cursive;
@@ -238,6 +229,7 @@ cta-1
 .medi-info, .time-info{
 	padding: 20px;
 	color: #fff;
+	font-size: 14px;
 }
 .medi-info h3, .time-info h3{
 	padding-bottom: 16px;
@@ -245,7 +237,7 @@ cta-1
 	font-weight: 600;
 }
 .medi-info-btn, .medi-info-btn:hover, .medi-info-btn:focus {
-    margin: 15px 0px 5px;
+    margin: 15px 0 5px;
     display: inline-block;
     border: solid white 2px;
     padding: 3px 8px;
@@ -255,13 +247,11 @@ cta-1
     cursor: pointer;
 }
 td {
-    border: 0px solid #ededed;
+    border: 0 solid #ededed;
     border-top: 1px solid rgba(216, 216, 216, 0.5);
     padding: 6px 10px 6px 0;
 }
-.medi-info, .time-info{
-    font-size: 14px;
-}
+
 /***************************************
 about
 ***************************************/
@@ -302,7 +292,7 @@ about
 doctor team
 ***************************************/
 .thumbnail {
-	border-radius: 0px;
+	border-radius: 0;
 }
 .caption h3{
     padding-bottom: 5px;
@@ -320,7 +310,7 @@ testimonial
     background: #fff;
     padding: 14px 24px;
     margin-bottom: 20px;
-    box-shadow: 3px 3px 2px 0px rgba(0,0,0,0.18);
+    box-shadow: 3px 3px 2px 0 rgba(0,0,0,0.18);
     position: relative;
 }
 .testi-info a {
@@ -364,15 +354,15 @@ testimonial
     content: '';
     position: absolute;
     transform: rotate(45deg);
-    width: 0px;
-    height: 0px;
+    width: 0;
+    height: 0;
     bottom: -30px;
     left: 45px;
     border-style: solid;
     border-width: 15px;
     border-color: transparent;
     z-index: -1;
-    box-shadow: 3px -13px 5px 0px rgba(0, 0, 0, 0.18);
+    box-shadow: 3px -13px 5px 0 rgba(0, 0, 0, 0.18);
     border-left: 0;
 }
 /***************************************
@@ -386,7 +376,6 @@ cta -2
 }
 .icon-play, .icon-play:hover, .icon-play:focus{
 	background-color: #0CB8B6;
-	padding: 5px 10px;
 	color: #fff;
 	text-decoration: none;
 	padding: 5px 17px;
@@ -409,11 +398,11 @@ contact us
 .btn-form, .btn-form:hover, .btn-form:focus {
     background-color: #0cb8b6;
     color: #fff;
-    border-radius: 0px;
+    border-radius: 0;
     padding: 10px 20px;
 }
 .br-radius-zero {
-    border-radius: 0px;
+    border-radius: 0;
 }
 .form-control{
 	height: 40px;
@@ -492,11 +481,11 @@ footer
     background-color: #3498DB;
 }
 .top-footer {
-    padding: 40px 0px;
+    padding: 40px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 .footer-line {
-    padding: 15px 0px;
+    padding: 15px 0;
     color: #fff;
 }
 
@@ -530,12 +519,12 @@ footer
         margin-bottom: 30px;
     }
     .medi-info {
-    border: 0px;
+    border: 0;
     border-bottom: 1px solid #fff;
     }
     .service-info{
         margin-top: 20px;
-        margin-bottom: 0px;
+        margin-bottom: 0;
     }
     .caption h3 {
     font-size: 14px;

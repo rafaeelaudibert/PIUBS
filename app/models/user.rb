@@ -18,24 +18,25 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :invitable, :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable, :async
 
-   filterrific(
-    default_filter_params: { sorted_by_name: 'name_asc'},
-    available_filters: [
-      :sorted_by_name,
-      :with_role,
-      :with_status_adm,
-      :with_status,
-      :with_company,
-      :with_state,
-      :with_city,
-      :search_query
+  filterrific(
+    default_filter_params: { sorted_by_name: 'name_asc' },
+    available_filters: %i[
+      sorted_by_name
+      with_role
+      with_status_adm
+      with_status
+      with_company
+      with_state
+      with_city
+      search_query
     ]
   )
 
   scope :search_query, lambda { |query|
-    return nil  if query.blank?
+    return nil if query.blank?
     query_search = "%#{query}%"
-    where("name ILIKE :search OR last_name ILIKE :search OR email ILIKE :search", search: query_search)
+    where('name ILIKE :search OR last_name ILIKE :search OR email ILIKE :search',
+          search: query_search)
   }
 
   scope :sorted_by_name, lambda { |sort_key|
@@ -44,69 +45,63 @@ class User < ApplicationRecord
     when /^name_/
       order(name: sort)
     else
-      raise(ArgumentError, "Invalid filter option")
+      raise(ArgumentError, 'Invalid filter option')
     end
   }
 
   scope :with_role, lambda { |role|
-    return nil if role == [""]
-      if role != [""]
-        where(role: role)
-      end
+    return nil if role == ['']
+    where(role: role)
   }
 
   scope :with_status_adm, lambda { |status|
-    if status == "" || status == "all"
-      return nil
-    elsif status == "registered"
-      where("invitation_accepted_at IS NOT NULL")
-    elsif status == "invited"
-      where("invitation_sent_at IS NOT NULL AND invitation_accepted_at IS NULL")
-    elsif status == "bot"
-      where("invitation_sent_at IS NULL AND invitation_accepted_at IS NULL")
+    return nil if status == '' || status == 'all'
+
+    if status == 'registered'
+      where('invitation_accepted_at IS NOT NULL')
+    elsif status == 'invited'
+      where('invitation_sent_at IS NOT NULL AND invitation_accepted_at IS NULL')
+    elsif status == 'bot'
+      where('invitation_sent_at IS NULL AND invitation_accepted_at IS NULL')
     end
   }
 
   scope :with_status, lambda { |status|
-    return nil if status == [""]
-      if status == ["registered"]
-        where("invitation_accepted_at" != nil)
-      elsif status == ["invited"]
-        where("invitation_sent_at" != nil)
-      end
+    return nil if status == ['']
+    if status == ['registered']
+      where('invitation_accepted_at' != nil)
+    elsif status == ['invited']
+      where('invitation_sent_at' != nil)
+    end
   }
 
   scope :with_city, lambda { |city|
-    unless (city == 0)
-      where(city_id: city)
-    end
+    where(city_id: city) unless city.zero?
   }
 
   scope :with_company, lambda { |sei|
-    unless (sei == "")
-      where(sei: sei)
-    end
+    where(sei: sei) unless sei == ''
   }
 
   def self.options_for_with_status
     [
-      ['Cadastrados', 'registered'],
-      ['Convidados', 'invited'],
+      %w[Cadastrados registered],
+      %w[Convidados invited]
     ]
   end
 
   def self.options_for_with_status_adm
     [
-      ['Cadastrados', 'registered'],
-      ['Convidados', 'invited'],
-      ['Robôs', 'bot'],
+      %w[Cadastrados registered],
+      %w[Convidados invited],
+      %w[Robôs bot]
     ]
   end
 
   def self.options_for_sorted_by_name
     [
       ['Nome [A-Z]', 'name_asc'],
-      ['Nome [Z-A]', 'name_desc'],
+      ['Nome [Z-A]', 'name_desc']
     ]
   end
 
@@ -120,13 +115,13 @@ class User < ApplicationRecord
       ['Suporte [Adm]', 7],
       ['Município', 1],
       ['UBS [Usu]', 4],
-      ['UBS [Adm]', 3],
+      ['UBS [Adm]', 3]
     ]
   end
 
   def self.options_for_with_city
     [
-      ['Cidade', 0],
+      ['Cidade', 0]
     ]
   end
 
@@ -135,11 +130,11 @@ class User < ApplicationRecord
   end
 
   def self.company_accounts
-    User.where(role: [:company_admin, :company_user]).order(:id)
+    User.where(role: %i[company_admin company_user]).order(:id)
   end
 
   def self.support_accounts
-    User.where(role: [:call_center_admin, :call_center_user]).order(:id)
+    User.where(role: %i[call_center_admin call_center_user]).order(:id)
   end
 
   def self.faq_inserters
@@ -151,7 +146,7 @@ class User < ApplicationRecord
   end
 
   def self.unity_accounts
-    User.where(role: [:ubs_admin, :ubs_user]).order(:id)
+    User.where(role: %i[ubs_admin ubs_user]).order(:id)
   end
 
   def self.by_role

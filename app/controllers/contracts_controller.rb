@@ -11,8 +11,7 @@ class ContractsController < ApplicationController
     (@filterrific = initialize_filterrific(
       Contract,
       params[:filterrific],
-      select_options: { # em breve
-      },
+      select_options: { }, # em breve
       persistence_id: false
     )) || return
     @contracts = @filterrific.find.page(params[:page]).joins(:city).order('sei')
@@ -38,13 +37,11 @@ class ContractsController < ApplicationController
   def create
     @contract = Contract.new(contract_params)
     if one_city? # If there already is a city with this ID in the database
-      @contract.errors.add(:city_id,
-                           :blank,
+      @contract.errors.add(:city_id, :blank,
                            message: 'Essa cidade já possui um contrato')
       render :new
     elsif !check_pdf
-      @contract.errors.add(:filename,
-                           :blank,
+      @contract.errors.add(:filename, :blank,
                            message: 'Você precisa inserir um contrato em formato PDF')
       render :new
     elsif @contract.save
@@ -81,9 +78,7 @@ class ContractsController < ApplicationController
   # GET /contract/:id/download
   def download
     if @contract.content_type.split('/')[1].to_s == 'pdf'
-      send_data(@contract.file_contents,
-                type: @contract.content_type,
-                filename: @contract.filename)
+      send_data(@contract.file_contents, type: @contract.content_type, filename: @contract.filename)
     end
   rescue StandardError
     redirect_to not_found_path
@@ -97,11 +92,9 @@ class ContractsController < ApplicationController
   end
 
   # Never trust parameters from internet, only allow the white list through.
-  # Also optimize the file data, separating it in filename,
-  # content_type & file_contents
+  # Also optimize the file data, separating it in filename, content_type & file_contents
   def contract_params
-    parameters = params.require(:contract).permit(:file, :contract_number,
-                                                  :city_id, :sei)
+    parameters = params.require(:contract).permit(:file, :contract_number, :city_id, :sei)
     file = parameters.delete(:file) if parameters
     if file
       parameters[:filename] = File.basename(file.original_filename)
@@ -122,8 +115,7 @@ class ContractsController < ApplicationController
     city_id = params.require(:contract).require(:city_id)
     ans = Contract.where(city_id: city_id).first
 
-    # If this city doesn't have a contract or is the same city
-    # that we have in the contract now
+    # If this city doesn't have a contract or is the same city that we have in the contract now
     !(ans.nil? || city_id == id.to_s)
   end
 

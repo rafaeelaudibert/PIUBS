@@ -22,7 +22,9 @@ class CompaniesController < ApplicationController
   # GET /companies/1
   # GET /companies/1.json
   def show
-    @contracts = Contract.where(sei: @company.sei).order('city_id').paginate(page: params[:page], per_page: 25)
+    @contracts = Contract.where(sei: @company.sei)
+                         .order('city_id')
+                         .paginate(page: params[:page], per_page: 25)
     @users = User.where(sei: @company.sei)
   end
 

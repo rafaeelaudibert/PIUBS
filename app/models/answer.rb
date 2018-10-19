@@ -32,25 +32,24 @@ class Answer < ApplicationRecord
 
   filterrific(
     default_filter_params: { with_category: 'category_any' },
-    available_filters: [
-      :with_category,
-      :search_query_faq,
-      :search_query
-    ]
+    available_filters: %i[with_category search_query_faq search_query]
   )
 
   scope :search_query, lambda { |query|
-    return nil  if query.blank?
-    self.search_for query
+    return nil if query.blank?
+
+    search_for query
   }
 
   scope :search_query_faq, lambda { |query|
-    return nil  if query.blank?
-    self.search_for query
+    return nil if query.blank?
+
+    search_for query
   }
 
   scope :with_category, lambda { |category_id|
     return nil if category_id == 'category_any'
+    
     where(faq: true, category_id: category_id) if category_id != 'category_id'
   }
 end
