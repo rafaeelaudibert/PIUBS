@@ -77,6 +77,7 @@ Rails.application.routes.draw do
     resources :cities do
       collection do
         get 'states/:id', to: 'cities#states', as: 'states'
+        get 'unities/:id', to: 'cities#unities', as: 'unities'
       end
     end
 
