@@ -41,8 +41,7 @@ class RepliesController < ApplicationController
 
     if @reply.save
       files.each do |file_uuid|
-        @link = AttachmentLink.new(attachment_id: file_uuid,
-                                   reply_id: @reply.id, source: 'reply')
+        @link = AttachmentLink.new(attachment_id: file_uuid, reply_id: @reply.id, source: 'reply')
 
         unless @link.save
           raise 'Não consegui criar o link entre arquivo e a resposta.'\
@@ -80,10 +79,10 @@ class RepliesController < ApplicationController
         render(json: Reply.find(params[:id])
                                     .attachments
                                     .map do |attachment|
-                       { filename: attachment.filename,
-                         type: attachment.content_type,
-                         id: attachment.id,
-                         bytes: Reply.connection
+                        { filename: attachment.filename,
+                          type: attachment.content_type,
+                          id: attachment.id,
+                          bytes: Reply.connection
                                       .select_all(Reply.sanitize_sql_array(
                                                     ['SELECT octet_length(file_contents) FROM '\
                                                      'attachments WHERE attachments.id = ?',
@@ -104,6 +103,7 @@ class RepliesController < ApplicationController
   def reply_params
     params.require(:reply).permit(:faq_attachments, :protocol,
                                   :description, :user_id, :faq, :files)
+
   end
 
   def filter_role
