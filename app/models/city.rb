@@ -8,7 +8,7 @@ class City < ApplicationRecord
   validates :name, presence: true
 
   filterrific(
-    default_filter_params: {},  # em breve
+    default_filter_params: {}, # em breve
     available_filters: %i[search_query]
   )
 

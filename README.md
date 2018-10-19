@@ -1,6 +1,6 @@
 # :hospital: PIUBS :hospital:
 
-[![CodeFactor](https://www.codefactor.io/repository/github/rafaeelaudibert/piubs/badge/fix/code-factor)](https://www.codefactor.io/repository/github/rafaeelaudibert/piubs/overview/fix/code-factor)
+[![CodeFactor](https://www.codefactor.io/repository/github/rafaeelaudibert/piubs/badge/master)](https://www.codefactor.io/repository/github/rafaeelaudibert/piubs/overview/master)
 
 This repository is meant to create the platform to handle the Controversy Solution problem, in a cooperation project between UFRGS (Rio Grande do Sul's Federal University) and the Brazilian Health Ministery
 
