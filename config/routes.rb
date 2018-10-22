@@ -7,8 +7,6 @@ Rails.application.routes.draw do
     # /apoioaempresas
     get '/', to: 'calls#index' # Apoio a Empresas root
 
-    # /apoioaempresas/login
-    get '/login', to: 'visitors#index'
 
     # /apoioaempresas/attachments
     resources :attachments do
@@ -83,12 +81,12 @@ Rails.application.routes.draw do
 
     # /apoioaempresas/states
     resources :states
-
-    # /apoioaempresas/users
-    devise_for :users, controllers: { invitations: 'users/invitations',
-                                      registrations: 'users/registrations' }
-    resources :users
   end
+
+  # /apoioaempresas/users
+  devise_for :users, controllers: { invitations: 'users/invitations',
+                                    registrations: 'users/registrations' }
+  resources :users
 
   # Errors
   get '404', to: 'application#page_not_found', as: 'not_found'
