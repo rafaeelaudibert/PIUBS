@@ -13,13 +13,13 @@
   </div>
   <div class="form-group">
     <% unless current_user.admin? %>
-      <%= f.hidden_field :role, value: $roles_allowed[0] %>
+      <%= f.hidden_field :role, value: @roles_allowed[0] %>
     <% else %>
       <% if @role %>
         <%= f.hidden_field :role, value: @role %>
       <% else %>
         <%= f.label "Escolha o tipo de usuário", class: 'required' %>
-        <%= f.select(:role, $roles_allowed, {:include_blank => "Selecione", :selected => nil, required: true}, {:class => "form-control"})%>
+        <%= f.select(:role, @roles_allowed, {:include_blank => "Selecione", :selected => nil, required: true}, {:class => "form-control"})%>
       <% end %>
     <% end %>
   </div>
