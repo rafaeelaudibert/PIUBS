@@ -83,12 +83,12 @@ Rails.application.routes.draw do
 
     # /apoioaempresas/states
     resources :states
-
-    # /apoioaempresas/users
-    devise_for :users, controllers: { invitations: 'users/invitations',
-                                      registrations: 'users/registrations' }
-    resources :users
   end
+
+  # /apoioaempresas/users
+  devise_for :users, controllers: { invitations: 'users/invitations',
+                                    registrations: 'users/registrations' }
+  resources :users
 
   # Errors
   get '404', to: 'application#page_not_found', as: 'not_found'
