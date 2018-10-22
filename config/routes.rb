@@ -7,8 +7,6 @@ Rails.application.routes.draw do
     # /apoioaempresas
     get '/', to: 'calls#index' # Apoio a Empresas root
 
-    # /apoioaempresas/login
-    get '/login', to: 'visitors#index'
 
     # /apoioaempresas/attachments
     resources :attachments do
