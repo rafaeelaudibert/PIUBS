@@ -14,7 +14,9 @@ class Users::InvitationsController < Devise::InvitationsController
   end
 
   def create
-    params[:user][:cnes] = '' if params[:user] && params[:user][:role] == 'city_admin'
+    params[:user][:cnes] = '' if params[:user] && !%w[ubs_admin ubs_user].include?(params[:user][:role])
+    params[:user][:city_id] = '' if params[:user] && params[:user][:city_id] == '0'
+    params[:user][:state_id] = '' if params[:user] && params[:user][:state_id] == '0'
     super
   end
 
