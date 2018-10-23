@@ -5,6 +5,7 @@ class Users::InvitationsController < Devise::InvitationsController
   before_action :set_roles_allowed, only: :new
   before_action :update_sanitized_params, only: :update
   before_action :create_sanitized_params, only: :create
+  before_action :sanitize_optional_params, only: :create
 
   def new
     @role = params[:role] || $roles_allowed[0] if $roles_allowed.length == 1
@@ -14,9 +15,6 @@ class Users::InvitationsController < Devise::InvitationsController
   end
 
   def create
-    params[:user][:cnes] = '' if params[:user] && !%w[ubs_admin ubs_user].include?(params[:user][:role])
-    params[:user][:city_id] = '' if params[:user] && params[:user][:city_id] == '0'
-    params[:user][:state_id] = '' if params[:user] && params[:user][:state_id] == '0'
     super
   end
 
@@ -46,6 +44,42 @@ class Users::InvitationsController < Devise::InvitationsController
                      else
                        []
                      end
+  end
+
+  def sanitize_optional_params
+    if params[:user]
+      params[:user][:cnes] = sanitize_cnes
+      params[:user][:city_id] = sanitize_city_id
+      params[:user][:state_id] = sanitize_state_id
+      params[:user][:sei] = sanitize_sei
+    end
+  end
+
+  def sanitize_cnes
+    return params[:user][:cnes] if %w[ubs_admin ubs_user].include?(params[:user][:role])
+
+    ''
+  end
+
+  def sanitize_city_id
+    return '' if params[:user][:city_id] == '0' ||
+                 !%w[city_admin ubs_admin ubs_user].include?(params[:user][:role])
+
+    params[:user][:city_id]
+  end
+
+  def sanitize_state_id
+    return '' if params[:user][:state_id] == '0' ||
+                 !%w[city_admin ubs_admin ubs_user].include?(params[:user][:role])
+
+    params[:user][:state_id]
+  end
+
+  def sanitize_sei
+    return '' if params[:user][:sei] == '0' ||
+                 !%w[company_admin company_user].include?(params[:user][:role])
+
+    params[:user][:sei]
   end
 
   def update_sanitized_params
