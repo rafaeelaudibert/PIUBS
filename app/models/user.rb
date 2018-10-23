@@ -73,24 +73,25 @@ class User < ApplicationRecord
     return nil if status == ['']
 
     if status == ['registered']
-      where('invitation_accepted_at' != nil)
+      where(!'invitation_accepted_at'.nil?)
     elsif status == ['invited']
-      where('invitation_sent_at' != nil)
+      where(!'invitation_sent_at'.nil?)
     end
   }
 
   scope :with_state, lambda { |state|
-    @cities = City.where(state_id: state).map{ |c| c.id }
-    @unities = Unity.where('city_id IN (?)', @cities).map{ |u| u.cnes }
-    @contracts = Contract.where('city_id IN (?)', @cities).map{ |ct| ct.sei }
-    @companies = Company.where('sei IN (?)', @contracts).map{ |cm| cm.sei }
+    @cities = City.where(state_id: state).map(&:id)
+    @unities = Unity.where('city_id IN (?)', @cities).map(&:cnes)
+    @contracts = Contract.where('city_id IN (?)', @cities).map(&:sei)
+    @companies = Company.where('sei IN (?)', @contracts).map(&:sei)
     return [] if state == ['']
+
     where('cnes IN (?) OR sei IN (?)', @unities, @companies) if state != ['']
   }
 
   scope :with_city, lambda { |city|
-    @contracts = Contract.where(city_id: city).map{ |ct| ct.sei }
-    @companies = Company.where('sei IN (?)', @contracts).map{ |cm| cm.sei }
+    @contracts = Contract.where(city_id: city).map(&:sei)
+    @companies = Company.where('sei IN (?)', @contracts).map(&:sei)
     where('city_id = ? OR sei IN (?)', city, @companies) unless city.zero?
   }
 
@@ -178,5 +179,4 @@ class User < ApplicationRecord
   def self.send_devise_notification(notification, *args)
     DeviseWorker.perform_async(devise_mailer, notification, id, *args)
   end
-
 end
