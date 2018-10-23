@@ -45,7 +45,7 @@ class CallsController < ApplicationController
         @calls = []
       end
     else
-      redirect_to login_path
+      redirect_to new_user_session_path
     end
     # puts params[:filterrific].require(:filtered_by)
     respond_to do |format|
