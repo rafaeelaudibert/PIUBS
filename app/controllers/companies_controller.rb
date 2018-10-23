@@ -16,7 +16,7 @@ class CompaniesController < ApplicationController
       },
       persistence_id: false
     )) || return
-    @companies = @filterrific.find.page(params[:page]).order('sei')
+    @companies = @filterrific.find.order(:sei).page(params[:page])
   end
 
   # GET /companies/1

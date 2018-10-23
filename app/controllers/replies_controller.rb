@@ -15,7 +15,7 @@ class RepliesController < ApplicationController
       },
       persistence_id: false
     )) || return
-    @replies = @filterrific.find.page(params[:page]).order('created_at DESC')
+    @replies = @filterrific.find.order(created_at: :desc).page(params[:page])
   end
 
   # GET /replies/1

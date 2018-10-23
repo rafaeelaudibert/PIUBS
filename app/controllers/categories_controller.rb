@@ -16,7 +16,7 @@ class CategoriesController < ApplicationController
       },
       persistence_id: false
     )) || return
-    @categories = @filterrific.find.page(params[:page]).order('id')
+    @categories = @filterrific.find.order('id').page(params[:page])
   end
 
   # GET /categories/1

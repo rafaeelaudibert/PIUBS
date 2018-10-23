@@ -16,7 +16,7 @@ class StatesController < ApplicationController
       },
       persistence_id: false
     )) || return
-    @states = @filterrific.find.page(params[:page]).order('name ASC')
+    @states = @filterrific.find.order(:name).page(params[:page])
   end
 
   # GET /states/1

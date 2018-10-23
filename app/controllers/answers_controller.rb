@@ -16,7 +16,7 @@ class AnswersController < ApplicationController
       },
       persistence_id: false
     )) || return
-    @answers = @filterrific.find.page(params[:page]).order('category_id ASC')
+    @answers = @filterrific.find.order(:category_id).page(params[:page])
   end
 
   # get /faq
@@ -29,11 +29,7 @@ class AnswersController < ApplicationController
       },
       persistence_id: false
     )) || return
-    @answers = Answer.filterrific_find(@filterrific).includes(:category).page(params[:page])
-
-    # As linha abaixo sao backup do que tinha antes de add o filterrific
-    # @answers = Answer.where(faq: true).includes(:category)
-    # .order('category_id ASC').paginate(page: params[:page], per_page: 25)
+    @answers = Answer.filterrific_find(@filterrific).order(:category_id).page(params[:page])
 
     respond_to do |format|
       format.html

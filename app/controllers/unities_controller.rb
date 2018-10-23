@@ -15,7 +15,7 @@ class UnitiesController < ApplicationController
       },
       persistence_id: false
     )) || return
-    @unities = @filterrific.find.page(params[:page]).order('name', 'city_id')
+    @unities = @filterrific.find.joins(:city).order('cities.name', 'name').page(params[:page])
   end
 
   # GET /unities/1
