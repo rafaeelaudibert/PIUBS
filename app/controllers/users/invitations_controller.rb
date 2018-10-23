@@ -2,13 +2,13 @@
 
 class Users::InvitationsController < Devise::InvitationsController
   before_action :admin_only, only: :new
-  before_action :set_roles_allowed, only: :new
   before_action :update_sanitized_params, only: :update
   before_action :create_sanitized_params, only: :create
   before_action :sanitize_optional_params, only: :create
 
   def new
-    @role = params[:role] || $roles_allowed[0] if $roles_allowed.length == 1
+    @roles_allowed = set_roles_allowed
+    @role = params[:role] || @roles_allowed[0] if @roles_allowed.length == 1
     @sei = params[:sei].to_i if params[:sei]
     @city_id = params[:city_id].to_i if params[:city_id]
     super
@@ -31,19 +31,19 @@ class Users::InvitationsController < Devise::InvitationsController
   private
 
   def set_roles_allowed
-    $roles_allowed = if current_user.admin?
-                       %i[faq_inserter admin city_admin ubs_admin company_admin call_center_admin]
-                     elsif current_user.city_admin?
-                       [:ubs_admin]
-                     elsif current_user.ubs_admin?
-                       [:ubs_user]
-                     elsif current_user.company_admin?
-                       [:company_user]
-                     elsif current_user.call_center_admin?
-                       [:call_center_user]
-                     else
-                       []
-                     end
+    if current_user.admin?
+      %i[faq_inserter admin city_admin ubs_admin company_admin call_center_admin]
+    elsif current_user.city_admin?
+      [:ubs_admin]
+    elsif current_user.ubs_admin?
+      [:ubs_user]
+    elsif current_user.company_admin?
+      [:company_user]
+    elsif current_user.call_center_admin?
+      [:call_center_user]
+    else
+      []
+    end
   end
 
   def sanitize_optional_params
