@@ -79,8 +79,19 @@ class User < ApplicationRecord
     end
   }
 
+  scope :with_state, lambda { |state|
+    @cities = City.where(state_id: state).map{ |c| c.id }
+    @unities = Unity.where('city_id IN (?)', @cities).map{ |u| u.cnes }
+    @contracts = Contract.where('city_id IN (?)', @cities).map{ |ct| ct.sei }
+    @companies = Company.where('sei IN (?)', @contracts).map{ |cm| cm.sei }
+    return [] if state == ['']
+    where('cnes IN (?) OR sei IN (?)', @unities, @companies) if state != ['']
+  }
+
   scope :with_city, lambda { |city|
-    where(city_id: city) unless city.zero?
+    @contracts = Contract.where(city_id: city).map{ |ct| ct.sei }
+    @companies = Company.where('sei IN (?)', @contracts).map{ |cm| cm.sei }
+    where('city_id = ? OR sei IN (?)', city, @companies) unless city.zero?
   }
 
   scope :with_company, lambda { |sei|
