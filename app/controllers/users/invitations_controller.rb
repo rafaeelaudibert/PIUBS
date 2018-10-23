@@ -49,7 +49,7 @@ class Users::InvitationsController < Devise::InvitationsController
   def sanitize_optional_params
     if params[:user]
       role = params[:user][:role]
-      params[:user][:cnes] = '' if !%w[ubs_admin ubs_user].include?(params[:user][:role])
+      params[:user][:cnes] = '' unless %w[ubs_admin ubs_user].include?(params[:user][:role])
       params[:user][:city_id] = '' if params[:user][:city_id] == '0' ||
                                       !%w[city_admin ubs_admin ubs_user].include?(role)
       params[:user][:state_id] = '' if params[:user][:state_id] == '0' ||
