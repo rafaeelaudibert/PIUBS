@@ -79,15 +79,16 @@ class RepliesController < ApplicationController
         render(json: Reply.find(params[:id])
                                     .attachments
                                     .map do |attachment|
-                        { filename: attachment.filename,
-                          type: attachment.content_type,
-                          id: attachment.id,
-                          bytes: Reply.connection
-                                      .select_all(Reply.sanitize_sql_array(
-                                                    ['SELECT octet_length(file_contents) FROM '\
-                                                     'attachments WHERE attachments.id = ?',
-                                                      attachment.id]))[0]['octet_length'] }
-                    end)
+                       { filename: attachment.filename,
+                         type: attachment.content_type,
+                         id: attachment.id,
+                         bytes: Reply.connection
+                                     .select_all(Reply.sanitize_sql_array(
+                                                   ['SELECT octet_length(file_contents) FROM '\
+                                                    'attachments WHERE attachments.id = ?',
+                                                    attachment.id]
+                                                 ))[0]['octet_length'] }
+                     end)
       end
     end
   end
@@ -103,7 +104,6 @@ class RepliesController < ApplicationController
   def reply_params
     params.require(:reply).permit(:faq_attachments, :protocol,
                                   :description, :user_id, :faq, :files)
-
   end
 
   def filter_role
