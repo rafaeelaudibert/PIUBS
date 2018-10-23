@@ -34,11 +34,11 @@ class CallsController < ApplicationController
         User.where(invited_by_id: current_user.id).each do |user|
           children << user.id
         end
-        @calls = @filterrific.find.page(params[:page]).where(support_user: children)
+        @calls = @filterrific.find.where(support_user: children).page(params[:page])
       elsif current_user.try(:company_admin?)
-        @calls = @filterrific.find.page(params[:page]).where(sei: current_user.sei)
+        @calls = @filterrific.where(sei: current_user.sei).find.page(params[:page])
       elsif current_user.try(:company_user?)
-        @calls = @filterrific.find.page(params[:page]).where(user_id: current_user.id)
+        @calls = @filterrific.where(user_id: current_user.id).find.page(params[:page])
       elsif current_user.try(:admin?)
         @calls = @filterrific.find.page(params[:page])
       else
