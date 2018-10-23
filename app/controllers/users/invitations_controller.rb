@@ -57,24 +57,28 @@ class Users::InvitationsController < Devise::InvitationsController
 
   def sanitize_cnes
     return params[:user][:cnes] if %w[ubs_admin ubs_user].include?(params[:user][:role])
+
     ''
   end
 
   def sanitize_city_id
     return '' if params[:user][:city_id] == '0' ||
                  !%w[city_admin ubs_admin ubs_user].include?(params[:user][:role])
+
     params[:user][:city_id]
   end
 
   def sanitize_state_id
     return '' if params[:user][:state_id] == '0' ||
                  !%w[city_admin ubs_admin ubs_user].include?(params[:user][:role])
+
     params[:user][:state_id]
   end
 
   def sanitize_sei
     return '' if params[:user][:sei] == '0' ||
                  !%w[company_admin company_user].include?(params[:user][:role])
+
     params[:user][:sei]
   end
 
