@@ -169,7 +169,8 @@ class AnswersController < ApplicationController
                                       .select_all(Answer.sanitize_sql_array(
                                                     ['SELECT octet_length(file_contents) FROM '\
                                                      'attachments WHERE attachments.id = ?',
-                                                      attachment.id]))[0]['octet_length'] }
+                                                     attachment.id]
+                                                  ))[0]['octet_length'] }
                      end)
       end
     end
