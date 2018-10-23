@@ -201,14 +201,14 @@ class AnswersController < ApplicationController
     elsif %w[new create destroy].include? action
       redirect_to denied_path unless admin? || support_user? || faq_inserter?
     elsif action == 'show'
-      unless (@answer.faq && !city_user? && !unity_user?) ||
+      unless (@answer.faq && !city_user? && !ubs_user?) ||
              admin? ||
              (support_user? && @answer.user_id == current_user.id) ||
              faq_inserter?
         redirect_to denied_path
       end
     elsif action == 'faq'
-      redirect_to denied_path if city_user? || unity_user?
+      redirect_to denied_path if city_user? || ubs_user?
     end
   end
 end
