@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Controversy < ApplicationRecord
   belongs_to :company, foreign_key: :sei
   belongs_to :contract
@@ -9,7 +11,6 @@ class Controversy < ApplicationRecord
   belongs_to :support_2, class_name: 'User', optional: true
   has_many :attachment_links
   has_many :attachments, through: :attachment_links
-
 
   enum creator: %i[company unity]
   enum category: %i[hardware software]

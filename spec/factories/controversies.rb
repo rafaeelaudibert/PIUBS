@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :controversy do
-    title { "MyString" }
-    description { "MyString" }
-    protocol { "MyString" }
-    closed_at { "2018-10-24 16:27:10" }
+    title { 'MyString' }
+    description { 'MyString' }
+    protocol { 'MyString' }
+    closed_at { '2018-10-24 16:27:10' }
     company_id { 1 }
     contract_id { 1 }
     city_id { 1 }
