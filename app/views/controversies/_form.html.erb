@@ -63,12 +63,12 @@
 
   <div class="field">
     <%= form.label :creator %>
-    <%= form.number_field :creator %>
+    <%= form.select :creator, Controversy.creators %>
   </div>
 
   <div class="field">
     <%= form.label :category %>
-    <%= form.number_field :category %>
+    <%= form.select :category, Controversy.categories %>
   </div>
 
   <div class="field">
