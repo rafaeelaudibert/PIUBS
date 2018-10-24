@@ -12,6 +12,7 @@ class CreateControversies < ActiveRecord::Migration[5.2]
       t.integer :cnes
       t.integer :company_user_id
       t.integer :unity_user_id
+      t.integer :city_user_id
       t.integer :creator
       t.integer :category
       t.integer :complexity
@@ -27,6 +28,7 @@ class CreateControversies < ActiveRecord::Migration[5.2]
     add_foreign_key :controversies, :unities, column: :cnes, primary_key: :cnes
     add_foreign_key :controversies, :users, column: :company_user_id
     add_foreign_key :controversies, :users, column: :unity_user_id
+    add_foreign_key :controversies, :users, column: :city_user_id
     add_foreign_key :controversies, :users, column: :support_1_id
     add_foreign_key :controversies, :users, column: :support_2_id
   end
