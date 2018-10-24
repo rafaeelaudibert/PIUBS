@@ -1,0 +1,2 @@
+module ControversiesHelper
+end

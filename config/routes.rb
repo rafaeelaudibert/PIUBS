@@ -83,6 +83,10 @@ Rails.application.routes.draw do
     resources :states
   end
 
+  scope '/controversias' do
+    resources :controversies
+  end
+
   # /apoioaempresas/users
   devise_for :users, controllers: { invitations: 'users/invitations',
                                     registrations: 'users/registrations' }

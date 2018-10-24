@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_08_150001) do
+ActiveRecord::Schema.define(version: 2018_10_24_162710) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "fuzzystrmatch"
@@ -117,6 +117,26 @@ ActiveRecord::Schema.define(version: 2018_10_08_150001) do
     t.index ["city_id"], name: "index_contracts_on_city_id"
   end
 
+  create_table "controversies", primary_key: "protocol", id: :string, force: :cascade do |t|
+    t.string "title"
+    t.string "description"
+    t.datetime "closed_at"
+    t.integer "status"
+    t.integer "sei"
+    t.integer "contract_id"
+    t.integer "city_id"
+    t.integer "cnes"
+    t.integer "company_user_id"
+    t.integer "unity_user_id"
+    t.integer "creator"
+    t.integer "category"
+    t.integer "complexity"
+    t.integer "support_1_id"
+    t.integer "support_2_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "replies", force: :cascade do |t|
     t.string "protocol"
     t.text "description"
@@ -203,6 +223,14 @@ ActiveRecord::Schema.define(version: 2018_10_08_150001) do
   add_foreign_key "cities", "states"
   add_foreign_key "contracts", "cities"
   add_foreign_key "contracts", "companies", column: "sei", primary_key: "sei"
+  add_foreign_key "controversies", "cities"
+  add_foreign_key "controversies", "companies", column: "sei", primary_key: "sei"
+  add_foreign_key "controversies", "contracts"
+  add_foreign_key "controversies", "unities", column: "cnes", primary_key: "cnes"
+  add_foreign_key "controversies", "users", column: "company_user_id"
+  add_foreign_key "controversies", "users", column: "support_1_id"
+  add_foreign_key "controversies", "users", column: "support_2_id"
+  add_foreign_key "controversies", "users", column: "unity_user_id"
   add_foreign_key "replies", "users"
   add_foreign_key "unities", "cities"
   add_foreign_key "users", "cities"

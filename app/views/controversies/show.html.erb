@@ -1,0 +1,79 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Protocol:</strong>
+  <%= @controversy.protocol %>
+</p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @controversy.title %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @controversy.description %>
+</p>
+
+<p>
+  <strong>Closed at:</strong>
+  <%= @controversy.closed_at %>
+</p>
+
+<p>
+  <strong>Company:</strong>
+  <%= @controversy.sei %>
+</p>
+
+<p>
+  <strong>Contract:</strong>
+  <%= @controversy.contract_id %>
+</p>
+
+<p>
+  <strong>City:</strong>
+  <%= @controversy.city_id %>
+</p>
+
+<p>
+  <strong>Unity:</strong>
+  <%= @controversy.cnes %>
+</p>
+
+<p>
+  <strong>Company user:</strong>
+  <%= @controversy.company_user_id %>
+</p>
+
+<p>
+  <strong>Unity user:</strong>
+  <%= @controversy.unity_user_id %>
+</p>
+
+<p>
+  <strong>Creator:</strong>
+  <%= @controversy.creator %>
+</p>
+
+<p>
+  <strong>Category:</strong>
+  <%= @controversy.category %>
+</p>
+
+<p>
+  <strong>Complexity:</strong>
+  <%= @controversy.complexity %>
+</p>
+
+<p>
+  <strong>Support 1:</strong>
+  <%= @controversy.support_1_id %>
+</p>
+
+<p>
+  <strong>Support 2:</strong>
+  <%= @controversy.support_2_id %>
+</p>
+
+<%= link_to 'Edit', edit_controversy_path(@controversy) %> |
+<%= link_to 'Back', controversies_path %>

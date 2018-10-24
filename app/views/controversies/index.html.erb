@@ -1,0 +1,55 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Controversies</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Protocol</th>
+      <th>Closed at</th>
+      <th>Company</th>
+      <th>Contract</th>
+      <th>City</th>
+      <th>Unity</th>
+      <th>Company user</th>
+      <th>Unity user</th>
+      <th>Creator</th>
+      <th>Category</th>
+      <th>Complexity</th>
+      <th>Support 1</th>
+      <th>Support 2</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @controversies.each do |controversy| %>
+      <tr>
+        <td><%= controversy.title %></td>
+        <td><%= controversy.description %></td>
+        <td><%= controversy.protocol %></td>
+        <td><%= controversy.closed_at %></td>
+        <td><%= controversy.sei %></td>
+        <td><%= controversy.contract_id %></td>
+        <td><%= controversy.city_id %></td>
+        <td><%= controversy.cnes %></td>
+        <td><%= controversy.company_user_id %></td>
+        <td><%= controversy.unity_user_id %></td>
+        <td><%= controversy.creator %></td>
+        <td><%= controversy.category %></td>
+        <td><%= controversy.complexity %></td>
+        <td><%= controversy.support_1_id %></td>
+        <td><%= controversy.support_2_id %></td>
+        <td><%= link_to 'Show', controversy %></td>
+        <td><%= link_to 'Edit', edit_controversy_path(controversy) %></td>
+        <td><%= link_to 'Destroy', controversy, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Controversy', new_controversy_path %>
