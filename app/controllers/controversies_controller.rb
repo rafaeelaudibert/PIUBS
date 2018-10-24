@@ -25,25 +25,12 @@ class ControversiesController < ApplicationController
   # POST /controversies.json
   def create
     controversy_parameters = controversy_params
-    files = controversy_parameters.delete(:files).split(',') if controversy_parameters[:files]
 
-    @controversy = Controversy.new(controversy_parameters)
-    @controversy.protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
-    @controversy.open!
-    @controversy.complexity = 1
-
+    files = retrieve_files controversy_parameters
+    @controversy = create_controversy controversy_parameters
 
     if @controversy.save
-      files.each do |file_uuid|
-        @link = AttachmentLink.new(attachment_id: file_uuid,
-                                   controversy_id: @controversy.protocol,
-                                   source: 'controversy')
-        unless @link.save
-          raise 'Não consegui criar o link entre arquivo e a Controvérsia.'\
-                ' Por favor tente mais tarde'
-        end
-      end
-
+      create_file_links @controversy, files
       ControversyMailer.notify(@controversy.protocol, current_user.id).deliver_later
       redirect_to @controversy, notice: 'Controvérsia criada com sucesso.'
     else
@@ -80,6 +67,29 @@ class ControversiesController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_controversy
     @controversy = Controversy.find(params[:id])
+  end
+
+  def retrieve_files(parameters)
+    parameters.delete(:files).split(',') if parameters[:files]
+  end
+
+  def create_controversy(parameters)
+    @controversy = Controversy.new(parameters)
+    @controversy.protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
+    @controversy.open!
+    @controversy.complexity = 1
+    @controversy
+  end
+
+  def create_file_links(controversy, files)
+    files.each do |file_uuid|
+      @link = AttachmentLink.new(attachment_id: file_uuid, controversy_id: controversy.protocol,
+                                 source: 'controversy')
+      unless @link.save
+        raise 'Não consegui criar o link entre arquivo e a Controvérsia.'\
+              ' Por favor tente mais tarde'
+      end
+    end
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
