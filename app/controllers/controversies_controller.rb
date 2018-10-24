@@ -24,16 +24,29 @@ class ControversiesController < ApplicationController
   # POST /controversies
   # POST /controversies.json
   def create
-    @controversy = Controversy.new(controversy_params)
+    controversy_parameters = controversy_params
+    files = controversy_parameters.delete(:files).split(',') if controversy_parameters[:files]
 
-    respond_to do |format|
-      if @controversy.save
-        format.html { redirect_to @controversy, notice: 'Controvérsia criada com sucesso.' }
-        format.json { render :show, status: :created, location: @controversy }
-      else
-        format.html { render :new }
-        format.json { render json: @controversy.errors, status: :unprocessable_entity }
+    @controversy = Controversy.new(controversy_parameters)
+    @controversy.protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
+    @controversy.open!
+    @controversy.complexity = 1
+
+
+    if @controversy.save
+      files.each do |file_uuid|
+        @link = AttachmentLink.new(attachment_id: file_uuid,
+                                   controversy_id: @controversy.protocol,
+                                   source: 'controversy')
+        unless @link.save
+          raise 'Não consegui criar o link entre arquivo e a Controvérsia.'\
+                ' Por favor tente mais tarde'
+        end
       end
+
+      redirect_to @controversy, notice: 'Controvérsia criada com sucesso.'
+    else
+      render :new
     end
   end
 
@@ -73,6 +86,6 @@ class ControversiesController < ApplicationController
     params.require(:controversy).permit(:title, :description, :protocol, :closed_at, :sei,
                                         :contract_id, :city_id, :cnes, :company_user_id,
                                         :unity_user_id, :creator, :category, :complexity,
-                                        :support_1_id, :support_2_id)
+                                        :support_1_id, :support_2_id, :files)
   end
 end

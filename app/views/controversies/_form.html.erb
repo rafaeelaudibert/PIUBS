@@ -62,13 +62,8 @@
   </div>
 
   <div class="field">
-    <%= form.label :creator %>
-    <%= form.select :creator, Controversy.creators %>
-  </div>
-
-  <div class="field">
     <%= form.label :category %>
-    <%= form.select :category, Controversy.categories %>
+    <%= form.select :category, Controversy.categories.map(&:first) %>
   </div>
 
   <div class="field">
@@ -86,7 +81,87 @@
     <%= form.number_field :support_2_id %>
   </div>
 
+  <div class="form-group">
+    <%= form.label :files, 'Arquivos (selecione todos os arquivos necessários pressionando a tecla CTRL)' %>
+    <%= form.text_field :files, id:'uuid-files', class: 'hidden'%>
+    <div id="dropzone" class="future-dropzone">
+      <div class="dz-default dz-message">
+        Arraste arquivos aqui para adicioná-los
+      </div>
+    </div>
+  </div>
+
   <div class="actions">
     <%= form.submit %>
   </div>
 <% end %>
+
+<script>
+
+let fileIds = [];
+
+$(document).ready(() => {
+
+  // Adds the actual class, to prevent errors
+  document.querySelector('.future-dropzone').classList.add('dropzone');
+
+    // grap our upload form by its id
+  $('#dropzone').dropzone({
+      url: '/apoioaempresas/attachments',
+
+      // restrict image size to a maximum 20MB
+      maxFilesize: 20,
+
+      // restrict to the maximum of 5 files
+      maxFiles: 5,
+
+      // Translations
+      dictCancelUpload: 'Cancelar Upload',
+      dictCancelUploadConfirmation: 'Deseja mesmo cancelar o Upload?',
+      dictRemoveFile: 'Remover arquivo',
+      dictDefaultMessage: 'Arraste arquivos aqui para adicioná-los',
+      dictFallbackMessage: 'Esse browser não suporta o anexo de arquivos.',
+      dictFileTooBig: 'Tamanho dos anexos excedido',
+      dictInvalidFileType: 'Extensão de arquivo Inválida',
+      dictMaxFilesExceeded: 'Quantidade de arquivos excedida',
+
+      // show remove links on each image upload
+      addRemoveLinks: true,
+
+      // if the upload was successful
+      success: (file, response) => {
+          // find the remove button link of the uploaded file and give it an id
+          // based of the attachmentID response from the server
+          $(file.previewTemplate).find('.dz-remove').attr('id', response.attachmentID);
+
+          // Add to array
+          fileIds.push(response.attachmentID);
+          $('#uuid-files').val(fileIds);
+
+          // add the dz-success class (the green tick sign)
+          $(file.previewElement).addClass("dz-success");
+
+      },
+      //when the remove button is clicked
+      removedfile: file => {
+
+          // grap the id of the uploaded file we set earlier
+          let id = $(file.previewTemplate).find('.dz-remove').attr('id');
+
+          // Remove from array
+          fileIds = fileIds.filter(uuid => uuid != id)
+          $('#uuid-files').val(fileIds);
+
+          // make a DELETE ajax request to delete the file
+          $.ajax({
+              type: 'DELETE',
+              url: '/apoioaempresas/attachments/' + id,
+              success: () => $(file.previewTemplate).fadeOut(),
+              error: e => console.error(e)
+          });
+      }
+  });
+})
+
+
+</script>
