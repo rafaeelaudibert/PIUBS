@@ -36,9 +36,8 @@ class CallsController < ApplicationController
     if current_user.try(:call_center_user?)
       @calls = @filterrific.find.page(params[:page]).where(support_user: [current_user.id, nil])
     elsif current_user.try(:call_center_admin?)
-      children = [nil]
-      User.where(invited_by_id: current_user.id).each do |user| children << user.id end
-      @calls = @filterrific.find.page(params[:page]).where(support_user: children)
+      children = User.where(invited_by_id: current_user.id).map(&:id)
+      @calls = @filterrific.find.page(params[:page]).where(support_user: [children, nil].flatten)
     elsif current_user.try(:company_admin?)
       @calls = @filterrific.find.page(params[:page]).where(sei: current_user.sei)
     elsif current_user.try(:company_user?)
