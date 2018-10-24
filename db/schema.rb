@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_24_162800) do
+ActiveRecord::Schema.define(version: 2018_10_24_181200) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "fuzzystrmatch"
@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(version: 2018_10_24_162800) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "attachment_id"
+    t.string "controversy_id"
     t.index ["answer_id"], name: "index_attachment_links_on_answer_id"
     t.index ["call_id"], name: "index_attachment_links_on_call_id"
     t.index ["reply_id"], name: "index_attachment_links_on_reply_id"
@@ -215,6 +216,7 @@ ActiveRecord::Schema.define(version: 2018_10_24_162800) do
 
   add_foreign_key "answers", "categories"
   add_foreign_key "answers", "users"
+  add_foreign_key "attachment_links", "controversies", primary_key: "protocol"
   add_foreign_key "calls", "answers"
   add_foreign_key "calls", "categories"
   add_foreign_key "calls", "cities"
