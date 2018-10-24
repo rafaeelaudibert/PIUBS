@@ -44,6 +44,7 @@ class ControversiesController < ApplicationController
         end
       end
 
+      ControversyMailer.notify(@controversy.protocol, current_user.id).deliver_later
       redirect_to @controversy, notice: 'Controvérsia criada com sucesso.'
     else
       render :new

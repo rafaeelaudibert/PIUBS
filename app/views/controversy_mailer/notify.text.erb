@@ -1,0 +1,11 @@
+PIUBS
+
+Olá, <%= @current_user.name %>, você abriu uma nova controvérsia.
+
+Protocolo: <%= @controversy.protocol %>
+
+Título da controvérsia: <%= @controversy.title %>
+
+<%= @controversy.created_at.strftime("%d %b %y - %H:%M:%S") %>
+
+<%= link_to "Clique aqui para acessar o PIUBS e visualizar o atendimento completo", @link %>
