@@ -12,19 +12,18 @@ class CallsController < ApplicationController
   def index
     @contracts = Contract.where(sei: current_user.sei)
     (@filterrific = initialize_filterrific(Call, params[:filterrific],
-      select_options: { sorted_by_creation: Call.options_for_sorted_by_creation,
-                        with_status: Call.options_for_with_status,
-                        with_state: State.all.map { |s| [s.name, s.id] },
-                        with_city: Call.options_for_with_city,
-                        with_ubs: Unity.where(city_id: @contracts.map(&:city_id)).map { |u| [u.name, u.cnes] },
-                        with_company: Company.all.map(&:sei)  },
-      persistence_id: false
-    )) || return
-      if user_signed_in?
-        filtered_calls
-      else
-        redirect_to new_user_session_path
-      end
+                                           select_options: { sorted_by_creation: Call.options_for_sorted_by_creation,
+                                                             with_status: Call.options_for_with_status,
+                                                             with_state: State.all.map { |s| [s.name, s.id] },
+                                                             with_city: Call.options_for_with_city,
+                                                             with_ubs: Unity.where(city_id: @contracts.map(&:city_id)).map { |u| [u.name, u.cnes] },
+                                                             with_company: Company.all.map(&:sei) },
+                                           persistence_id: false)) || return
+    if user_signed_in?
+      filtered_calls
+    else
+      redirect_to new_user_session_path
+    end
 
     respond_to do |format|
       format.html
