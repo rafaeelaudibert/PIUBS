@@ -13,7 +13,8 @@
   </div>
 <% end %>
 <div style="max-width: 850px">
-  <%= form.text_field :protocol, type: 'hidden', class: 'form-control', required: true %>
+  <%= form.text_field :repliable_id, type: 'hidden', value: @call.protocol, class: 'form-control', required: true %>
+  <%= form.text_field :repliable_type, type: 'hidden', value:  'Call', class: 'form-control', required: true %>
   <% if support_user? || current_user.try(:admin?) %>
     <%= form.check_box :faq, checked: false, id:'on-faq', style: "display: none;" %>
   <% end %>
@@ -39,10 +40,7 @@
 <script>
   let replyFileIds = [];
   let dropReply;
-  $(document).ready(function () {
-    var protocol = "<%= escape_javascript @call.protocol %>";
-    $("#reply_protocol").val(protocol);
-    $("#reply_protocol").hide();
+  $(document).ready(() => {
 
     // Adds the actual class, to prevent errors
     document.querySelectorAll('.future-dropzone').forEach(d => d.classList.add('dropzone'));
