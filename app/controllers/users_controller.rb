@@ -25,7 +25,7 @@ class UsersController < ApplicationController
           current_user.try(:city_admin?) ||
           current_user.try(:company_admin?) ||
           current_user.try(:ubs_admin?)
-      @users = @filterrific.find.page(params[:page]).where(invited_by_id: current_user.id)
+      @users = @filterrific.find.where(invited_by_id: current_user.id).page(params[:page])
     end
   end
 
