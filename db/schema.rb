@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_24_162710) do
+ActiveRecord::Schema.define(version: 2018_10_24_162800) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "fuzzystrmatch"
@@ -138,7 +138,6 @@ ActiveRecord::Schema.define(version: 2018_10_24_162710) do
   end
 
   create_table "replies", force: :cascade do |t|
-    t.string "protocol"
     t.text "description"
     t.bigint "user_id"
     t.datetime "created_at", null: false
@@ -146,6 +145,9 @@ ActiveRecord::Schema.define(version: 2018_10_24_162710) do
     t.integer "status"
     t.string "category"
     t.boolean "faq", default: false
+    t.string "repliable_type"
+    t.bigint "repliable_id"
+    t.index ["repliable_type", "repliable_id"], name: "index_replies_on_repliable_type_and_repliable_id"
     t.index ["user_id"], name: "index_replies_on_user_id"
   end
 

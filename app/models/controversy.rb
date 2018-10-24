@@ -11,6 +11,7 @@ class Controversy < ApplicationRecord
   belongs_to :support_2, class_name: 'User', optional: true
   has_many :attachment_links
   has_many :attachments, through: :attachment_links
+  has_many :replies, as: :repliable
 
   enum creator: %i[company unity]
   enum category: %i[hardware software]

@@ -9,7 +9,7 @@ class Call < ApplicationRecord
   belongs_to :answer, optional: true
   belongs_to :unity, class_name: 'Unity', foreign_key: :cnes
   validates :protocol, presence: true, uniqueness: true
-  has_many :replies, class_name: 'Reply', foreign_key: :protocol
+  has_many :replies, as: :repliable
   has_many :attachment_links
   has_many :attachments, through: :attachment_links
 
