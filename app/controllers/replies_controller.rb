@@ -54,7 +54,7 @@ class RepliesController < ApplicationController
       end
 
       ReplyMailer.notify(@reply, current_user).deliver_later
-      
+
       id = @reply.repliable_id
       redirect_to @reply.repliable_type == 'Call' ? call_path(id) : controversy_path(id),
                   notice: 'Resposta adicionada com sucesso.'
