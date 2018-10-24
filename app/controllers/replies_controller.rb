@@ -32,12 +32,16 @@ class RepliesController < ApplicationController
   # POST /replies
   def create
     rep_params = reply_params
-    files = rep_params.delete(:files).split(',') if rep_params[:files]
+    files = rep_params[:files] ? rep_params.delete(:files).split(',') : []
 
     @reply = Reply.new(rep_params)
     @reply.user_id = current_user.id
-    @reply.status = @reply.call.status || 'Sem Status'
-    @reply.category = (support_user? || current_user.try(:admin?)) ? 'support' : 'reply'
+    @reply.status = @reply.repliable.status || 'Sem Status'
+    @reply.category = if support_user? || current_user.try(:admin?)
+                        'support'
+                      else
+                        company_user? ? 'company' : 'unity'
+                      end
 
     if @reply.save
       files.each do |file_uuid|
@@ -50,7 +54,9 @@ class RepliesController < ApplicationController
       end
 
       ReplyMailer.notify(@reply, current_user).deliver_later
-      redirect_to call_path(@reply.protocol),
+      
+      id = @reply.repliable_id
+      redirect_to @reply.repliable_type == 'Call' ? call_path(id) : controversy_path(id),
                   notice: 'Resposta adicionada com sucesso.'
     else
       render :new
@@ -102,7 +108,7 @@ class RepliesController < ApplicationController
 
   # Never trust parameters from internet, only allow the white list through.
   def reply_params
-    params.require(:reply).permit(:faq_attachments, :protocol,
+    params.require(:reply).permit(:faq_attachments, :repliable_id, :repliable_type,
                                   :description, :user_id, :faq, :files)
   end
 
