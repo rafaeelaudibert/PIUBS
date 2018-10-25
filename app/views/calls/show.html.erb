@@ -5,6 +5,7 @@
 <h5>
   Atendimento | Nº do protocolo:
   <span class="badge badge-dark"><%= @call.protocol %></span>
+  <span class="badge badge-<%=t "activerecord.enums.call.status.style.#{@call.status}" %>"><%= t "activerecord.enums.call.status.#{@call.status}" %></span>
 </h5>
 <%end%>
 
@@ -16,10 +17,23 @@
   <span class="badge badge-pill badge-dark m-2">
     <a><%= User.find(@call.user_id).email %></a>
   </span>
-  Data de criação :
-  <span class="badge badge-pill badge-dark m-2">
-    <%= @call.created_at %>
-  </span>
+
+  <% if @call.open? %>
+    Data de criação :
+    <span class="badge badge-pill badge-dark m-2">
+      <%= @call.created_at %>
+    </span>
+  <%elsif @call.reopened?%>
+    Data de reabertura :
+    <span class="badge badge-pill badge-dark m-2">
+      <%= @call.reopened_at %>
+    </span>
+  <%elsif @call.closed?%>
+    Data de fechamento :
+    <span class="badge badge-pill badge-dark m-2">
+      <%= @call.finished_at %>
+    </span>
+  <%end%>
 
   Sei :
   <span class="badge badge-pill badge-dark m-2">
@@ -71,8 +85,6 @@
 <span class="badge badge-pill badge-light m-2"><%= @call.city.name %></span>
 <%= t "activerecord.general.uf" %>
 <span class="badge badge-pill badge-light m-2"><%= @call.state.name %></span>
-<%= t :status %>
-<span class="badge badge-pill badge-light m-2" style="color:blue !important;"><%= t "activerecord.enums.call.status.#{@call.status}" %></span>
 <%= t "activerecord.models.call.severity" %>
 <span class="badge badge-pill badge-light m-2"><%= t "activerecord.enums.call.severity.#{@call.severity}" if @call.severity %></span>
 <%= t "activerecord.models.call.category" %>
@@ -110,9 +122,9 @@
   <!-- Chamado fechado -->
   <div class="closed-call">
     <% if admin? || support_user? %>
-      <p>Chamado fechado</p>
+      <p>Chamado fechado <br> <span style="font-size: 1rem;"> (<%= @call.finished_at %>) </span></p>
     <% else %>
-      <p>Chamado fechado! Somente reabra caso a solução oferecida pela atendente não tenha resolvido o seu problema.</br>
+      <p>Chamado fechado em <%= @call.finished_at %>. <br>Somente reabra caso a solução oferecida pelo atendente <br>não tenha resolvido o seu problema.</br>
     </p>
     <a data-confirm="Tens certeza?" class="btn btn-danger btn-lg" rel="nofollow" data-method="post" href="/apoioaempresas/calls/reopen_call?call=<%= @call.id %>">
       Reabrir chamado
