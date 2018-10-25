@@ -16,7 +16,7 @@ class AnswersController < ApplicationController
       },
       persistence_id: false
     )) || return
-    @answers = @filterrific.find.page(params[:page]).order('category_id ASC')
+    @answers = @filterrific.find.order(:category_id).page(params[:page])
   end
 
   # get /faq
@@ -29,11 +29,7 @@ class AnswersController < ApplicationController
       },
       persistence_id: false
     )) || return
-    @answers = Answer.filterrific_find(@filterrific).includes(:category).page(params[:page])
-
-    # As linha abaixo sao backup do que tinha antes de add o filterrific
-    # @answers = Answer.where(faq: true).includes(:category)
-    # .order('category_id ASC').paginate(page: params[:page], per_page: 25)
+    @answers = Answer.filterrific_find(@filterrific).order(:category_id).page(params[:page])
 
     respond_to do |format|
       format.html
@@ -64,6 +60,7 @@ class AnswersController < ApplicationController
       if params[:question_id]
         @call = Call.find(params[:question_id])
         @call.closed!
+        @call.update(:finished_at => Time.now)
 
         # Retira a answer caso ela nao esteja no FAQ + attach_links
         if @call.answer_id && @call.answer.faq == false
@@ -91,8 +88,8 @@ class AnswersController < ApplicationController
                                    answer_id: @answer.id,
                                    source: 'answer')
         unless @link.save
-           raise 'Não consegui criar o link entre arquivo e resposta final.'\
-                 ' Por favor tente mais tarde'
+          raise 'Não consegui criar o link entre arquivo e resposta final.'\
+                ' Por favor tente mais tarde'
         end
       end
 
@@ -123,20 +120,14 @@ class AnswersController < ApplicationController
                                    answer_id: @answer.id,
                                    source: 'answer')
         unless @link.save
-           raise 'Não consegui criar o link entre arquivo e resposta final.'\
-                 ' Por favor tente mais tarde'
+          raise 'Não consegui criar o link entre arquivo e resposta final.'\
+                ' Por favor tente mais tarde'
         end
       end
 
-      if @answer.save
-
-        if @answer.update(ans_params)
-          format.html { redirect_to @answer, notice: 'Resposta atualizada com sucesso.' }
-          format.json { render :show, status: :ok, location: @answer }
-        else
-          format.html { render :edit }
-          format.json { render json: @answer.errors, status: :unprocessable_entity }
-        end
+      if @answer.update(ans_params)
+        format.html { redirect_to @answer, notice: 'Resposta atualizada com sucesso.' }
+        format.json { render :show, status: :ok, location: @answer }
       else
         format.html { render :edit }
         format.json { render json: @answer.errors, status: :unprocessable_entity }
@@ -177,12 +168,11 @@ class AnswersController < ApplicationController
                          id: attachment.id,
                          bytes: Answer.connection
                                       .select_all(Answer.sanitize_sql_array(
-                                                    ["SELECT octet_length(file_contents) FROM "\
-                                                     "attachments WHERE attachments.id = ?",
-                                                      attachment.id]))[0]['octet_length']
-                       }
-                     end
-               )
+                                                    ['SELECT octet_length(file_contents) FROM '\
+                                                     'attachments WHERE attachments.id = ?',
+                                                     attachment.id]
+                                                  ))[0]['octet_length'] }
+                     end)
       end
     end
   end
@@ -209,14 +199,14 @@ class AnswersController < ApplicationController
     elsif %w[new create destroy].include? action
       redirect_to denied_path unless admin? || support_user? || faq_inserter?
     elsif action == 'show'
-      unless (@answer.faq && !city_user? && !unity_user?) ||
+      unless (@answer.faq && !city_user? && !ubs_user?) ||
              admin? ||
              (support_user? && @answer.user_id == current_user.id) ||
              faq_inserter?
         redirect_to denied_path
       end
     elsif action == 'faq'
-      redirect_to denied_path if city_user? || unity_user?
+      redirect_to denied_path if city_user? || ubs_user?
     end
   end
 end

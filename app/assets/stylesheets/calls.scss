@@ -64,6 +64,7 @@
   color: #555;
   vertical-align: middle;
   border-radius: 4px;
+  width: 100%;
   max-width: 100%;
   line-height: 22px;
   cursor: text;
@@ -121,10 +122,6 @@
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
 // keywords
-.bootstrap-tagsinput {
-  width: 100%;
-}
-
 .label-info {
   background-color: #6dc8bf;
 }

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CategoriesController < ApplicationController
-  before_action :set_category, only: %i[show edit update destroy]  
+  before_action :set_category, only: %i[show edit update destroy]
   before_action :authenticate_user!
   before_action :filter_role
   include ApplicationHelper
@@ -16,7 +16,7 @@ class CategoriesController < ApplicationController
       },
       persistence_id: false
     )) || return
-    @categories = @filterrific.find.page(params[:page]).order('id')
+    @categories = @filterrific.find.order('id').page(params[:page])
   end
 
   # GET /categories/1
@@ -78,7 +78,7 @@ class CategoriesController < ApplicationController
   def category_params
     puts params
     parent_id = params[:category][:parent_id]
-    params[:category][:parent_depth] = 1 + Category.find(parent_id).parent_depth if parent_id != ""
+    params[:category][:parent_depth] = 1 + Category.find(parent_id).parent_depth if parent_id != ''
     params.require(:category).permit(:name, :parent_id,
                                      :parent_depth, :severity)
   end

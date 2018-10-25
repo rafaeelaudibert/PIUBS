@@ -8,7 +8,7 @@
 <%end%>
 
 <%= form_for_filterrific @filterrific do |f| %>
-  <div class="left form-group" style="width:65%; display:inline-block">
+  <div class="left form-group" style="width:75%; display:inline-block">
 
     <div class="form-group" style="display: inline-block; margin-bottom: 0">
       <%= f.label :filterrific_with_status, 'Filtro por Status'%>
@@ -67,12 +67,12 @@
                  style: 'margin-top: 0.375em') if params[:filterrific] %>
   </div>
 
-  <div class="right input-group" style="width: 32%; margin: 7em auto 0 !important">
+  <div class="right input-group" style="width: 24%; margin: 7em auto 0 !important">
     <input name="filterrific[search_query]" id="filterrific_search_query"
            class="form-control mr-sm-2" type="search" aria-label="Search">
     <label>
       <i class="fa fa-search"></i>
-      &nbsp;Pesquisar Usuário
+      &nbsp;Atendimento
     </label>
      <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
   </div>

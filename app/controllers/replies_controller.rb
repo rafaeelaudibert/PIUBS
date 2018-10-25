@@ -15,7 +15,7 @@ class RepliesController < ApplicationController
       },
       persistence_id: false
     )) || return
-    @replies = @filterrific.find.page(params[:page]).order('created_at DESC')
+    @replies = @filterrific.find.order(created_at: :desc).page(params[:page])
   end
 
   # GET /replies/1
@@ -37,16 +37,15 @@ class RepliesController < ApplicationController
     @reply = Reply.new(rep_params)
     @reply.user_id = current_user.id
     @reply.status = @reply.call.status || 'Sem Status'
-    @reply.category = support_user? || current_user.try(:admin?) ? 'support' : 'reply'
+    @reply.category = (support_user? || current_user.try(:admin?)) ? 'support' : 'reply'
 
     if @reply.save
-      if files
-        files.each do |file_uuid|
-          @link = AttachmentLink.new(attachment_id: file_uuid,
-                                     reply_id: @reply.id, source: 'reply')
+      files.each do |file_uuid|
+        @link = AttachmentLink.new(attachment_id: file_uuid, reply_id: @reply.id, source: 'reply')
 
+        unless @link.save
           raise 'Não consegui criar o link entre arquivo e a resposta.'\
-                ' Por favor tente mais tarde' unless @link.save
+                ' Por favor tente mais tarde'
         end
       end
 
@@ -84,13 +83,12 @@ class RepliesController < ApplicationController
                          type: attachment.content_type,
                          id: attachment.id,
                          bytes: Reply.connection
-                                      .select_all(Reply.sanitize_sql_array(
-                                                    ["SELECT octet_length(file_contents) FROM "\
-                                                     "attachments WHERE attachments.id = ?",
-                                                      attachment.id]))[0]['octet_length']
-                      }
-                     end
-              )
+                                     .select_all(Reply.sanitize_sql_array(
+                                                   ['SELECT octet_length(file_contents) FROM '\
+                                                    'attachments WHERE attachments.id = ?',
+                                                    attachment.id]
+                                                 ))[0]['octet_length'] }
+                     end)
       end
     end
   end

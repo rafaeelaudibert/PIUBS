@@ -11,16 +11,14 @@ class Company < ApplicationRecord
   self.primary_key = 'sei' # Setting a different primary_key
 
   filterrific(
-    default_filter_params: { # em breve
-     },
-    available_filters: %i[
-      search_query
-    ]
+    default_filter_params: {}, # em breve
+    available_filters: %i[search_query]
   )
 
   scope :search_query, lambda { |query|
-    return nil  if query.blank? || query.class != Integer
+    return nil if query.blank? || query.class != Integer
+
     query_search_i = query.to_i
-    where("sei = ?", query_search_i)
+    where('sei = ?', query_search_i)
   }
 end

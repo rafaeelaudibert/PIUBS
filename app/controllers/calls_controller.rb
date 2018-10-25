@@ -11,46 +11,40 @@ class CallsController < ApplicationController
   # GET /calls.json
   def index
     @contracts = Contract.where(sei: current_user.sei)
-    (@filterrific = initialize_filterrific(
-      Call,
-      params[:filterrific],
-      select_options: {
-        sorted_by_creation: Call.options_for_sorted_by_creation,
-        with_status: Call.options_for_with_status,
-        with_state: State.all.map { |s| [s.name, s.id] },
-        with_city: Call.options_for_with_city,
-        with_ubs: Unity.where(city_id: @contracts.map(&:city_id)).map { |u| [u.name, u.cnes] },
-        with_company: Company.all.map(&:sei)
-      },
-      persistence_id: false
-    )) || return
-
-    # @calls = Call.filterrific_find(@filterrific).page(params[:page])
+    (@filterrific = initialize_filterrific(Call, params[:filterrific],
+       select_options: { sorted_by_creation: Call.options_for_sorted_by_creation,
+                         with_status: Call.options_for_with_status,
+                         with_state: State.all.map { |s| [s.name, s.id] },
+                         with_city: Call.options_for_with_city,
+                         with_ubs: Unity.where(city_id: @contracts.map(&:city_id)).map { |u| [u.name, u.cnes] },
+                         with_company: Company.all.map(&:sei) },
+       persistence_id: false)) || return
     if user_signed_in?
-      if current_user.try(:call_center_user?)
-        @calls = @filterrific.find.page(params[:page]).where(support_user: [current_user.id, nil])
-      elsif current_user.try(:call_center_admin?)
-        children = [nil]
-        User.where(invited_by_id: current_user.id).each do |user|
-          children << user.id
-        end
-        @calls = @filterrific.find.page(params[:page]).where(support_user: children)
-      elsif current_user.try(:company_admin?)
-        @calls = @filterrific.find.page(params[:page]).where(sei: current_user.sei)
-      elsif current_user.try(:company_user?)
-        @calls = @filterrific.find.page(params[:page]).where(user_id: current_user.id)
-      elsif current_user.try(:admin?)
-        @calls = @filterrific.find.page(params[:page])
-      else
-        @calls = []
-      end
+      filtered_calls
     else
-      redirect_to login_path
+      redirect_to new_user_session_path
     end
-    # puts params[:filterrific].require(:filtered_by)
+
     respond_to do |format|
       format.html
       format.js
+    end
+  end
+
+  def filtered_calls
+    if current_user.try(:call_center_user?)
+      @calls = @filterrific.find.page(params[:page]).where(support_user: [current_user.id, nil])
+    elsif current_user.try(:call_center_admin?)
+      children = User.where(invited_by_id: current_user.id).map(&:id)
+      @calls = @filterrific.find.page(params[:page]).where(support_user: [children, current_user.id, nil].flatten)
+    elsif current_user.try(:company_admin?)
+      @calls = @filterrific.find.page(params[:page]).where(sei: current_user.sei)
+    elsif current_user.try(:company_user?)
+      @calls = @filterrific.find.page(params[:page]).where(user_id: current_user.id)
+    elsif current_user.try(:admin?)
+      @calls = @filterrific.find.page(params[:page])
+    else
+      @calls = []
     end
   end
 
@@ -85,15 +79,13 @@ class CallsController < ApplicationController
     @call.severity = 'normal' # Call has a normal severity by default
 
     if @call.save
-      if files
-        files.each do |file_uuid|
-          @link = AttachmentLink.new(attachment_id: file_uuid,
-                                     call_id: @call.id,
-                                     source: 'call')
-          unless @link.save
-            raise 'Não consegui criar o link entre arquivo e o atendimento.'\
-                  ' Por favor tente mais tarde'
-          end
+      files.each do |file_uuid|
+        @link = AttachmentLink.new(attachment_id: file_uuid,
+                                   call_id: @call.id,
+                                   source: 'call')
+        unless @link.save
+          raise 'Não consegui criar o link entre arquivo e o atendimento.'\
+                ' Por favor tente mais tarde'
         end
       end
 
@@ -160,6 +152,7 @@ class CallsController < ApplicationController
   def reopen_call
     @call = Call.find(params[:call])
     @call.reopened!
+    @call.update(:reopened_at => Time.now)
 
     if @call.save
 

@@ -16,7 +16,8 @@ class CitiesController < ApplicationController
       },
       persistence_id: false
     )) || return
-    @cities = @filterrific.find.page(params[:page]).order('state_id, name')
+    @cities = @filterrific.find.joins(:state).order('states.name', 'cities.name')
+                          .page(params[:page])
   end
 
   # GET /cities/1
@@ -38,7 +39,9 @@ class CitiesController < ApplicationController
   def create
     @city = City.new(city_params)
     if @city.save
-      redirect_to @city, notice: 'Cidade criada com sucesso.'
+      redirect_to new_user_invitation_path(city_id: @city.id,
+                                           role: 'city_admin'),
+                  notice: 'City successfully created. Please add its responsible'
     else
       render :new
     end
@@ -62,7 +65,14 @@ class CitiesController < ApplicationController
   # GET /cities/states
   def states
     respond_to do |format|
-      format.js { render json: City.where(state_id: params[:id]).order('id ASC') }
+      format.js { render json: State.find(params[:id]).cities }
+    end
+  end
+
+  # GET /cities/unities/:id
+  def unities
+    respond_to do |format|
+      format.js { render json: City.find(params[:id]).unities.order('name ASC') }
     end
   end
 

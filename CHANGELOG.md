@@ -1,10 +1,72 @@
 # Change Log
 
-## [v0.2.0](https://github.com/rafaeelaudibert/PIUBS/tree/v0.2.0) (15-10-2018)
+## [v0.3.0](https://github.com/rafaeelaudibert/PIUBS/tree/v0.3.0) (25-10-2018)
+[Full Changelog](https://github.com/rafaeelaudibert/PIUBS/compare/v0.2.4...v0.3.0)
+
+**Merged pull requests:**
+
+- :sparkles::card\_file\_box: Introduces record and view call status update dates [\#145](https://github.com/rafaeelaudibert/PIUBS/pull/145) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :sparkles::bug: Adds TinyMCE configuration to always paste text in Plain Text. [\#144](https://github.com/rafaeelaudibert/PIUBS/pull/144) ([mgfzemor](https://github.com/mgfzemor))
+- :recycle: Improves calls index [\#143](https://github.com/rafaeelaudibert/PIUBS/pull/143) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :recycle: Improves calls controller [\#142](https://github.com/rafaeelaudibert/PIUBS/pull/142) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :recycle: Improves display order in index pages [\#140](https://github.com/rafaeelaudibert/PIUBS/pull/140) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :bug: Fixes ubs filter [\#139](https://github.com/rafaeelaudibert/PIUBS/pull/139) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :recycle: Refactoring users filters [\#138](https://github.com/rafaeelaudibert/PIUBS/pull/138) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :twisted\_rightwards\_arrows: Fixes users filters with state and city [\#137](https://github.com/rafaeelaudibert/PIUBS/pull/137) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :twisted\_rightwards\_arrows: Merges master to local branch [\#136](https://github.com/rafaeelaudibert/PIUBS/pull/136) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :bug::recycle: Improves optional params sanitization on user invitation [\#135](https://github.com/rafaeelaudibert/PIUBS/pull/135) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :bug: Fixes bug with user creations [\#134](https://github.com/rafaeelaudibert/PIUBS/pull/134) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :recycle: Removes '/apoioaempresas' from devise links [\#133](https://github.com/rafaeelaudibert/PIUBS/pull/133) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :rotating\_light: Applies fixes from CodeFactor [\#132](https://github.com/rafaeelaudibert/PIUBS/pull/132) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :rotating\_light: Fixes/Refactores code according to CodeFactor [\#131](https://github.com/rafaeelaudibert/PIUBS/pull/131) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :construction: Finishes user creation forms [\#130](https://github.com/rafaeelaudibert/PIUBS/pull/130) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+
+## [v0.2.4](https://github.com/rafaeelaudibert/PIUBS/tree/v0.2.4) (18-10-2018)
+[Full Changelog](https://github.com/rafaeelaudibert/PIUBS/compare/v0.2.3...v0.2.4)
+
+**Merged pull requests:**
+
+- :bug::construction: Improves cron jobs - Version 0.2.5 [\#129](https://github.com/rafaeelaudibert/PIUBS/pull/129) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :sparkles: Introduces feature to remove unlinked attachments [\#128](https://github.com/rafaeelaudibert/PIUBS/pull/128) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :recycle: sets correct time for the whenever gem. [\#127](https://github.com/rafaeelaudibert/PIUBS/pull/127) ([mgfzemor](https://github.com/mgfzemor))
+
+## [v0.2.3](https://github.com/rafaeelaudibert/PIUBS/tree/v0.2.3) (18-10-2018)
+[Full Changelog](https://github.com/rafaeelaudibert/PIUBS/compare/v0.2.2...v0.2.3)
+
+**Merged pull requests:**
+
+- :bug: Fixes AnyLogin bug in production - Version 0.2.3 [\#126](https://github.com/rafaeelaudibert/PIUBS/pull/126) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :lock: Enforces authentication to acess stuff [\#125](https://github.com/rafaeelaudibert/PIUBS/pull/125) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+
+## [v0.2.2](https://github.com/rafaeelaudibert/PIUBS/tree/v0.2.2) (18-10-2018)
+[Full Changelog](https://github.com/rafaeelaudibert/PIUBS/compare/v0.2.1...v0.2.2)
+
+**Merged pull requests:**
+
+- :twisted\_rightwards\_arrows: Fixes backup in Production - Version 0.2.2 [\#124](https://github.com/rafaeelaudibert/PIUBS/pull/124) ([mgfzemor](https://github.com/mgfzemor))
+
+## [v0.2.1](https://github.com/rafaeelaudibert/PIUBS/tree/v0.2.1) (18-10-2018)
+[Full Changelog](https://github.com/rafaeelaudibert/PIUBS/compare/v0.2.0...v0.2.1)
+
+**Merged pull requests:**
+
+- :recycle: Fixes more stuff with backup [\#123](https://github.com/rafaeelaudibert/PIUBS/pull/123) ([mgfzemor](https://github.com/mgfzemor))
+- :sparkles: Introduces backup - Version 0.2.1 [\#122](https://github.com/rafaeelaudibert/PIUBS/pull/122) ([mgfzemor](https://github.com/mgfzemor))
+- :recycle: Fixes mistakes with backup [\#121](https://github.com/rafaeelaudibert/PIUBS/pull/121) ([mgfzemor](https://github.com/mgfzemor))
+- :sparkles: Introduces any\_login to development [\#120](https://github.com/rafaeelaudibert/PIUBS/pull/120) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :construction: Explores backup in production [\#119](https://github.com/rafaeelaudibert/PIUBS/pull/119) ([mgfzemor](https://github.com/mgfzemor))
+- :recycle: Explores backup [\#118](https://github.com/rafaeelaudibert/PIUBS/pull/118) ([mgfzemor](https://github.com/mgfzemor))
+- :construction: Improves backup and filter changes [\#117](https://github.com/rafaeelaudibert/PIUBS/pull/117) ([mgfzemor](https://github.com/mgfzemor))
+- :recycle: Updates FAQ text box search to trigram [\#116](https://github.com/rafaeelaudibert/PIUBS/pull/116) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :rocket: Automated backups [\#115](https://github.com/rafaeelaudibert/PIUBS/pull/115) ([mgfzemor](https://github.com/mgfzemor))
+- :lipstick: Standardizes filters layout [\#114](https://github.com/rafaeelaudibert/PIUBS/pull/114) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+
+## [v0.2.0](https://github.com/rafaeelaudibert/PIUBS/tree/v0.2.0) (16-10-2018)
 [Full Changelog](https://github.com/rafaeelaudibert/PIUBS/compare/v0.1.0...v0.2.0)
 
 **Merged pull requests:**
 
+- :twisted\_rightwards\_arrows: Merges Version 0.2.0 [\#113](https://github.com/rafaeelaudibert/PIUBS/pull/113) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
 - :lipstick: Improves FAQ filters view [\#112](https://github.com/rafaeelaudibert/PIUBS/pull/112) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
 - :sparkles: Introduces search mechanisms [\#111](https://github.com/rafaeelaudibert/PIUBS/pull/111) ([felipefcomerlato](https://github.com/felipefcomerlato))
 - :sparkles: Adds attachments preview to calls index [\#110](https://github.com/rafaeelaudibert/PIUBS/pull/110) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
@@ -120,3 +182,7 @@
 - :page\_facing\_up: README/LICENSE updates [\#3](https://github.com/rafaeelaudibert/PIUBS/pull/3) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
 - :lipstick: Upgrades some UI [\#2](https://github.com/rafaeelaudibert/PIUBS/pull/2) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
 - :sparkles: Basic layout definition, Devise Auth and Mailer working. [\#1](https://github.com/rafaeelaudibert/PIUBS/pull/1) ([mgfzemor](https://github.com/mgfzemor))
+
+
+
+\* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*

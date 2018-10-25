@@ -15,7 +15,7 @@ class UnitiesController < ApplicationController
       },
       persistence_id: false
     )) || return
-    @unities = @filterrific.find.page(params[:page]).order('name', 'city_id')
+    @unities = @filterrific.find.joins(:city).order('cities.name', 'name').page(params[:page])
   end
 
   # GET /unities/1
@@ -36,7 +36,10 @@ class UnitiesController < ApplicationController
   def create
     @unity = Unity.new(unity_params)
     if @unity.save
-      redirect_to @unity, notice: 'Unity was successfully created.'
+      redirect_to new_user_invitation_path(city_id: @unity.city_id,
+                                           unity_id: @unity.id,
+                                           role: 'ubs_admin'),
+                  notice: 'Unity successfully created. Please add its responsible'
     else
       render :new
     end

@@ -7,6 +7,6 @@ class AddUuidToAttachments < ActiveRecord::Migration[5.2]
 
     remove_column :attachments, :id, :integer
     add_column :attachments, :id, :uuid, null: false
-    execute "ALTER TABLE attachments ADD PRIMARY KEY (id);"
+    execute 'ALTER TABLE attachments ADD PRIMARY KEY (id);'
   end
 end

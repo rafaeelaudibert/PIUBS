@@ -2,19 +2,15 @@
 
 class Users::InvitationsController < Devise::InvitationsController
   before_action :admin_only, only: :new
-  before_action :set_roles_allowed, only: :new
-  before_action :set_unities_allowed, only: :new
-  before_action :set_cities, only: :new
-  before_action :set_companies, only: :new
-  before_action :set_sei, only: :new
-  before_action :set_cnes, only: :new
-  before_action :set_city, only: :new
   before_action :update_sanitized_params, only: :update
   before_action :create_sanitized_params, only: :create
+  before_action :sanitize_optional_params, only: :create
 
   def new
-    @role = params[:role] if params[:role]
+    @roles_allowed = set_roles_allowed
+    @role = params[:role] || @roles_allowed[0] if @roles_allowed.length == 1
     @sei = params[:sei].to_i if params[:sei]
+    @city_id = params[:city_id].to_i if params[:city_id]
     super
   end
 
@@ -35,58 +31,55 @@ class Users::InvitationsController < Devise::InvitationsController
   private
 
   def set_roles_allowed
-    $roles_allowed = if current_user.admin?
-                       %i[faq_inserter admin city_admin ubs_admin company_admin call_center_admin]
-                     elsif current_user.city_admin?
-                       [:ubs_admin]
-                     elsif current_user.ubs_admin?
-                       [:ubs_user]
-                     elsif current_user.company_admin?
-                       [:company_user]
-                     elsif current_user.call_center_admin?
-                       [:call_center_user]
-                     else
-                       []
-                     end
-  end
-
-  def set_unities_allowed
-    return unless current_user.city_admin?
-
-    $unities_allowed = {}
-    Unity.where([city_id: current_user.city_id]).each do |unity|
-      $unities_allowed[unity.name] = unity.cnes
+    if current_user.admin?
+      %i[faq_inserter admin city_admin ubs_admin company_admin call_center_admin]
+    elsif current_user.city_admin?
+      [:ubs_admin]
+    elsif current_user.ubs_admin?
+      [:ubs_user]
+    elsif current_user.company_admin?
+      [:company_user]
+    elsif current_user.call_center_admin?
+      [:call_center_user]
+    else
+      []
     end
   end
 
-  def set_cities
-    return unless current_user.admin?
-
-    $cities = {}
-    City.all.each do |city|
-      $cities[city.name] = city.id
+  def sanitize_optional_params
+    if params[:user]
+      params[:user][:cnes] = sanitize_cnes
+      params[:user][:city_id] = sanitize_city_id
+      params[:user][:state_id] = sanitize_state_id
+      params[:user][:sei] = sanitize_sei
     end
   end
 
-  def set_companies
-    return unless current_user.admin?
+  def sanitize_cnes
+    return params[:user][:cnes] if %w[ubs_admin ubs_user].include?(params[:user][:role])
 
-    $companies = []
-    Company.all.each do |company|
-      $companies << company.sei
-    end
+    ''
   end
 
-  def set_sei
-    $current_user_sei = current_user.sei if current_user.company_admin?
+  def sanitize_city_id
+    return '' if params[:user][:city_id] == '0' ||
+                 !%w[city_admin ubs_admin ubs_user].include?(params[:user][:role])
+
+    params[:user][:city_id]
   end
 
-  def set_cnes
-    $current_user_cnes = current_user.cnes if current_user.ubs_admin?
+  def sanitize_state_id
+    return '' if params[:user][:state_id] == '0' ||
+                 !%w[city_admin ubs_admin ubs_user].include?(params[:user][:role])
+
+    params[:user][:state_id]
   end
 
-  def set_city
-    $current_user_city = current_user.city_id if current_user.city_admin?
+  def sanitize_sei
+    return '' if params[:user][:sei] == '0' ||
+                 !%w[company_admin company_user].include?(params[:user][:role])
+
+    params[:user][:sei]
   end
 
   def update_sanitized_params
