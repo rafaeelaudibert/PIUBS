@@ -36,7 +36,7 @@ class CallsController < ApplicationController
       @calls = @filterrific.find.page(params[:page]).where(support_user: [current_user.id, nil])
     elsif current_user.try(:call_center_admin?)
       children = User.where(invited_by_id: current_user.id).map(&:id)
-      @calls = @filterrific.find.page(params[:page]).where(support_user: [children, nil].flatten)
+      @calls = @filterrific.find.page(params[:page]).where(support_user: [children, current_user.id, nil].flatten)
     elsif current_user.try(:company_admin?)
       @calls = @filterrific.find.page(params[:page]).where(sei: current_user.sei)
     elsif current_user.try(:company_user?)
@@ -152,6 +152,7 @@ class CallsController < ApplicationController
   def reopen_call
     @call = Call.find(params[:call])
     @call.reopened!
+    @call.update(:reopened_at => Time.now)
 
     if @call.save
 
