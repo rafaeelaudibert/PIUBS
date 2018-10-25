@@ -43,6 +43,10 @@ en:
           open: "Aberto"
           reopened: "Reaberto"
           closed: "Fechado"
+          style:
+            open: "success"
+            reopened: "warning"
+            closed: "danger"
         severity:
           low: "Baixa"
           normal: "Normal"
