@@ -2,7 +2,7 @@
   "use strict";
 
   var defaultOptions = {
-    tagClass: function(item) {
+    tagClass: function() {
       return 'label label-info';
     },
     itemValue: function(item) {
@@ -11,7 +11,7 @@
     itemText: function(item) {
       return this.itemValue(item);
     },
-    itemTitle: function(item) {
+    itemTitle: function() {
       return null;
     },
     freeInput: true,
@@ -399,7 +399,7 @@
           }, self));
       }
 
-      self.$container.on('click', $.proxy(function(event) {
+      self.$container.on('click', $.proxy(function() {
         if (!self.$element.attr('disabled')) {
           self.$input.removeAttr('disabled');
         }
@@ -407,7 +407,7 @@
       }, self));
 
       if (self.options.addOnBlur && self.options.freeInput) {
-        self.$input.on('focusout', $.proxy(function(event) {
+        self.$input.on('focusout', $.proxy(function() {
           // HACK: only process on focusout when no typeahead opened, to
           //       avoid adding the typeahead text as tag
           if ($('.typeahead, .twitter-typeahead', self.$container)

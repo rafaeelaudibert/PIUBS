@@ -6,10 +6,9 @@ RUN touch /etc/apt/sources.list.d/pgdg.list
 RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main' > /etc/apt/sources.list.d/pgdg.list
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
-# Install dependencies
-RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs
-RUN apt-get install -y cron
-RUN apt-get install -y postgresql-client-10
+# Install dependencies and clean lists
+RUN apt-get update -qq && apt-get install -y --no-install-recommends build-essential libpq-dev \
+    nodejs cron postgresql-client-10 && apt-get clean && rm -rf /var/lib/apt/list/*
 
 
 # Set an environment variable where the Rails app is installed to inside of Docker image:

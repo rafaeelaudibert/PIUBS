@@ -16,9 +16,30 @@
 <% end %>
 <div class="col-8 mb-8">
   <div id="pre_search" class="search">
+    <div class='text_explain'>
+      <h4>Atenção!<h4>
+      <p>
+        Antes de avançar para a criação do seu atendimento, certifique-se de que a sua resposta não
+        foi respondida, e já não se encontra no FAQ. Pesquise bastante o que você está procurando
+        no campo de pesquisa abaixo, utilizando palavras-chave que possam ajudar o sistema a
+        encontrar uma resposta no FAQ que seja útil para você. Você também pode acessar todas as
+        respostas do FAQ e vasculhar seu extenso repositório de respostas no link da barra lateral
+        ou clicando <a href="apoioaempresas/faq">aqui</a>.
+        <br/><br/>
+        É de extrema importância que se evite ao máximo abrir um atendimento para resolver um
+        problema que JÁ FOI RESOLVIDO ANTES. Isso consome o tempo dos atendentes, que poderiam estar
+        encontrando soluções para novos problemas. Caso o atendente consiga resolver a sua questão
+        através de uma resposta que já estava no FAQ, sua empresa será notificada. Caso os casos de
+        questionamentos com respostas disponíveis no FAQ continuem, a empresa poderá ser penalizada.
+        <br/><br/>
+        Caso tenha certeza de que sua dúvida não se encontra no FAQ, sinta-se a vontade para clicar
+        na checkbox abaixo dos cartões de resultados de pesquisa, para que possa preencher os dados
+        e detalhar o seu problema. Lembre-se de preencher todos os campos com opções relevantes.
+      </p>
+    </div>
     <div class="field">
       <%= form.label :title, 'Título', class: 'required' %>
-      <%= form.text_field :title, class: 'form-control boxed', autocomplete: :off, required: true, id:'search' %>
+      <%= form.text_field :title, class: 'form-control boxed', autocomplete: :off, id:'search' %>
     </div>
     <div id="table" class="m-2" style="max-height: 600px; overflow-y: scroll; padding: 5px"></div>
   </div>
@@ -225,15 +246,24 @@
       <% end %>
       <div class="field">
         <%= form.label :category_id, 'Categoria', class: 'required' %>
-        <%= form.collection_select(:category_id, Category.all, :id, :name, {include_blank: "Selecione uma Categoria: "}, class: 'form-control boxed', required: true) %>
+        <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[category_id]" id="answer_category_id" class="form-control" required="required">
+          <option value="0">Selecione uma categoria:</option>
+          <%= inside_layout "categories/category_select", {categ: Category.all} do %>
+            <%= yield %>
+          <% end %>
+        </select>
       </div>
 
-      <div class="form-group input-group">
-        <br/>
-        <%= form.label :file, 'Anexar arquivos', class: "btn btn-secondary btn-file input-group-btn" %>
-        <%= form.file_field :file, class: 'form-control-file', multiple: true, onchange: 'validateFiles(this)', data: {max_file_size: 20.megabytes, max_file_quantity: 10}, style:"display: none"%>
-        <%= form.text_field :file_text, class:"form-control", readonly: true %>
+      <div class="form-group">
+        <%= form.label :files, 'Arquivos (selecione todos os arquivos necessários pressionando a tecla CTRL)' %>
+        <%= form.text_field :files, id:'uuid-files', style: 'display: none'%>
+        <div id="dropzone" class="future-dropzone">
+          <div class="dz-default dz-message">
+            Arraste arquivos aqui para adicioná-los
+          </div>
+        </div>
       </div>
+
       <%= form.submit 'Criar atendimento', :class => 'btn btn-primary btn-sm' %>
       <%= link_to 'Cancelar', calls_path, :class => 'btn btn-danger btn-sm' %>
     </div>
@@ -261,9 +291,7 @@
 
     }
   });
-</script>
 
-<script>
   let tableDiv = document.getElementById('table');
   let textField = document.getElementById('search');
   var xTriggered = 0;
@@ -310,69 +338,68 @@
       }
     }
   });
-</script>
 
-<script>
-  function validateFiles(inputFile) {
+  let fileIds = []
+  $(document).ready(function(){
+      // Adds the actual class, to prevent errors
+      document.querySelector('.future-dropzone').classList.add('dropzone');
 
-    var size = 0;
-    var maxFileSize = $(inputFile).data('max-file-size');
-    var maxFileQuantity = $(inputFile).data('max-file-quantity');
+        // grap our upload form by its id
+      $('#dropzone').dropzone({
+          url: '/apoioaempresas/attachments',
 
-    $.each(inputFile.files, function () {
-      if (this.size) {
-        size += this.size;
-      }
-    });
+          // restrict image size to a maximum 20MB
+          maxFilesize: 20,
 
-    if (size && maxFileSize && size > parseInt(maxFileSize)) {
-      const animation = {
-        "in": "bounceIn",
-        "out": "fadeOutUpBig"
-      };
-      const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
-      Notification.create("<%= 'Alerta' %>", '<%= "Esses anexos excedem o tamanho máximo permitido (20 MB)" %>', heart, animation, 2, 5);
-      $(inputFile).val('');
-    } else if (inputFile.files.length > maxFileQuantity) {
-      const animation = {
-        "in": "bounceIn",
-        "out": "fadeOutUpBig"
-      };
-      const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
-      Notification.create("<%= 'Alerta' %>", '<%= "Esses anexos excedem a quantidade máxima permitida (10 arquivos)" %>', heart, animation, 2, 5);
-      $(inputFile).val('');
-    };
-  }
+          // restrict to the maximum of 3 files
+          maxFiles: 3,
 
-  $(function () {
+          // Translations
+          dictCancelUpload: 'Cancelar Upload',
+          dictCancelUploadConfirmation: 'Deseja mesmo cancelar o Upload?',
+          dictRemoveFile: 'Remover arquivo',
+          dictDefaultMessage: 'Arraste arquivos aqui para adicioná-los',
+          dictFallbackMessage: 'Esse browser não suporta o anexo de arquivos.',
+          dictFileTooBig: 'Tamanho dos anexos excedido',
+          dictInvalidFileType: 'Extensão de arquivo Inválida',
+          dictMaxFilesExceeded: 'Quantidade de arquivos excedida',
 
-    // We can attach the `fileselect` event to all file inputs on the page
-    $(document).on('change', ':file', function () {
-      var input = $(this),
-        numFiles = input.get(0).files
-          ? input.get(0).files.length
-          : 1,
-        label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-      input.trigger('fileselect', [numFiles, label]);
-    });
+          // show remove links on each image upload
+          addRemoveLinks: true,
 
-    // We can watch for our custom `fileselect` event like this
-    $(document).ready(function () {
-      $(':file').on('fileselect', function (event, numFiles, label) {
+          // if the upload was successful
+          success: (file, response) => {
+              // find the remove button link of the uploaded file and give it an id
+              // based of the attachmentID response from the server
+              $(file.previewTemplate).find('.dz-remove').attr('id', response.attachmentID);
 
-        var input = $(this).parents('.input-group').find(':text'),
-          log = numFiles > 1
-            ? numFiles + ' files selected'
-            : label;
+              // Add to array
+              fileIds.push(response.attachmentID);
+              $('#uuid-files').val(fileIds);
 
-        if (input.length) {
-          input.val(log);
-        } else {
-          if (log)
-            alert(log);
+              // add the dz-success class (the green tick sign)
+              $(file.previewElement).addClass("dz-success");
+
+          },
+          //when the remove button is clicked
+          removedfile: file => {
+
+              // grap the id of the uploaded file we set earlier
+              let id = $(file.previewTemplate).find('.dz-remove').attr('id');
+
+              // Remove from array
+              fileIds = fileIds.filter(uuid => uuid != id)
+              $('#uuid-files').val(fileIds);
+
+              // make a DELETE ajax request to delete the file
+              $.ajax({
+                  type: 'DELETE',
+                  url: '/apoioaempresas/attachments/' + id,
+                  success: () => $(file.previewTemplate).fadeOut(),
+                  error: e => console.error(e)
+              });
           }
-        });
-    });
-
+      });
   });
+
 </script>

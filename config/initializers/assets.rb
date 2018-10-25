@@ -13,7 +13,9 @@ Rails.application.config.assets.paths << Rails.root.join('node_modules')
 # Precompile additional assets.
 # application.js, application.css, and all non-JS/CSS in the app/assets
 # folder are already added.
-Rails.application.config.assets.precompile += %w[application.js bootstrap-toolkit.js welcome.js jquery.js]
+Rails.application.config.assets.precompile += %w[application.js]
+Rails.application.config.assets.precompile += %w[bootstrap-toolkit.js]
+Rails.application.config.assets.precompile += %w[welcome.js jquery.js]
 Rails.application.config.assets.precompile += %w[main.css]
-Rails.application.config.assets.precompile += %w( filterrific/filterrific-spinner.gif )
-Rails.application.config.assets.precompile += %w( welcome.css )
+Rails.application.config.assets.precompile += %w[filterrific/filterrific-spinner.gif]
+Rails.application.config.assets.precompile += %w[welcome.scss]

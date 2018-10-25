@@ -2,13 +2,22 @@
 
 class CitiesController < ApplicationController
   before_action :set_city, only: %i[show edit update destroy]
+  before_action :authenticate_user!
   before_action :filter_role
   include ApplicationHelper
 
   # GET /cities
   # GET /cities.json
   def index
-    @cities = City.includes(:state).order('state_id').paginate(page: params[:page], per_page: 25)
+    (@filterrific = initialize_filterrific(
+      City,
+      params[:filterrific],
+      select_options: { # em breve
+      },
+      persistence_id: false
+    )) || return
+    @cities = @filterrific.find.joins(:state).order('states.name', 'cities.name')
+                          .page(params[:page])
   end
 
   # GET /cities/1
@@ -30,7 +39,9 @@ class CitiesController < ApplicationController
   def create
     @city = City.new(city_params)
     if @city.save
-      redirect_to @city, notice: 'Cidade criada com sucesso.'
+      redirect_to new_user_invitation_path(city_id: @city.id,
+                                           role: 'city_admin'),
+                  notice: 'City successfully created. Please add its responsible'
     else
       render :new
     end
@@ -54,7 +65,14 @@ class CitiesController < ApplicationController
   # GET /cities/states
   def states
     respond_to do |format|
-      format.js { render json: City.where(state_id: params[:id]).order('id ASC') }
+      format.js { render json: State.find(params[:id]).cities }
+    end
+  end
+
+  # GET /cities/unities/:id
+  def unities
+    respond_to do |format|
+      format.js { render json: City.find(params[:id]).unities.order('name ASC') }
     end
   end
 
@@ -65,7 +83,7 @@ class CitiesController < ApplicationController
     @city = City.find(params[:id])
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
+  # Never trust parameters from internet, only allow the white list through.
   def city_params
     params.require(:city).permit(:name, :state_id)
   end
@@ -73,9 +91,9 @@ class CitiesController < ApplicationController
   def filter_role
     action = params[:action]
     if %w[new create destroy edit update show].include? action
-      redirect_to denied_path unless is_admin?
+      redirect_to denied_path unless admin?
     elsif %w[index show states].include? action
-      redirect_to denied_path unless is_admin? || is_support_user
+      redirect_to denied_path unless admin? || support_user?
     end
   end
 end

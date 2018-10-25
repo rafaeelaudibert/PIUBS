@@ -88,10 +88,6 @@
               <i class="fa fa-bell icon"></i>
               Notificações
             </a>
-            <!-- <a class="dropdown-item" href="#">
-              <i class="fa fa-gear icon"></i>
-              Settings
-            </a> -->
             <div class="dropdown-divider"></div>
             <%= link_to destroy_user_session_path, :method=>'delete' , class: 'dropdown-item' do %>
             <i class="fa fa-power-off icon"></i>
@@ -186,3 +182,5 @@
     dataConfirmModal.setDefaults({title: 'Confirme sua ação', commit: 'Sim, proceda', cancel: 'Cancelar'});
   </script>
 <%end%>
+
+<%= any_login_here if defined?(AnyLogin) %>

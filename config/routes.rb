@@ -7,8 +7,6 @@ Rails.application.routes.draw do
     # /apoioaempresas
     get '/', to: 'calls#index' # Apoio a Empresas root
 
-    # /apoioaempresas/login
-    get '/login', to: 'visitors#index'
 
     # /apoioaempresas/attachments
     resources :attachments do
@@ -59,10 +57,14 @@ Rails.application.routes.draw do
     # /apoioaempresas/companies
     resources :companies, param: :sei do
       collection do
-        get ':id/states', to: 'companies#getStates', as: 'company_states'
-        get ':id/users', to: 'companies#getUsers', as: 'company_users'
-        get ':id/cities/:state_id', to: 'companies#getCities', as: 'company_cities'
-        get ':id/unities/:city_id', to: 'companies#getUnities', as: 'company_unities'
+        get ':id/states', to: 'companies#states',
+                          as: 'company_states'
+        get ':id/users', to: 'companies#users',
+                         as: 'company_users'
+        get ':id/cities/:state_id', to: 'companies#cities',
+                                    as: 'company_cities'
+        get ':id/unities/:city_id', to: 'companies#unities',
+                                    as: 'company_unities'
       end
     end
 
@@ -73,16 +75,18 @@ Rails.application.routes.draw do
     resources :cities do
       collection do
         get 'states/:id', to: 'cities#states', as: 'states'
+        get 'unities/:id', to: 'cities#unities', as: 'unities'
       end
     end
 
     # /apoioaempresas/states
     resources :states
-
-    # /apoioaempresas/users
-    devise_for :users, controllers: { invitations: 'users/invitations', registrations: 'users/registrations' }
-    resources :users
   end
+
+  # /apoioaempresas/users
+  devise_for :users, controllers: { invitations: 'users/invitations',
+                                    registrations: 'users/registrations' }
+  resources :users
 
   # Errors
   get '404', to: 'application#page_not_found', as: 'not_found'

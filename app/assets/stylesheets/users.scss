@@ -1,12 +1,12 @@
 .user-name {
-  font-size: 1rem;
+  font-size: 1.2rem;
   color: black;
-  display: block;
   line-height: 2rem;
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  text-transform: capitalize;
 
   a {
     color: #333 !important;
@@ -16,11 +16,6 @@
       color: #000 !important;
     }
   }
-}
-
-.user-name {
-  font-size: 1.2rem;
-  text-transform: capitalize;
 }
 
 .user-role {

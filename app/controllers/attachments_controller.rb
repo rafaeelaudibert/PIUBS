@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class AttachmentsController < ApplicationController
+  protect_from_forgery
   before_action :set_attachment, only: %i[show edit update destroy download]
   before_action :filter_role
   include ApplicationHelper
@@ -8,7 +9,7 @@ class AttachmentsController < ApplicationController
   # GET /attachments
   # GET /attachments.json
   def index
-    @attachments = Attachment.order('id').paginate(page: params[:page], per_page: 25)
+    @attachments = Attachment.order(:id).paginate(page: params[:page], per_page: 25)
   end
 
   # GET /attachments/1
@@ -24,16 +25,12 @@ class AttachmentsController < ApplicationController
 
   # POST /attachments
   def create
-    parsed_params = attachment_params
-    parsed_params[:filename].each_with_index do |_filename, _index|
-      @attachment = Attachment.new(eachAttachment(parsed_params, _index))
-      raise 'Não consegui anexar o arquivo. Por favor tente mais tarde' unless @attachment.save
-    end
+    @attachment = Attachment.new(attachment_params)
 
     if @attachment.save
-      redirect_to @attachment, notice: 'Attachment was successfully created.'
+      render json: { message: 'success', attachmentID: @attachment.id }, status: 200
     else
-      render :new
+      render json: { message: 'error', error: @attachment.errors }, status: 501
     end
   end
 
@@ -48,13 +45,19 @@ class AttachmentsController < ApplicationController
 
   # DELETE /attachments/1
   def destroy
-    @attachment.destroy
-    redirect_to attachments_url, notice: 'Attachment was successfully destroyed.'
+    unless @attachment.attachment_links.length
+      @attachment.destroy
+      render json: { message: 'success' }, status: 200
+    end
+    render json: { message: 'Não será apagado, pois tem links' }, status: 200
   end
 
   # GET /attachment/:id/download
   def download
-    send_data(@attachment.file_contents, type: @attachment.content_type, filename: @attachment.filename) if @attachment.filename != ''
+    if @attachment.filename != ''
+      send_data(@attachment.file_contents, type: @attachment.content_type,
+                                           filename: @attachment.filename)
+    end
   rescue StandardError
     redirect_to not_found_path
   end
@@ -66,51 +69,53 @@ class AttachmentsController < ApplicationController
     @attachment = Attachment.find(params[:id])
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
+  # Never trust parameters from internet, only allow the white list through.
   def attachment_params
-    parameters = params.require(:attachment).permit(:id, :source, file: [])
-    file = parameters.delete(:file) if parameters
-    if file
-      parameters[:filename] = []
-      parameters[:content_type] = []
-      parameters[:file_contents] = []
-      file.each do |_file|
-        parameters[:filename].append(File.basename(_file.original_filename))
-        parameters[:content_type].append(_file.content_type)
-        parameters[:file_contents].append(_file.read)
-      end
-    end
+    parameters = {}
+    parameters[:id] = SecureRandom.uuid
+    parameters[:filename] = params[:file].original_filename
+    parameters[:content_type] = params[:file].content_type
+    parameters[:file_contents] = params[:file].read
     parameters
-  end
-
-  def eachAttachment(_parsed_params, _index)
-    new_params = {}
-    new_params[:filename] = _parsed_params[:filename][_index]
-    new_params[:content_type] = _parsed_params[:content_type][_index]
-    new_params[:file_contents] = _parsed_params[:file_contents][_index]
-    pp new_params
-    new_params
   end
 
   def filter_role
     action = params[:action]
     if %w[index show edit update].include? action
-      redirect_to denied_path unless is_admin?
+      redirect_to denied_path unless admin?
     elsif action == 'download'
-      user_id = current_user.id
       sei = current_user.sei
       links = @attachment.attachment_links
-      unless is_admin? || is_support_user?
-        if is_company_user
-          links.each do |_link|
+      unless admin? || support_user?
+        if company_user?
+          links.each do |link|
             # Answer check
-            redirect_to denied_path if _link.answer? && !_link.answer.faq && ((current_user.try(:company_admin?) && Call.where(answer_id: _link.answer_id).first.sei != sei) || (current_user.try(:company_user?) && Call.where(answer_id: _link.answer_id).first.user_id != id))
+            if link.answer? &&
+               !link.answer.faq &&
+               ((current_user.try(:company_admin?) &&
+                 Call.where(answer_id: link.answer_id).first.sei != sei) ||
+                (current_user.try(:company_user?) &&
+                 Call.where(answer_id: link.answer_id).first.user_id != id))
+              redirect_to denied_path
+            end
 
             # Reply check
-            redirect_to denied_path if _link.reply? && ((current_user.try(:company_admin?) && Call.find(_link.reply.protocol).sei != sei) || (current_user.try(:company_user?) && Call.find(_link.reply.protocol).user_id != id))
+            if link.reply? &&
+               ((current_user.try(:company_admin?) &&
+                 Call.find(link.reply.protocol).sei != sei) ||
+                (current_user.try(:company_user?) &&
+                 Call.find(link.reply.protocol).user_id != id))
+              redirect_to denied_path
+            end
 
             # Call check
-            redirect_to denied_path if _link.call? && ((current_user.try(:company_admin?) && _link.call.sei != sei) || (current_user.try(:company_user?) && _link.call.user_id != id))
+            next unless link.call? &&
+                        ((current_user.try(:company_admin?) &&
+                          link.call.sei != sei) ||
+                         (current_user.try(:company_user?) &&
+                          link.call.user_id != id))
+
+            redirect_to denied_path
           end
         else
           redirect_to denied_path

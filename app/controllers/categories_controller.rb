@@ -2,13 +2,21 @@
 
 class CategoriesController < ApplicationController
   before_action :set_category, only: %i[show edit update destroy]
+  before_action :authenticate_user!
   before_action :filter_role
   include ApplicationHelper
 
   # GET /categories
   # GET /categories.json
   def index
-    @categories = Category.order('id').paginate(page: params[:page], per_page: 25)
+    (@filterrific = initialize_filterrific(
+      Category,
+      params[:filterrific],
+      select_options: { # em breve
+      },
+      persistence_id: false
+    )) || return
+    @categories = @filterrific.find.order('id').page(params[:page])
   end
 
   # GET /categories/1
@@ -66,16 +74,16 @@ class CategoriesController < ApplicationController
     @category = Category.find(params[:id])
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
+  # Never trust parameters from internet, only allow the white list through.
   def category_params
     puts params
     parent_id = params[:category][:parent_id]
-    puts parent_id
-    params[:category][:parent_depth] = 1 + Category.find(parent_id).parent_depth if parent_id
-    params.require(:category).permit(:name, :parent_id, :parent_depth, :severity)
+    params[:category][:parent_depth] = 1 + Category.find(parent_id).parent_depth if parent_id != ''
+    params.require(:category).permit(:name, :parent_id,
+                                     :parent_depth, :severity)
   end
 
   def filter_role
-    redirect_to denied_path unless is_admin?
+    redirect_to denied_path unless admin?
   end
 end
