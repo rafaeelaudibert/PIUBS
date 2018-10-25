@@ -262,7 +262,7 @@
           Resposta no FAQ
         </span>
       <% end %>
-      <span class="badge badge-pill badge-dark">
+      <span class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.#{reply.status}" %>">
         <%= t "activerecord.enums.call.status.#{reply.status}" if reply.status%>
       </span>
     </div>
