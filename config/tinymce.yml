@@ -11,3 +11,5 @@ plugins:
   - emoticons
   - preview
   - textcolor
+  - paste
+paste_as_text: true
