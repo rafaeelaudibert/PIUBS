@@ -60,6 +60,7 @@ class AnswersController < ApplicationController
       if params[:question_id]
         @call = Call.find(params[:question_id])
         @call.closed!
+        @call.update(:finished_at => Time.now)
 
         # Retira a answer caso ela nao esteja no FAQ + attach_links
         if @call.answer_id && @call.answer.faq == false
