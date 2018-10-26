@@ -12,13 +12,8 @@ class CallsController < ApplicationController
   def index
     @contracts = Contract.where(sei: current_user.sei)
     (@filterrific = initialize_filterrific(Call, params[:filterrific],
-       select_options: { sorted_by_creation: Call.options_for_sorted_by_creation,
-                         with_status: Call.options_for_with_status,
-                         with_state: State.all.map { |s| [s.name, s.id] },
-                         with_city: Call.options_for_with_city,
-                         with_ubs: Unity.where(city_id: @contracts.map(&:city_id)).map { |u| [u.name, u.cnes] },
-                         with_company: Company.all.map(&:sei) },
-       persistence_id: false)) || return
+                                           select_options: options_for_filterrific,
+                                           persistence_id: false)) || return
     if user_signed_in?
       @calls = filtered_calls
     else
@@ -29,7 +24,7 @@ class CallsController < ApplicationController
       format.html
       format.js
     end
-  end  
+  end
 
   # GET /calls/1
   def show
@@ -119,7 +114,7 @@ class CallsController < ApplicationController
   def reopen_call
     @call = Call.find(params[:call])
     @call.reopened!
-    @call.update(:reopened_at => Time.now)
+    @call.update(reopened_at: Time.now)
     @answer = @call.answer
     @call.answer_id = nil
 
@@ -147,18 +142,29 @@ class CallsController < ApplicationController
   def set_company
     @company = Company.find(current_user.sei) if current_user.sei
   end
-  
+
+  def options_for_filterrific
+    { sorted_by_creation: Call.options_for_sorted_by_creation,
+      with_status: Call.options_for_with_status,
+      with_state: State.all.map { |s| [s.name, s.id] },
+      with_city: Call.options_for_with_city,
+      with_ubs: Unity.where(city_id: @contracts.map(&:city_id)).map { |u| [u.name, u.cnes] },
+      with_company: Company.all.map(&:sei) }
+  end
+
   def filtered_calls
     if current_user.try(:call_center_user?)
       @filterrific.find.page(params[:page]).where(support_user: [current_user.id, nil])
-    elsif current_user.try(:call_center_admin?)
-      children = User.where(invited_by_id: current_user.id).map(&:id)
-      @filterrific.find.page(params[:page]).where(support_user: [children, current_user.id, nil].flatten)
+    elsif support_user?
+      @filterrific.find.page(params[:page])
+                  .where(support_user: [User.where(invited_by_id: current_user.id).map(&:id),
+                                        current_user.id,
+                                        nil].flatten)
     elsif current_user.try(:company_admin?)
-     @filterrific.find.page(params[:page]).where(sei: current_user.sei)
-    elsif current_user.try(:company_user?)
+      @filterrific.find.page(params[:page]).where(sei: current_user.sei)
+    elsif company_user?
       @filterrific.find.page(params[:page]).where(user_id: current_user.id)
-    elsif current_user.try(:admin?)
+    elsif admin?
       @filterrific.find.page(params[:page])
     else
       []
