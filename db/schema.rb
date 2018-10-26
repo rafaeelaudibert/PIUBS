@@ -75,6 +75,7 @@ ActiveRecord::Schema.define(version: 2018_10_24_181200) do
     t.integer "cnes"
     t.integer "support_user"
     t.integer "severity"
+    t.datetime "reopened_at"
     t.index ["answer_id"], name: "index_calls_on_answer_id"
     t.index ["category_id"], name: "index_calls_on_category_id"
     t.index ["city_id"], name: "index_calls_on_city_id"

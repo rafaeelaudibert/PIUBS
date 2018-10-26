@@ -11,42 +11,25 @@ class CallsController < ApplicationController
   # GET /calls.json
   def index
     @contracts = Contract.where(sei: current_user.sei)
-    (@filterrific = initialize_filterrific(
-      Call,
-      params[:filterrific],
-      select_options: {
-        sorted_by_creation: Call.options_for_sorted_by_creation,
-        with_status: Call.options_for_with_status,
-        with_state: State.all.map { |s| [s.name, s.id] },
-        with_city: Call.options_for_with_city,
-        with_ubs: Unity.where(city_id: @contracts.map(&:city_id)).map { |u| [u.name, u.cnes] },
-        with_company: Company.all.map(&:sei)
-      },
-      persistence_id: false
-    )) || return
-
+    (@filterrific = initialize_filterrific(Call, params[:filterrific],
+       select_options: { sorted_by_creation: Call.options_for_sorted_by_creation,
+                         with_status: Call.options_for_with_status,
+                         with_state: State.all.map { |s| [s.name, s.id] },
+                         with_city: Call.options_for_with_city,
+                         with_ubs: Unity.where(city_id: @contracts.map(&:city_id)).map { |u| [u.name, u.cnes] },
+                         with_company: Company.all.map(&:sei) },
+       persistence_id: false)) || return
     if user_signed_in?
-      if current_user.try(:call_center_user?)
-        @calls = @filterrific.find.page(params[:page]).where(support_user: [current_user.id, nil])
-      elsif current_user.try(:call_center_admin?)
-        children = [nil]
-        User.where(invited_by_id: current_user.id).each do |user|
-          children << user.id
-        end
-        @calls = @filterrific.find.where(support_user: children).page(params[:page])
-      elsif current_user.try(:company_admin?)
-        @calls = @filterrific.find.where(sei: current_user.sei).page(params[:page])
-      elsif current_user.try(:company_user?)
-        @calls = @filterrific.find.where(user_id: current_user.id).page(params[:page])
-      elsif current_user.try(:admin?)
-        @calls = @filterrific.find.page(params[:page])
-      else
-        @calls = []
-      end
+      @calls = filtered_calls
     else
       redirect_to new_user_session_path
     end
-  end
+
+    respond_to do |format|
+      format.html
+      format.js
+    end
+  end  
 
   # GET /calls/1
   def show
@@ -136,6 +119,7 @@ class CallsController < ApplicationController
   def reopen_call
     @call = Call.find(params[:call])
     @call.reopened!
+    @call.update(:reopened_at => Time.now)
     @answer = @call.answer
     @call.answer_id = nil
 
@@ -162,6 +146,23 @@ class CallsController < ApplicationController
 
   def set_company
     @company = Company.find(current_user.sei) if current_user.sei
+  end
+  
+  def filtered_calls
+    if current_user.try(:call_center_user?)
+      @filterrific.find.page(params[:page]).where(support_user: [current_user.id, nil])
+    elsif current_user.try(:call_center_admin?)
+      children = User.where(invited_by_id: current_user.id).map(&:id)
+      @filterrific.find.page(params[:page]).where(support_user: [children, current_user.id, nil].flatten)
+    elsif current_user.try(:company_admin?)
+     @filterrific.find.page(params[:page]).where(sei: current_user.sei)
+    elsif current_user.try(:company_user?)
+      @filterrific.find.page(params[:page]).where(user_id: current_user.id)
+    elsif current_user.try(:admin?)
+      @filterrific.find.page(params[:page])
+    else
+      []
+    end
   end
 
   def create_call(call_parameters)

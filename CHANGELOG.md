@@ -1,5 +1,26 @@
 # Change Log
 
+## [v0.3.0](https://github.com/rafaeelaudibert/PIUBS/tree/v0.3.0) (25-10-2018)
+[Full Changelog](https://github.com/rafaeelaudibert/PIUBS/compare/v0.2.4...v0.3.0)
+
+**Merged pull requests:**
+
+- :sparkles::card\_file\_box: Introduces record and view call status update dates [\#145](https://github.com/rafaeelaudibert/PIUBS/pull/145) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :sparkles::bug: Adds TinyMCE configuration to always paste text in Plain Text. [\#144](https://github.com/rafaeelaudibert/PIUBS/pull/144) ([mgfzemor](https://github.com/mgfzemor))
+- :recycle: Improves calls index [\#143](https://github.com/rafaeelaudibert/PIUBS/pull/143) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :recycle: Improves calls controller [\#142](https://github.com/rafaeelaudibert/PIUBS/pull/142) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :recycle: Improves display order in index pages [\#140](https://github.com/rafaeelaudibert/PIUBS/pull/140) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :bug: Fixes ubs filter [\#139](https://github.com/rafaeelaudibert/PIUBS/pull/139) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :recycle: Refactoring users filters [\#138](https://github.com/rafaeelaudibert/PIUBS/pull/138) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :twisted\_rightwards\_arrows: Fixes users filters with state and city [\#137](https://github.com/rafaeelaudibert/PIUBS/pull/137) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :twisted\_rightwards\_arrows: Merges master to local branch [\#136](https://github.com/rafaeelaudibert/PIUBS/pull/136) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :bug::recycle: Improves optional params sanitization on user invitation [\#135](https://github.com/rafaeelaudibert/PIUBS/pull/135) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :bug: Fixes bug with user creations [\#134](https://github.com/rafaeelaudibert/PIUBS/pull/134) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :recycle: Removes '/apoioaempresas' from devise links [\#133](https://github.com/rafaeelaudibert/PIUBS/pull/133) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :rotating\_light: Applies fixes from CodeFactor [\#132](https://github.com/rafaeelaudibert/PIUBS/pull/132) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :rotating\_light: Fixes/Refactores code according to CodeFactor [\#131](https://github.com/rafaeelaudibert/PIUBS/pull/131) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :construction: Finishes user creation forms [\#130](https://github.com/rafaeelaudibert/PIUBS/pull/130) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+
 ## [v0.2.4](https://github.com/rafaeelaudibert/PIUBS/tree/v0.2.4) (18-10-2018)
 [Full Changelog](https://github.com/rafaeelaudibert/PIUBS/compare/v0.2.3...v0.2.4)
 
