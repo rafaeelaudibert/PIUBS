@@ -36,7 +36,7 @@ class RepliesController < ApplicationController
     @reply = create_reply rep_params
 
     if @reply.save
-      create_file_links reply, files
+      create_file_links @reply, files
       ReplyMailer.notify(@reply, current_user).deliver_later
       redirect_to create_path(@reply), notice: 'Resposta adicionada com sucesso.'
     else
@@ -89,11 +89,13 @@ class RepliesController < ApplicationController
   def create_reply(rep_params)
     reply = Reply.new(rep_params)
     reply.user_id = current_user.id
-    reply.status = @reply.repliable.status || 'Sem Status'
+    reply.status = reply.repliable.status || 'Sem Status'
     reply.category = if support_user? || current_user.try(:admin?)
                        'support'
+                     elsif company_user?
+                       'company'
                      else
-                       company_user? ? 'company' : 'unity'
+                       city_user? ? 'city' : 'unity'
                      end
     reply
   end
