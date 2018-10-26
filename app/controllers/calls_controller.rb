@@ -25,7 +25,6 @@ class CallsController < ApplicationController
       persistence_id: false
     )) || return
 
-    # @calls = Call.filterrific_find(@filterrific).page(params[:page])
     if user_signed_in?
       if current_user.try(:call_center_user?)
         @calls = @filterrific.find.page(params[:page]).where(support_user: [current_user.id, nil])
@@ -36,9 +35,9 @@ class CallsController < ApplicationController
         end
         @calls = @filterrific.find.where(support_user: children).page(params[:page])
       elsif current_user.try(:company_admin?)
-        @calls = @filterrific.where(sei: current_user.sei).find.page(params[:page])
+        @calls = @filterrific.find.where(sei: current_user.sei).page(params[:page])
       elsif current_user.try(:company_user?)
-        @calls = @filterrific.where(user_id: current_user.id).find.page(params[:page])
+        @calls = @filterrific.find.where(user_id: current_user.id).page(params[:page])
       elsif current_user.try(:admin?)
         @calls = @filterrific.find.page(params[:page])
       else
@@ -46,11 +45,6 @@ class CallsController < ApplicationController
       end
     else
       redirect_to new_user_session_path
-    end
-    # puts params[:filterrific].require(:filtered_by)
-    respond_to do |format|
-      format.html
-      format.js
     end
   end
 
@@ -74,27 +68,11 @@ class CallsController < ApplicationController
   # POST /calls
   def create
     call_parameters = call_params
-    files = call_parameters.delete(:files).split(',') if call_parameters[:files]
-    @call = Call.new(call_parameters)
-    # status, severity, protocol, company_id
-    @call.protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
-    @call.id = @call.protocol
-    @call.user_id ||= current_user.id
-    @call.sei ||= current_user.sei
-    @call.open!               # Call is open by default
-    @call.severity = 'normal' # Call has a normal severity by default
+    files = retrieve_files call_parameters
+    @call = create_call call_parameters
 
     if @call.save
-      files.each do |file_uuid|
-        @link = AttachmentLink.new(attachment_id: file_uuid,
-                                   call_id: @call.id,
-                                   source: 'call')
-        unless @link.save
-          raise 'Não consegui criar o link entre arquivo e o atendimento.'\
-                ' Por favor tente mais tarde'
-        end
-      end
-
+      create_file_links @call, files
       CallMailer.notify(@call, @call.user).deliver_later
       redirect_to @call, notice: 'Call was successfully created.'
     else
@@ -158,23 +136,14 @@ class CallsController < ApplicationController
   def reopen_call
     @call = Call.find(params[:call])
     @call.reopened!
+    @answer = @call.answer
+    @call.answer_id = nil
 
     if @call.save
 
       # Retira a ultima answer caso ela nao esteja no FAQ,
       # e exclui seus attachment_links
-      if @call.answer_id && @call.answer.faq == false
-        @answer = Answer.find(@call.answer_id)
-        @answer.attachment_links.each(&:destroy)
-
-        @call.answer_id = nil # Retira o answer_id
-        unless @call.save
-          raise 'Não conseguimos remover a call_id corretamente, ao tentar reabri-la.'\
-                ' Por favor, verifique'
-        end
-
-        @answer.destroy # Destroi a resposta final anterior
-      end
+      delete_final_answer @answer if @answer.try(:faq) == false
 
       redirect_back(fallback_location: root_path,
                     notice: 'Atendimento reaberto')
@@ -193,6 +162,40 @@ class CallsController < ApplicationController
 
   def set_company
     @company = Company.find(current_user.sei) if current_user.sei
+  end
+
+  def create_call(call_parameters)
+    @call = Call.new call_parameters
+
+    @call.protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
+    @call.id = @call.protocol
+    @call.user_id ||= current_user.id
+    @call.sei ||= current_user.sei
+    @call.open!               # Call is open by default
+    @call.severity = 'normal' # Call has a normal severity by default
+
+    @call
+  end
+
+  def retrieve_files(call_parameters)
+    call_parameters.delete(:files).split(',') if call_parameters[:files]
+  end
+
+  def create_file_links(call, files)
+    files.each do |file_uuid|
+      @link = AttachmentLink.new(attachment_id: file_uuid,
+                                 call_id: call.id,
+                                 source: 'call')
+      unless @link.save
+        raise 'Não consegui criar o link entre arquivo e o atendimento.'\
+              ' Por favor tente mais tarde'
+      end
+    end
+  end
+
+  def delete_final_answer(answer)
+    answer.attachment_links.each(&:destroy)
+    answer.destroy # Destroi a resposta final anterior
   end
 
   # Never trust parameters from internet, only allow the white list through.

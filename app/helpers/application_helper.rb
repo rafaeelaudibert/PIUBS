@@ -23,6 +23,12 @@ module ApplicationHelper
     current_user.try(:admin?)
   end
 
+  def admin_like?
+    current_user.try(:admin?) || current_user.try(:ubs_admin?) ||
+      current_user.try(:company_admin?) || current_user.try(:call_center_admin?) ||
+      current_user.try(:city_admin?)
+  end
+
   def ubs_user?
     current_user.try(:ubs_admin?) || current_user.try(:ubs_user?)
   end

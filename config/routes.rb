@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
-Rails.application.routes.draw do
+Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   root to: 'welcome#index'
 
-  scope '/apoioaempresas' do
+  scope '/apoioaempresas' do # rubocop:disable Metrics/BlockLength
     # /apoioaempresas
     get '/', to: 'calls#index' # Apoio a Empresas root
-
 
     # /apoioaempresas/attachments
     resources :attachments do

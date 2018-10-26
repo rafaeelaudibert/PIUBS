@@ -51,11 +51,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
                                       keys: %i[name last_name cpf email
                                                current_password password password_confirmation])
     begin
-      params.require(:user).require(:name)
-      params.require(:user).require(:last_name)
-      params.require(:user).require(:cpf)
-      params.require(:user).require(:email)
-      params.require(:user).require(:current_password)
+      params.require(:user).require(:name, :last_name, :cpf, :email, :current_password)
     rescue StandardError
       redirect_back fallback_location: not_found_path, alert: 'Por favor, preencha todos os campos.'
     end
