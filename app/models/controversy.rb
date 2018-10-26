@@ -2,7 +2,7 @@
 
 class Controversy < ApplicationRecord
   belongs_to :company, foreign_key: :sei
-  belongs_to :contract
+  belongs_to :contract, optional: true
   belongs_to :city
   belongs_to :unity, foreign_key: :cnes, optional: true
   belongs_to :company_user, class_name: 'User', optional: true
@@ -14,7 +14,7 @@ class Controversy < ApplicationRecord
   has_many :attachments, through: :attachment_links
   has_many :replies, as: :repliable
 
-  enum creator: %i[company unity]
+  enum creator: %i[company unity city support]
   enum category: %i[hardware software]
   enum status: %i[open closed]
 end

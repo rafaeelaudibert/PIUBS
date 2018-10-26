@@ -21,64 +21,47 @@
     <%= form.text_field :description %>
   </div>
 
-  <div class="field">
-    <%= form.label :protocol %>
-    <%= form.text_field :protocol %>
-  </div>
+  <% if company_user?  %>
 
-  <div class="field">
-    <%= form.label :closed_at %>
-    <%= form.datetime_select :closed_at %>
-  </div>
+    <div class="field">
+      <%= form.hidden_field :sei, value: current_user.sei %>
+    </div>
 
-  <div class="field">
-    <%= form.label :sei %>
-    <%= form.number_field :sei %>
-  </div>
+    <div class="field">
+      <%= form.label :city_id %>
+      <%= form.number_field :city_id %>
+    </div>
 
-  <div class="field">
-    <%= form.label :contract_id %>
-    <%= form.number_field :contract_id %>
-  </div>
+    <div class="field">
+      <%= form.label :cnes %>
+      <%= form.number_field :cnes %>
+    </div>
+  <% elsif ubs_user? %>
 
-  <div class="field">
-    <%= form.label :city_id %>
-    <%= form.number_field :city_id %>
-  </div>
+    <div class="field">
+      <%= form.hidden_field :city_id, value: current_user.city_id %>
+      <%= form.hidden_field :cnes, value: current_user.cnes %>
+    </div>
 
-  <div class="field">
-    <%= form.label :cnes %>
-    <%= form.number_field :cnes %>
-  </div>
+    <div class="field">
+      <%= form.label :sei %>
+      <%= form.number_field :sei %>
+    </div>
+  <% elsif city_user? %>
+  
+    <div class="field">
+      <%= form.hidden_field :city_id, value: current_user.city_id %>
+    </div>
 
-  <div class="field">
-    <%= form.label :company_user_id %>
-    <%= form.number_field :company_user_id %>
-  </div>
-
-  <div class="field">
-    <%= form.label :unity_user_id %>
-    <%= form.number_field :unity_user_id %>
-  </div>
+    <div class="field">
+      <%= form.label :sei %>
+      <%= form.number_field :sei %>
+    </div>
+  <% end %>
 
   <div class="field">
     <%= form.label :category %>
-    <%= form.select :category, Controversy.categories.map(&:first) %>
-  </div>
-
-  <div class="field">
-    <%= form.label :complexity %>
-    <%= form.number_field :complexity %>
-  </div>
-
-  <div class="field">
-    <%= form.label :support_1_id %>
-    <%= form.number_field :support_1_id %>
-  </div>
-
-  <div class="field">
-    <%= form.label :support_2_id %>
-    <%= form.number_field :support_2_id %>
+    <%= form.select :category, Controversy.categories.map { |category| [category[0].titleize, category[0]] } %>
   </div>
 
   <div class="form-group">
@@ -90,6 +73,8 @@
       </div>
     </div>
   </div>
+
+
 
   <div class="actions">
     <%= form.submit %>

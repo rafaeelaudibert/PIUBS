@@ -11,7 +11,9 @@ class ControversiesController < ApplicationController
 
   # GET /controversies/1
   # GET /controversies/1.json
-  def show; end
+  def show
+    @reply = Reply.new
+  end
 
   # GET /controversies/new
   def new
@@ -74,11 +76,28 @@ class ControversiesController < ApplicationController
   end
 
   def create_controversy(parameters)
-    @controversy = Controversy.new(parameters)
-    @controversy.protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
-    @controversy.open!
-    @controversy.complexity = 1
-    @controversy
+    controversy = Controversy.new(parameters)
+    controversy.protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
+    controversy.contract_id = 1
+    controversy.city_id ||= current_user.city_id
+    controversy.cnes ||= current_user.cnes
+    controversy.open!
+    controversy.complexity = 1
+    controversy.creator = map_role_to_creator
+    controversy[map_role_to_creator + '_user_id'] = current_user.id
+    controversy
+  end
+
+  def map_role_to_creator
+    {
+      company_user: 'company',
+      company_admin: 'company',
+      ubs_admin: 'unity',
+      ubs_user: 'unity',
+      call_center_admin: 'support',
+      call_center_user: 'support',
+      city_admin: 'city'
+    }[current_user.role.to_sym]
   end
 
   def create_file_links(controversy, files)
