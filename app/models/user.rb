@@ -42,7 +42,8 @@ class User < ApplicationRecord
   }
 
   scope :sorted_by_name, lambda { |sort_key|
-    sort = (sort_key =~ /asc$/) ? 'asc' : 'desc'
+    sort = sort_key.match?(/asc$/) ? 'asc' : 'desc'
+
     case sort_key.to_s
     when /^name_/
       order(name: sort)
@@ -58,7 +59,7 @@ class User < ApplicationRecord
   }
 
   scope :with_status_adm, lambda { |status|
-    return nil if status == '' || status == 'all'
+    return nil if ['', 'all'].include? status
 
     if status == 'registered'
       where('invitation_accepted_at IS NOT NULL')
