@@ -178,14 +178,11 @@
       <div class="card-header">
         <em class="fa fa-comment-o m-2"></em>
         <span class="badge badge-pill badge-dark m-1" style="display: none"><%= '#' << reply.id.to_s %></span>
-        <span class="badge badge-pill badge-dark m-2">
-          <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
-        </span>
         -
         <strong class="m-2">
           <%= User.find(reply.user_id).name %>
         </strong>
-        Adicionou uma resposta.
+        Adicionou uma resposta em <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
 
       </div>
       <div class="card-body" style="padding: 5px 30px 15px">
@@ -219,15 +216,15 @@
     <div class="card-header">
       <em class="fa fa-comment-o m-2"></em>
       <span class="badge badge-pill badge-dark m-1" style="display: none"><%= '#' << reply.id.to_s %></span>
-      <span class="badge badge-pill badge-dark m-1">
-        <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
-      </span>
       <span class="badge badge-pill badge-dark m-1">suporte</span>
-      -
-      <strong class="m-2">
+      <span class="badge badge-pill badge-dark m-1">
         <%= User.find(reply.user_id).name %>
+      </span>
+      Adicionou uma resposta em <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+      <strong class="m-2">
+
       </strong>
-      Adicionou uma resposta.
+
     </div>
     <div class="card-block">
       <span>
@@ -264,6 +261,8 @@
       <% end %>
       <span class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.#{reply.status}" %>">
         <%= t "activerecord.enums.call.status.#{reply.status}" if reply.status%>
+        <% pp reply.status %>
+        <% puts "Kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk" %>
       </span>
     </div>
   </div>
@@ -288,16 +287,16 @@
 <div class="header-block">
 <p class="title" style="color: white">
 <i class="fa fa-envelope mr-2"></i>
-Final Answer</p>
+Resposta final</p>
 </div>
 </div>
 <div class="card-block">
 <% answer = Answer.find(@call.answer_id) %>
-<span class="badge badge-pill badge-dark m-1">
-<%= answer.created_at %></span>
+<span class="badge badge-pill badge-dark m-1">suporte</span>
 <span class="badge badge-pill badge-dark m-1">
 <%= User.find(answer.user_id).name %></span>
-<span class="badge badge-pill badge-dark m-1">suporte</span><hr/>
+Resposta final adicionada em <%= answer.created_at %>
+<hr/>
 <%= answer.answer.html_safe %>
 <% if answer.attachments.length > 0 %>
 <hr/>
