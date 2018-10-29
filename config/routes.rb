@@ -56,9 +56,9 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     # /apoioaempresas/companies
     resources :companies, param: :sei do
       collection do
-        get ':id/states', to: 'companies#states',
+        get ':sei/states', to: 'companies#states',
                           as: 'company_states'
-        get ':id/users', to: 'companies#users',
+        get ':sei/users', to: 'companies#users',
                          as: 'company_users'
         get ':id/cities/:state_id', to: 'companies#cities',
                                     as: 'company_cities'
@@ -68,13 +68,19 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     end
 
     # /apoioaempresas/unities
-    resources :unities, param: :cnes
+    resources :unities, param: :cnes do
+      collection do
+        get ':cnes/users', to: 'unities#users',
+                           as: 'unity_users'
+      end
+    end
 
     # /apoioaempresas/cities
     resources :cities do
       collection do
-        get 'states/:id', to: 'cities#states', as: 'states'
-        get 'unities/:id', to: 'cities#unities', as: 'unities'
+        get 'states/:id', to: 'cities#states', as: 'city_states'
+        get 'unities/:id', to: 'cities#unities', as: 'city_unities'
+        get ':id/users', to: 'cities#users', as: 'city_users'
       end
     end
 

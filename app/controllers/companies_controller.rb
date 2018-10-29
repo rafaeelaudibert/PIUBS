@@ -68,7 +68,7 @@ class CompaniesController < ApplicationController
 
   # GET /companies/1/states
   def states
-    @company = Company.find(params[:id])
+    @company = Company.find(params[:sei])
     respond_to do |format|
       format.js { render json: State.where(id: @company.state_ids).order('id ASC') }
     end
@@ -76,9 +76,8 @@ class CompaniesController < ApplicationController
 
   # GET /companies/1/users
   def users
-    @company = Company.find(params[:id])
     respond_to do |format|
-      format.js { render json: User.where(sei: @company.sei).order('id ASC') }
+      format.js { render json: User.where(sei: params[:sei]).order('id ASC') }
     end
   end
 

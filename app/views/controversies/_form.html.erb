@@ -12,12 +12,12 @@
   <% end %>
 
   <div class="field">
-    <%= form.label :title, class: 'required' %>
+    <%= form.label :title, 'Titulo', class: 'required' %>
     <%= form.text_field :title, required: true %>
   </div>
 
   <div class="field">
-    <%= form.label :description, class: 'required' %>
+    <%= form.label :description, 'Descrição', class: 'required' %>
     <%= form.text_field :description, required: true %>
   </div>
 
@@ -28,12 +28,12 @@
     </div>
 
     <div class="field">
-      <%= form.label :city_id, class: 'required' %>
+      <%= form.label :city_id, 'Cidade', class: 'required' %>
       <%= form.number_field :city_id, required: true %>
     </div>
 
     <div class="field">
-      <%= form.label :cnes %>
+      <%= form.label :cnes, 'UBS' %>
       <%= form.number_field :cnes %>
     </div>
   <% elsif ubs_user? %>
@@ -44,7 +44,7 @@
     </div>
 
     <div class="field">
-      <%= form.label :sei, class: 'required' %>
+      <%= form.label :sei, 'Empresa', class: 'required' %>
       <%= form.number_field :sei, required: true %>
     </div>
   <% elsif city_user? %>
@@ -54,43 +54,113 @@
     </div>
 
     <div class="field">
-      <%= form.label :sei, class: 'required' %>
+      <%= form.label :sei, 'Empresa', class: 'required' %>
       <%= form.number_field :sei, required: true %>
     </div>
   <% elsif admin? || support_user? %>
     <div class="field">
-      <%= form.label :sei, class: 'required' %>
+      <%= form.label :sei, 'Empresa', class: 'required' %>
       <%= form.select :sei, Company.all.map(&:sei), required: true, prompt: 'Selecione uma empresa' %>
     </div>
 
     <div class="field">
-      <%= form.label :state_id, class: 'required' %>
-      <%= form.select :state_id, State.all.map(&:name), required: true, prompt: 'Selecione um estado' %>
+      <%= form.label :state_id, 'Estado', class: 'required' %>
+      <%= form.select :state_id, [], required: true, prompt: 'Selecione uma empresa primeiro' %>
     </div>
 
     <div class="field">
-      <%= form.label :city_id, class: 'required' %>
-      <%= form.select :city_id, City.all.sample(30).map { |city| [city.name, city.id] }, required: true, prompt: 'Selecione uma cidade' %>
+      <%= form.label :city_id, 'Cidade', class: 'required' %>
+      <%= form.select :city_id, [], required: true, prompt: 'Selecione um estado primeiro' %>
     </div>
 
     <div class="field">
-      <%= form.label :cnes %>
-      <%= form.select :cnes, Unity.all.sample(30).map { |unity| [unity.name, unity.cnes] }, prompt: 'Selecione uma UBS (OPCIONAL)' %>
+      <%= form.label :cnes, 'UBS' %>
+      <%= form.select :cnes, [], prompt: 'Selecione uma cidade primeiro (CAMPO OPCIONAL)' %>
     </div>
 
     <div class="field">
-      <%= form.label :creator, class: 'required' %>
-      <%= form.select :creator, %w[company unity city].map { |creator| [creator.titleize, creator] }, required: true, prompt: 'Selecione o tipo de criador' %>
+      <%= form.label :creator, 'Posição do criador', class: 'required' %>
+      <%= form.select :creator, [['Empresa', 'company'], ['UBS', 'unity'], ['Cidade', 'city']], required: true, prompt: 'Selecione o tipo de criador' %>
     </div>
 
     <div class="field">
-      <%= form.label :user_creator, class: 'required' %>
-      <%= form.select :user_creator, [], required: true, prompt: 'Selecione os campos acima primeiro' %>
+      <%= form.label :user_creator, 'Usuário responsável', class: 'required' %>
+      <%= form.select :user_creator, [], required: true, prompt: 'Preencha os campos obrigatórios acima primeiro' %>
     </div>
+
+    <script>
+
+      const companySelect = document.getElementById('controversy_sei');
+      const stateSelect = document.getElementById('controversy_state_id');
+      const citySelect = document.getElementById('controversy_city_id');
+      const ubsSelect = document.getElementById('controversy_cnes');
+      const creatorSelect = document.getElementById('controversy_creator');
+      const userSelect = document.getElementById('controversy_user_creator');
+
+      const triggeredByCompany = () => jQuery.ajax({url: `/apoioaempresas/companies/${companySelect.value}/states`, type: "GET", dataType: "json", success: insertStatesData });
+      const triggeredByState = () => jQuery.ajax({url: `/apoioaempresas/companies/${companySelect.value}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
+      const triggeredByCity = () => jQuery.ajax({url: `/apoioaempresas/companies/${companySelect.value}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
+      const fetchUsers = () => {
+        switch(creatorSelect.value){
+          case 'company':
+            jQuery.ajax({url: `/apoioaempresas/companies/${companySelect.value}/users`, type: "GET", dataType: "json", success: insertUsersData});
+            break;
+          case 'city':
+            jQuery.ajax({url: `/apoioaempresas/cities/${citySelect.value}/users`, type: "GET", dataType: "json", success: insertUsersData});
+            break;
+          case 'unity':
+            jQuery.ajax({url: `/apoioaempresas/unities/${ubsSelect.value}/users`, type: "GET", dataType: "json", success: insertUsersData});
+            break;
+          default:
+            break;
+        }
+      }
+
+      companySelect.addEventListener('change', triggeredByCompany);
+      stateSelect.addEventListener('change', triggeredByState);
+      citySelect.addEventListener('change', triggeredByCity);
+      [creatorSelect, companySelect, stateSelect, citySelect, ubsSelect].forEach(element => element.addEventListener('change', fetchUsers))
+
+      function insertUsersData(users) {
+        let innerHTML = '<option value> Selecione o Usuário </option>';
+        for (let user of users) {
+          innerHTML += '<option value=' + user.id + '>' + `${user.name} - ${user.cpf}` + '</option>'
+        }
+        if(users.length > 0)
+          userSelect.innerHTML = innerHTML;
+        else
+          userSelect.innerHTML = '<option value="0"> Opção sem usuários válidos. Cheque as opções acima. </option>'
+      }
+
+      function insertStatesData(states) {
+        let innerHTML = '<option value> Selecione o Estado </option>';
+        for (let state of states) {
+          innerHTML += '<option value=' + state.id + '>' + state.name + '</option>'
+        }
+        stateSelect.innerHTML = innerHTML;
+      }
+
+      function insertCitiesData(cities) {
+        let innerHTML = '<option value> Selecione a cidade </option>';
+        for (let city of cities) {
+          innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
+        }
+        citySelect.innerHTML = innerHTML;
+      }
+
+      function insertUBSData(unities) {
+        let innerHTML = '<option value> Selecione a UBS </option>';
+        for (let unity of unities) {
+          innerHTML += '<option value=' + unity.cnes + '>' + unity.name + '</option>'
+        }
+        ubsSelect.innerHTML = innerHTML
+      }
+
+    </script>
   <% end %>
 
   <div class="field">
-    <%= form.label :category, class: 'required' %>
+    <%= form.label :category, 'Categoria', class: 'required' %>
     <%= form.select :category, Controversy.categories.map { |category| [category[0].titleize, category[0]] }, required: true %>
   </div>
 
