@@ -29,7 +29,8 @@ class ControversiesController < ApplicationController
     controversy_parameters = controversy_params
 
     files = retrieve_files controversy_parameters
-    @controversy = create_controversy controversy_parameters
+    user_creator = retrieve_user_creator controversy_parameters
+    @controversy = create_controversy controversy_parameters, user_creator
 
     if @controversy.save
       create_file_links @controversy, files
@@ -75,16 +76,20 @@ class ControversiesController < ApplicationController
     parameters.delete(:files).split(',') if parameters[:files]
   end
 
-  def create_controversy(parameters)
+  def retrieve_user_creator(parameters)
+    puts parameters
+    parameters.delete(:user_creator) if parameters[:user_creator]
+  end
+
+  def create_controversy(parameters, user_creator_id)
     controversy = Controversy.new(parameters)
     controversy.protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
-    controversy.contract_id = 1
-    controversy.city_id ||= current_user.city_id
-    controversy.cnes ||= current_user.cnes
+    controversy.contract_id = Contract.where(city: controversy.city).try(:id)
+    controversy.creator ||= map_role_to_creator
+    controversy[controversy.creator + '_user_id'] ||= user_creator_id || current_user.id
+    controversy.support_1_user_id = current_user.id if admin? || support_user?
     controversy.open!
     controversy.complexity = 1
-    controversy.creator = map_role_to_creator
-    controversy[map_role_to_creator + '_user_id'] = current_user.id
     controversy
   end
 
@@ -117,6 +122,6 @@ class ControversiesController < ApplicationController
     params.require(:controversy).permit(:title, :description, :protocol, :closed_at, :sei,
                                         :contract_id, :city_id, :cnes, :company_user_id,
                                         :unity_user_id, :creator, :category, :complexity,
-                                        :support_1_id, :support_2_id, :files)
+                                        :support_1_id, :support_2_id, :user_creator, :files)
   end
 end

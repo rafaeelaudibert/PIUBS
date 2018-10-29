@@ -12,24 +12,24 @@
   <% end %>
 
   <div class="field">
-    <%= form.label :title %>
-    <%= form.text_field :title %>
+    <%= form.label :title, class: 'required' %>
+    <%= form.text_field :title, required: true %>
   </div>
 
   <div class="field">
-    <%= form.label :description %>
-    <%= form.text_field :description %>
+    <%= form.label :description, class: 'required' %>
+    <%= form.text_field :description, required: true %>
   </div>
 
   <% if company_user?  %>
 
     <div class="field">
-      <%= form.hidden_field :sei, value: current_user.sei %>
+      <%= form.hidden_field :sei, value: current_user.sei, required: true %>
     </div>
 
     <div class="field">
-      <%= form.label :city_id %>
-      <%= form.number_field :city_id %>
+      <%= form.label :city_id, class: 'required' %>
+      <%= form.number_field :city_id, required: true %>
     </div>
 
     <div class="field">
@@ -39,33 +39,63 @@
   <% elsif ubs_user? %>
 
     <div class="field">
-      <%= form.hidden_field :city_id, value: current_user.city_id %>
-      <%= form.hidden_field :cnes, value: current_user.cnes %>
+      <%= form.hidden_field :city_id, value: current_user.city_id, required: true %>
+      <%= form.hidden_field :cnes, value: current_user.cnes, required: true %>
     </div>
 
     <div class="field">
-      <%= form.label :sei %>
-      <%= form.number_field :sei %>
+      <%= form.label :sei, class: 'required' %>
+      <%= form.number_field :sei, required: true %>
     </div>
   <% elsif city_user? %>
-  
+
     <div class="field">
-      <%= form.hidden_field :city_id, value: current_user.city_id %>
+      <%= form.hidden_field :city_id, value: current_user.city_id, required: true %>
     </div>
 
     <div class="field">
-      <%= form.label :sei %>
-      <%= form.number_field :sei %>
+      <%= form.label :sei, class: 'required' %>
+      <%= form.number_field :sei, required: true %>
+    </div>
+  <% elsif admin? || support_user? %>
+    <div class="field">
+      <%= form.label :sei, class: 'required' %>
+      <%= form.select :sei, Company.all.map(&:sei), required: true, prompt: 'Selecione uma empresa' %>
+    </div>
+
+    <div class="field">
+      <%= form.label :state_id, class: 'required' %>
+      <%= form.select :state_id, State.all.map(&:name), required: true, prompt: 'Selecione um estado' %>
+    </div>
+
+    <div class="field">
+      <%= form.label :city_id, class: 'required' %>
+      <%= form.select :city_id, City.all.sample(30).map { |city| [city.name, city.id] }, required: true, prompt: 'Selecione uma cidade' %>
+    </div>
+
+    <div class="field">
+      <%= form.label :cnes %>
+      <%= form.select :cnes, Unity.all.sample(30).map { |unity| [unity.name, unity.cnes] }, prompt: 'Selecione uma UBS (OPCIONAL)' %>
+    </div>
+
+    <div class="field">
+      <%= form.label :creator, class: 'required' %>
+      <%= form.select :creator, %w[company unity city].map { |creator| [creator.titleize, creator] }, required: true, prompt: 'Selecione o tipo de criador' %>
+    </div>
+
+    <div class="field">
+      <%= form.label :user_creator, class: 'required' %>
+      <%= form.select :user_creator, [], required: true, prompt: 'Selecione os campos acima primeiro' %>
     </div>
   <% end %>
 
   <div class="field">
-    <%= form.label :category %>
-    <%= form.select :category, Controversy.categories.map { |category| [category[0].titleize, category[0]] } %>
+    <%= form.label :category, class: 'required' %>
+    <%= form.select :category, Controversy.categories.map { |category| [category[0].titleize, category[0]] }, required: true %>
   </div>
 
   <div class="form-group">
-    <%= form.label :files, 'Arquivos (selecione todos os arquivos necessários pressionando a tecla CTRL)' %>
+    <%= form.label :files, 'Arquivos' %>
     <%= form.text_field :files, id:'uuid-files', class: 'hidden'%>
     <div id="dropzone" class="future-dropzone">
       <div class="dz-default dz-message">
