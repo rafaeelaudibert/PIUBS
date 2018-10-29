@@ -1,58 +1,56 @@
-<p id="notice"><%= notice %></p>
+<%= content_for :body_title do%>
+  <h4 class="display-5">Controvérsia nº <%= @controversy.protocol %>
+  </h4>
+<% end %>
 
 <p>
-  <strong>Protocol:</strong>
+  <strong>Protocolo:</strong>
   <%= @controversy.protocol %>
 </p>
 
 <p>
-  <strong>Title:</strong>
+  <strong>Título:</strong>
   <%= @controversy.title %>
 </p>
 
 <p>
-  <strong>Description:</strong>
+  <strong>Descrição:</strong>
   <%= @controversy.description %>
 </p>
 
 <p>
-  <strong>Closed at:</strong>
-  <%= @controversy.closed_at %>
-</p>
-
-<p>
-  <strong>Company:</strong>
+  <strong>Empresa:</strong>
   <%= @controversy.sei %>
 </p>
 
 <p>
-  <strong>Contract:</strong>
-  <%= @controversy.contract_id %>
+  <strong>Contrato:</strong>
+  <%= link_to 'Download', download_contracts_path(@controversy.contract_id) %>
 </p>
 
 <p>
-  <strong>City:</strong>
-  <%= @controversy.city_id %>
+  <strong>Cidade & Estado:</strong>
+  <%= @controversy.city.name %> - <%= @controversy.city.state.name %>
 </p>
 
 <p>
   <strong>Unity:</strong>
-  <%= @controversy.cnes %>
+  <%= @controversy.unity.name %>
 </p>
 
 <p>
   <strong>Company user:</strong>
-  <%= @controversy.company_user_id %>
+  <%= "#{@controversy.company_user.name} - #{@controversy.company_user.cpf}" if @controversy.company_user %>
 </p>
 
 <p>
   <strong>Unity user:</strong>
-  <%= @controversy.unity_user_id %>
+  <%= "#{@controversy.unity_user.name} - #{@controversy.unity_user.cpf}" if @controversy.unity_user %>
 </p>
 
 <p>
   <strong>City user:</strong>
-  <%= @controversy.city_user_id %>
+  <%= "#{@controversy.city_user.name} - #{@controversy.city_user.cpf}" if @controversy.city_user %>
 </p>
 
 <p>
@@ -66,18 +64,13 @@
 </p>
 
 <p>
-  <strong>Complexity:</strong>
-  <%= @controversy.complexity %>
-</p>
-
-<p>
   <strong>Support 1:</strong>
-  <%= @controversy.support_1_user_id %>
+  <%= "#{@controversy.support_1.name} - #{@controversy.support_1.cpf}" if @controversy.support_1 %>
 </p>
 
 <p>
   <strong>Support 2:</strong>
-  <%= @controversy.support_2_user_id %>
+  <%= "#{@controversy.support_2.name} - #{@controversy.support_2.cpf}" if @controversy.support_2 %>
 </p>
 
 <div class="card card-primary" id="reply_box">
