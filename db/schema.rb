@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_25_162124) do
+ActiveRecord::Schema.define(version: 2018_10_29_130000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "fuzzystrmatch"
@@ -134,10 +134,10 @@ ActiveRecord::Schema.define(version: 2018_10_25_162124) do
     t.integer "creator"
     t.integer "category"
     t.integer "complexity"
-    t.integer "support_1_id"
-    t.integer "support_2_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "support_1_user_id"
+    t.integer "support_2_user_id"
   end
 
   create_table "replies", force: :cascade do |t|
@@ -235,8 +235,8 @@ ActiveRecord::Schema.define(version: 2018_10_25_162124) do
   add_foreign_key "controversies", "unities", column: "cnes", primary_key: "cnes"
   add_foreign_key "controversies", "users", column: "city_user_id"
   add_foreign_key "controversies", "users", column: "company_user_id"
-  add_foreign_key "controversies", "users", column: "support_1_id"
-  add_foreign_key "controversies", "users", column: "support_2_id"
+  add_foreign_key "controversies", "users", column: "support_1_user_id"
+  add_foreign_key "controversies", "users", column: "support_2_user_id"
   add_foreign_key "controversies", "users", column: "unity_user_id"
   add_foreign_key "replies", "users"
   add_foreign_key "unities", "cities"

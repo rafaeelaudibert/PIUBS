@@ -94,9 +94,10 @@ class ControversiesController < ApplicationController
       company_admin: 'company',
       ubs_admin: 'unity',
       ubs_user: 'unity',
-      call_center_admin: 'support',
-      call_center_user: 'support',
-      city_admin: 'city'
+      city_admin: 'city',
+      call_center_admin: 'support_1',
+      call_center_user: 'support_1',
+      admin: 'support_1'
     }[current_user.role.to_sym]
   end
 
