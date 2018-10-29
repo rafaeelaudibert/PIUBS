@@ -25,7 +25,7 @@
 
 <p>
   <strong>Contrato:</strong>
-  <%= link_to 'Download', download_contracts_path(@controversy.contract_id) %>
+  <%= link_to('Download', download_contracts_path(@controversy.contract_id)) if @controversy.contract_id %>
 </p>
 
 <p>
