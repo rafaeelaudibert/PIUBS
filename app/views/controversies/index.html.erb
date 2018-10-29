@@ -1,55 +1,76 @@
-<p id="notice"><%= notice %></p>
+<%= content_for :body_title do%>
+  <div class="left">
+    <h4 class="display-5">Controvérsias</h4>
+  </div>
+  <div class="right create-new">
+  <%= link_to 'Adicionar nova controvérsia', new_controversy_path, class: 'btn btn-primary btn-lg' %>
+  </div>
+<%end%>
 
-<h1>Controversies</h1>
+<div class="right" style="display: inline-block !important">
+  <form role="search">
+    <div class="right input-group" style="margin: 15px auto !important">
+      <input name="filterrific[search_query]" id="filterrific_search_query" class="form-control mr-sm-2" type="search" aria-label="Search">
+      <label>
+        <i class="fa fa-search"></i>
+        &nbsp;Pesquisar controvérsia
+      </label>
+      <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
+    </div>
+  </form>
+</div>
+<hr class="under-header" style="margin-top: <%= params[:filterrific] ? '8em' : '5em'%>"/>
 
-<table>
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Description</th>
-      <th>Protocol</th>
-      <th>Closed at</th>
-      <th>Company</th>
-      <th>Contract</th>
-      <th>City</th>
-      <th>Unity</th>
-      <th>Company user</th>
-      <th>Unity user</th>
-      <th>Creator</th>
-      <th>Category</th>
-      <th>Complexity</th>
-      <th>Support 1</th>
-      <th>Support 2</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @controversies.each do |controversy| %>
+<% if @controversies.length > 0 %>
+  <table class="table table-striped table-hover">
+    <thead class="thead-dark">
       <tr>
-        <td><%= controversy.title %></td>
-        <td><%= controversy.description %></td>
-        <td><%= controversy.protocol %></td>
-        <td><%= controversy.closed_at %></td>
-        <td><%= controversy.sei %></td>
-        <td><%= controversy.contract_id %></td>
-        <td><%= controversy.city_id %></td>
-        <td><%= controversy.cnes %></td>
-        <td><%= controversy.company_user_id %></td>
-        <td><%= controversy.unity_user_id %></td>
-        <td><%= controversy.creator %></td>
-        <td><%= controversy.category %></td>
-        <td><%= controversy.complexity %></td>
-        <td><%= controversy.support_1_user_id %></td>
-        <td><%= controversy.support_2_user_id %></td>
-        <td><%= link_to 'Show', controversy %></td>
-        <td><%= link_to 'Edit', edit_controversy_path(controversy) %></td>
-        <td><%= link_to 'Destroy', controversy, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <th>Protocolo</th>
+        <th>Título</th>
+        <th>Empresa</th>
+        <th>Cidade</th>
+        <th>UBS</th>
+        <th>Criador</th>
+        <th colspan="3">Ações</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
 
-<br>
+    <tbody>
+      <% @controversies.each do |controversy| %>
+        <% creator = "#{controversy.creator}_user_id" %>
+        <tr>
+          <td><%= controversy.protocol %></td>
+          <td><%= controversy.title %></td>
+          <td><%= controversy.sei %></td>
+          <td><%= controversy.city.name %></td>
+          <td><%= controversy.try(:unity).try(:name) || 'Nenhuma em específico' %></td>
+          <td><%= User.find(controversy[creator]).name if controversy[creator] %></td>
+          <td><%= link_to 'Mostrar', controversy, class: 'btn btn-sm btn-primary' %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+<h3>
+  Não existe nenhuma controvérsia para a pesquisa realizada
+</h3>
+<% end %>
+<hr/>
 
-<%= link_to 'New Controversy', new_controversy_path %>
+
+<script>
+$('document').ready(function () {
+
+  $('#filterrific_search_query').on('focusout', function () {
+    changeState($(this));
+  });
+
+  function changeState(form) {
+    if (form.val().length > 0) {
+      form.addClass('has-value');
+    } else {
+      form.removeClass('has-value');
+    }
+  }
+});
+</script>
