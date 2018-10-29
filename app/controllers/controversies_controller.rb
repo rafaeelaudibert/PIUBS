@@ -83,13 +83,10 @@ class ControversiesController < ApplicationController
 
   def create_controversy(parameters, user_creator_id)
     controversy = Controversy.new(parameters)
-    controversy.protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
     controversy.contract_id = Contract.where(city: controversy.city).try(:id)
     controversy.creator ||= map_role_to_creator
-    controversy[controversy.creator + '_user_id'] ||= user_creator_id || current_user.id
+    controversy[controversy.creator + '_user_id'] = user_creator_id || current_user.id
     controversy.support_1_user_id = current_user.id if admin? || support_user?
-    controversy.open!
-    controversy.complexity = 1
     controversy
   end
 

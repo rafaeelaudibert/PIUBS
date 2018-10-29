@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_29_130000) do
+ActiveRecord::Schema.define(version: 2018_10_29_140000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "fuzzystrmatch"
@@ -58,7 +58,7 @@ ActiveRecord::Schema.define(version: 2018_10_29_130000) do
     t.string "title"
     t.text "description"
     t.datetime "finished_at"
-    t.integer "status"
+    t.integer "status", default: 0
     t.string "version"
     t.string "access_profile"
     t.string "feature_detail"
@@ -74,7 +74,7 @@ ActiveRecord::Schema.define(version: 2018_10_29_130000) do
     t.bigint "answer_id"
     t.integer "cnes"
     t.integer "support_user"
-    t.integer "severity"
+    t.integer "severity", default: 1
     t.datetime "reopened_at"
     t.index ["answer_id"], name: "index_calls_on_answer_id"
     t.index ["category_id"], name: "index_calls_on_category_id"
@@ -123,7 +123,7 @@ ActiveRecord::Schema.define(version: 2018_10_29_130000) do
     t.string "title"
     t.string "description"
     t.datetime "closed_at"
-    t.integer "status"
+    t.integer "status", default: 0
     t.integer "sei"
     t.integer "contract_id"
     t.integer "city_id"
@@ -133,7 +133,7 @@ ActiveRecord::Schema.define(version: 2018_10_29_130000) do
     t.integer "city_user_id"
     t.integer "creator"
     t.integer "category"
-    t.integer "complexity"
+    t.integer "complexity", default: 1
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "support_1_user_id"

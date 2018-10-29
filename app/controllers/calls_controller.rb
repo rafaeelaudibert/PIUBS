@@ -173,13 +173,8 @@ class CallsController < ApplicationController
 
   def create_call(call_parameters)
     @call = Call.new call_parameters
-
-    @call.protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
-    @call.id = @call.protocol
     @call.user_id ||= current_user.id
     @call.sei ||= current_user.sei
-    @call.open!               # Call is open by default
-    @call.severity = 'normal' # Call has a normal severity by default
 
     @call
   end
