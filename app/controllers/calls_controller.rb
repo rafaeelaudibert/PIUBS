@@ -153,6 +153,8 @@ class CallsController < ApplicationController
     @call = Call.find(params[:call])
     @call.reopened!
     @call.update(:reopened_at => Time.now)
+    @reply = Reply.find(params[:reply_id])
+    @reply.update(:last_call_ref_reply_reopened_at => Time.now)
 
     if @call.save
 
