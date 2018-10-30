@@ -61,7 +61,8 @@ class AnswersController < ApplicationController
         @call = Call.find(params[:question_id])
         @call.closed!
         @call.update(:finished_at => Time.now)
-
+        @reply = Reply.find(params[:reply_id])
+        @reply.update(:last_call_ref_reply_closed_at => Time.now)
         # Retira a answer caso ela nao esteja no FAQ + attach_links
         if @call.answer_id && @call.answer.faq == false
           @old_answer = Answer.find(@call.answer_id)
