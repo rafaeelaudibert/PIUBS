@@ -2,6 +2,7 @@
 
 class ControversiesController < ApplicationController
   before_action :set_controversy, only: %i[show edit update destroy]
+  before_action :filter_role
 
   # GET /controversies
   # GET /controversies.json
@@ -120,5 +121,23 @@ class ControversiesController < ApplicationController
                                         :contract_id, :city_id, :cnes, :company_user_id,
                                         :unity_user_id, :creator, :category, :complexity,
                                         :support_1_id, :support_2_id, :user_creator, :files)
+  end
+
+  def filter_role
+    action = params[:action]
+    if %w[edit update].include? action
+      redirect_to denied_path unless admin?
+    elsif %w[new create index destroy].include? action
+      redirect_to denied_path unless admin? || support_user? || company_user? ||
+                                     city_user? || unity_user?
+    elsif action == 'show'
+      unless (company_user? && @controversy.company_user_id == current_user.id) ||
+             (unity_user? && @controversy.unity_user_id == current_user.id) ||
+             (city_user? && @controversy.unity_user_id == current_user.id) ||
+             support_user? ||
+             admin?
+        redirect_to denied_path
+      end
+    end
   end
 end
