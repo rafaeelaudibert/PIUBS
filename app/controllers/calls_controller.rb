@@ -80,9 +80,7 @@ class CallsController < ApplicationController
 
     if @call.save
       files.each do |file_uuid|
-        @link = AttachmentLink.new(attachment_id: file_uuid,
-                                   call_id: @call.id,
-                                   source: 'call')
+        @link = AttachmentLink.new(attachment_id: file_uuid, call_id: @call.id, source: 'call')
         unless @link.save
           raise 'Não consegui criar o link entre arquivo e o atendimento.'\
                 ' Por favor tente mais tarde'
@@ -152,12 +150,10 @@ class CallsController < ApplicationController
   def reopen_call
     @call = Call.find(params[:call])
     @call.reopened!
-    @call.update(:reopened_at => Time.now)
-    @reply = Reply.find(params[:reply_id])
-    @reply.update(:last_call_ref_reply_reopened_at => Time.now)
+    @call.update(reopened_at: Time.now)
+    @reply = Reply.find(params[:reply_id]).update(last_call_ref_reply_reopened_at: Time.now)
 
     if @call.save
-
       # Retira a ultima answer caso ela nao esteja no FAQ,
       # e exclui seus attachment_links
       if @call.answer_id && @call.answer.faq == false
@@ -173,8 +169,7 @@ class CallsController < ApplicationController
         @answer.destroy # Destroi a resposta final anterior
       end
 
-      redirect_back(fallback_location: root_path,
-                    notice: 'Atendimento reaberto')
+      redirect_back(fallback_location: root_path, notice: 'Atendimento reaberto')
     else
       redirect_back(fallback_location: root_path,
                     notice: 'Ocorreu um erro ao tentar reabrir o atendimento')
