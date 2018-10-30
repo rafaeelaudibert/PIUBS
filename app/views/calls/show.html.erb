@@ -176,7 +176,7 @@
 <% @call.replies.order(:id).each do |reply| %>
 
   <% if first_reply %>
-    <span style="width:100%; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.#{reply.status}" %>">
+    <span style="width:100%; opacity: 0.8; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.#{reply.status}" %>">
       <%= t "activerecord.enums.call.status.#{reply.status}" if reply.status%>
     </span>
     <% first_reply = false %>
@@ -277,13 +277,13 @@
   <% end # end if reply.category == 'support' %>
 
   <% if reply.last_call_ref_reply_closed_at %>
-    <span style="width:100%; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.closed" %>">
+    <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.closed" %>">
       <%= t "activerecord.enums.call.status.closed"%> em <%= reply.last_call_ref_reply_closed_at %>
     </span>
   <% end %>
 
   <% if reply.last_call_ref_reply_reopened_at && reply.last_call_ref_reply_reopened_at > reply.last_call_ref_reply_closed_at %>
-    <span style="width:100%; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.reopened" %>">
+    <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.reopened" %>">
       <%= t "activerecord.enums.call.status.reopened"%> em <%= reply.last_call_ref_reply_reopened_at %>
     </span>
   <% end %>
