@@ -7,8 +7,11 @@ services:
     ports:
       - "5433:5432"
   app:
-    build: .
-    command: bundle exec puma -C config/puma.rb
+    build:
+      context: .
+    command: >
+          bash -c "bundle exec puma -C config/puma.rb
+          && bundle exec sidekiq -C config/sidekiq.yml"
     env_file:
       - config/.env
     volumes:
@@ -21,16 +24,6 @@ services:
       - redis
   redis:
     image: redis:latest
-  sidekiq:
-    build: .
-    command: bundle exec sidekiq -C config/sidekiq.yml
-    env_file:
-      - config/.env
-    depends_on:
-      - redis
-    volumes:
-      - .:/var/www/PIUBS
-
   web:
     build:
       context: .
