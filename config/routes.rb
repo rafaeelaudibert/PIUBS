@@ -89,7 +89,18 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   scope '/controversias' do
-    resources :controversies
+    resources :controversies do
+      collection do
+        post ':id/company_user/:user_id', to: 'controversies#company_user',
+                                          as: 'company_user'
+        post ':id/city_user/:user_id', to: 'controversies#city_user',
+                                        as: 'city_user'
+        post ':id/unity_user/:user_id', to: 'controversies#unity_user',
+                                        as: 'unity_user'
+        post ':id/support_user/:user_id', to: 'controversies#support_user',
+                                          as: 'support_user'
+      end
+    end
   end
 
   # /apoioaempresas/users
