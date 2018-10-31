@@ -346,6 +346,13 @@ tinymce.EditorManager.execCommand('mceRemoveEditor', true, 'tinymce');
 tinymce.EditorManager.execCommand('mceAddEditor', true, 'tinymce');
 $('#tinymce_ifr').css('height', '300px');
 }
+
+const cleanMCEAnswer = () => {
+tinymce.EditorManager.execCommand('mceRemoveEditor', true, 'tinymcee');
+tinymce.EditorManager.execCommand('mceAddEditor', true, 'tinymcee');
+$('#tinymcee_ifr').css('height', '300px');
+}
+
 // Reply buttons
 $("#reply").click(e => {
 extraFilesFaq = 0;
@@ -422,6 +429,7 @@ $("#reply_box").hide(200);
         parent.appendChild(finalAnswer);
         $('#final-answer').show(200);
       }
+      cleanMCEAnswer();
 
       const formChildren = finalAnswer.children[3].children;
       const answerDivField = formChildren[2].children[1];
