@@ -138,7 +138,10 @@
   <div class="card-block">
     <div class="row justify-content-around mb-3">
         <button type="button" id="reply-top" class="col-md-5 btn btn-primary btn-lg">Adicionar Nova Resposta</button>
-        <button type="button" id="faq-top" disabled="disabled" class="col-md-5 btn btn-primary btn-lg">Adicionar Resposta do FAQ</button>
+
+        <% if admin? || support_user? %>
+          <button type="button" id="faq-top" class="col-md-5 btn btn-primary btn-lg">Adicionar Resposta do FAQ</button>
+        <% end %>
     </div>
 
     <!-- Card para escrever resposta -->
@@ -155,6 +158,22 @@
         <%= render 'reply', reply: @reply %>
       </div>
     </div>
+
+    <% if admin? || support_user? %>
+      <!-- Card para pegar informações do FAQ -->
+      <div class="card card-primary" style="display: none" id="faq_box">
+        <div class="card-header pl-2">
+          <div class="header-block">
+            <p class="title" style="color: white;">
+              <i class="fa fa-mail-forward mr-2"></i>FAQ
+            </p>
+          </div>
+        </div>
+        <div class="card-body">
+          <%= render 'faq' %>
+        </div>
+      </div>
+    <% end %>
 
     <% @controversy.replies.each do |reply| %>
       <div class="card card-default mb-3 <%= reply.category %>-border">
@@ -206,7 +225,9 @@
     <% if @controversy.replies.length > 6 %>
       <div class="row justify-content-around mb-3">
           <button type="button" id="reply-bottom" class="col-md-5 btn btn-primary btn-lg">Adicionar Nova Resposta</button>
-          <button type="button" id="faq-bottom" disabled="disabled" class="col-md-5 btn btn-primary btn-lg">Adicionar Resposta do FAQ</button>
+          <% if admin? || support_user? %>
+            <button type="button" id="faq-bottom" class="col-md-5 btn btn-primary btn-lg">Adicionar Resposta do FAQ</button>
+          <% end %>
       </div>
     <% end %>
   </div>
@@ -289,5 +310,22 @@
 
     cleanMCE();
     $("#faq_box").hide(200);
+  });
+
+  $("#faq-top, #faq-bottom").click(e => {
+    if (e.target.parentNode.nextElementSibling == $("#faq_box")[0]) {
+      $("#faq_box").toggle(200);
+    } else {
+      $("#faq_box").hide(0);
+      e.target.parentNode.insertAdjacentElement('afterend', document.getElementById('faq_box'));
+      $("#faq_box").show(200);
+    }
+
+    cleanMCE();
+    $("#reply_box").hide(200);
+  });
+
+  $("#cancel").click(() => {
+    $("#reply_box").hide(200);
   });
 </script>
