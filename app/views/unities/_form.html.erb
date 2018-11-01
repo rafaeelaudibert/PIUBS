@@ -57,7 +57,7 @@
     let citySelect = document.getElementById('unity_city_id');
 
     stateSelect.addEventListener('change', () => jQuery.ajax({
-      url: '/apoioaempresas/cities/states/' + stateSelect.value,
+      url: '/cities/states/' + stateSelect.value,
       type: "GET",
       dataType: "json",
       success: insertData

@@ -485,7 +485,7 @@ if (log)
       const replyId = parent.parentNode.children[0].children[1].innerText.split('#')[1];
 
       $.ajax({
-        url: '/apoioaempresas/replies/attachments/' + replyId,
+        url: '/replies/attachments/' + replyId,
         type: "GET",
         dataType: "json",
         success: data => {

@@ -47,7 +47,7 @@
 
       // grap our upload form by its id
     dropReply = $('#reply-dropzone').dropzone({
-        url: '/apoioaempresas/attachments',
+        url: '/attachments',
 
         // restrict image size to a maximum 20MB
         maxFilesize: 20,
@@ -95,7 +95,7 @@
             // make a DELETE ajax request to delete the file
             $.ajax({
                 type: 'DELETE',
-                url: '/apoioaempresas/attachments/' + id,
+                url: '/attachments/' + id,
                 success: () => $(file.previewTemplate).fadeOut(),
                 error: e => console.error(e)
             });

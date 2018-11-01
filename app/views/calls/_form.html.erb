@@ -107,11 +107,11 @@
           const ubsSelect = document.getElementById('call_cnes')
 
           const triggeredByCompany = () => {
-            jQuery.ajax({url: `/apoioaempresas/companies/${companySelect.value}/states`, type: "GET", dataType: "json", success: insertStatesData, error: console.log});
-            jQuery.ajax({url: `/apoioaempresas/companies/${companySelect.value}/users`, type: "GET", dataType: "json", success: insertUsersData, error: console.log});
+            jQuery.ajax({url: `/companies/${companySelect.value}/states`, type: "GET", dataType: "json", success: insertStatesData, error: console.log});
+            jQuery.ajax({url: `/companies/${companySelect.value}/users`, type: "GET", dataType: "json", success: insertUsersData, error: console.log});
           }
-          const triggeredByState = () => jQuery.ajax({url: `/apoioaempresas/companies/${companySelect.value}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
-          const triggeredByCity = () => jQuery.ajax({url: `/apoioaempresas/companies/${companySelect.value}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
+          const triggeredByState = () => jQuery.ajax({url: `/companies/${companySelect.value}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
+          const triggeredByCity = () => jQuery.ajax({url: `/companies/${companySelect.value}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
 
           companySelect.addEventListener('change', triggeredByCompany);
           stateSelect.addEventListener('change', triggeredByState);
@@ -221,8 +221,8 @@
           const stateSelect = document.getElementById('call_state_id');
           const citySelect = document.getElementById('call_city_id');
           const ubsSelect = document.getElementById('call_cnes')
-          const triggeredByState = () => jQuery.ajax({url: `/apoioaempresas/companies/${query.sei}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
-          const trigerredByCity = () => jQuery.ajax({url: `/apoioaempresas/companies/${query.sei}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
+          const triggeredByState = () => jQuery.ajax({url: `/companies/${query.sei}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
+          const trigerredByCity = () => jQuery.ajax({url: `/companies/${query.sei}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
           stateSelect.addEventListener('change', triggeredByState);
           citySelect.addEventListener('change', trigerredByCity);
 
@@ -312,7 +312,7 @@
 
       if (arr.length >= 1) {
         jQuery.ajax({
-          url: '/apoioaempresas/answers/query/' + textField.value,
+          url: '/answers/query/' + textField.value,
           type: "GET",
           dataType: "json",
           success: data => {
@@ -346,7 +346,7 @@
 
         // grap our upload form by its id
       $('#dropzone').dropzone({
-          url: '/apoioaempresas/attachments',
+          url: '/attachments',
 
           // restrict image size to a maximum 20MB
           maxFilesize: 20,
@@ -394,7 +394,7 @@
               // make a DELETE ajax request to delete the file
               $.ajax({
                   type: 'DELETE',
-                  url: '/apoioaempresas/attachments/' + id,
+                  url: '/attachments/' + id,
                   success: () => $(file.previewTemplate).fadeOut(),
                   error: e => console.error(e)
               });

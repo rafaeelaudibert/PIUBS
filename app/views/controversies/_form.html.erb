@@ -59,8 +59,8 @@
         const citySelect = document.getElementById('controversy_city_id');
         const ubsSelect = document.getElementById('controversy_cnes');
 
-        stateSelect.addEventListener('change', () => jQuery.ajax({url: `/apoioaempresas/companies/${companySelect.value}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData}));
-        citySelect.addEventListener('change', () => jQuery.ajax({url: `/apoioaempresas/companies/${companySelect.value}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData}));
+        stateSelect.addEventListener('change', () => jQuery.ajax({url: `/companies/${companySelect.value}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData}));
+        citySelect.addEventListener('change', () => jQuery.ajax({url: `/companies/${companySelect.value}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData}));
 
         function insertCitiesData(cities) {
           let innerHTML = '<option value> Selecione a cidade </option>';
@@ -143,19 +143,19 @@
               const creatorSelect = document.getElementById('controversy_creator');
               const userSelect = document.getElementById('controversy_user_creator');
 
-              const triggeredByCompany = () => jQuery.ajax({url: `/apoioaempresas/companies/${companySelect.value}/states`, type: "GET", dataType: "json", success: insertStatesData});
-              const triggeredByState = () => jQuery.ajax({url: `/apoioaempresas/companies/${companySelect.value}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
-              const triggeredByCity = () => jQuery.ajax({url: `/apoioaempresas/companies/${companySelect.value}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
+              const triggeredByCompany = () => jQuery.ajax({url: `/companies/${companySelect.value}/states`, type: "GET", dataType: "json", success: insertStatesData});
+              const triggeredByState = () => jQuery.ajax({url: `/companies/${companySelect.value}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
+              const triggeredByCity = () => jQuery.ajax({url: `/companies/${companySelect.value}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
               const fetchUsers = () => {
                 switch (creatorSelect.value) {
                   case 'company':
-                    jQuery.ajax({url: `/apoioaempresas/companies/${companySelect.value}/users`, type: "GET", dataType: "json", success: insertUsersData});
+                    jQuery.ajax({url: `/companies/${companySelect.value}/users`, type: "GET", dataType: "json", success: insertUsersData});
                     break;
                   case 'city':
-                    jQuery.ajax({url: `/apoioaempresas/cities/${citySelect.value}/users`, type: "GET", dataType: "json", success: insertUsersData});
+                    jQuery.ajax({url: `/cities/${citySelect.value}/users`, type: "GET", dataType: "json", success: insertUsersData});
                     break;
                   case 'unity':
-                    jQuery.ajax({url: `/apoioaempresas/unities/${ubsSelect.value}/users`, type: "GET", dataType: "json", success: insertUsersData});
+                    jQuery.ajax({url: `/unities/${ubsSelect.value}/users`, type: "GET", dataType: "json", success: insertUsersData});
                     break;
                   default:
                     break;
@@ -242,7 +242,7 @@
 
         // grap our upload form by its id
         $('#dropzone').dropzone({
-          url: '/apoioaempresas/attachments',
+          url: '/attachments',
 
           // restrict image size to a maximum 20MB
           maxFilesize: 20,
@@ -290,7 +290,7 @@
             // make a DELETE ajax request to delete the file
             $.ajax({
               type: 'DELETE',
-              url: '/apoioaempresas/attachments/' + id,
+              url: '/attachments/' + id,
               success: () => $(file.previewTemplate).fadeOut(),
               error: e => console.error(e)
             });

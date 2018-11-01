@@ -84,7 +84,7 @@
           const citySelect = document.getElementById('user_city_id');
           const unitySelect = document.getElementById('user_cnes');
           const unityRequest = () => jQuery.ajax({
-            url: '/apoioaempresas/cities/unities/' + citySelect.value,
+            url: '/cities/unities/' + citySelect.value,
             type: "GET",
             dataType: "json",
             success: insertUnityData
@@ -92,7 +92,7 @@
 
 
           stateSelect.addEventListener('change', () => jQuery.ajax({
-            url: '/apoioaempresas/cities/states/' + stateSelect.value,
+            url: '/cities/states/' + stateSelect.value,
             type: "GET",
             dataType: "json",
             success: insertCityData

@@ -19,7 +19,7 @@
   button.addEventListener('click', () => {
     if (textField.value.length > 3) {
       jQuery.ajax({
-        url: '/apoioaempresas/answers/query/' + textField.value.split('.').join(' '),
+        url: '/answers/query/' + textField.value.split('.').join(' '),
         type: "GET",
         dataType: "json",
         success: data => {
@@ -67,11 +67,11 @@
     $("#on-faq").prop('checked', true);
 
     $.ajax({
-      url: '/apoioaempresas/answers/attachments/' + id,
+      url: '/answers/attachments/' + id,
       type: "GET",
       dataType: "json",
       success: data => {
-        tinyMCE.get(0).setContent(`${answer}<br/>Essa resposta foi retirada do FAQ. Ela estava disponível <a href="/apoioaempresas/answers/${id}" target='_blank'>aqui</a></b>`);
+        tinyMCE.get(0).setContent(`${answer}<br/>Essa resposta foi retirada do FAQ. Ela estava disponível <a href="/answers/${id}" target='_blank'>aqui</a></b>`);
 
         // Set the ids
         replyFileIds = data.map(val => val.id).reduce((acc, val) => acc.concat(val), [])
