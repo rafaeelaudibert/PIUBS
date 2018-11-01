@@ -57,79 +57,77 @@
     Cidade: <span class="badge badge-pill badge-light m-2"><%= "#{@controversy.city.name}//#{@controversy.city.state.name}" %> - <%= @controversy.city_user.try(:name) || 'Sem usuário na conversa' %></span>
     <hr/>
 
-    <div class="row mr-1">
-      <div class="input-group col-md-3 p-2">
-        <% if @controversy.company_user_id != nil %>
-          <button class="btn btn-danger btn-sm col-12" type="button">Remover Usuário da Empresa</button>
-        <% else %>
-        <select class="custom-select" id="companySelect">
-          <option selected>Adicionar usuário Empresa</option>
-          <% User.where(sei: @controversy.sei).each do |user| %>
-            <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
-          <% end %>
-        </select>
-        <div class="input-group-append">
-          <button class="btn btn-primary btn-outline-secondary" type="button"><em class="fa fa-plus"></em></button>
-        </div>
-        <% end %>
-      </div>
-      <div class="input-group col-md-3 p-2">
-        <% if @controversy.unity_user_id != nil %>
-          <button class="btn btn-danger btn-sm col-12" type="button">Remover Usuário da UBS</button>
-        <% else %>
-          <select class="custom-select" id="unitySelect">
-            <option selected>Adicionar usuário UBS</option>
-            <% if @controversy.unity %>
-              <% User.where(unity: @controversy.unity).each do |user| %>
-                <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
-              <% end %>
-            <% else %>
-              <% User.where(city_id: @controversy.city_id).where.not(cnes: nil).each do |user| %>
-                <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
-              <% end %>
+    <% if current_user.admin? || current_user.call_center_user? || current_user.call_center_admin? %>
+      <div class="row mr-1">
+        <div class="input-group col-md-3 p-2">
+          <% if @controversy.company_user_id != nil %>
+            <button class="btn btn-danger btn-sm col-12" onclick="toggleCompany()" type="button">Remover Usuário da Empresa</button>
+          <% else %>
+          <select class="custom-select" id="companySelect">
+            <option selected>Adicionar usuário Empresa</option>
+            <% User.where(sei: @controversy.sei).each do |user| %>
+              <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
             <% end %>
           </select>
           <div class="input-group-append">
-            <button class="btn btn-primary btn-outline-secondary" type="button"><em class="fa fa-plus"></em></button>
+            <button class="btn btn-primary btn-outline-secondary" onclick="toggleCompany()" type="button"><em class="fa fa-plus"></em></button>
           </div>
-        <% end %>
-      </div>
-      <div class="input-group col-md-3 p-2">
-        <% if @controversy.city_user_id != nil %>
-          <button class="btn btn-danger btn-sm col-12" type="button">Remover Usuário da Cidade</button>
-        <% else %>
-        <select class="custom-select" id="citySelect">
-          <option selected>Adicionar usuário Cidade</option>
-          <% User.where(city_id: @controversy.city_id, cnes: nil).each do |user| %>
-            <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
           <% end %>
-        </select>
-        <div class="input-group-append">
-          <button class="btn btn-primary btn-outline-secondary" type="button"><em class="fa fa-plus"></em></button>
         </div>
-        <% end %>
-      </div>
-      <div class="input-group col-md-3 p-2">
-        <% if @controversy.support_2_user_id != nil %>
-          <button class="btn btn-danger btn-sm col-12" type="button">Remover Suporte Adicional</button>
-        <% else %>
-        <select class="custom-select" id="supportSelect">
-          <option selected>Adicionar suporte adicional</option>
-          <% User.where(role: ['call_center_user', 'call_center_admin']).each do |user| %>
-            <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
+        <div class="input-group col-md-3 p-2">
+          <% if @controversy.unity_user_id != nil %>
+            <button class="btn btn-danger btn-sm col-12" onclick="toggleUnity()" type="button">Remover Usuário da UBS</button>
+          <% else %>
+            <select class="custom-select" id="unitySelect">
+              <option selected>Adicionar usuário UBS</option>
+              <% if @controversy.unity %>
+                <% User.where(unity: @controversy.unity).each do |user| %>
+                  <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
+                <% end %>
+              <% else %>
+                <% User.where(city_id: @controversy.city_id).where.not(cnes: nil).each do |user| %>
+                  <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
+                <% end %>
+              <% end %>
+            </select>
+            <div class="input-group-append">
+              <button class="btn btn-primary btn-outline-secondary" onclick="toggleUnity()" type="button"><em class="fa fa-plus"></em></button>
+            </div>
           <% end %>
-        </select>
-        <div class="input-group-append">
-          <button class="btn btn-primary btn-outline-secondary" onclick="addSupport()" type="button"><em class="fa fa-plus"></em></button>
         </div>
-        <% end %>
-      </div>
+        <div class="input-group col-md-3 p-2">
+          <% if @controversy.city_user_id != nil %>
+            <button class="btn btn-danger btn-sm col-12" onclick="toggleCity()" type="button">Remover Usuário da Cidade</button>
+          <% else %>
+          <select class="custom-select" id="citySelect">
+            <option selected>Adicionar usuário Cidade</option>
+            <% User.where(city_id: @controversy.city_id, cnes: nil).each do |user| %>
+              <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
+            <% end %>
+          </select>
+          <div class="input-group-append">
+            <button class="btn btn-primary btn-outline-secondary" onclick="toggleCity()" type="button"><em class="fa fa-plus"></em></button>
+          </div>
+          <% end %>
+        </div>
+        <div class="input-group col-md-3 p-2">
+          <% if @controversy.support_2_user_id != nil %>
+            <button class="btn btn-danger btn-sm col-12" onclick="toggleSupport()" type="button">Remover Suporte Adicional</button>
+          <% else %>
+          <select class="custom-select" id="supportSelect">
+            <option selected>Adicionar suporte adicional</option>
+            <% User.where(role: ['call_center_user', 'call_center_admin']).each do |user| %>
+              <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
+            <% end %>
+          </select>
+          <div class="input-group-append">
+            <button class="btn btn-primary btn-outline-secondary" onclick="toggleSupport()" type="button"><em class="fa fa-plus"></em></button>
+          </div>
+          <% end %>
+        </div>
 
-      <!-- <%= link_to 'Adicionar usuário da empresa', company_user_controversies_path(user_id: 46), method: :post, class: 'btn btn-primary' unless @controversy.company_user %>
-      <%= link_to 'Adicionar usuário da cidade', city_user_controversies_path(user_id: 78), method: :post, class: 'btn btn-primary'  unless @controversy.city_user %>
-      <%= link_to 'Adicionar usuário da UBS', unity_user_controversies_path(user_id: 79), method: :post, class: 'btn btn-primary'  unless @controversy.unity_user %>
-      <%= link_to 'Adicionar usuário do suporte', support_user_controversies_path(user_id: 46), method: :post, class: 'btn btn-primary'  unless @controversy.support_2 %>
---></div>
+      </div>
+    <% end %>
 
   </div>
 </div>
@@ -261,21 +259,58 @@
 
 <script>
 
-  $(document).ready(() => {
+  <% if current_user.admin? || current_user.call_center_user? || current_user.call_center_admin? %>
+    $(document).ready(() => {
 
-    // Configure cross-reference ajax request
-    $.ajaxSetup({
-      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
+      // Configure cross-reference ajax request
+      $.ajaxSetup({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
+      })
     })
-  })
 
-  function addSupport(){
-    const protocol = document.getElementById('protocol').innerHTML;
-    const user_id = document.getElementById('supportSelect').value;
-    $.ajax({
-      url: `/controversias/controversies/${protocol}/support_user/${user_id}`,
-      method: 'post'
-    }).then(() => window.location.reload());
-  }
+    function toggleSupport(){
+      const protocol = document.getElementById('protocol').innerHTML;
+      const select = document.getElementById('supportSelect');
+      const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
+
+      $.ajax({
+        url: `/controversias/controversies/${protocol}/support_user/${user_id}`,
+        method: 'post'
+      }).then(() => window.location.reload());
+    }
+
+    function toggleCompany(){
+      const protocol = document.getElementById('protocol').innerHTML;
+      const select = document.getElementById('companySelect');
+      const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
+
+      $.ajax({
+        url: `/controversias/controversies/${protocol}/company_user/${user_id}`,
+        method: 'post'
+      }).then(() => window.location.reload());
+    }
+
+    function toggleUnity(){
+      const protocol = document.getElementById('protocol').innerHTML;
+      const select = document.getElementById('unitySelect');
+      const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
+
+      $.ajax({
+        url: `/controversias/controversies/${protocol}/unity_user/${user_id}`,
+        method: 'post'
+      }).then(() => window.location.reload());
+    }
+
+    function toggleCity(){
+      const protocol = document.getElementById('protocol').innerHTML;
+      const select = document.getElementById('citySelect');
+      const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
+
+      $.ajax({
+        url: `/controversias/controversies/${protocol}/city_user/${user_id}`,
+        method: 'post'
+      }).then(() => window.location.reload());
+    }
+  <% end %>
 
 </script>

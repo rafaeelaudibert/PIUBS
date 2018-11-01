@@ -80,7 +80,7 @@ class ControversiesController < ApplicationController
       @controversy.company_user_id = nil
       redirect_to @controversy,
                   notice: (@controversy.save ? 'Usuário removido' : 'Erro na remoção de usuário')
-    elsif @user.company_id == @controversy.company_id
+    elsif @user.sei == @controversy.sei
       @controversy.company_user = @user
       redirect_to @controversy,
                   notice: (@controversy.save ? 'Usuário adicionado' : 'Erro na adição de usuário')
@@ -116,6 +116,10 @@ class ControversiesController < ApplicationController
       @controversy.unity_user_id = nil
       redirect_to @controversy,
                   notice: (@controversy.save ? 'Usuário removido' : 'Erro na remoção de usuário')
+    elsif @controversy.cnes == nil
+      @controversy.unity_user = @user
+      redirect_to @controversy,
+                  notice: (@controversy.save ? 'Usuário adicionado' : 'Erro na adição de usuário')
     elsif @user.cnes == @controversy.cnes
       @controversy.unity_user = @user
       redirect_to @controversy,
