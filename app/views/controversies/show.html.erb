@@ -1,3 +1,6 @@
+<%= tinymce_assets %>
+<%= tinymce language: 'pt_BR' %>
+
 <%= content_for :body_title do%>
   <h4 class="display-5">Controvérsia nº <span id="protocol"><%= @controversy.protocol %></span>
   </h4>
@@ -59,7 +62,7 @@
 
     <% if current_user.admin? || current_user.call_center_user? || current_user.call_center_admin? %>
       <div class="row mr-1">
-        <div class="input-group col-md-3 p-2">
+        <div class="input-group col-lg-3 col-md-6 p-2">
           <% if @controversy.company_user_id != nil %>
             <button class="btn btn-danger btn-sm col-12" onclick="toggleCompany()" type="button">Remover Usuário da Empresa</button>
           <% else %>
@@ -74,7 +77,7 @@
           </div>
           <% end %>
         </div>
-        <div class="input-group col-md-3 p-2">
+        <div class="input-group col-lg-3 col-md-6 p-2">
           <% if @controversy.unity_user_id != nil %>
             <button class="btn btn-danger btn-sm col-12" onclick="toggleUnity()" type="button">Remover Usuário da UBS</button>
           <% else %>
@@ -95,7 +98,7 @@
             </div>
           <% end %>
         </div>
-        <div class="input-group col-md-3 p-2">
+        <div class="input-group col-lg-3 col-md-6 p-2">
           <% if @controversy.city_user_id != nil %>
             <button class="btn btn-danger btn-sm col-12" onclick="toggleCity()" type="button">Remover Usuário da Cidade</button>
           <% else %>
@@ -110,7 +113,7 @@
           </div>
           <% end %>
         </div>
-        <div class="input-group col-md-3 p-2">
+        <div class="input-group col-lg-3 col-md-6 p-2">
           <% if @controversy.support_2_user_id != nil %>
             <button class="btn btn-danger btn-sm col-12" onclick="toggleSupport()" type="button">Remover Suporte Adicional</button>
           <% else %>
@@ -125,102 +128,49 @@
           </div>
           <% end %>
         </div>
-
       </div>
     <% end %>
-
-  </div>
-</div>
-<hr/>
-
-<div class="card card-primary" id="reply_box">
-<div class="card-header pl-2">
-<div class="header-block">
-<p class="title" style="color: white;">
-  <i class="fa fa-mail-forward mr-2"></i>Resposta ao atendimento</p>
-</div>
-</div>
-<div class="card-body">
-<%= render 'reply', reply: @reply %>
-</div>
+  </div> <!-- Card block END -->
 </div>
 
-<div class="card-block">
-<% @controversy.replies.each do |reply| %>
-
-<% if reply.category == 'support' %>
-  <div class="card card-default mb-3" style="border-left: 5px solid #85CE36; box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
-    <div class="card-header">
-      <em class="fa fa-comment-o m-2"></em>
-      <span class="badge badge-pill badge-dark m-1" style="display: none"><%= '#' << reply.id.to_s %></span>
-      <span class="badge badge-pill badge-dark m-1">
-        <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
-      </span>
-      <span class="badge badge-pill badge-dark m-1">suporte</span>
-      -
-      <strong class="m-2">
-        <%= User.find(reply.user_id).name %>
-      </strong>
-      Adicionou uma resposta.
+<!-- Card das replies -->
+<div class="card card-primary">
+  <div class="card-block">
+    <div class="row justify-content-around mb-3">
+        <button type="button" id="reply-top" class="col-md-5 btn btn-primary btn-lg">Adicionar Nova Resposta</button>
+        <button type="button" id="faq-top" disabled="disabled" class="col-md-5 btn btn-primary btn-lg">Adicionar Resposta do FAQ</button>
     </div>
-    <div class="card-block">
-      <span>
-        <%= reply.description.html_safe %>
-      </span>
 
-      <% if reply.attachments.length > 0 %>
-        <hr/>
-        <strong class='m-2'>
-          Attachments
-        </strong>
-        <br/>
-        <div>
-          <% reply.attachments.each do |_attachment| %>
-            <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
-              <i class="fa fa-file-text mr-1"></i>
-              <%= truncate _attachment.filename, length: 10, omission: '...' %>
-            <% end %>
-          <% end %>
+    <!-- Card para escrever resposta -->
+    <div class="card card-primary" style="display: none" id="reply_box">
+      <div class="card-header pl-2">
+        <div class="header-block">
+        <p class="title" style="color: white;">
+          <i class="fa fa-mail-forward mr-2"></i>
+          Resposta ao atendimento
+        </p>
         </div>
-      <% end %>
-
-      <hr/>
-      <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-        <% if @my_call %>
-          <a style="color: white" onclick="toggleFinalAnswer(this)" class="btn btn-primary btn-sm">Marcar como resposta final</a>
-        <% end %>
-      <% end %>
-      <div style="float: right">
-        <% if reply.faq == true %>
-          <span class="badge badge-pill badge-dark">
-            Resposta no FAQ
-          </span>
-        <% end %>
-        <span class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.#{reply.status}" %>">
-          <%= t "activerecord.enums.call.status.#{reply.status}" if reply.status%>
-        </span>
+      </div>
+      <div class="card-body">
+        <%= render 'reply', reply: @reply %>
       </div>
     </div>
-  </div>
-<%end%>
 
-  <% else %>
-    <div class="card card-default mb-3" style="box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
-      <div class="card-header">
-        <em class="fa fa-comment-o m-2"></em>
-        <span class="badge badge-pill badge-dark m-1" style="display: none"><%= '#' << reply.id.to_s %></span>
-        <span class="badge badge-pill badge-dark m-2">
-          <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
-        </span>
-        -
-        <strong class="m-2">
-          <%= User.find(reply.user_id).name %>
-        </strong>
-        Adicionou uma resposta.
+    <% @controversy.replies.each do |reply| %>
+      <div class="card card-default mb-3 <%= reply.category %>-border">
+        <div class="card-header">
+          <em class="fa fa-comment-o m-2"></em>
+          <span style="display: none"><%= '#' << reply.id.to_s %></span>
+          <% if reply.category == 'support' %>
+            <span class="badge badge-pill badge-dark m-1">suporte</span>
+          <% end %>
+          <span class="badge badge-pill badge-dark m-1">
+            <%= User.find(reply.user_id).name %>
+          </span>
+          Adicionou uma resposta em <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+        </div>
 
-      </div>
-      <div class="card-body" style="padding: 5px 30px 15px">
-        <p class="card-text">
+        <div class="card-block">
           <span>
             <%= reply.description.html_safe %>
           </span>
@@ -234,83 +184,110 @@
             <div>
               <% reply.attachments.each do |_attachment| %>
                 <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
-                <i class="fa fa-file-text mr-1"></i>
-                <%= truncate(_attachment.filename, length: 10, omission: '...')%>
-              <%end%>
-            <% end %>
-          </div>
-        <% end %>
-      </p>
-    </div>
+                  <i class="fa fa-file-text mr-1"></i>
+                  <%= truncate _attachment.filename, length: 10, omission: '...' %>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+          <hr/>
+
+          <% if reply.faq == true %>
+            <div class="right">
+                <span class="badge badge-pill badge-dark">
+                  Resposta no FAQ
+                </span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if @controversy.replies.length > 6 %>
+      <div class="row justify-content-around mb-3">
+          <button type="button" id="reply-bottom" class="col-md-5 btn btn-primary btn-lg">Adicionar Nova Resposta</button>
+          <button type="button" id="faq-bottom" disabled="disabled" class="col-md-5 btn btn-primary btn-lg">Adicionar Resposta do FAQ</button>
+      </div>
+    <% end %>
   </div>
-<%end%>
-
-
-
-<% if @my_call %>
-<button type="button" id="reply-2" class="btn btn-primary">Nova Resposta</button>
-<% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-<button type="button" id="faq-reply-2" class="btn btn-primary">Resposta do FAQ</button>
-<% end %>
-<% end %>
-
 </div>
 
+<% if current_user.admin? || current_user.call_center_user? || current_user.call_center_admin? %>
+  <script>
+
+      $(document).ready(() => {
+
+        // Configure cross-reference ajax request
+        $.ajaxSetup({
+          headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
+        })
+      })
+
+      function toggleSupport(){
+        const protocol = document.getElementById('protocol').innerHTML;
+        const select = document.getElementById('supportSelect');
+        const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
+
+        $.ajax({
+          url: `/controversias/controversies/${protocol}/support_user/${user_id}`,
+          method: 'post'
+        }).then(() => window.location.reload());
+      }
+
+      function toggleCompany(){
+        const protocol = document.getElementById('protocol').innerHTML;
+        const select = document.getElementById('companySelect');
+        const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
+
+        $.ajax({
+          url: `/controversias/controversies/${protocol}/company_user/${user_id}`,
+          method: 'post'
+        }).then(() => window.location.reload());
+      }
+
+      function toggleUnity(){
+        const protocol = document.getElementById('protocol').innerHTML;
+        const select = document.getElementById('unitySelect');
+        const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
+
+        $.ajax({
+          url: `/controversias/controversies/${protocol}/unity_user/${user_id}`,
+          method: 'post'
+        }).then(() => window.location.reload());
+      }
+
+      function toggleCity(){
+        const protocol = document.getElementById('protocol').innerHTML;
+        const select = document.getElementById('citySelect');
+        const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
+
+        $.ajax({
+          url: `/controversias/controversies/${protocol}/city_user/${user_id}`,
+          method: 'post'
+        }).then(() => window.location.reload());
+      }
+
+  </script>
+<% end %>
 
 <script>
+  const cleanMCE = () => {
+    tinymce.EditorManager.execCommand('mceRemoveEditor', true, 'tinymce');
+    tinymce.EditorManager.execCommand('mceAddEditor', true, 'tinymce');
+    $('#tinymce_ifr').css('height', '300px');
+  }
 
-  <% if current_user.admin? || current_user.call_center_user? || current_user.call_center_admin? %>
-    $(document).ready(() => {
-
-      // Configure cross-reference ajax request
-      $.ajaxSetup({
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
-      })
-    })
-
-    function toggleSupport(){
-      const protocol = document.getElementById('protocol').innerHTML;
-      const select = document.getElementById('supportSelect');
-      const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
-
-      $.ajax({
-        url: `/controversias/controversies/${protocol}/support_user/${user_id}`,
-        method: 'post'
-      }).then(() => window.location.reload());
+  // Reply buttons
+  $("#reply-top, #reply-bottom").click(e => {
+    if (e.target.parentNode.nextElementSibling == $("#reply_box")[0]) {
+      $("#reply_box").toggle(200);
+    } else {
+      $("#reply_box").hide(0);
+      e.target.parentNode.insertAdjacentElement('afterend', document.getElementById('reply_box'));
+      $("#reply_box").show(200);
     }
 
-    function toggleCompany(){
-      const protocol = document.getElementById('protocol').innerHTML;
-      const select = document.getElementById('companySelect');
-      const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
-
-      $.ajax({
-        url: `/controversias/controversies/${protocol}/company_user/${user_id}`,
-        method: 'post'
-      }).then(() => window.location.reload());
-    }
-
-    function toggleUnity(){
-      const protocol = document.getElementById('protocol').innerHTML;
-      const select = document.getElementById('unitySelect');
-      const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
-
-      $.ajax({
-        url: `/controversias/controversies/${protocol}/unity_user/${user_id}`,
-        method: 'post'
-      }).then(() => window.location.reload());
-    }
-
-    function toggleCity(){
-      const protocol = document.getElementById('protocol').innerHTML;
-      const select = document.getElementById('citySelect');
-      const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
-
-      $.ajax({
-        url: `/controversias/controversies/${protocol}/city_user/${user_id}`,
-        method: 'post'
-      }).then(() => window.location.reload());
-    }
-  <% end %>
-
+    cleanMCE();
+    $("#faq_box").hide(200);
+  });
 </script>
