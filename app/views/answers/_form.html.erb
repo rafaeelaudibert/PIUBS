@@ -1,6 +1,6 @@
 <%= tinymce_assets %>
 <%= tinymce language: 'pt_BR' %>
-<%= form_with(model: answer, local: true) do |form| %>
+<%= form_with(model: answer, local: true, :html => { :id => "faqForm"} ) do |form| %>
 <% if answer.errors.any? %>
   <div id="error_explanation">
     <h2><%= pluralize(answer.errors.count, "error") %>
@@ -61,8 +61,8 @@
     <% else %>
       <div class="field">
         <%= form.label :category_id, 'Categoria', class: 'required' %>
-        <select skip_default_ids="false" allow_method_names_outside_object="true" name="answer[category_id]" id="answer_category_id" class="form-control" required="required">
-          <option value="0">Selecione uma categoria:</option>
+        <select skip_default_ids="false" allow_method_names_outside_object="true" name="answer[category_id]" id="answer_category_id" class="form-control">
+          <option value="">Selecione uma categoria:</option>
           <%= inside_layout "categories/category_select", {categ: Category.all, selected: @answer.category} do %>
             <%= yield %>
           <% end %>
