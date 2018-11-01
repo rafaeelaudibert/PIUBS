@@ -2,6 +2,7 @@
 
 class ControversiesController < ApplicationController
   before_action :set_controversy, only: %i[show edit update destroy]
+  before_action :authenticate_user!
   before_action :filter_role
 
   # GET /controversies
@@ -211,7 +212,7 @@ class ControversiesController < ApplicationController
       redirect_to denied_path unless admin?
     elsif %w[new create index destroy].include? action
       redirect_to denied_path unless admin? || support_user? || company_user? ||
-                                     city_user? || unity_user?
+                                     city_user? || ubs_user?
     elsif action == 'show'
       unless (company_user? && @controversy.company_user_id == current_user.id) ||
              (ubs_user? && @controversy.unity_user_id == current_user.id) ||

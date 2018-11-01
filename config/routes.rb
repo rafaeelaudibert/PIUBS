@@ -5,7 +5,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
 
   scope '/apoioaempresas' do # rubocop:disable Metrics/BlockLength
     # /apoioaempresas
-    get '/', to: 'calls#index' # Apoio a Empresas root
+    get '/', to: 'calls#index', as: 'apoio_root' # Apoio a Empresas root
 
     # /apoioaempresas/attachments
     resources :attachments do
@@ -89,6 +89,10 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   scope '/controversias' do
+    # /controversias
+    get '/', to: 'controversies#index', as: 'controversias_root' # Controversias root
+
+
     resources :controversies do
       collection do
         post ':id/company_user/:user_id', to: 'controversies#company_user',
