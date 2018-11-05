@@ -11,7 +11,9 @@
   <li <%= "class=active" if current_page?(replies_path) || current_page?(answers_path) || current_page?(attachments_path) || current_page?(categories_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-dashboard"></i> Misc <i class="fa arrow"></i><%end%>
     <ul class="sidebar-nav collapse">
       <li> <%= link_to(replies_path, class: 'nav-item nav-link') do %> <i class="fa fa-pencil"></i> Respostas <%end%></li>
+      <li> <%= link_to(feedbacks_path, class: 'nav-item nav-link') do %> <i class="fa fa-bookmark"></i> Pareceres <%end%></li>
       <li> <%= link_to(attachments_path, class: 'nav-item nav-link') do %> <i class="fa fa-files-o"></i> Anexos <%end%></li>
+
     </ul>
   </li>
   <li <%= "class=active" if current_page?(users_path) || current_page?(new_user_invitation_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Colaboradores <i class="fa arrow"></i><%end%>
