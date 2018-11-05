@@ -4,7 +4,7 @@ class Users::InvitationsController < Devise::InvitationsController
   before_action :admin_only, only: :new
   before_action :update_sanitized_params, only: :update
   before_action :create_sanitized_params, only: :create
-  before_action :set_roles_allowed, only: :new
+  before_action :set_roles_allowed, only: %i[new create]
 
   def new
     @role = params[:role] || @roles_allowed[0] if @roles_allowed.length == 1
