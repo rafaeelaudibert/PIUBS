@@ -1,0 +1,103 @@
+<div class="required_info"></div>
+<br/>
+<%= form_with(model: feedback, local: true) do |form| %>
+<% if feedback.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(feedback.errors.count, "error") %>
+      prohibited this feedback from being saved:</h2>
+    <ul>
+      <% feedback.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+<div style="max-width: 850px">
+  <%= form.text_field :controversy_id, type: 'hidden', value: @controversy.protocol, class: 'form-control', required: true %>
+
+  <div class="field">
+    <%= form.label :description, 'Descrição', class: 'required' %>
+    <%= form.text_area :description, id:'tinymce', class: 'tinymce', :rows => 40, :cols => 120%>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :files, 'Arquivos (selecione todos os arquivos necessários pressionando a tecla CTRL)' %>
+    <%= form.text_field :files, id:'uuid-files-feedback', style: 'display: none'%>
+    <div id="feedback-dropzone" class="future-dropzone">
+      <div class="dz-default dz-message">
+        Arraste arquivos aqui para adicioná-los
+      </div>
+    </div>
+  </div>
+
+  <%= form.submit 'Enviar Feedback e Fechar Controvérsia', class: 'btn btn-primary btn-sm' %>
+  <button id="cancel-feedback" type="button" class="btn btn-danger btn-sm">Cancelar</button>
+</div>
+<script>
+  let feedbackFileIds = [];
+  let dropFeedback;
+  $(document).ready(() => {
+
+    // Adds the actual class, to prevent errors
+    document.querySelectorAll('.future-dropzone').forEach(d => d.classList.add('dropzone'));
+
+      // grap our upload form by its id
+    dropFeedback = $('#feedback-dropzone').dropzone({
+        url: '/attachments',
+
+        // restrict image size to a maximum 20MB
+        maxFilesize: 20,
+
+        // restrict to the maximum of 3 files
+        maxFiles: 3,
+
+        // Translations
+        dictCancelUpload: 'Cancelar Upload',
+        dictCancelUploadConfirmation: 'Deseja mesmo cancelar o Upload?',
+        dictRemoveFile: 'Remover arquivo',
+        dictDefaultMessage: 'Arraste arquivos aqui para adicioná-los',
+        dictFallbackMessage: 'Esse browser não suporta o anexo de arquivos.',
+        dictFileTooBig: 'Tamanho dos anexos excedido',
+        dictInvalidFileType: 'Extensão de arquivo Inválida',
+        dictMaxFilesExceeded: 'Quantidade de arquivos excedida',
+
+        // show remove links on each image upload
+        addRemoveLinks: true,
+
+        // if the upload was successful
+        success: (file, response) => {
+            // find the remove button link of the uploaded file and give it an id
+            // based of the attachmentID response from the server
+            $(file.previewTemplate).find('.dz-remove').attr('id', response.attachmentID);
+
+            // Add to array
+            feedbackFileIds.push(response.attachmentID);
+            $('#uuid-files-feedback').val(feedbackFileIds);
+
+            // add the dz-success class (the green tick sign)
+            $(file.previewElement).addClass("dz-success");
+
+        },
+        //when the remove button is clicked
+        removedfile: file => {
+
+            // grap the id of the uploaded file we set earlier
+            let id = $(file.previewTemplate).find('.dz-remove').attr('id');
+
+            // Remove from array
+            feedbackFileIds = feedbackFileIds.filter(uuid => uuid != id)
+            $('#uuid-files-feedback').val(feedbackFileIds);
+
+            // make a DELETE ajax request to delete the file
+            $.ajax({
+                type: 'DELETE',
+                url: '/attachments/' + id,
+                success: () => $(file.previewTemplate).fadeOut(),
+                error: e => console.error(e)
+            });
+        }
+    });
+  });
+
+</script>
+<% end %>

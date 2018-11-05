@@ -15,6 +15,7 @@ class ControversiesController < ApplicationController
   # GET /controversies/1.json
   def show
     @reply = Reply.new
+    @feedback = Feedback.new
     @user_creator = begin
                       User.find(@controversy[@controversy.creator + '_user_id']).name
                     rescue
