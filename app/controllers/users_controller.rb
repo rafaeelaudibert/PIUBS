@@ -20,12 +20,12 @@ class UsersController < ApplicationController
                                           persistence_id: false) || return
 
     if current_user.try(:admin?)
-      @users = @filterrific.find.page(params[:page])
+      @users = @filterrific.find.page(params[:page]).limit(999999)
     elsif current_user.try(:call_center_admin?) ||
           current_user.try(:city_admin?) ||
           current_user.try(:company_admin?) ||
           current_user.try(:ubs_admin?)
-      @users = @filterrific.find.where(invited_by_id: current_user.id).page(params[:page])
+      @users = @filterrific.find.where(invited_by_id: current_user.id).page(params[:page]).limit(99)
     end
   end
 
@@ -101,6 +101,6 @@ class UsersController < ApplicationController
   end
 
   def secure_params
-    params.require(:user).permit(:role, :name, :cpf, :sei, :cnes, :city_id, :last_name)
+    params.require(:user).permit(:role, :name, :cpf, :sei, :cnes, :city_id, :last_name, :system)
   end
 end
