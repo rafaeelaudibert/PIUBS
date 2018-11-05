@@ -343,9 +343,12 @@
 
   <script>
     const cleanMCE = () => {
-      tinymce.EditorManager.execCommand('mceRemoveEditor', true, 'tinymce');
-      tinymce.EditorManager.execCommand('mceAddEditor', true, 'tinymce');
-      $('#tinymce_ifr').css('height', '300px');
+      tinymce.EditorManager.execCommand('mceRemoveEditor', true, 'tinymce-reply');
+      tinymce.EditorManager.execCommand('mceAddEditor', true, 'tinymce-reply');
+      tinymce.EditorManager.execCommand('mceRemoveEditor', true, 'tinymce-feedback');
+      tinymce.EditorManager.execCommand('mceAddEditor', true, 'tinymce-feedback');
+      $('#tinymce-reply_ifr').css('height', '300px');
+      $('#tinymce-feedback_ifr').css('height', '300px');
     }
 
     // Reply buttons
