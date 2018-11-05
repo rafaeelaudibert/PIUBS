@@ -12,30 +12,7 @@
 </td>
 <% if current_user.try(:admin?) %>
   <td class="user">
-    <%=
-      if user.role == "admin"
-        $mask_role = "Administrador"
-      elsif user.role == "company_admin"
-        $mask_role = "Empresa[Adm]"
-      elsif user.role == "company_user"
-        $mask_role = "Empresa[Usu]"
-      elsif user.role == "city_admin"
-        $mask_role = "Município"
-      elsif user.role == "ubs_admin"
-        $mask_role = "UBS[Adm]"
-      elsif user.role == "ubs_user"
-        $mask_role = "UBS[Usu]"
-      elsif user.role == "call_center_admin"
-        $mask_role = "Suporte[Adm]"
-      elsif user.role == "call_center_user"
-        $mask_role = "Suporte[Usu]"
-      elsif user.role == "faq_inserter"
-        $mask_role = 'Criador de FAQ'
-      else
-        $mask_role = "Não informado"
-      end
-      $mask_role
-    %>
+      <%= t "activerecord.enums.user.role.min.#{user.role}" if user.role %>
   </td>
 <% end %>
 <td class="user">
