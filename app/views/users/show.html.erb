@@ -1,10 +1,32 @@
-<h3>Usuário</h3>
-<p>Nome:
-  <%= @user.name + " #{@user.last_name}" if @user.name %></p>
+<h4 class="display-5">Usuário</h4>
+
+<br />
+
+<h6><%= @user.name + " #{@user.last_name}" if @user.name %></h6>
+
+<br />
+
 <p>E-mail:
   <%= @user.email if @user.email %></p>
 <p>CPF:
   <%= @user.cpf if @user.cpf %></p>
+<p>Perfil de Acesso:
+  <%= t "activerecord.enums.user.role.#{@user.role}" if @user.role %></p>
+
+<% if @user.city_id %>
+  <p><%= "Município: #{@user.city_id}" %></p>
+<% end %>
+<% if @user.cnes %>
+  <p><%= "UBS: #{@user.cnes}" %></p>
+<% end %>
+<% if @user.sei %>
+  <p><%= "Empresa: #{@user.sei}" %></p>
+<% end %>
+<p>Acesso ao Sistema:
+  <%= "Apoio à Empresas" %></p>
+
+<hr />
+
 <p>Cadastrado em:
   <%= @user.invitation_accepted_at.strftime("%d %b %y - %H:%M:%S") if @user.invitation_accepted_at %></p>
 <p>Último login:
