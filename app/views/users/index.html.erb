@@ -7,70 +7,8 @@
   </div>
 <% end %>
 
-<%= form_for_filterrific @filterrific do |f| %>
-  <div class="left form-group" style="width:64%; display:inline-block">
-    <% if current_user.try(:admin?) %>
-      <div class="form-group" style="display: inline-block; margin-bottom: 0.5em">
-        <%= f.label :filterrific_with_company, 'Filtro por Empresa' %>
-        <%= f.select(:with_company, @filterrific.select_options[:with_company], {multiple: true, include_blank: "Empresa"}, class: 'form-control filterrific') %>
-      </div>
-      &nbsp;&nbsp;&nbsp;&nbsp;
-      <div class="form-group" style="display: inline-block; margin-bottom: 0.5em">
-        <%= f.label :filterrific_with_state, 'Filtro por Estado' %>
-        <%= f.select(:with_state, @filterrific.select_options[:with_state], {multiple: true, include_blank: "Estado"}, class: 'form-control filterrific') %>
-      </div>
-      &nbsp;&nbsp;&nbsp;&nbsp;
-      <div class="form-group" style="display: inline-block; margin-bottom: 0.5em">
-        <%= f.label :filterrific_with_city, 'Filtro por Cidade' %>
-        <%= f.select(:with_city, @filterrific.select_options[:with_city], {multiple: true}, class: 'form-control filterrific') %>
-      </div>
-      &nbsp;&nbsp;<br/>
-      <div class="form-group" style="display: inline-block; margin-bottom: 0.5em">
-        <%= f.label :filterrific_with_role, 'Filtro por Role' %>
-        <%= f.select(:with_role, @filterrific.select_options[:with_role], {multiple: true, include_blank: "Perfil"}, class: 'form-control filterrific') %>
-      </div>
-      &nbsp;&nbsp;
-      <div class="form-group" style="display: inline-block; margin-bottom: 0.5em">
-        <%= f.label :filterrific_with_status_adm, 'Filtro por Status' %>
-        <%= f.select(:with_status_adm, @filterrific.select_options[:with_status_adm], {multiple: true, include_blank: "Todos"}, class: 'form-control filterrific') %>
-      </div>
-      &nbsp;&nbsp;
-    <% end %>
+  <%= render 'filters' %>
 
-    <% unless current_user.try(:admin?) %>
-      <div class="form-group" style="display: inline-block; margin-bottom: 0.5em">
-        <%= f.label :filterrific_with_status, 'Filtro por Status' %>
-        <%= f.select(:with_status, @filterrific.select_options[:with_status], {multiple: true, include_blank: "Todos"}, class: 'form-control filterrific') %>
-      </div>
-      &nbsp;&nbsp;
-    <% end %>
-
-    <div class="form-group" style="display: inline-block; margin-bottom: 0.5em">
-      <%= f.label :filterrific_sorted_by_name, 'Filtro por Nome' %>
-      <%= f.select(:sorted_by_name, @filterrific.select_options[:sorted_by_name], {multiple: true}, class: 'form-control filterrific') %>
-    </div>
-
-    <br/>
-    <%= (link_to 'Desfazer filtros',
-                 reset_filterrific_url,
-                 class: 'btn btn-danger',
-                 style: 'margin-top: 0.375em') if params[:filterrific] %>
-  </div>
-
-
-  <div class="right input-group" style="width: 35%; margin: 6.5em auto 0 !important">
-    <input name="filterrific[search_query]" id="filterrific_search_query"
-           class="form-control mr-sm-2" type="search" aria-label="Search">
-    <label>
-      <i class="fa fa-search"></i>
-      &nbsp;Pesquisar Usuários
-    </label>
-     <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
-  </div>
-  <%= f.submit "Mostrar",
-               id: 'mostrar-filter',
-               class: 'btn btn-link invisible right' %>
-<%end%>
   <hr class="under-header" style="margin-top: <%= params[:filterrific] ? '15em' : '11em'%>"/>
 
 
