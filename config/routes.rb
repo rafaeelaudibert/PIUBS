@@ -12,7 +12,6 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   get '404', to: 'application#page_not_found', as: 'not_found'
   get '422', to: 'application#acess_denied', as: 'denied'
 
-  
   # /attachments
   resources :attachments do
     collection do
@@ -39,9 +38,9 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   resources :companies, param: :sei do
     collection do
       get ':sei/states', to: 'companies#states',
-                        as: 'company_states'
+                         as: 'company_states'
       get ':sei/users', to: 'companies#users',
-                       as: 'company_users'
+                        as: 'company_users'
       get ':id/cities/:state_id', to: 'companies#cities',
                                   as: 'company_cities'
       get ':id/unities/:city_id', to: 'companies#unities',
@@ -76,11 +75,11 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   # /states
   resources :states
 
-  scope '/apoioaempresas' do # rubocop:disable Metrics/BlockLength
+  scope '/apoioaempresas' do
     # /apoioaempresas
     get '/', to: 'calls#index', as: 'apoio_root' # Apoio a Empresas root
 
-    #/apoioaempresas/faq
+    # /apoioaempresas/faq
     get 'faq', to: 'answers#faq', as: 'faq'
 
     # /apoioaempresas/calls
@@ -104,13 +103,12 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     # /controversias
     get '/', to: 'controversies#index', as: 'controversias_root' # Controversias root
 
-
     resources :controversies do
       collection do
         post ':id/company_user/:user_id', to: 'controversies#company_user',
                                           as: 'company_user'
         post ':id/city_user/:user_id', to: 'controversies#city_user',
-                                        as: 'city_user'
+                                       as: 'city_user'
         post ':id/unity_user/:user_id', to: 'controversies#unity_user',
                                         as: 'unity_user'
         post ':id/support_user/:user_id', to: 'controversies#support_user',
