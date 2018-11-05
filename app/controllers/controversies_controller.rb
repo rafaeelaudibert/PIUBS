@@ -2,6 +2,7 @@
 
 class ControversiesController < ApplicationController
   before_action :set_controversy, except: %i[index new create]
+  before_action :set_user, only: %i[company_user city_user support_user unity_user]
   before_action :authenticate_user!
   before_action :filter_role
 
@@ -18,7 +19,7 @@ class ControversiesController < ApplicationController
     @feedback = Feedback.new
     @user_creator = begin
                       User.find(@controversy[@controversy.creator + '_user_id']).name
-                    rescue
+                    rescue StandardError
                       'Sem usuário criador (Relate ao suporte)'
                     end
   end
@@ -75,8 +76,6 @@ class ControversiesController < ApplicationController
 
   # POST /:id/company_user/:user_id
   def company_user
-    @user = User.find(params[:user_id])
-
     if !@controversy.company_user.nil?
       @controversy.company_user_id = nil
       redirect_to @controversy,
@@ -92,8 +91,6 @@ class ControversiesController < ApplicationController
 
   # POST /:id/city_user/:user_id
   def city_user
-    @user = User.find(params[:user_id])
-
     if !@controversy.city_user.nil?
       @controversy.city_user_id = nil
       redirect_to @controversy,
@@ -109,17 +106,11 @@ class ControversiesController < ApplicationController
 
   # POST /:id/unity_user/:user_id
   def unity_user
-    @user = User.find(params[:user_id])
-
     if !@controversy.unity_user.nil?
       @controversy.unity_user_id = nil
       redirect_to @controversy,
                   notice: (@controversy.save ? 'Usuário removido' : 'Erro na remoção de usuário')
-    elsif @controversy.cnes == nil
-      @controversy.unity_user = @user
-      redirect_to @controversy,
-                  notice: (@controversy.save ? 'Usuário adicionado' : 'Erro na adição de usuário')
-    elsif @user.cnes == @controversy.cnes
+    elsif @controversy.cnes.nil? || @user.cnes == @controversy.cnes
       @controversy.unity_user = @user
       redirect_to @controversy,
                   notice: (@controversy.save ? 'Usuário adicionado' : 'Erro na adição de usuário')
@@ -130,13 +121,11 @@ class ControversiesController < ApplicationController
 
   # POST /:id/support_user/:user_id
   def support_user
-    @user = User.find(params[:user_id])
-
     if !@controversy.support_2.nil?
       @controversy.support_2_user_id = nil
       redirect_to @controversy,
                   notice: (@controversy.save ? 'Usuário removido' : 'Erro na remoção de usuário')
-    elsif @user.call_center_user? || @user.call_center_admin? || @user.admin?
+    elsif support_like?(@user)
       @controversy.support_2 = @user
       redirect_to @controversy,
                   notice: (@controversy.save ? 'Usuário adicionado' : 'Erro na adição de usuário')
@@ -150,6 +139,10 @@ class ControversiesController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_controversy
     @controversy = Controversy.find(params[:id])
+  end
+
+  def set_user
+    @user = User.find(params[:user_id])
   end
 
   def retrieve_files(parameters)
