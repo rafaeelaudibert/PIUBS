@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ReplyMailer < ApplicationMailer
+class CallReplyMailer < ApplicationMailer
   def notify(reply, current_user)
     @reply = reply
     @call = Call.find(@reply.repliable_id)

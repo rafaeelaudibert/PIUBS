@@ -20,9 +20,18 @@ class Controversy < ApplicationRecord
 
   before_create :generate_protocol
 
+  def all_users
+    [self.company_user_id, self.unity_user_id,
+     self.city_user_id, self.support_1_user_id,
+     self.support_2_user_id].reject{ |id| id.nil? }
+                            .map { |user_id| User.find(user_id) }
+  end
+
   protected
 
   def generate_protocol
     self.protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
   end
+
+
 end

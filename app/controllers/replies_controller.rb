@@ -37,7 +37,7 @@ class RepliesController < ApplicationController
 
     if @reply.save
       create_file_links @reply, files
-      ReplyMailer.notify(@reply, current_user).deliver_later
+      send_mail @reply, current_user
       redirect_to create_path(@reply), notice: 'Resposta adicionada com sucesso.'
     else
       render :new
@@ -123,6 +123,16 @@ class RepliesController < ApplicationController
   def create_path(reply)
     id = reply.repliable_id
     reply.repliable_type == 'Call' ? call_path(id) : controversy_path(id)
+  end
+
+  def send_mail(reply, current_user)
+    if reply.repliable.class.name == 'Call'
+      CallReplyMailer.notify(@reply, current_user).deliver_later
+    else
+      reply.repliable.all_users.each do |user|
+        ControversyReplyMailer.notify(@reply, current_user, user).deliver_later
+      end
+    end
   end
 
   # Never trust parameters from internet, only allow the white list through.

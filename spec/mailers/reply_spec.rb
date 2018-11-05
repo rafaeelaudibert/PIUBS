@@ -2,9 +2,9 @@
 
 require 'rails_helper'
 
-RSpec.describe ReplyMailer, type: :mailer do
+RSpec.describe CallReplyMailer, type: :mailer do
   describe 'reply_mailer' do
-    let(:mail) { ReplyMailer.reply_mailer }
+    let(:mail) { CallReplyMailer.reply_mailer }
 
     it 'renders the headers' do
       expect(mail.subject).to eq('Reply mailer')
@@ -18,7 +18,7 @@ RSpec.describe ReplyMailer, type: :mailer do
   end
 
   describe 'notification' do
-    let(:mail) { ReplyMailer.notification }
+    let(:mail) { CallReplyMailer.notification }
 
     it 'renders the headers' do
       expect(mail.subject).to eq('Notification')

@@ -1,0 +1,16 @@
+PIUBS
+
+Olá, <%= @user.name %>, uma das controvérsias que você participa tem uma nova resposta.
+
+Protocolo: <%= @controversy.protocol %>
+
+Controvérsia: <%= @controversy.title %>
+
+Título do Atendimento: <%= @controversy.title %>
+
+Nova resposta:
+<%= @reply.description.html_safe %>
+
+<%= @reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+
+<%= link_to "Clique aqui para acessar o PIUBS e ver o atendimento completo", @link %>
