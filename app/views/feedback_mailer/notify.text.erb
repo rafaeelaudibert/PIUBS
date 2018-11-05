@@ -1,0 +1,14 @@
+PIUBS
+
+Olá, <%= @user.name %>, uma das controvérsias que você participa recebeu um parecel final.
+
+Protocolo: <%= @controversy.protocol %>
+
+Controvérsia: <%= @controversy.title %>
+
+Título do Atendimento: <%= @controversy.title %>
+
+Parecer final:
+<%= @feedback.description.html_safe %>
+
+<%= link_to "Clique aqui para acessar o PIUBS e ver o atendimento completo", @link %>

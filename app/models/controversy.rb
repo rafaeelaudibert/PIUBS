@@ -13,6 +13,7 @@ class Controversy < ApplicationRecord
   has_many :attachment_links
   has_many :attachments, through: :attachment_links
   has_many :replies, as: :repliable
+  has_one :feedback
 
   enum creator: %i[company unity city support]
   enum category: %i[hardware software]
@@ -25,6 +26,12 @@ class Controversy < ApplicationRecord
      self.city_user_id, self.support_1_user_id,
      self.support_2_user_id].reject{ |id| id.nil? }
                             .map { |user_id| User.find(user_id) }
+  end
+
+  def involved_users
+    [self.company_user_id, self.unity_user_id,
+     self.city_user_id].reject { |id| id.nil? }
+                       .map { |user_id| User.find(user_id) }
   end
 
   protected

@@ -115,5 +115,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
                                           as: 'support_user'
       end
     end
+
+    resources :feedbacks
   end
 end

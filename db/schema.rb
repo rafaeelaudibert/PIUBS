@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_05_160600) do
+ActiveRecord::Schema.define(version: 2018_11_05_181800) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "fuzzystrmatch"
@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(version: 2018_11_05_160600) do
     t.datetime "updated_at", null: false
     t.uuid "attachment_id"
     t.string "controversy_id"
+    t.integer "feedback_id"
     t.index ["answer_id"], name: "index_attachment_links_on_answer_id"
     t.index ["call_id"], name: "index_attachment_links_on_call_id"
     t.index ["reply_id"], name: "index_attachment_links_on_reply_id"
@@ -138,7 +139,14 @@ ActiveRecord::Schema.define(version: 2018_11_05_160600) do
     t.datetime "updated_at", null: false
     t.integer "support_1_user_id"
     t.integer "support_2_user_id"
-    t.string "feedback"
+  end
+
+  create_table "feedbacks", force: :cascade do |t|
+    t.string "description"
+    t.bigint "controversy_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["controversy_id"], name: "index_feedbacks_on_controversy_id"
   end
 
   create_table "replies", force: :cascade do |t|
@@ -219,6 +227,7 @@ ActiveRecord::Schema.define(version: 2018_11_05_160600) do
   add_foreign_key "answers", "categories"
   add_foreign_key "answers", "users"
   add_foreign_key "attachment_links", "controversies", primary_key: "protocol"
+  add_foreign_key "attachment_links", "feedbacks"
   add_foreign_key "calls", "answers"
   add_foreign_key "calls", "categories"
   add_foreign_key "calls", "cities"

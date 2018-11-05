@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ControversiesController < ApplicationController
-  before_action :set_controversy, only: %i[show edit update destroy]
+  before_action :set_controversy, except: %i[index new create]
   before_action :authenticate_user!
   before_action :filter_role
 
@@ -74,7 +74,6 @@ class ControversiesController < ApplicationController
 
   # POST /:id/company_user/:user_id
   def company_user
-    @controversy = Controversy.find(params[:id])
     @user = User.find(params[:user_id])
 
     if !@controversy.company_user.nil?
@@ -92,7 +91,6 @@ class ControversiesController < ApplicationController
 
   # POST /:id/city_user/:user_id
   def city_user
-    @controversy = Controversy.find(params[:id])
     @user = User.find(params[:user_id])
 
     if !@controversy.city_user.nil?
@@ -110,7 +108,6 @@ class ControversiesController < ApplicationController
 
   # POST /:id/unity_user/:user_id
   def unity_user
-    @controversy = Controversy.find(params[:id])
     @user = User.find(params[:user_id])
 
     if !@controversy.unity_user.nil?
@@ -132,7 +129,6 @@ class ControversiesController < ApplicationController
 
   # POST /:id/support_user/:user_id
   def support_user
-    @controversy = Controversy.find(params[:id])
     @user = User.find(params[:user_id])
 
     if !@controversy.support_2.nil?
@@ -146,7 +142,6 @@ class ControversiesController < ApplicationController
     else
       redirect_to @controversy, alert: 'Usuário sem permissão para ser adicionado'
     end
-
   end
 
   private
@@ -203,7 +198,8 @@ class ControversiesController < ApplicationController
     params.require(:controversy).permit(:title, :description, :protocol, :closed_at, :sei,
                                         :contract_id, :city_id, :cnes, :company_user_id,
                                         :unity_user_id, :creator, :category, :complexity,
-                                        :support_1_id, :support_2_id, :user_creator, :files)
+                                        :support_1_id, :support_2_id, :user_creator, :feedback,
+                                        :files)
   end
 
   def filter_role
