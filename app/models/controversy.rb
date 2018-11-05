@@ -22,16 +22,13 @@ class Controversy < ApplicationRecord
   before_create :generate_protocol
 
   def all_users
-    [self.company_user_id, self.unity_user_id,
-     self.city_user_id, self.support_1_user_id,
-     self.support_2_user_id].reject(&:nil?)
-                            .map { |user_id| User.find(user_id) }
+    [company_user_id, unity_user_id, city_user_id, support_1_user_id,
+     support_2_user_id].reject(&:nil?).map { |user_id| User.find(user_id) }
   end
 
   def involved_users
-    [self.company_user_id, self.unity_user_id,
-     self.city_user_id].reject(&:nil?)
-                       .map { |user_id| User.find(user_id) }
+    [company_user_id, unity_user_id, city_user_id].reject(&:nil?)
+                                                  .map { |user_id| User.find(user_id) }
   end
 
   protected

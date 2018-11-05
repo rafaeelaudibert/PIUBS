@@ -114,11 +114,8 @@ class CallsController < ApplicationController
   # POST /calls/reopen_call
   def reopen_call
     @call = Call.find(params[:call])
-    @call.reopened!
-    @call.update(reopened_at: Time.now)
     @answer = @call.answer
-    @call.answer_id = nil
-    @reply = Reply.find(params[:reply_id]).update(last_call_ref_reply_reopened_at: Time.now)
+    @call = update_call @call, params
 
     if @call.save
       # Retira a ultima answer caso ela nao esteja no FAQ,
@@ -150,6 +147,16 @@ class CallsController < ApplicationController
       with_city: Call.options_for_with_city,
       with_ubs: Unity.where(city_id: @contracts.map(&:city_id)).map { |u| [u.name, u.cnes] },
       with_company: Company.all.map(&:sei) }
+  end
+
+  def update_call(call, params)
+    call.reopened!
+    call.update(reopened_at: Time.now)
+    call.answer_id = nil
+
+    Reply.find(params[:reply_id]).update(last_call_ref_reply_reopened_at: Time.now)
+
+    call
   end
 
   def filtered_calls
