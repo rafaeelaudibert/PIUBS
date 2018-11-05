@@ -13,7 +13,7 @@
     <div class="form-group" style="display: inline-block; margin-bottom: 0">
       <%= f.label :filterrific_with_status, 'Filtro por Status'%>
       <%= f.select(:with_status, @filterrific.select_options[:with_status],
-                   {multiple: true, include_blank: "Todos Status"},
+                   {multiple: true},
                    class: 'form-control filterrific') %>
     </div>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -46,7 +46,7 @@
       <div class="form-group" style="display: inline-block; margin-bottom: 0.5em">
         <%= f.label :filterrific_with_city, 'Filtro por Cidades'%>
         <%= f.select(:with_city, @filterrific.select_options[:with_city],
-                     {multiple: true, include_blank: "Todas Cidades"},
+                     {multiple: true},
                      class: 'form-control filterrific') %>
       </div>
     <% end %>

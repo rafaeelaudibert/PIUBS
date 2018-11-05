@@ -51,6 +51,7 @@ class CallsController < ApplicationController
 
     if @call.save
       create_file_links @call, files
+
       CallMailer.notify(@call, @call.user).deliver_later
       redirect_to @call, notice: 'Call was successfully created.'
     else
@@ -117,15 +118,15 @@ class CallsController < ApplicationController
     @call.update(reopened_at: Time.now)
     @answer = @call.answer
     @call.answer_id = nil
+    @reply = Reply.find(params[:reply_id]).update(last_call_ref_reply_reopened_at: Time.now)
+
 
     if @call.save
-
       # Retira a ultima answer caso ela nao esteja no FAQ,
       # e exclui seus attachment_links
       delete_final_answer @answer if @answer.try(:faq) == false
 
-      redirect_back(fallback_location: root_path,
-                    notice: 'Atendimento reaberto')
+      redirect_back(fallback_location: root_path, notice: 'Atendimento reaberto')
     else
       redirect_back(fallback_location: root_path,
                     notice: 'Ocorreu um erro ao tentar reabrir o atendimento')
