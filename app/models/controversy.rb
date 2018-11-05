@@ -24,13 +24,13 @@ class Controversy < ApplicationRecord
   def all_users
     [self.company_user_id, self.unity_user_id,
      self.city_user_id, self.support_1_user_id,
-     self.support_2_user_id].reject{ |id| id.nil? }
+     self.support_2_user_id].reject(&:nil?)
                             .map { |user_id| User.find(user_id) }
   end
 
   def involved_users
     [self.company_user_id, self.unity_user_id,
-     self.city_user_id].reject { |id| id.nil? }
+     self.city_user_id].reject(&:nil?)
                        .map { |user_id| User.find(user_id) }
   end
 
@@ -39,6 +39,4 @@ class Controversy < ApplicationRecord
   def generate_protocol
     self.protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
   end
-
-
 end

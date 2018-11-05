@@ -120,7 +120,6 @@ class CallsController < ApplicationController
     @call.answer_id = nil
     @reply = Reply.find(params[:reply_id]).update(last_call_ref_reply_reopened_at: Time.now)
 
-
     if @call.save
       # Retira a ultima answer caso ela nao esteja no FAQ,
       # e exclui seus attachment_links
