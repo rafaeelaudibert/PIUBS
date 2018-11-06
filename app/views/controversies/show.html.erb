@@ -239,15 +239,18 @@
       </div>
     <% end %>
 
+    <div class="row justify-content-around mb-3">
     <% if @controversy.replies.length > 6 && @controversy.open? %>
-      <div class="row justify-content-around mb-3">
-          <button type="button" id="reply-bottom" class="col-md-4 btn btn-primary btn-lg">Adicionar Nova Resposta</button>
-          <% if admin? || support_user? %>
-            <button type="button" id="faq-bottom" class="col-md-4 btn btn-primary btn-lg">Adicionar Resposta do FAQ</button>
-            <button type="button" id="feedback-bottom" class="col-md-3 btn btn-primary btn-lg">Adicionar Parecer Final</button>
-          <% end %>
-      </div>
+      <button type="button" id="reply-bottom" class="col-md-4 btn btn-primary btn-lg">Adicionar Nova Resposta</button>
+      <% if admin? || support_user? %>
+        <button type="button" id="faq-bottom" class="col-md-4 btn btn-primary btn-lg">Adicionar Resposta do FAQ</button>
+      <% end %>
     <% end %>
+
+    <% if (admin? || support_user?) && @controversy.open? %>
+      <button type="button" id="feedback-bottom" class="col-md-3 btn btn-primary btn-lg">Adicionar Parecer Final</button>
+    <% end %>
+    </div>
   </div>
 </div>
 
