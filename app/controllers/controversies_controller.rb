@@ -97,7 +97,7 @@ class ControversiesController < ApplicationController
   # POST calls/unlink_controversy
   def unlink_controversy
     if @controversy.support_1 == User.find(params[:user_id])
-      @controversy.support_user = nil
+      @controversy.support_1 = nil
       if @controversy.save
         redirect_back(fallback_location: root_path,
                       notice: 'Controvérsia liberada')
