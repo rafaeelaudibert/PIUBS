@@ -8,17 +8,40 @@
 
     <nav class="menu">
       <ul class="sidebar-menu metismenu" id="sidebar-menu">
-        <%= render 'layouts/sidebar_links_for_auth' %>
+        <% if request.env['PATH_INFO'].split('/')[1] == 'controversias' %>
+          <%= render 'layouts/sidebar_links_for_auth_controversias' %>
+        <% elsif request.env['PATH_INFO'].split('/')[1] == 'apoioaempresas' %>
+          <%= render 'layouts/sidebar_links_for_auth_apoio' %>
+        <% else %>
+          <%= render 'layouts/sidebar_links_for_auth' %>
+        <% end %>
       </ul>
     </nav>
   </div>
   <footer class="sidebar-footer">
     <ul class="sidebar-menu metismenu" id="customize-menu">
+      <% if request.env['PATH_INFO'].split('/')[1] != 'controversias' %>
+      <li>
+        <%= link_to controversias_root_path do %>
+          <i class="fa fa-exchange icon"></i>
+          Acessar Controvérsias
+        <% end %>
+      </li>
+      <% end %>
+      <% if request.env['PATH_INFO'].split('/')[1] != 'apoioaempresas' %>
+      <li>
+        <%= link_to apoio_root_path do %>
+          <i class="fa fa-exchange icon"></i>
+          Acessar Apoio a Empresas
+        <% end %>
+      </li>
+      <% end %>
       <li>
         <%= link_to destroy_user_session_path, :method=>'delete' do %>
-        <i class="fa fa-power-off icon"></i>
-        Sair
-      <% end %>
-    </li>
-  </ul>
-</footer>
+          <i class="fa fa-power-off icon"></i>
+          Sair
+        <% end %>
+      </li>
+    </ul>
+  </footer>
+</div>

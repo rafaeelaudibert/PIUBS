@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
-
 require 'faker'
 require 'logger'
 require 'cpf_cnpj'
@@ -292,28 +287,106 @@ def seed_calls
   Rails.logger.info('[FINISH] -- Calls insertion')
 end
 
+def seed_controversies
+  cities = City.all
+  companies = Company.all
+
+  Rails.logger.info('[START]  -- Controversy insertion')
+  (1..15).each do |_|
+    city = cities.sample
+    unity = city.unities.sample
+    company = companies.sample
+    contract = city.contract
+    protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
+    controversy = Controversy.new(title: Faker::Lorem.sentence(15, true, 2),
+                                  description: Faker::Lorem.sentence(80, true, 6),
+                                  status: %w[open closed].sample,
+                                  protocol: protocol,
+                                  city: city,
+                                  unity: unity,
+                                  sei: company.sei,
+                                  contract: contract,
+                                  creator: 'company',
+                                  company_user_id: User.where(sei: company.sei).sample.id,
+                                  city_user_id: User.where(city: city, cnes: nil).sample.try(:id),
+                                  unity_user_id: Random.rand > 0.6 ? User.where(cnes: unity.cnes).sample.try(:id) : nil,
+                                  id: protocol)
+    if controversy.save
+      Rails.logger.debug('Inserted a new controversy')
+      seed_feedback(controversy) if controversy.closed?
+    else
+      Rails.logger.error('ERROR creating a CONTROVERSY')
+      Rails.logger.error(controversy.errors.full_messages)
+    end
+  end
+  Rails.logger.info('[FINISH] -- Controversies insertion')
+end
+
+def seed_feedback(controversy)
+  feedback = Feedback.new(description: Faker::Lorem.sentence(150, true, 6),
+                          controversy_id: controversy.id)
+  if feedback.save
+    Rails.logger.debug("Inserted a new feedback for controversy #{controversy.protocol}")
+  else
+    Rails.logger.error('ERROR creating a FEEDBACK')
+    Rails.logger.error(feedback.errors.full_messages)
+  end
+
+end
+
 def seed_replies
   calls = Call.all
+  controversies = Controversy.all
   call_center_users = User.where(role: %w[call_center_admin call_center_user])
   company_users = User.where(role: %w[company_admin company_user])
+  city_users = User.where(role: %w[city_admin])
+  unity_users = User.where(role: %w[ubs_admin ubs_user])
 
   Rails.logger.info('[START]  -- Replies (and FAQ) insertion')
-  (1..2000).each do |_|
-    random = Random.rand
-    user = random > 0.60 ? call_center_users.sample : company_users.sample
-    call = calls.sample
-    reply = Reply.new(protocol: call.protocol,
-                      description: Faker::Lorem.sentence(25, true, 0),
-                      user_id: user.id,
-                      status: [0, 1, 2].sample,
-                      category: random > 0.60 ? 'support' : 'reply',
-                      faq: random > 0.90)
-    if reply.save
-      Rails.logger.debug("Inserted a new reply to the protocol #{reply.protocol}")
-      seed_faq_from_replies(call, reply) if reply.faq
-    else
-      Rails.logger.error('ERROR creating a REPLY')
-      Rails.logger.error(reply.errors.full_messages)
+  (1..4000).each do |_|
+    random1 = Random.rand
+    random2 = Random.rand
+    if random1 > 0.50 # Reply para call
+      user = random2 > 0.60 ? call_center_users.sample : company_users.sample
+      call = calls.sample
+      reply = Reply.new(repliable_id: call.protocol,
+                        repliable_type: 'Call',
+                        description: Faker::Lorem.sentence(25, true, 0),
+                        user_id: user.id,
+                        status: [0, 1, 2].sample,
+                        category: random2 > 0.60 ? 'support' : 'company',
+                        faq: random2 > 0.90)
+      if reply.save
+        Rails.logger.debug("Inserted a new reply to the call #{call.protocol}")
+        seed_faq_from_replies(call, reply) if reply.faq
+      else
+        Rails.logger.error('ERROR creating a REPLY')
+        Rails.logger.error(reply.errors.full_messages)
+      end
+    else # Reply para Controvérsia
+      user, role = if random2 < 0.25
+                     [call_center_users.sample, 'support']
+                   elsif random2 < 0.5
+                     [company_users.sample, 'company']
+                   elsif random2 < 0.75
+                     [city_users.sample, 'city']
+                   else
+                     [unity_users.sample, 'unity']
+                   end
+      controversy = controversies.sample
+             reply = Reply.new(repliable_id: controversy.protocol,
+                               repliable_type: 'Controversy',
+                               description: Faker::Lorem.sentence(25, true, 0),
+                               user_id: user.id,
+                               status: %w[open closed].sample,
+                               category: role,
+                               faq: false)
+             if reply.save
+               Rails.logger.debug("Inserted a new reply to the controversy #{controversy.protocol}")
+             else
+               Rails.logger.error('ERROR creating a REPLY')
+               Rails.logger.error(reply.errors.full_messages)
+             end
     end
   end
   Rails.logger.info('[FINISH] -- Replies (and FAQ) insertion')
@@ -344,14 +417,9 @@ def main
   seed_categories
   seed_answers
   seed_calls
+  seed_controversies
   seed_replies
   Rails.logger.warn('[FINISH] SEED')
 end
 
 main
-
-private
-
-def company_user?(user)
-  %w[company_admin company_user].include?(user.role)
-end

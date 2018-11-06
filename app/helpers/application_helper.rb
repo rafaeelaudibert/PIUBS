@@ -19,27 +19,38 @@ module ApplicationHelper
   end
 
   # User helper
-  def admin?
-    current_user.try(:admin?)
+  def admin?(user = current_user)
+    user.try(:admin?)
   end
 
-  def ubs_user?
-    current_user.try(:ubs_admin?) || current_user.try(:ubs_user?)
+  def admin_like?(user = current_user)
+    user.try(:admin?) || user.try(:ubs_admin?) ||
+      user.try(:company_admin?) || user.try(:call_center_admin?) ||
+      user.try(:city_admin?)
   end
 
-  def company_user?
-    current_user.try(:company_user?) || current_user.try(:company_admin?)
+  def support_like?(user = current_user)
+    user.try(:admin?) || user.try(:call_center_user?) ||
+      user.try(:call_center_admin?)
   end
 
-  def support_user?
-    current_user.try(:call_center_user?) || current_user.try(:call_center_admin?)
+  def ubs_user?(user = current_user)
+    user.try(:ubs_admin?) || user.try(:ubs_user?)
   end
 
-  def city_user?
-    current_user.try(:city_admin?)
+  def company_user?(user = current_user)
+    user.try(:company_user?) || user.try(:company_admin?)
   end
 
-  def faq_inserter?
-    current_user.try(:faq_inserter?)
+  def support_user?(user = current_user)
+    user.try(:call_center_user?) || user.try(:call_center_admin?)
+  end
+
+  def city_user?(user = current_user)
+    user.try(:city_admin?)
+  end
+
+  def faq_inserter?(user = current_user)
+    user.try(:faq_inserter?)
   end
 end

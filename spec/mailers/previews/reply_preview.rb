@@ -4,11 +4,11 @@
 class ReplyPreview < ActionMailer::Preview
   # Preview this email at http://localhost:3000/rails/mailers/reply/reply_mailer
   def reply_mailer
-    ReplyMailer.reply_mailer
+    CallReplyMailer.reply_mailer
   end
 
   # Preview this email at http://localhost:3000/rails/mailers/reply/notification
   def notification
-    ReplyMailer.notification
+    CallReplyMailer.notification
   end
 end

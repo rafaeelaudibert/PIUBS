@@ -53,47 +53,13 @@ class AnswersController < ApplicationController
   # POST /answers
   def create
     ans_params = answer_params
-    files = ans_params.delete(:files).split(',') if ans_params[:files]
+
+    files = retrieve_files ans_params
     @answer = Answer.new(ans_params)
 
     if @answer.save
-      if params[:question_id]
-        @call = Call.find(params[:question_id])
-        @call.closed!
-        @call.update(finished_at: Time.now)
-        @reply = Reply.find(params[:reply_id])
-        @reply.update(last_call_ref_reply_closed_at: Time.now)
-        # Retira a answer caso ela nao esteja no FAQ + attach_links
-        if @call.answer_id && @call.answer.faq == false
-          @old_answer = Answer.find(@call.answer_id)
-          @old_answer.attachment_links.each(&:destroy)
-
-          # Atualiza o answer_id
-          @call.answer_id = @answer.id
-          AnswerMailer.notify(@call, @answer, current_user).deliver_later
-          raise 'Não conseguimos salvar a answer de maneira correta.' unless @call.save
-
-          # Destroi a anterior
-          @old_answer.destroy
-        else
-          # Atualiza o answer_id
-          @call.answer_id = @answer.id
-          AnswerMailer.notify(@call, @answer, current_user).deliver_later
-          raise 'Não conseguimos salvar a answer de maneira correta.' unless @call.save
-        end
-
-      end
-
-      files.each do |file_uuid|
-        @link = AttachmentLink.new(attachment_id: file_uuid,
-                                   answer_id: @answer.id,
-                                   source: 'answer')
-        unless @link.save
-          raise 'Não consegui criar o link entre arquivo e resposta final.'\
-                ' Por favor tente mais tarde'
-        end
-      end
-
+      mark_as_final_answer @answer if params[:question_id]
+      create_file_links @answer, files
       redirect_to (@call || faq_path || root_path), notice: 'Resposta final marcada com sucesso.'
     else
       render :new
@@ -103,36 +69,18 @@ class AnswersController < ApplicationController
   # PATCH/PUT /answers/1
   # PATCH/PUT /answers/1.json
   def update
-    respond_to do |format|
-      ans_params = answer_params
-      files = ans_params.delete(:files).split(',') if ans_params[:files]
+    ans_params = answer_params
+    files = retrieve_files ans_params
 
-      # Remove todos os links que foram removidos
-      @answer.attachment_links.each do |link|
-        unless files.include?(link)
-          link.destroy
-          files.delete(link)
-        end
-      end
+    if @answer.update(ans_params)
 
-      # Cria novos links
-      files.each do |file_uuid|
-        @link = AttachmentLink.new(attachment_id: file_uuid,
-                                   answer_id: @answer.id,
-                                   source: 'answer')
-        unless @link.save
-          raise 'Não consegui criar o link entre arquivo e resposta final.'\
-                ' Por favor tente mais tarde'
-        end
-      end
+      # Remove do DB os links que foram removidos do front_end
+      @answer.attachment_links.each { |link| remove_link(link, files) unless files.include?(link) }
 
-      if @answer.update(ans_params)
-        format.html { redirect_to @answer, notice: 'Resposta atualizada com sucesso.' }
-        format.json { render :show, status: :ok, location: @answer }
-      else
-        format.html { render :edit }
-        format.json { render json: @answer.errors, status: :unprocessable_entity }
-      end
+      create_file_links @answer, files
+      redirect_to @answer, notice: 'Resposta atualizada com sucesso.'
+    else
+      render :edit
     end
   end
 
@@ -150,9 +98,8 @@ class AnswersController < ApplicationController
   def search
     respond_to do |format|
       format.js do
-        render json: Answer.where('faq = true')
-                           .search_for(params[:search])
-          .with_pg_search_rank.limit(15)
+        render json: Answer.where(faq: true)
+                           .search_for(params[:search]).with_pg_search_rank.limit(15)
       end
     end
   end
@@ -167,12 +114,7 @@ class AnswersController < ApplicationController
                        { filename: attachment.filename,
                          type: attachment.content_type,
                          id: attachment.id,
-                         bytes: Answer.connection
-                                      .select_all(Answer.sanitize_sql_array(
-                                                    ['SELECT octet_length(file_contents) FROM '\
-                                                     'attachments WHERE attachments.id = ?',
-                                                     attachment.id]
-                                                  ))[0]['octet_length'] }
+                         bytes: retrieve_file_bytes(attachment) }
                      end)
       end
     end
@@ -191,6 +133,59 @@ class AnswersController < ApplicationController
     params.require(:answer).permit(:keywords, :question, :answer, :category_id,
                                    :user_id, :faq, :question_id,
                                    :reply_attachments, :files)
+  end
+
+  def retrieve_files(ans_params)
+    ans_params.delete(:files).split(',') if ans_params[:files]
+  end
+
+  def mark_as_final_answer(answer)
+    @call = Call.find(params[:question_id])
+    @call.closed!
+
+    # Retira a answer caso ela nao esteja no FAQ + attach_links
+    if @call.answer.try(:faq) == false
+      @old_answer = Answer.find(@call.answer_id)
+      @old_answer.attachment_links.each(&:destroy)
+
+      update_answer_id @call, answer
+      @old_answer.destroy
+    else
+      update_answer_id @call, answer
+    end
+  end
+
+  def update_answer_id(call, answer)
+    call.answer_id = answer.id
+    raise 'Não conseguimos salvar a answer de maneira correta.' unless call.save
+
+    AnswerMailer.notify(call, answer, current_user).deliver_later
+  end
+
+  def create_file_links(answer, files)
+    files.each do |file_uuid|
+      @link = AttachmentLink.new(attachment_id: file_uuid,
+                                 answer_id: answer.id,
+                                 source: 'answer')
+      unless @link.save
+        raise 'Não consegui criar o link entre arquivo e resposta final.'\
+              ' Por favor tente mais tarde'
+      end
+    end
+  end
+
+  def remove_links(link, files)
+    link.destroy
+    files.delete(link)
+  end
+
+  def retrieve_file_bytes(attachment)
+    Answer.connection
+          .select_all(Answer.sanitize_sql_array(
+                        ['SELECT octet_length(file_contents) FROM '\
+                         'attachments WHERE attachments.id = ?',
+                         attachment.id]
+                      ))[0]['octet_length']
   end
 
   def filter_role

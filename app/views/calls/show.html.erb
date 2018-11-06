@@ -195,8 +195,8 @@
     <% first_reply = false %>
   <% end %>
 
-  <% if reply.category == 'reply' %>
 
+  <% if reply.category == 'company' %>
     <div class="card card-default mb-3" style="box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
       <div class="card-header">
         <em class="fa fa-comment-o m-2"></em>
@@ -521,7 +521,7 @@ if (log)
       const replyId = parent.parentNode.children[0].children[1].innerText.split('#')[1];
 
       $.ajax({
-        url: '/apoioaempresas/replies/attachments/' + replyId,
+        url: '/replies/attachments/' + replyId,
         type: "GET",
         dataType: "json",
         success: data => {

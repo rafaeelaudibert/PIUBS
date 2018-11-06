@@ -19,7 +19,7 @@
   button.addEventListener('click', () => {
     if (textField.value.length > 3) {
       jQuery.ajax({
-        url: '/apoioaempresas/answers/query/' + textField.value.split('.').join(' '),
+        url: '/answers/query/' + textField.value.split('.').join(' '),
         type: "GET",
         dataType: "json",
         success: data => {
@@ -67,7 +67,7 @@
     $("#on-faq").prop('checked', true);
 
     $.ajax({
-      url: '/apoioaempresas/answers/attachments/' + id,
+      url: '/answers/attachments/' + id,
       type: "GET",
       dataType: "json",
       success: data => {

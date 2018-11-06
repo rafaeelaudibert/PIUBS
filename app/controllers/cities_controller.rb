@@ -76,6 +76,13 @@ class CitiesController < ApplicationController
     end
   end
 
+  # GET /cities/:id/users
+  def users
+    respond_to do |format|
+      format.js { render json: User.where(city_id: params[:id], cnes: nil).order('id ASC') }
+    end
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.

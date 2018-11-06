@@ -32,26 +32,13 @@ class RepliesController < ApplicationController
   # POST /replies
   def create
     rep_params = reply_params
-    files = rep_params.delete(:files).split(',') if rep_params[:files]
-
-    @reply = Reply.new(rep_params)
-    @reply.user_id = current_user.id
-    @reply.status = @reply.call.status || 'Sem Status'
-    @reply.category = (support_user? || current_user.try(:admin?)) ? 'support' : 'reply'
+    files = retrieve_files rep_params
+    @reply = create_reply rep_params
 
     if @reply.save
-      files.each do |file_uuid|
-        @link = AttachmentLink.new(attachment_id: file_uuid, reply_id: @reply.id, source: 'reply')
-
-        unless @link.save
-          raise 'Não consegui criar o link entre arquivo e a resposta.'\
-                ' Por favor tente mais tarde'
-        end
-      end
-
-      ReplyMailer.notify(@reply, current_user).deliver_later
-      redirect_to call_path(@reply.protocol),
-                  notice: 'Resposta adicionada com sucesso.'
+      create_file_links @reply, files
+      send_mail @reply, current_user
+      redirect_to create_path(@reply), notice: 'Resposta adicionada com sucesso.'
     else
       render :new
     end
@@ -60,7 +47,7 @@ class RepliesController < ApplicationController
   # PATCH/PUT /replies/1
   def update
     if @reply.update(reply_params)
-      redirect_to @reply, notice: 'Reply was successfully updated.'
+      redirect_to @reply, notice: 'Resposta atualizada com sucesso.'
     else
       render :edit
     end
@@ -69,7 +56,7 @@ class RepliesController < ApplicationController
   # DELETE /replies/1
   def destroy
     @reply.destroy
-    redirect_to replies_url, notice: 'Reply was successfully destroyed.'
+    redirect_to replies_url, notice: 'Resposta apagada com sucesso.'
   end
 
   # GET /replies/attachments/:id
@@ -82,12 +69,7 @@ class RepliesController < ApplicationController
                        { filename: attachment.filename,
                          type: attachment.content_type,
                          id: attachment.id,
-                         bytes: Reply.connection
-                                     .select_all(Reply.sanitize_sql_array(
-                                                   ['SELECT octet_length(file_contents) FROM '\
-                                                    'attachments WHERE attachments.id = ?',
-                                                    attachment.id]
-                                                 ))[0]['octet_length'] }
+                         bytes: retrieve_file_bytes(attachment) }
                      end)
       end
     end
@@ -100,9 +82,62 @@ class RepliesController < ApplicationController
     @reply = Reply.find(params[:id])
   end
 
+  def retrieve_files(rep_params)
+    rep_params[:files] ? rep_params.delete(:files).split(',') : []
+  end
+
+  def create_reply(rep_params)
+    reply = Reply.new(rep_params)
+    reply.user_id = current_user.id
+    reply.status = reply.repliable.status || 'Sem Status'
+    reply.category = if support_user? || current_user.try(:admin?)
+                       'support'
+                     elsif company_user?
+                       'company'
+                     else
+                       city_user? ? 'city' : 'unity'
+                     end
+    reply
+  end
+
+  def create_file_links(reply, files)
+    files.each do |file_uuid|
+      @link = AttachmentLink.new(attachment_id: file_uuid, reply_id: reply.id, source: 'reply')
+
+      unless @link.save
+        raise 'Não consegui criar o link entre arquivo e a resposta.'\
+              ' Por favor tente mais tarde'
+      end
+    end
+  end
+
+  def retrieve_file_bytes(attachment)
+    Reply.connection
+         .select_all(Reply.sanitize_sql_array(
+                       ['SELECT octet_length(file_contents) FROM '\
+                        'attachments WHERE attachments.id = ?',
+                        attachment.id]
+                     ))[0]['octet_length']
+  end
+
+  def create_path(reply)
+    id = reply.repliable_id
+    reply.repliable_type == 'Call' ? call_path(id) : controversy_path(id)
+  end
+
+  def send_mail(reply, current_user)
+    if reply.repliable.class.name == 'Call'
+      CallReplyMailer.notify(@reply, current_user).deliver_later
+    else
+      reply.repliable.all_users.each do |user|
+        ControversyReplyMailer.notify(@reply, current_user, user).deliver_later
+      end
+    end
+  end
+
   # Never trust parameters from internet, only allow the white list through.
   def reply_params
-    params.require(:reply).permit(:faq_attachments, :protocol,
+    params.require(:reply).permit(:faq_attachments, :repliable_id, :repliable_type,
                                   :description, :user_id, :faq, :files)
   end
 
