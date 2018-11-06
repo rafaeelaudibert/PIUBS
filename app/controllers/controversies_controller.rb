@@ -85,7 +85,7 @@ class ControversiesController < ApplicationController
         @controversy.support_1 = @user
         if @controversy.save
           redirect_back(fallback_location: root_path,
-                        notice: 'Agora essa controvérsia é seu')
+                        notice: 'Agora essa controvérsia é sua')
         else
           redirect_back(fallback_location: root_path,
                         notice: 'Ocorreu um erro ao tentar pegar a controvérsia')
