@@ -131,8 +131,8 @@
       </div>
         <hr>
       <div class="row mr-1 justify-content-around">
-        <%= button_to 'Soltar atendimento', unlink_controversies_path(id: @controversy.id, user_id: current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Soltar este atendimento' }, method: :post,
-                      form_class: 'col-md-5', class: "btn btn-danger w-100" %>
+        <%= button_to 'Soltar Controvérsia', unlink_controversies_path(id: @controversy.id, user_id: current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Soltar este atendimento' }, method: :post,
+                      form_class: 'col-md-12', class: "btn btn-danger col-sm-3 right" %>
       </div>
     <% elsif support_like? %>
       <% if @controversy.open? %>
@@ -144,7 +144,7 @@
             <% end %>
           <% elsif !admin? %>
             <hr/>
-            <%= button_to 'Pegar atendimento', link_controversies_path(id: @controversy.id, user_id: current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Soltar este atendimento' }, method: :post,
+            <%= button_to 'Pegar Controvérsia', link_controversies_path(id: @controversy.id, user_id: current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Soltar este atendimento' }, method: :post,
                           class: "btn right", :style => "color:#FFF; background-color: #084B8A; margin-bottom: 1em;" %>
           <% end %>
       <% else %> <!-- Chamado fechado -->
@@ -162,18 +162,51 @@
   </div> <!-- Card block END -->
 </div>
 
+<% if @controversy.feedback %>
+  <!-- Card do Parecer final -->
+  <div class="card card-primary">
+    <div class="card-header" id="headingTwo">
+      <div class="header-block">
+        <p class="title" style="color: white">
+          <i class="fa fa-bookmark mr-2"></i>
+          Parecer Final
+        </p>
+      </div>
+    </div>
+    <div class="card-block">
+      <%= @controversy.feedback.description.html_safe %>
+      <% if @controversy.feedback.attachments.length > 0 %>
+        <hr/>
+        <strong class='m-2'>Attachments</strong><br/>
+        <div class='mt-2'>
+          <% @controversy.feedback.attachments.each do |_attachment| %>
+            <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+              <i class="fa fa-file-text mr-1"></i>
+              <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
 <!-- Card das replies -->
 <div class="card card-primary">
   <div class="card-block">
 
-    <% if @controversy.open? && @controversy.support_1 == current_user %>
-      <div class="row justify-content-around mb-3">
-          <button type="button" id="reply-top" class="col-md-5 btn btn-primary btn-lg">Adicionar Nova Resposta</button>
+    <% if @controversy.open? %>
+      <% if [@controversy.support_1, @controversy.support_2, @controversy.company_user, @controversy.unity_user, @controversy.city_user].include? current_user %>
+        <div class="row justify-content-around mb-3">
+          <button type="button" id="reply-top" class="col-md-4 col-sm-5 btn btn-primary btn-lg">Adicionar Nova Resposta</button>
 
-          <% if admin? || support_user? %>
-            <button type="button" id="faq-top" class="col-md-5 btn btn-primary btn-lg">Adicionar Resposta do FAQ</button>
+          <% if @controversy.support_1 == current_user %>
+            <button type="button" id="faq-top" class="col-md-4 col-sm-5 btn btn-primary btn-lg">Pesquisar no FAQ</button>
+            <button type="button" id="feedback-bottom" class="col-md-3 col-sm-5 btn btn-primary btn-lg">Adicionar Parecer Final</button>
           <% end %>
-      </div>
+        </div>
+      <% end %>
+
 
       <!-- Card para escrever resposta -->
       <div class="card card-primary" style="display: none" id="reply_box">
@@ -190,7 +223,7 @@
         </div>
       </div>
 
-      <% if admin? || support_user? %>
+      <% if support_like? %>
         <!-- Card para pegar informações do FAQ -->
         <div class="card card-primary" style="display: none" id="faq_box">
           <div class="card-header pl-2">
@@ -221,7 +254,14 @@
       <% end %>
     <% end %>
 
-    <% @controversy.replies.order(created_at: 'ASC').each do |reply| %>
+    <% if @controversy.replies.length == 0 %>
+      <!-- Zero replies message -->
+      <div class="row justify-content-around">
+        <h3 class="mt-3"> Nenhuma resposta para mostrar ainda </h4>
+      </div>
+    <% end %>
+
+    <% @controversy.replies.order(created_at: :desc).each do |reply| %>
       <div class="card card-default mb-3 <%= reply.category %>-border">
         <div class="card-header">
           <em class="fa fa-comment-o m-2"></em>
@@ -268,51 +308,16 @@
       </div>
     <% end %>
 
-    <div class="row justify-content-around mb-3">
     <% if @controversy.replies.length > 6 && @controversy.open? && @controversy.support_1 == current_user %>
-      <button type="button" id="reply-bottom" class="col-md-4 btn btn-primary btn-lg">Adicionar Nova Resposta</button>
-      <% if admin? || support_user? %>
-        <button type="button" id="faq-bottom" class="col-md-4 btn btn-primary btn-lg">Adicionar Resposta do FAQ</button>
-      <% end %>
+      <div class="row justify-content-around mb-3">
+          <button type="button" id="reply-bottom" class="col-md-4 col-sm-5 btn btn-primary btn-lg">Adicionar Nova Resposta</button>
+          <% if admin? || support_user? %>
+            <button type="button" id="faq-bottom" class="col-md-4 col-sm-5 btn btn-primary btn-lg">Pesquisar no FAQ</button>
+          <% end %>
+      </div>
     <% end %>
-
-    <% if (admin? || support_user?) && @controversy.open? && @controversy.support_1 == current_user %>
-      <button type="button" id="feedback-bottom" class="col-md-3 btn btn-primary btn-lg">Adicionar Parecer Final</button>
-    <% end %>
-    </div>
   </div>
 </div>
-
-
-<% if @controversy.feedback %>
-  <!-- Card do Parecer final -->
-  <div class="card card-primary">
-    <div class="card-header" id="headingTwo">
-      <div class="header-block">
-        <p class="title" style="color: white">
-          <i class="fa fa-bookmark mr-2"></i>
-          Parecer Final
-        </p>
-      </div>
-    </div>
-    <div class="card-block">
-      <%= @controversy.feedback.description.html_safe %>
-      <% if @controversy.feedback.attachments.length > 0 %>
-        <hr/>
-        <strong class='m-2'>Attachments</strong><br/>
-        <div class='mt-2'>
-          <% @controversy.feedback.attachments.each do |_attachment| %>
-            <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
-              <i class="fa fa-file-text mr-1"></i>
-              <%= truncate(_attachment.filename, length: 10, omission: '...')%>
-            <% end %>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
-  </div>
-<% end %>
-
 
 <% if @controversy.open? %>
   <% if current_user.admin? || current_user.call_center_user? || current_user.call_center_admin? %>
