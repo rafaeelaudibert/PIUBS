@@ -1,3 +1,6 @@
+<%= tinymce_assets %>
+<%= tinymce language: 'pt_BR' %>
+
 <div class="required_info"></div><br/>
 <%= form_with(model: controversy, local: true) do |form| %>
 <% if controversy.errors.any? %>
@@ -21,7 +24,7 @@
 
     <div class="field">
       <%= form.label :description, 'Descrição', class: 'required' %>
-      <%= form.text_field :description, class: 'form-control', required: true %>
+      <%= form.text_area :description, id:'tinymce', class: 'tinymce', :rows => 25, :cols => 120%>
     </div>
 
     <% if company_user?  %>
