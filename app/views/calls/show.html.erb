@@ -185,18 +185,21 @@
 </div>
 <div class="card-block">
 
-<% first_reply = true %>
-<% @call.replies.order(:id).each do |reply| %>
+<% @call.replies.order(id: :desc).each do |reply| %>
 
-  <% if first_reply %>
-    <span style="width:100%; opacity: 0.8; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.#{reply.status}" %>">
-      <%= t "activerecord.enums.call.status.#{reply.status}" if reply.status%>
-      em
-      <%= @call.created_at.strftime("%d %b %y - %H:%M:%S") if @call.created_at %>
-    </span>
-    <% first_reply = false %>
+  <% if reply.last_call_ref_reply_closed_at %>
+    <% if reply.last_call_ref_reply_reopened_at && reply.last_call_ref_reply_reopened_at > reply.last_call_ref_reply_closed_at %>
+      <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.reopened" %>">
+        <%= t "activerecord.enums.call.status.reopened"%> em <%= reply.last_call_ref_reply_reopened_at.strftime("%d %b %y - %H:%M:%S") %>
+      </span>
+    <% end %>
   <% end %>
 
+  <% if reply.last_call_ref_reply_closed_at %>
+    <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.closed" %>">
+      <%= t "activerecord.enums.call.status.closed"%> em <%= reply.last_call_ref_reply_closed_at.strftime("%d %b %y - %H:%M:%S") %>
+    </span>
+  <% end %>
 
   <% if reply.category == 'company' %>
     <div class="card card-default mb-3" style="box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
@@ -295,21 +298,15 @@
     </div>
   <% end # end if reply.category == 'support' %>
 
-  <% if reply.last_call_ref_reply_closed_at %>
-    <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.closed" %>">
-      <%= t "activerecord.enums.call.status.closed"%> em <%= reply.last_call_ref_reply_closed_at.strftime("%d %b %y - %H:%M:%S") %>
-    </span>
-  <% end %>
-
-  <% if reply.last_call_ref_reply_closed_at %>
-    <% if reply.last_call_ref_reply_reopened_at && reply.last_call_ref_reply_reopened_at > reply.last_call_ref_reply_closed_at %>
-      <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.reopened" %>">
-        <%= t "activerecord.enums.call.status.reopened"%> em <%= reply.last_call_ref_reply_reopened_at.strftime("%d %b %y - %H:%M:%S") %>
-      </span>
-    <% end %>
-  <% end %>
-
 <% end #end call.replies.each %>
+
+<% if @call.replies.order(id: :desc).last %>
+  <span style="width:100%; opacity: 0.8; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.#{@call.replies.order(id: :desc).last.status}" %>">
+    <%= t "activerecord.enums.call.status.#{@call.replies.order(id: :desc).last.status}" if @call.replies.order(id: :desc).last.status%>
+    em
+    <%= @call.created_at.strftime("%d %b %y - %H:%M:%S") if @call.created_at %>
+  </span>
+<% end %>
 
   <% if @call.open? || @call.reopened? %>
     <% if @my_call %>
