@@ -14,16 +14,20 @@ class ApplicationController < ActionController::Base
 
   private
 
+  def infinite_loop
+    request.fullpath != '/' && request.fullpath != '/user/sign_in'
+  end
+
   # Its important that the location is NOT stored if:
   # - The request method is not GET (non idempotent)
-  # - The request is handled by a Devise controller such as Devise::SessionsController as that could cause an
-  #    infinite redirect loop.
+  # - The request is handled by a Devise controller such as Devise::SessionsController as
+  #    that could cause an infinite redirect loop.
   # - The request is an Ajax request as this can lead to very unexpected behaviour.
   # - The request will create an infinite loop
   def storable_location?
     request.get? && is_navigational_format? &&
       !devise_controller? && !request.xhr? &&
-      request.fullpath != '/' && request.fullpath != '/user/sign_in'
+      !infinite_loop?
   end
 
   def store_user_location!
