@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def infinite_loop
+  def infinite_loop?
     request.fullpath != '/' && request.fullpath != '/user/sign_in'
   end
 
