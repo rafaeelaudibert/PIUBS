@@ -134,7 +134,7 @@
         <p>
           Chamado fechado em <%= @call.finished_at.strftime("%d %b %y - %H:%M:%S") %>.
           <br>
-          Somente reabra caso a solução oferecida pelo atendente <br>não tenha resolvido o seu problema.</br>
+          Somente reabra caso a solução oferecida pelo atendente não tenha resolvido o seu problema.</br>
         </p>
       <% end %>
       <% if @call.replies.order(:id).last %>
