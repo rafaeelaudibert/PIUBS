@@ -105,6 +105,10 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
 
     resources :controversies do
       collection do
+        post 'link_controversy', to: 'controversies#link_controversy',
+                                 as: 'link'
+        post 'unlink_controversy', to: 'controversies#unlink_controversy',
+                                   as: 'unlink'
         post ':id/company_user/:user_id', to: 'controversies#company_user',
                                           as: 'company_user'
         post ':id/city_user/:user_id', to: 'controversies#city_user',

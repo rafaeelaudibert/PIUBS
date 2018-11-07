@@ -74,6 +74,43 @@ class ControversiesController < ApplicationController
     end
   end
 
+  # POST calls/link_controversy
+  def link_controversy
+    if @controversy.support_1
+      redirect_back(fallback_location: root_path,
+                    alert: 'Você não pode pegar uma controvérsia de outro usuário do suporte')
+    else
+      @user = User.find(params[:user_id])
+      if %w[admin call_center_user call_center_admin].include?(@user.role)
+        @controversy.support_1 = @user
+        if @controversy.save
+          redirect_back(fallback_location: root_path,
+                        notice: 'Agora essa controvérsia é sua')
+        else
+          redirect_back(fallback_location: root_path,
+                        notice: 'Ocorreu um erro ao tentar pegar a controvérsia')
+        end
+      end
+    end
+  end
+
+  # POST calls/unlink_controversy
+  def unlink_controversy
+    if @controversy.support_1 == User.find(params[:user_id])
+      @controversy.support_1 = nil
+      if @controversy.save
+        redirect_back(fallback_location: root_path,
+                      notice: 'Controvérsia liberada')
+      else
+        redirect_back(fallback_location: root_path,
+                      notice: 'Ocorreu um erro ao tentar liberar a controvérsia')
+      end
+    else
+      redirect_back(fallback_location: root_path,
+                    alert: 'Essa controvérsia pertence a outro usuário do suporte')
+    end
+  end
+
   # POST /:id/company_user/:user_id
   def company_user
     if !@controversy.company_user.nil?
