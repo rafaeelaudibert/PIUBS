@@ -127,10 +127,10 @@ class RepliesController < ApplicationController
 
   def send_mail(reply, current_user)
     if reply.repliable.class.name == 'Call'
-      CallReplyMailer.notify(@reply, current_user).deliver_later
+      ReplyMailer.call_reply(@reply, current_user).deliver_later
     else
       reply.repliable.all_users.each do |user|
-        ControversyReplyMailer.notify(@reply, current_user, user).deliver_later
+        ReplyMailer.controversy_reply(@reply, current_user, user).deliver_later
       end
     end
   end

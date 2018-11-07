@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def infinite_loop
+  def non_infinite_loop?
     request.fullpath != '/' && request.fullpath != '/user/sign_in'
   end
 
@@ -27,7 +27,7 @@ class ApplicationController < ActionController::Base
   def storable_location?
     request.get? && is_navigational_format? &&
       !devise_controller? && !request.xhr? &&
-      !infinite_loop?
+      non_infinite_loop?
   end
 
   def store_user_location!
