@@ -19,6 +19,11 @@
         <b><%= @unity.name %></b> (CNES: <b><%= @unity.cnes %></b>)</p>
   <% end %>
 
+  <% if @user.city_id %>
+    <p>Município:
+      <b><%= @city.name %> - <%= @state.abbr %></b></p>
+  <% end %>
+
   <% if @user.sei %>
       <p>Empresa:
         <b><%= @company.sei %></b> (SEI)</p>
