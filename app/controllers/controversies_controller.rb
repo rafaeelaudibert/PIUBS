@@ -43,7 +43,7 @@ class ControversiesController < ApplicationController
 
     if @controversy.save
       create_file_links @controversy, files
-      ControversyMailer.notify(@controversy.protocol, current_user.id).deliver_later
+      ControversyMailer.new(@controversy.protocol, current_user.id).deliver_later
       redirect_to @controversy, notice: 'Controvérsia criada com sucesso.'
     else
       render :new

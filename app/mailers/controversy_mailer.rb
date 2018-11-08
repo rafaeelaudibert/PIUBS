@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ControversyMailer < ApplicationMailer
-  def notify(controversy_id, user_id)
+  def new(controversy_id, user_id)
     @controversy = Controversy.find(controversy_id)
     @current_user = User.find(user_id)
     @link = "#{root_url}/controversias/controversies/#{@controversy.protocol}"
