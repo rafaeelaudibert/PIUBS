@@ -159,7 +159,7 @@ class AnswersController < ApplicationController
     call.answer_id = answer.id
     raise 'Não conseguimos salvar a answer de maneira correta.' unless call.save
 
-    AnswerMailer.notify(call, answer, current_user).deliver_later
+    AnswerMailer.new(call, answer, current_user).deliver_later
   end
 
   def create_file_links(answer, files)
