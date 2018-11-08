@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CallMailer < ApplicationMailer
-  def new(call, current_user)
+  def new_call(call, current_user)
     @call = call
     @current_user = current_user
     @link = "#{root_url}calls/#{@call.protocol}"

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AnswerMailer < ApplicationMailer
-  def new(call, answer, current_user)
+  def new_answer(call, answer, current_user)
     @call = call || Call.all.sample
     @call_user = call ? User.find(call.user_id) : User.find(current_user.id)
     @current_user = current_user
