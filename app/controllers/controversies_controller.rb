@@ -43,7 +43,7 @@ class ControversiesController < ApplicationController
 
     if @controversy.save
       create_file_links @controversy, files
-      ControversyMailer.new(@controversy.protocol, current_user.id).deliver_later
+      ControversyMailer.new_controversy(@controversy.protocol, current_user.id).deliver_later
       redirect_to @controversy, notice: 'Controvérsia criada com sucesso.'
     else
       render :new
@@ -119,6 +119,7 @@ class ControversiesController < ApplicationController
                   notice: (@controversy.save ? 'Usuário removido' : 'Erro na remoção de usuário')
     elsif @user.sei == @controversy.sei
       @controversy.company_user = @user
+      ControversyMailer.user_added(@controversy.id, @user.id).deliver_later
       redirect_to @controversy,
                   notice: (@controversy.save ? 'Usuário adicionado' : 'Erro na adição de usuário')
     else
@@ -132,8 +133,9 @@ class ControversiesController < ApplicationController
       @controversy.city_user_id = nil
       redirect_to @controversy,
                   notice: (@controversy.save ? 'Usuário removido' : 'Erro na remoção de usuário')
-    elsif @user.city_id == @controversy.city_id && @user.cnes.nil?
+    elsif city_user_eligible?
       @controversy.city_user = @user
+      ControversyMailer.user_added(@controversy.id, @user.id).deliver_later
       redirect_to @controversy,
                   notice: (@controversy.save ? 'Usuário adicionado' : 'Erro na adição de usuário')
     else
@@ -147,8 +149,9 @@ class ControversiesController < ApplicationController
       @controversy.unity_user_id = nil
       redirect_to @controversy,
                   notice: (@controversy.save ? 'Usuário removido' : 'Erro na remoção de usuário')
-    elsif @controversy.cnes.nil? || @user.cnes == @controversy.cnes
+    elsif unity_user_elegible?
       @controversy.unity_user = @user
+      ControversyMailer.user_added(@controversy.id, @user.id).deliver_later
       redirect_to @controversy,
                   notice: (@controversy.save ? 'Usuário adicionado' : 'Erro na adição de usuário')
     else
@@ -164,6 +167,7 @@ class ControversiesController < ApplicationController
                   notice: (@controversy.save ? 'Usuário removido' : 'Erro na remoção de usuário')
     elsif support_like?(@user)
       @controversy.support_2 = @user
+      ControversyMailer.user_added(@controversy.id, @user.id).deliver_later
       redirect_to @controversy,
                   notice: (@controversy.save ? 'Usuário adicionado' : 'Erro na adição de usuário')
     else
@@ -198,6 +202,15 @@ class ControversiesController < ApplicationController
     controversy[controversy.creator + '_user_id'] = user_creator_id || current_user.id
     controversy.support_1_user_id = current_user.id if admin? || support_user?
     controversy
+  end
+
+  def city_user_elegible?
+    @user.city_id == @controversy.city_id && @user.cnes.nil?
+  end
+
+  def unity_user_elegible?
+    (@controversy.cnes.nil? && @user.city_id == @controversy.city_id) ||
+      @user.cnes == @controversy.cnes
   end
 
   def map_role_to_creator

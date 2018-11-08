@@ -6,6 +6,8 @@ Protocolo: <%= @controversy.protocol %>
 
 Título da controvérsia: <%= @controversy.title %>
 
+Descrição da Controvérsia: <%= @controversy.description.html_safe %>
+
 <%= @controversy.created_at.strftime("%d %b %y - %H:%M:%S") %>
 
-<%= link_to "Clique aqui para acessar o PIUBS e visualizar o atendimento completo", @link %>
+<%= link_to "Clique aqui para acessar o PIUBS e visualizar a controvérsia completa", @link %>
