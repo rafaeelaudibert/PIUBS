@@ -21,6 +21,8 @@ class UsersController < ApplicationController
            @user == current_user
       redirect_to root_path, alert: 'Acesso Negado!'
     end
+    @company = Company.find(@user.sei) if @user.sei
+    @unity = Unity.find(@user.cnes) if @user.cnes
   end
 
   def update
@@ -53,9 +55,9 @@ class UsersController < ApplicationController
 
   def allowed_users
     if admin?
-      @filterrific.find.page(params[:page])
+      @filterrific.find.page(params[:page]).limit(999999)
     elsif admin_like?
-      @filterrific.find.where(invited_by_id: current_user.id).page(params[:page])
+      @filterrific.find.where(invited_by_id: current_user.id).page(params[:page]).limit(999999)
     end
   end
 
