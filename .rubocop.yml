@@ -3,6 +3,7 @@ AllCops:
     - 'db/schema.rb'
     - 'db/migrate/*'
     - 'db/seeds/*'
+    - 'bin/*'
 
 Metrics/ClassLength:
   Enabled: false
