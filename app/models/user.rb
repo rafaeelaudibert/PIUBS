@@ -7,14 +7,16 @@ class User < ApplicationRecord
   has_many :calls
   has_many :answer
 
+  # If update here, update to en.yml
   enum role: %i[admin city_admin faq_inserter
                 ubs_admin ubs_user
                 company_admin company_user
                 call_center_admin call_center_user]
 
+  # If update here, update to en.yml
   enum system: %i[companies controversies both]
 
-  
+
   validates_cpf_format_of :cpf, options: { allow_blank: true, allow_nil: true }
   validates :cpf, presence: true, uniqueness: true
 
