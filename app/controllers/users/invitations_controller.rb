@@ -51,12 +51,15 @@ class Users::InvitationsController < Devise::InvitationsController
     params[:user][:city_id] = sanitize_city_id
     params[:user][:state_id] = sanitize_state_id
     params[:user][:sei] = sanitize_sei
+    params[:user][:system] = sanitize_system
+  end
+
+  def sanitize_system
+    %w[company_admin company_user].include?(params[:user][:role]) ? params[:user][:system] : 1
   end
 
   def sanitize_cnes
-    return params[:user][:cnes] if %w[ubs_admin ubs_user].include?(params[:user][:role])
-
-    ''
+    %w[ubs_admin ubs_user].include?(params[:user][:role]) ? params[:user][:cnes] : ''
   end
 
   def sanitize_city_id
@@ -95,7 +98,7 @@ class Users::InvitationsController < Devise::InvitationsController
   end
 
   def create_sanitized_params
-    devise_parameter_sanitizer.permit(:invite, keys: %i[email role sei cnes city_id])
+    devise_parameter_sanitizer.permit(:invite, keys: %i[email role sei cnes city_id system])
   end
 
   def admin_only
