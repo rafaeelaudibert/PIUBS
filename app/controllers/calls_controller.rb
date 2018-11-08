@@ -52,7 +52,7 @@ class CallsController < ApplicationController
     if @call.save
       create_file_links @call, files
 
-      CallMailer.notify(@call, @call.user).deliver_later
+      CallMailer.new(@call, @call.user).deliver_later
       redirect_to @call, notice: 'Call was successfully created.'
     else
       render :new
