@@ -200,7 +200,7 @@ class ControversiesController < ApplicationController
     controversy.contract_id = controversy.city.contract.id
     controversy.creator ||= map_role_to_creator
     controversy[controversy.creator + '_user_id'] = user_creator_id || current_user.id
-    controversy.support_1_user_id = current_user.id if admin? || support_user?
+    controversy.support_1_user_id = current_user.id if support_user?
     controversy
   end
 
