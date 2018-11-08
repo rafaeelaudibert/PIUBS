@@ -78,6 +78,10 @@ en:
             company_user: "Empresa[Usu]"
             call_center_admin: "Suporte[Adm]"
             call_center_user: "Suporte[Usu]"
+        system:
+          companies: "Apoio à Empresas"
+          controversies: "Solução de Controvérsias"
+          both: "Apoio à Empresas e Solução de Controvérsias"
     general:
       ubs: "UBS"
       city: "Cidade"

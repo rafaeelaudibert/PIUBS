@@ -24,7 +24,7 @@ class UsersController < ApplicationController
     @company = Company.find(@user.sei) if @user.sei
     @unity = Unity.find(@user.cnes) if @user.cnes
     @city = City.find(@user.city_id) if @user.city_id
-    @state = State.find(@city.state_id) if @city.state_id
+    @state = State.find(@city.state_id) if @city
   end
 
   def update

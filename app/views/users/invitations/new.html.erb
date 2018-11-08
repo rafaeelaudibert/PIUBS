@@ -162,6 +162,15 @@
     <%= f.hidden_field :cnes, value: current_user.cnes %>
   <% end %>
 
+  <% unless current_user.ubs_admin? %>
+    <div class="form-group">
+      <%= f.label "Acesso aos sistemas", class: "required" %>
+      <%= f.radio_button :system, :companies, :checked => true %> Apoio à Empresas <br>
+      <%= f.radio_button :system, :controversies %> Solução de Controvérsias <Br>
+      <%= f.radio_button :system, :both %> Ambos
+    </div>
+  <% end %>
+
   <p><%= f.submit "Enviar convite", :class => 'btn btn-primary' %></p>
 <% end %>
 </div>
