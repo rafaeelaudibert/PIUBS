@@ -21,6 +21,18 @@ class Controversy < ApplicationRecord
 
   before_create :generate_protocol
 
+  filterrific(
+    default_filter_params: {},
+    available_filters: %i[search_query]
+  )
+
+  scope :search_query, lambda { |query|
+    return nil if query.blank?
+
+    query_search = "%#{query}%"
+    where('title ILIKE :search OR description ILIKE :search', search: query_search)
+  }
+
   def all_users
     [company_user_id, unity_user_id, city_user_id, support_1_user_id,
      support_2_user_id].reject(&:nil?).map { |user_id| User.find(user_id) }
