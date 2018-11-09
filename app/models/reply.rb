@@ -14,8 +14,8 @@ class Reply < ApplicationRecord
 
   scope :search_query, lambda { |query|
     return nil if query.blank?
+    return where(repliable_id: query) if query.class == Integer
 
-    query_search = "%#{query}%"
-    where('protocol ILIKE :search OR description ILIKE :search', search: query_search)
+    where('description ILIKE :search', search: "%#{query}%")
   }
 end
