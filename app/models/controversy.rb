@@ -34,6 +34,6 @@ class Controversy < ApplicationRecord
   protected
 
   def generate_protocol
-    self.protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
+    self.protocol = 0.seconds.from_now.strftime('%Y%m%d%H%M%S%L').to_i
   end
 end

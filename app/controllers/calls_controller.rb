@@ -151,10 +151,10 @@ class CallsController < ApplicationController
 
   def update_call(call, params)
     call.reopened!
-    call.update(reopened_at: Time.now)
+    call.update(reopened_at: 0.seconds.from_now)
     call.answer_id = nil
 
-    Reply.find(params[:reply_id]).update(last_call_ref_reply_reopened_at: Time.now)
+    Reply.find(params[:reply_id]).update(last_call_ref_reply_reopened_at: 0.seconds.from_now)
 
     call
   end

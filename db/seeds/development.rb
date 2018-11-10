@@ -261,7 +261,7 @@ def seed_calls
     city = City.find(ubs.city_id)
     contract = Contract.where(city_id: city.id).first
     user = User.where(sei: contract.sei).sample
-    protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
+    protocol = 0.seconds.from_now.strftime('%Y%m%d%H%M%S%L').to_i
     call = Call.new(title: Faker::Lorem.sentence(15, true, 2),
                     description: Faker::Lorem.sentence(80, true, 6),
                     version: ['1.0.0', '1.0.1', '2.0.0', '3.0.0-beta'].sample,
@@ -297,7 +297,7 @@ def seed_controversies
     unity = city.unities.sample
     company = companies.sample
     contract = city.contract
-    protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
+    protocol = 0.seconds.from_now.strftime('%Y%m%d%H%M%S%L').to_i
     controversy = Controversy.new(title: Faker::Lorem.sentence(15, true, 2),
                                   description: Faker::Lorem.sentence(80, true, 6),
                                   status: %w[open closed].sample,
