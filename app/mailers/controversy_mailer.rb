@@ -14,7 +14,7 @@ class ControversyMailer < ApplicationMailer
     @controversy = Controversy.find(controversy_id)
     @current_user = User.find(user_id)
     @link = "#{root_url}/controversias/controversies/#{@controversy.protocol}"
-    @user_reator = begin
+    @user_creator = begin
                       User.find(@controversy[@controversy.creator + '_user_id']).name
                     rescue StandardError
                       'Sem usuário criador (Relate ao suporte)'
