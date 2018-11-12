@@ -17,6 +17,6 @@ class Unity < ApplicationRecord
     return nil if query.blank?
     return where(cnes: query) if query.class == Integer
 
-    where('name ILIKE :search', search: "%#{query}%")
+    where('unities.name ILIKE :search', search: "%#{query}%")
   }
 end

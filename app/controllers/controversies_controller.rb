@@ -9,7 +9,15 @@ class ControversiesController < ApplicationController
   # GET /controversies
   # GET /controversies.json
   def index
-    @controversies = Controversy.all
+    (@filterrific = initialize_filterrific(
+      Controversy,
+      params[:filterrific],
+      select_options: { # em breve
+      },
+      persistence_id: false
+    )) || return
+    @controversies = @filterrific.find.page(params[:page])
+    # @controversies = Controversy.all
   end
 
   # GET /controversies/1

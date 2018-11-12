@@ -21,17 +21,17 @@
   <% if @call.open? %>
     Data de criação :
     <span class="badge badge-pill badge-dark m-2">
-      <%= @call.created_at.strftime("%d %b %y - %H:%M:%S") %>
+      <%= @call.created_at.strftime("%d %b %y - %H:%M:%S") if @call.created_at %>
     </span>
   <%elsif @call.reopened?%>
     Data de reabertura :
     <span class="badge badge-pill badge-dark m-2">
-      <%= @call.reopened_at.strftime("%d %b %y - %H:%M:%S") %>
+      <%= @call.reopened_at.strftime("%d %b %y - %H:%M:%S") if @call.reopened_at %>
     </span>
   <%elsif @call.closed?%>
     Data de fechamento :
     <span class="badge badge-pill badge-dark m-2">
-      <%= @call.finished_at.strftime("%d %b %y - %H:%M:%S") %>
+      <%= @call.finished_at.strftime("%d %b %y - %H:%M:%S") if @call.finished_at %>
     </span>
   <%end%>
 
@@ -134,12 +134,14 @@
         <p>
           Chamado fechado em <%= @call.finished_at.strftime("%d %b %y - %H:%M:%S") %>.
           <br>
-          Somente reabra caso a solução oferecida pelo atendente <br>não tenha resolvido o seu problema.</br>
+          Somente reabra caso a solução oferecida pelo atendente não tenha resolvido o seu problema.</br>
         </p>
       <% end %>
-    <a data-confirm="Tens certeza?" class="btn btn-danger btn-lg" rel="nofollow" data-method="post" href="/apoioaempresas/calls/reopen_call?call=<%= @call.id %>&reply_id=<%= @call.replies.order(:id).last.id %>">
-      Reabrir chamado
-    </a>
+      <% if @call.replies.order(:id).last %>
+        <a data-confirm="Tens certeza?" class="btn btn-danger btn-lg" rel="nofollow" data-method="post" href="/apoioaempresas/calls/reopen_call?call=<%= @call.id %>&reply_id=<%= @call.replies.order(:id).last.id %>">
+          Reabrir chamado
+        </a>
+      <% end %>
   <% end %>
 </div>
 <% end %>
@@ -183,18 +185,21 @@
 </div>
 <div class="card-block">
 
-<% first_reply = true %>
-<% @call.replies.order(:id).each do |reply| %>
+<% @call.replies.order(id: :desc).each do |reply| %>
 
-  <% if first_reply %>
-    <span style="width:100%; opacity: 0.8; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.#{reply.status}" %>">
-      <%= t "activerecord.enums.call.status.#{reply.status}" if reply.status%>
-      em
-      <%= @call.created_at.strftime("%d %b %y - %H:%M:%S") %>
-    </span>
-    <% first_reply = false %>
+  <% if reply.last_call_ref_reply_closed_at %>
+    <% if reply.last_call_ref_reply_reopened_at && reply.last_call_ref_reply_reopened_at > reply.last_call_ref_reply_closed_at %>
+      <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.reopened" %>">
+        <%= t "activerecord.enums.call.status.reopened"%> em <%= reply.last_call_ref_reply_reopened_at.strftime("%d %b %y - %H:%M:%S") %>
+      </span>
+    <% end %>
   <% end %>
 
+  <% if reply.last_call_ref_reply_closed_at %>
+    <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.closed" %>">
+      <%= t "activerecord.enums.call.status.closed"%> em <%= reply.last_call_ref_reply_closed_at.strftime("%d %b %y - %H:%M:%S") %>
+    </span>
+  <% end %>
 
   <% if reply.category == 'company' %>
     <div class="card card-default mb-3" style="box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
@@ -205,7 +210,9 @@
         <strong class="m-2">
           <%= User.find(reply.user_id).name %>
         </strong>
-        Adicionou uma resposta em <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+        <% if reply.created_at %>
+          Adicionou uma resposta em <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+        <% end %>
 
       </div>
       <div class="card-body" style="padding: 5px 30px 15px">
@@ -244,7 +251,9 @@
         <span class="badge badge-pill badge-dark m-1">
           <%= User.find(reply.user_id).name %>
         </span>
-        Adicionou uma resposta em <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+        <% if reply.created_at %>
+          Adicionou uma resposta em <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+        <% end %>
         <strong class="m-2">
 
         </strong>
@@ -289,19 +298,15 @@
     </div>
   <% end # end if reply.category == 'support' %>
 
-  <% if reply.last_call_ref_reply_closed_at %>
-    <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.closed" %>">
-      <%= t "activerecord.enums.call.status.closed"%> em <%= reply.last_call_ref_reply_closed_at.strftime("%d %b %y - %H:%M:%S") %>
-    </span>
-  <% end %>
-
-  <% if reply.last_call_ref_reply_reopened_at && reply.last_call_ref_reply_reopened_at > reply.last_call_ref_reply_closed_at %>
-    <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.reopened" %>">
-      <%= t "activerecord.enums.call.status.reopened"%> em <%= reply.last_call_ref_reply_reopened_at.strftime("%d %b %y - %H:%M:%S") %>
-    </span>
-  <% end %>
-
 <% end #end call.replies.each %>
+
+<% if @call.replies.order(id: :desc).last %>
+  <span style="width:100%; opacity: 0.8; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.#{@call.replies.order(id: :desc).last.status}" %>">
+    <%= t "activerecord.enums.call.status.#{@call.replies.order(id: :desc).last.status}" if @call.replies.order(id: :desc).last.status%>
+    em
+    <%= @call.created_at.strftime("%d %b %y - %H:%M:%S") if @call.created_at %>
+  </span>
+<% end %>
 
   <% if @call.open? || @call.reopened? %>
     <% if @my_call %>
@@ -332,7 +337,9 @@ Resposta final</p>
 <span class="badge badge-pill badge-dark m-1">suporte</span>
 <span class="badge badge-pill badge-dark m-1">
 <%= User.find(answer.user_id).name %></span>
-Resposta final adicionada em <%= answer.created_at.strftime("%d %b %y - %H:%M:%S") %>
+<% if answer.created_at %>
+  Marcada como resposta final em <%= answer.created_at.strftime("%d %b %y - %H:%M:%S") %>
+<% end %>
 <hr/>
 <%= answer.answer.html_safe %>
 <% if answer.attachments.length > 0 %>

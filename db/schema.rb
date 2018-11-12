@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 2018_11_05_184347) do
+ActiveRecord::Schema.define(version: 2018_11_06_171444) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "fuzzystrmatch"
@@ -159,11 +158,10 @@ ActiveRecord::Schema.define(version: 2018_11_05_184347) do
     t.boolean "faq", default: false
     t.string "repliable_type"
     t.bigint "repliable_id"
-    t.index ["repliable_type", "repliable_id"], name: "index_replies_on_repliable_type_and_repliable_id"
     t.integer "status"
     t.datetime "last_call_ref_reply_closed_at"
     t.datetime "last_call_ref_reply_reopened_at"
-
+    t.index ["repliable_type", "repliable_id"], name: "index_replies_on_repliable_type_and_repliable_id"
     t.index ["user_id"], name: "index_replies_on_user_id"
   end
 
@@ -219,6 +217,7 @@ ActiveRecord::Schema.define(version: 2018_11_05_184347) do
     t.bigint "city_id"
     t.integer "cnes"
     t.string "last_name"
+    t.integer "system"
     t.index ["city_id"], name: "index_users_on_city_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
