@@ -263,6 +263,27 @@ label {
 }
 
 
+// -------- Controversies
+
+//user-reference
+.controversy-user-reference {
+
+  font-size: 1.1rem;
+
+  b {
+    font-size: 1.2rem;
+  }
+
+  .input-group {
+    margin: 0 !important;
+  }
+
+  .no-border {
+    border: 0;
+  }
+}
+
+
 // Controversies autocomplete
 
 .ui-autocomplete {
