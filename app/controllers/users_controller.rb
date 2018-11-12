@@ -21,10 +21,7 @@ class UsersController < ApplicationController
            @user == current_user
       redirect_to root_path, alert: 'Acesso Negado!'
     end
-    @company = Company.find(@user.sei) if @user.sei
-    @unity = Unity.find(@user.cnes) if @user.cnes
-    @city = City.find(@user.city_id) if @user.city_id
-    @state = State.find(@city.state_id) if @city
+    user_infos
   end
 
   def update
@@ -43,6 +40,13 @@ class UsersController < ApplicationController
 
   private
 
+  def user_infos
+    @company = Company.find(@user.sei) if @user.sei
+    @unity = Unity.find(@user.cnes) if @user.cnes
+    @city = City.find(@user.city_id) if @user.city_id
+    @state = State.find(@city.state_id) if @city
+  end
+
   def create_options_for_filterrific
     {
       sorted_by_name: User.all.options_for_sorted_by_name,
@@ -57,9 +61,9 @@ class UsersController < ApplicationController
 
   def allowed_users
     if admin?
-      @filterrific.find.page(params[:page]).limit(999999)
+      @filterrific.find.page(params[:page]).limit(999_999)
     elsif admin_like?
-      @filterrific.find.where(invited_by_id: current_user.id).page(params[:page]).limit(999999)
+      @filterrific.find.where(invited_by_id: current_user.id).page(params[:page]).limit(999_999)
     end
   end
 
