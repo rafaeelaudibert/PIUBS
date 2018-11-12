@@ -242,12 +242,18 @@ class CallsController < ApplicationController
     if %w[edit update].include? action
       redirect_to denied_path unless admin?
     elsif %w[new create destroy].include? action
-      redirect_to denied_path unless admin? || support_user? || company_user?
-    elsif action == 'show'
-      redirect_to denied_path unless alloweds_users
-    elsif action == 'index'
-      redirect_to faq_path unless admin? || support_user? || company_user?
+      redirect_to denied_path unless admin_support_company?
+    else
+      show_or_index?
     end
+  end
+end
+
+def show_or_index?
+  if action == 'show'
+    redirect_to denied_path unless alloweds_users
+  elsif action == 'index'
+    redirect_to faq_path unless admin_support_company?
   end
 end
 
@@ -261,4 +267,8 @@ end
 
 def creator_company_user?
   current_user.try(:company_user?) && @call.user_id == current_user.id
+end
+
+def admin_support_company?
+  admin? || support_user? || company_user?
 end
