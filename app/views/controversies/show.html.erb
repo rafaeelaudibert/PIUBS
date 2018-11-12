@@ -84,7 +84,8 @@
           <div class="col-md-5">
             <div class="input-group">
               <%= text_field_tag :sei, @controversy.sei, type: :hidden %>
-              <%= autocomplete_field_tag :company_search, params[:search], autocomplete_company_users_path, size: 75, class: "form-control search-query", placeholder: "Adicionar Usuário para a Empresa", 'data-auto-focus' => true, fields: {sei: '#sei'}, 'data-showNoMatches' => false, 'min-length' => 1 %>
+              <%= text_field_tag :company_user_id_text, 1, type: :hidden %>
+              <%= autocomplete_field_tag :company_search, params[:search], autocomplete_company_users_path, size: 75, class: "form-control search-query", placeholder: "Adicionar Usuário para a Empresa", 'data-auto-focus' => true, fields: {sei: '#sei'}, update_elements: {company_user_id: '#company_user_id_text'}, 'data-showNoMatches' => false, 'min-length' => 1 %>
               <div class="input-group-append">
                 <button class="btn btn-primary btn-outline-secondary" onclick="toggleCompany()" type="button"><em class="fa fa-check"></em></button>
               </div>
@@ -111,7 +112,7 @@
               <span class="form-control no-border"> <%= @controversy.city_user.name %> </span>
               <% if current_user == @controversy.support_1 && @controversy.open? %>
                 <div class="input-group-append">
-                  <button class="btn btn-primary btn-outline-secondary" onclick="toggleCity()" type="button"><em class="fa fa-trash"></em></button>
+                  <button class="btn btn-danger btn-outline-secondary" onclick="toggleCity()" type="button"><em class="fa fa-trash"></em></button>
                 </div>
               <% end %>
             </div>
@@ -120,7 +121,8 @@
           <div class="col-md-5">
             <div class="input-group">
               <%= text_field_tag :city_id, @controversy.city_id, type: :hidden %>
-              <%= autocomplete_field_tag :city_search, params[:search], autocomplete_city_users_path, size: 75, class: "form-control search-query", placeholder: "Adicionar Usuário para a Cidade", 'data-auto-focus' => true, fields: {city_id: '#city_id'}, 'data-showNoMatches' => false, 'min-length' => 1 %>
+              <%= text_field_tag :city_user_id_text, 1, type: :hidden %>
+              <%= autocomplete_field_tag :city_search, params[:search], autocomplete_city_users_path, size: 75, class: "form-control search-query", placeholder: "Adicionar Usuário para a Cidade", 'data-auto-focus' => true, fields: {city_id: '#city_id'}, update_elements: {city_user_id: '#city_user_id_text'}, 'data-showNoMatches' => false, 'min-length' => 1 %>
               <div class="input-group-append">
                 <button class="btn btn-primary btn-outline-secondary" onclick="toggleCity()" type="button"><em class="fa fa-check"></em></button>
               </div>
@@ -147,7 +149,7 @@
               <span class="form-control no-border"> <%= @controversy.unity_user.name %> </span>
               <% if current_user == @controversy.support_1 && @controversy.open? %>
                 <div class="input-group-append">
-                  <button class="btn btn-primary btn-outline-secondary" onclick="toggleUnity()" type="button"><em class="fa fa-trash"></em></button>
+                  <button class="btn btn-danger btn-outline-secondary" onclick="toggleUnity()" type="button"><em class="fa fa-trash"></em></button>
                 </div>
               <% end %>
             </div>
@@ -156,7 +158,8 @@
           <div class="col-md-5">
             <div class="input-group">
               <%= text_field_tag :cnes, @controversy.cnes || @controversy.city.unities.map(&:cnes).to_s, type: :hidden %>
-              <%= autocomplete_field_tag :unity_search, params[:search], autocomplete_unity_users_path, size: 75, class: "form-control search-query", placeholder: "Adicionar Usuário para a UBS", 'data-auto-focus' => true, fields: {cnes: '#cnes'}, 'data-showNoMatches' => false, 'min-length' => 1  %>
+              <%= text_field_tag :unity_user_id_text, 1, type: :hidden %>
+              <%= autocomplete_field_tag :unity_search, params[:search], autocomplete_unity_users_path, size: 75, class: "form-control search-query", placeholder: "Adicionar Usuário para a UBS", 'data-auto-focus' => true, fields: {cnes: '#cnes'}, update_elements: {unity_user_id: '#unity_user_id_text'}, 'data-showNoMatches' => false, 'min-length' => 1  %>
               <div class="input-group-append">
                 <button class="btn btn-primary btn-outline-secondary" onclick="toggleUnity()" type="button"><em class="fa fa-check"></em></button>
               </div>
@@ -184,7 +187,7 @@
                 <span class="form-control no-border"> <%= @controversy.support_2.name %> </span>
                 <% if current_user == @controversy.support_1 && @controversy.open? %>
                   <div class="input-group-append">
-                    <button class="btn btn-primary btn-outline-secondary" onclick="toggleSupport()" type="button"><em class="fa fa-trash"></em></button>
+                    <button class="btn btn-danger btn-outline-secondary" onclick="toggleSupport()" type="button"><em class="fa fa-trash"></em></button>
                   </div>
                 <% end %>
               </div>
@@ -193,7 +196,8 @@
             <div class="col-md-5">
               <div class="input-group">
                 <%= text_field_tag :user_id, @controversy.support_1_user_id, type: :hidden %>
-                <%= autocomplete_field_tag :support_search, params[:search], autocomplete_support_users_path, size: 75, class: "form-control search-query", placeholder: "Adicionar Suporte Adicional", 'data-auto-focus' => true, fields: {user_id: '#user_id'}, 'data-showNoMatches' => false, 'min-length' => 1 %>
+                <%= text_field_tag :support_user_id_text, 1, type: :hidden %>
+                <%= autocomplete_field_tag :support_search, params[:search], autocomplete_support_users_path, size: 75, class: "form-control search-query", placeholder: "Adicionar Suporte Adicional", 'data-auto-focus' => true, fields: {user_id: '#user_id'}, update_elements: {support_user_id: '#support_user_id_text'}, 'data-showNoMatches' => false, 'min-length' => 1 %>
                 <div class="input-group-append">
                   <button class="btn btn-primary btn-outline-secondary" onclick="toggleSupport()" type="button"><em class="fa fa-check"></em></button>
                 </div>
@@ -333,7 +337,7 @@
     <% if @controversy.replies.length == 0 %>
       <!-- Zero replies message -->
       <div class="row justify-content-around">
-        <h3 class="mt-3"> Nenhuma resposta para mostrar ainda </h4>
+        <h3 class="mt-3"> Nenhuma resposta para mostrar ainda </h3>
       </div>
     <% end %>
 
@@ -409,7 +413,7 @@
 
         function toggleSupport(){
           const protocol = document.getElementById('protocol').innerHTML;
-          const select = document.getElementById('supportSelect');
+          const select = document.getElementById('support_user_id_text');
           const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
 
           $.ajax({
@@ -420,7 +424,7 @@
 
         function toggleCompany(){
           const protocol = document.getElementById('protocol').innerHTML;
-          const select = document.getElementById('companySelect');
+          const select = document.getElementById('company_user_id_text');
           const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
 
           $.ajax({
@@ -431,7 +435,7 @@
 
         function toggleUnity(){
           const protocol = document.getElementById('protocol').innerHTML;
-          const select = document.getElementById('unitySelect');
+          const select = document.getElementById('unity_user_id_text');
           const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
 
           $.ajax({
@@ -442,7 +446,7 @@
 
         function toggleCity(){
           const protocol = document.getElementById('protocol').innerHTML;
-          const select = document.getElementById('citySelect');
+          const select = document.getElementById('city_user_id_text');
           const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
 
           $.ajax({

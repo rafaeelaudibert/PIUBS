@@ -48,6 +48,7 @@ class UsersController < ApplicationController
     render json: company_users.where('name ILIKE ? OR cpf ILIKE ?', "%#{terms}%", "%#{terms}%")
                               .map { |user|
                                 { id: user.id,
+                                  company_user_id: user.id,
                                   label: "#{user.name} - #{user.cpf}",
                                   value: user.name }
                               }
@@ -59,6 +60,7 @@ class UsersController < ApplicationController
     render json: city_users.where('name ILIKE ? OR cpf ILIKE ?', "%#{terms}%", "%#{terms}%")
                            .map { |user|
                              { id: user.id,
+                               city_user_id: user.id,
                                label: "#{user.name} - #{user.cpf}",
                                value: user.name }
                            }
@@ -70,6 +72,7 @@ class UsersController < ApplicationController
     render json: unity_user.where('name ILIKE ? OR cpf ILIKE ?', "%#{terms}%", "%#{terms}%")
                            .map { |user|
                              { id: user.id,
+                               unity_user_id: user.id,
                                label: "#{user.name} - #{user.cpf}",
                                value: user.name }
                            }
@@ -82,6 +85,7 @@ class UsersController < ApplicationController
     render json: support_users.where('name ILIKE ? OR cpf ILIKE ?', "%#{terms}%", "%#{terms}%")
                               .map { |user|
                                 { id: user.id,
+                                  support_user_id: user.id,
                                   label: "#{user.name} - #{user.cpf}",
                                   value: user.name }
                               }
