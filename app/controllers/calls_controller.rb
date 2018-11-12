@@ -243,8 +243,7 @@ class CallsController < ApplicationController
       redirect_to denied_path unless admin?
     elsif %w[new create destroy].include? action
       redirect_to denied_path unless admin_support_company?
-    else
-      show_or_index?
+    else show_or_index?
     end
   end
 end
