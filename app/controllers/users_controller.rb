@@ -21,14 +21,7 @@ class UsersController < ApplicationController
            @user == current_user
       redirect_to root_path, alert: 'Acesso Negado!'
     end
-    get_user_infos
-  end
-
-  def user_infos
-    @company = Company.find(@user.sei) if @user.sei
-    @unity = Unity.find(@user.cnes) if @user.cnes
-    @city = City.find(@user.city_id) if @user.city_id
-    @state = State.find(@city.state_id) if @city
+    user_infos
   end
 
   def update
@@ -46,6 +39,13 @@ class UsersController < ApplicationController
   end
 
   private
+
+  def user_infos
+    @company = Company.find(@user.sei) if @user.sei
+    @unity = Unity.find(@user.cnes) if @user.cnes
+    @city = City.find(@user.city_id) if @user.city_id
+    @state = State.find(@city.state_id) if @city
+  end
 
   def create_options_for_filterrific
     {
