@@ -54,6 +54,27 @@
       <% end %>
     <% end %>
 
+    <%= form_tag(users_path, :method => "get", id: "search-form") do %>
+      <div class="field">
+        <%= text_field_tag :sei, @controversy.sei, type: :hidden %>
+        <%= autocomplete_field_tag :company_search, params[:search], autocomplete_company_users_path, size: 75, class: "form-control search-query", placeholder: "Usuário da Empresa", 'data-auto-focus' => true, fields: {sei: '#sei'}, 'data-showNoMatches' => false, 'min-length' => 1 %>
+      </div>
+      <div class="field">
+        <%= text_field_tag :city_id, @controversy.city_id, type: :hidden %>
+        <%= autocomplete_field_tag :city_search, params[:search], autocomplete_city_users_path, size: 75, class: "form-control search-query", placeholder: "Usuário da Cidade", 'data-auto-focus' => true, fields: {city_id: '#city_id'}, 'data-showNoMatches' => false, 'min-length' => 1 %>
+      </div>
+      <div class="field">
+        <%= text_field_tag :cnes, @controversy.cnes || @controversy.city.unities.map(&:cnes).to_s, type: :hidden %>
+        <%= autocomplete_field_tag :unity_search, params[:search], autocomplete_unity_users_path, size: 75, class: "form-control search-query", placeholder: "Usuário da UBS", 'data-auto-focus' => true, fields: {cnes: '#cnes'}, 'data-showNoMatches' => false, 'min-length' => 1  %>
+      </div>
+      <div class="field">
+        <%= text_field_tag :user_id, @controversy.support_1_user_id, type: :hidden %>
+        <%= autocomplete_field_tag :support_search, params[:search], autocomplete_support_users_path, size: 75, class: "form-control search-query", placeholder: "Usuário do Suporte", 'data-auto-focus' => true, fields: {user_id: '#user_id'}, 'data-showNoMatches' => false, 'min-length' => 1 %>
+      </div>
+    <% end %>
+    </script>
+
+
     <hr/>
     Empresa: <span class="badge badge-pill badge-light m-2"><%= @controversy.sei %> - <%= @controversy.company_user.try(:name) || 'Sem usuário na conversa' %></span>
     UBS: <span class="badge badge-pill badge-light m-2"><%= @controversy.unity.try(:name) || 'Nenhuma em específico' %> - <%= @controversy.unity_user.try(:name) || 'Sem usuário na conversa' %></span>

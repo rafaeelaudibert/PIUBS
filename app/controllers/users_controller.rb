@@ -3,6 +3,10 @@
 class UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :admin_like?, only: %i[index]
+  autocomplete :user, :company
+  autocomplete :user, :city
+  autocomplete :user, :unity
+  autocomplete :user, :support
   include ApplicationHelper
 
   def index
@@ -34,7 +38,52 @@ class UsersController < ApplicationController
 
   def destroy
     User.find(params[:id]).destroy
-    redirect_to users_path, notice: 'User deleted.'
+    redirect_to users_path, notice: 'Usuário apagado.'
+  end
+
+  def autocomplete_company_users
+    terms = params[:term]
+    company_users = User.where(role: %i[company_admin company_user], sei: params[:sei])
+    render json: company_users.where('name ILIKE ? OR cpf ILIKE ?', "%#{terms}%", "%#{terms}%")
+                              .map { |user|
+                                { id: user.id,
+                                  label: "#{user.name} - #{user.cpf}",
+                                  value: user.name }
+                              }
+  end
+
+  def autocomplete_city_users
+    terms = params[:term]
+    city_users = User.where(role: :city_admin, city_id: params[:city_id], cnes: '')
+    render json: city_users.where('name ILIKE ? OR cpf ILIKE ?', "%#{terms}%", "%#{terms}%")
+                           .map { |user|
+                             { id: user.id,
+                               label: "#{user.name} - #{user.cpf}",
+                               value: user.name }
+                           }
+  end
+
+  def autocomplete_unity_users
+    terms = params[:term]
+    unity_user = User.where(role: %i[ubs_admin ubs_user], cnes: JSON.parse(params[:cnes]))
+    render json: unity_user.where('name ILIKE ? OR cpf ILIKE ?', "%#{terms}%", "%#{terms}%")
+                           .map { |user|
+                             { id: user.id,
+                               label: "#{user.name} - #{user.cpf}",
+                               value: user.name }
+                           }
+  end
+
+  def autocomplete_support_users
+    terms = params[:term]
+    support_users = User.where(role: %i[call_center_admin call_center_user])
+                        .where.not(id: params[:user_id])
+    render json: support_users.where('name ILIKE ? OR cpf ILIKE ?', "%#{terms}%", "%#{terms}%")
+                              .map { |user|
+                                { id: user.id,
+                                  label: "#{user.name} - #{user.cpf}",
+                                  value: user.name }
+                              }
   end
 
   private
