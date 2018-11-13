@@ -16,7 +16,6 @@ class User < ApplicationRecord
   # If update here, update to en.yml
   enum system: %i[companies controversies both]
 
-
   validates_cpf_format_of :cpf, options: { allow_blank: true, allow_nil: true }
   validates :cpf, presence: true, uniqueness: true
 

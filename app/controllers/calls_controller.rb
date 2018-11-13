@@ -161,21 +161,41 @@ class CallsController < ApplicationController
 
   def filtered_calls
     if current_user.try(:call_center_user?)
-      @filterrific.find.page(params[:page]).where(support_user: [current_user.id, nil])
+      calls_from_support
     elsif support_user?
-      @filterrific.find.page(params[:page])
-                  .where(support_user: [User.where(invited_by_id: current_user.id).map(&:id),
-                                        current_user.id,
-                                        nil].flatten)
+      calls_for_support
     elsif current_user.try(:company_admin?)
-      @filterrific.find.page(params[:page]).where(sei: current_user.sei)
+      calls_for_company_admin
     elsif company_user?
-      @filterrific.find.page(params[:page]).where(user_id: current_user.id)
+      calls_for_company_user
     elsif admin?
-      @filterrific.find.page(params[:page])
+      calls_for_admin
     else
       []
     end
+  end
+
+  def calls_from_support
+    @filterrific.find.page(params[:page]).where(support_user: [current_user.id, nil])
+  end
+
+  def calls_for_support
+    @filterrific.find.page(params[:page])
+                .where(support_user: [User.where(invited_by_id: current_user.id).map(&:id),
+                                      current_user.id,
+                                      nil].flatten)
+  end
+
+  def calls_for_company_admin
+    @filterrific.find.page(params[:page]).where(sei: current_user.sei)
+  end
+
+  def calls_for_company_user
+    @filterrific.find.page(params[:page]).where(user_id: current_user.id)
+  end
+
+  def calls_for_admin
+    @filterrific.find.page(params[:page])
   end
 
   def create_call(call_parameters)
@@ -222,16 +242,33 @@ class CallsController < ApplicationController
     if %w[edit update].include? action
       redirect_to denied_path unless admin?
     elsif %w[new create destroy].include? action
-      redirect_to denied_path unless admin? || support_user? || company_user?
-    elsif action == 'show'
-      unless (current_user.try(:company_admin?) && @call.sei == current_user.sei) ||
-             (current_user.try(:company_user?) && @call.user_id == current_user.id) ||
-             support_user? ||
-             admin?
-        redirect_to denied_path
-      end
-    elsif action == 'index'
-      redirect_to faq_path unless admin? || support_user? || company_user?
+      redirect_to denied_path unless admin_support_company?
+    else
+      show_or_index?(action)
     end
   end
+end
+
+def show_or_index?(action)
+  if action == 'show'
+    redirect_to denied_path unless alloweds_users
+  elsif action == 'index'
+    redirect_to faq_path unless admin_support_company?
+  end
+end
+
+def alloweds_users
+  creator_company_admin? || creator_company_user? || support_user? || admin?
+end
+
+def creator_company_admin?
+  current_user.try(:company_admin?) && @call.sei == current_user.sei
+end
+
+def creator_company_user?
+  current_user.try(:company_user?) && @call.user_id == current_user.id
+end
+
+def admin_support_company?
+  admin? || support_user? || company_user?
 end

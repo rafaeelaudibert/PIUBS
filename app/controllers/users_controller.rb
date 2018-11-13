@@ -25,7 +25,8 @@ class UsersController < ApplicationController
            @user == current_user
       redirect_to root_path, alert: 'Acesso Negado!'
     end
-    @company, @unity, @city, @state = retrieve_info_from @user
+
+    generate_user_info
   end
 
   def update
@@ -93,6 +94,13 @@ class UsersController < ApplicationController
 
   private
 
+  def generate_user_info
+    @company = Company.find(@user.sei) if @user.sei
+    @unity = Unity.find(@user.cnes) if @user.cnes
+    @city = City.find(@user.city_id) if @user.city_id
+    @state = State.find(@city.state_id) if @city
+  end
+
   def create_options_for_filterrific
     {
       sorted_by_name: User.all.options_for_sorted_by_name,
@@ -103,15 +111,7 @@ class UsersController < ApplicationController
       with_city: User.all.options_for_with_city,
       with_company: Company.all.map(&:sei)
     }
-  end
-
-  def retrieve_info_from(user)
-    company = Company.find(user.sei) if user.sei
-    unity = Unity.find(user.cnes) if user.cnes
-    city = City.find(user.city_id) if user.city_id
-    state = State.find(city.state_id) if city
-    [company, unity, city, state]
-  end
+  end  
 
   def allowed_users
     if admin?
