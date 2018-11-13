@@ -117,7 +117,7 @@ class RepliesController < ApplicationController
                        ['SELECT octet_length(file_contents) FROM '\
                         'attachments WHERE attachments.id = ?',
                         attachment.id]
-         ))[0]['octet_length']
+                     ))[0]['octet_length']
   end
 
   def create_path(reply)
