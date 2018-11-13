@@ -140,11 +140,8 @@ class AnswersController < ApplicationController
   end
 
   def mark_as_final_answer(answer)
-    @call = Call.find(params[:question_id])
-    @call.closed!
-    @call.update(finished_at: Time.now)
-    @reply = Reply.find(params[:reply_id])
-    @reply.update(last_call_ref_reply_closed_at: Time.now)
+    update_call
+    update_reply
 
     # Retira a answer caso ela nao esteja no FAQ + attach_links
     if @call.answer.try(:faq) == false
@@ -156,6 +153,17 @@ class AnswersController < ApplicationController
     else
       update_answer_id @call, answer
     end
+  end
+
+  def update_call
+    @call = Call.find(params[:question_id])
+    @call.closed!
+    @call.update(finished_at: Time.now)
+  end
+
+  def update_reply
+    @reply = Reply.find(params[:reply_id])
+    @reply.update(last_call_ref_reply_closed_at: Time.now)
   end
 
   def update_answer_id(call, answer)
@@ -184,11 +192,11 @@ class AnswersController < ApplicationController
 
   def retrieve_file_bytes(attachment)
     Answer.connection
-          .select_all(Answer.sanitize_sql_array(
-                        ['SELECT octet_length(file_contents) FROM '\
-                         'attachments WHERE attachments.id = ?',
-                         attachment.id]
-                      ))[0]['octet_length']
+          .select_all(Answer.sanitize_sql_array([
+                                                  'SELECT octet_length(file_contents) FROM '\
+                                                  'attachments WHERE attachments.id = ?',
+                                                  attachment.id
+                                                ]))[0]['octet_length']
   end
 
   def filter_role
@@ -196,16 +204,33 @@ class AnswersController < ApplicationController
     if %w[index edit update].include? action
       redirect_to denied_path unless admin? || faq_inserter?
     elsif %w[new create destroy].include? action
-      redirect_to denied_path unless admin? || support_user? || faq_inserter?
-    elsif action == 'show'
-      unless (@answer.faq && !city_user? && !ubs_user?) ||
-             admin? ||
-             (support_user? && @answer.user_id == current_user.id) ||
-             faq_inserter?
-        redirect_to denied_path
-      end
+      redirect_to denied_path unless admin_support_faq?
+    else
+      show_or_faq?
+    end
+  end
+
+  def admin_support_faq?
+    admin? || support_user? || faq_inserter?
+  end
+
+  def show_or_faq?
+    if action == 'show'
+      redirect_to denied_path unless alloweds_users_to_show?
     elsif action == 'faq'
       redirect_to denied_path if city_user? || ubs_user?
     end
+  end
+
+  def alloweds_users_to_show?
+    faq_and_not_city_ubs_users? || admin? || faq_inserter? || support_and_answer_creator?
+  end
+
+  def faq_and_not_city_ubs_users?
+    @answer.faq && !city_user? && !ubs_user?
+  end
+
+  def support_and_answer_creator?
+    support_user? && @answer.user_id == current_user.id
   end
 end
