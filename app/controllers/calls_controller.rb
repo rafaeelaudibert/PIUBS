@@ -243,21 +243,19 @@ class CallsController < ApplicationController
       redirect_to denied_path unless admin?
     elsif %w[new create destroy].include? action
       redirect_to denied_path unless admin_support_company?
-    elsif action == 'show'
-      redirect_to denied_path unless alloweds_users
-    elsif action == 'index'
-      redirect_to faq_path unless admin_support_company?
+    else
+      show_or_index?(action)
     end
   end
 end
 
-# def show_or_index?
-#   if action == 'show'
-#     redirect_to denied_path unless alloweds_users
-#   elsif action == 'index'
-#     redirect_to faq_path unless admin_support_company?
-#   end
-# end
+def show_or_index?(action)
+  if action == 'show'
+    redirect_to denied_path unless alloweds_users
+  elsif action == 'index'
+    redirect_to faq_path unless admin_support_company?
+  end
+end
 
 def alloweds_users
   creator_company_admin? || creator_company_user? || support_user? || admin?
