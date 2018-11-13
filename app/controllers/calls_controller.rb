@@ -244,12 +244,12 @@ class CallsController < ApplicationController
     elsif %w[new create destroy].include? action
       redirect_to denied_path unless admin_support_company?
     else
-      show_or_index?
+      show_or_index?(action)
     end
   end
 end
 
-def show_or_index?
+def show_or_index?(action)
   if action == 'show'
     redirect_to denied_path unless alloweds_users
   elsif action == 'index'
