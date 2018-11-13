@@ -143,7 +143,6 @@ class AnswersController < ApplicationController
     @call = Call.find(params[:question_id])
     update_call_reply @call
 
-
     # Retira a answer caso ela nao esteja no FAQ + attach_links
     if @call.answer.try(:faq) == false
       @old_answer = Answer.find(@call.answer_id)
@@ -159,7 +158,6 @@ class AnswersController < ApplicationController
   def update_call_reply(call)
     call.update(status: 'closed', finished_at: 0.seconds.from_now)
     Reply.find(params[:reply_id]).update(last_call_ref_reply_closed_at: 0.seconds.from_now)
-
   end
 
   def update_answer_id(call, answer)

@@ -111,7 +111,7 @@ class UsersController < ApplicationController
       with_city: User.all.options_for_with_city,
       with_company: Company.all.map(&:sei)
     }
-  end  
+  end
 
   def allowed_users
     if admin?
