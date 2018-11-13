@@ -61,8 +61,22 @@
     <hr class="mb-2"/>
 
     <div class="controversy-user-reference">
+
+      <!-- HEADER -->
+      <div class="row align-items-center mt-4">
+        <div class="col-md-3">
+          <!-- Nothing here -->
+        </div>
+        <div class="col-md-4">
+          <!-- Nothing here -->
+        </div>
+        <div class="col-md-5">
+          <b> Usuário responsável: </b>
+        </div>
+      </div>
+
       <!-- USUÁRIO DA EMPRESA -->
-      <div class="row align-items-center mb-2">
+      <div class="row align-items-center pt-2">
         <div class="col-md-3">
           <b> Empresa: </b>
         </div>
@@ -87,7 +101,7 @@
               <%= text_field_tag :company_user_id_text, 1, type: :hidden %>
               <%= autocomplete_field_tag :company_search, params[:search], autocomplete_company_users_path, size: 75, class: "form-control search-query", placeholder: "Adicionar Usuário para a Empresa", 'data-auto-focus' => true, fields: {sei: '#sei'}, update_elements: {company_user_id: '#company_user_id_text'}, 'data-showNoMatches' => false, 'min-length' => 1 %>
               <div class="input-group-append">
-                <button class="btn btn-primary btn-outline-secondary" onclick="toggleCompany()" type="button"><em class="fa fa-check"></em></button>
+                <button id='button-add-company' class="btn btn-primary btn-outline-secondary hidden" onclick="toggleCompany()" type="button"><em class="fa fa-check"></em></button>
               </div>
             </div>
           </div>
@@ -97,9 +111,10 @@
           </div>
         <% end %>
       </div>
+      <hr class="mt-2 mb-0"/>
 
       <!-- USUÁRIO DA CIDADE -->
-      <div class="row align-items-center mb-2">
+      <div class="row align-items-center pt-2">
         <div class="col-md-3">
           <b> Cidade: </b>
         </div>
@@ -124,7 +139,7 @@
               <%= text_field_tag :city_user_id_text, 1, type: :hidden %>
               <%= autocomplete_field_tag :city_search, params[:search], autocomplete_city_users_path, size: 75, class: "form-control search-query", placeholder: "Adicionar Usuário para a Cidade", 'data-auto-focus' => true, fields: {city_id: '#city_id'}, update_elements: {city_user_id: '#city_user_id_text'}, 'data-showNoMatches' => false, 'min-length' => 1 %>
               <div class="input-group-append">
-                <button class="btn btn-primary btn-outline-secondary" onclick="toggleCity()" type="button"><em class="fa fa-check"></em></button>
+                <button id='button-add-city' class="btn btn-primary btn-outline-secondary hidden" onclick="toggleCity()" type="button"><em class="fa fa-check"></em></button>
               </div>
             </div>
           </div>
@@ -134,9 +149,10 @@
           </div>
         <% end %>
       </div>
+      <hr class="mt-2 mb-0"/>
 
       <!-- USUÁRIO DA UBS -->
-      <div class="row align-items-center mb-2">
+      <div class="row align-items-center pt-2">
         <div class="col-md-3">
           <b> UBS: </b>
         </div>
@@ -161,7 +177,7 @@
               <%= text_field_tag :unity_user_id_text, 1, type: :hidden %>
               <%= autocomplete_field_tag :unity_search, params[:search], autocomplete_unity_users_path, size: 75, class: "form-control search-query", placeholder: "Adicionar Usuário para a UBS", 'data-auto-focus' => true, fields: {cnes: '#cnes'}, update_elements: {unity_user_id: '#unity_user_id_text'}, 'data-showNoMatches' => false, 'min-length' => 1  %>
               <div class="input-group-append">
-                <button class="btn btn-primary btn-outline-secondary" onclick="toggleUnity()" type="button"><em class="fa fa-check"></em></button>
+                <button id='button-add-unity' class="btn btn-primary btn-outline-secondary hidden" onclick="toggleUnity()" type="button"><em class="fa fa-check"></em></button>
               </div>
             </div>
           </div>
@@ -171,10 +187,11 @@
           </div>
         <% end %>
       </div>
+      <hr class="mt-2 mb-0"/>
 
       <!-- USUÁRIO ADICIONAL DE SUPORTE -->
       <% if admin_like? %>
-        <div class="row align-items-center mb-2">
+        <div class="row align-items-center pt-2 pb-2">
           <div class="col-md-3">
             <b> Suporte adicional: </b>
           </div>
@@ -199,7 +216,7 @@
                 <%= text_field_tag :support_user_id_text, 1, type: :hidden %>
                 <%= autocomplete_field_tag :support_search, params[:search], autocomplete_support_users_path, size: 75, class: "form-control search-query", placeholder: "Adicionar Suporte Adicional", 'data-auto-focus' => true, fields: {user_id: '#user_id'}, update_elements: {support_user_id: '#support_user_id_text'}, 'data-showNoMatches' => false, 'min-length' => 1 %>
                 <div class="input-group-append">
-                  <button class="btn btn-primary btn-outline-secondary" onclick="toggleSupport()" type="button"><em class="fa fa-check"></em></button>
+                  <button id='button-add-support' class="btn btn-primary btn-outline-secondary hidden" onclick="toggleSupport()" type="button"><em class="fa fa-check"></em></button>
                 </div>
               </div>
             </div>
@@ -408,6 +425,33 @@
           // Configure cross-reference ajax request
           $.ajaxSetup({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
+          })
+
+          $('#company_search, #city_search, #unity_search, #support_search').click(() => {
+              $('.ui-menu').click(e => {
+                let attr = e.target.parentNode.parentNode.getAttribute('data-origin')
+                $(`#button-add-${attr}`).show(80);
+              });
+          })
+
+          $('#company_search').keyup(() => {
+            $('#button-add-company').hide(80);
+            $('.ui-autocomplete').attr('data-origin', 'company');
+          })
+
+          $('#city_search').keyup(e => {
+            $('#button-add-city').hide(80);
+            $('.ui-autocomplete').attr('data-origin', 'city');
+          })
+
+          $('#unity_search').keyup(e => {
+            $('#button-add-unity').hide(80);
+            $('.ui-autocomplete').attr('data-origin', 'unity');
+          })
+
+          $('#support_search').keyup(e => {
+            $('#button-add-support').hide(80);
+            $('.ui-autocomplete').attr('data-origin', 'support');
           })
         })
 
