@@ -62,22 +62,18 @@
   const faq_click = button => {
     const answer = button.parentNode.parentNode.children[2].innerHTML;
     const id = button.parentNode.parentNode.children[0].innerHTML;
-    $("#reply_box").show(200);
-    $("#faq_box").hide(200);
-    $("#on-faq").prop('checked', true);
+
 
     $.ajax({
       url: '/answers/attachments/' + id,
       type: "GET",
       dataType: "json",
       success: data => {
+        const dropzone = $('#reply-dropzone')[0].dropzone
         tinyMCE.get(0).setContent(`${answer}<br/>Essa resposta foi retirada do FAQ. Ela estava disponível <a href="/answers/${id}" target='_blank'>aqui</a></b>`);
 
-        // Set the ids
-        replyFileIds = data.map(val => val.id).reduce((acc, val) => acc.concat(val), [])
-        $('#uuid-files-controversy').val(replyFileIds);
-
         // Fake their adittion in the reply-dropzone
+        dropzone.removeAllFiles();
         data.forEach( val => {
           let mockFile = {
                     name: val.filename,
@@ -85,13 +81,22 @@
                     type: val.type,
                     accepted: true            // required if using 'MaxFiles' option
                 };
-          dropzone = $('#reply-dropzone')[0].dropzone
+
           dropzone.files.push(mockFile);
           dropzone.emit('addedfile', mockFile);
           dropzone.emit('complete', mockFile);
           $(dropzone.files[dropzone.files.length - 1]
                                           .previewElement).find('.dz-remove').attr('id', val.id);
         })
+
+        // Set the ids
+        replyFileIds = data.map(val => val.id).reduce((acc, val) => acc.concat(val), [])
+        $('#uuid-files-controversy').val(replyFileIds);
+
+        // Update the divs
+        $("#reply_box").show(200);
+        $("#faq_box").hide(200);
+        $("#on-faq").prop('checked', true);
       }
     });
   }
