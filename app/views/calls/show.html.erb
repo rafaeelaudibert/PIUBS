@@ -220,7 +220,7 @@
       </div>
     </div>
 
-  <% end # end reply.category == 'reply' %>
+  <% end  %>
 
   <% if reply.category == 'support' %>
     <div class="card card-default mb-3" style="border-left: 5px solid #85CE36; box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
@@ -257,20 +257,19 @@
           <hr/>
           <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
             <% if @my_call %>
-              <% @reply = @call.replies.order(:id).last %>
               <a style="color: white" onclick="toggleFinalAnswer(this)" class="btn btn-primary btn-sm">Marcar como resposta final</a>
             <% end %>
           <% end %>
           <div style="float: right">
             <% if reply.faq == true %>
-              <span class="badge badge-pill badge-dark">
+              <span id="faq-<%= reply.id %>" class="badge badge-pill badge-dark">
                 Resposta no FAQ
               </span>
             <% end %>
           </div>
       </div>
     </div>
-  <% end # end if reply.category == 'support' %>
+  <% end  %>
 
   <% if reply.last_call_ref_reply_closed_at %>
     <span style="width:100%; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.closed" %>">
@@ -284,7 +283,7 @@
     </span>
   <% end %>
 
-<% end #end call.replies.each %>
+<% end  %>
 
   <% if @call.open? || @call.reopened? %>
     <% if @my_call %>
@@ -336,81 +335,82 @@
 <% end %>
 
 <div id="final-answer" style="display: none">
-<%= render 'finalAnswer', answer: @answer %>
+  <%= render 'finalAnswer', answer: @answer %>
 </div>
 
 <script>
 
-const cleanMCE = () => {
-tinymce.EditorManager.execCommand('mceRemoveEditor', true, 'tinymce');
-tinymce.EditorManager.execCommand('mceAddEditor', true, 'tinymce');
-$('#tinymce_ifr').css('height', '300px');
-}
+  const cleanMCE = id => {
+    tinymce.EditorManager.execCommand('mceRemoveEditor', true, id);
+    tinymce.EditorManager.execCommand('mceAddEditor', true, id);
+    $('#tinymce_ifr').css('height', '300px');
+  }
 
-const cleanMCEAnswer = () => {
-tinymce.EditorManager.execCommand('mceRemoveEditor', true, 'tinymcee');
-tinymce.EditorManager.execCommand('mceAddEditor', true, 'tinymcee');
-$('#tinymcee_ifr').css('height', '300px');
-}
+  // Reply buttons
+  $("#reply").click(e => {
+    extraFilesFaq = 0;
 
-// Reply buttons
-$("#reply").click(e => {
-extraFilesFaq = 0;
-$('#reply_file').trigger('change', 'answer');
-if ($('#reply_faq_attachments')[0]) {
-$('#reply_faq_attachments')[0].value = ''
-}
-if (e.target.parentNode == $("#reply_box")[0].parentNode) {
-$("#reply_box").toggle(200);
-} else {
-$("#reply_box").hide(0);
-e.target.parentNode.appendChild(document.getElementById('reply_box'));
-cleanMCE();
-$("#reply_box").show(200);
-}
-$("#faq_box").hide(200);
-});
+    $('#reply_file').trigger('change', 'answer');
+    if ($('#reply_faq_attachments')[0]) {
+      $('#reply_faq_attachments')[0].value = ''
+    }
 
-$("#reply-2").click(e => {
-if (e.target.parentNode == $("#reply_box")[0].parentNode) {
-$("#reply_box").toggle(200);
-} else {
-$("#reply_box").hide(0);
-e.target.parentNode.appendChild(document.getElementById('reply_box'));
-cleanMCE();
-$("#reply_box").show(200);
-}
-$("#faq_box").hide(200);
-});
+    if (e.target.parentNode == $("#reply_box")[0].parentNode) {
+      $("#reply_box").toggle(200);
+    } else {
+      $("#reply_box").hide(0);
+      e.target.parentNode.appendChild(document.getElementById('reply_box'));
+      cleanMCE('tinymce');
+      $("#reply_box").show(200);
+    }
 
-// FAQ buttons
-$("#faq-reply").click(e => {
-if (e.target.parentNode == $("#faq_box")[0].parentNode) {
-$("#faq_box").toggle(200);
-} else {
-$("#faq_box").hide(0);
-e.target.parentNode.appendChild(document.getElementById('faq_box'));
-cleanMCE();
-$("#faq_box").show(200);
-}
-$("#reply_box").hide(200);
-});
-$("#faq-reply-2").click(e => {
-if (e.target.parentNode == $("#faq_box")[0].parentNode) {
-$("#faq_box").toggle(200);
-} else {
-$("#faq_box").hide(0);
-e.target.parentNode.appendChild(document.getElementById('faq_box'));
-cleanMCE();
-$("#faq_box").show(200);
-}
-$("#reply_box").hide(200);
-});
+    $("#faq_box").hide(200);
+  });
 
-// CANCEL button
-$("#cancel").click(() => {
-$("#reply_box").hide(200);
-});
+  $("#reply-2").click(e => {
+    if (e.target.parentNode == $("#reply_box")[0].parentNode) {
+      $("#reply_box").toggle(200);
+    } else {
+      $("#reply_box").hide(0);
+      e.target.parentNode.appendChild(document.getElementById('reply_box'));
+      cleanMCE('tinymce');
+      $("#reply_box").show(200);
+    }
+
+    $("#faq_box").hide(200);
+  });
+
+  // FAQ buttons
+  $("#faq-reply").click(e => {
+    if (e.target.parentNode == $("#faq_box")[0].parentNode) {
+      $("#faq_box").toggle(200);
+    } else {
+      $("#faq_box").hide(0);
+      e.target.parentNode.appendChild(document.getElementById('faq_box'));
+      cleanMCE('tinymce');
+      $("#faq_box").show(200);
+    }
+
+    $("#reply_box").hide(200);
+  });
+
+  $("#faq-reply-2").click(e => {
+    if (e.target.parentNode == $("#faq_box")[0].parentNode) {
+      $("#faq_box").toggle(200);
+    } else {
+      $("#faq_box").hide(0);
+      e.target.parentNode.appendChild(document.getElementById('faq_box'));
+      cleanMCE('tinymce');
+      $("#faq_box").show(200);
+    }
+
+    $("#reply_box").hide(200);
+  });
+
+  // CANCEL button
+  $("#cancel").click(() => {
+    $("#reply_box").hide(200);
+  });
 
 </script>
 
@@ -421,39 +421,22 @@ $("#reply_box").hide(200);
 
       const finalAnswer = $('#final-answer')[0];
       const parent = button.parentNode;
+      const replyID = parent.parentNode.children[0].children[1].innerHTML.split('#')[1];
+      const float = $(`#faq-${replyID}`);
+      const faqField = $('#faq-form')[0];
 
-      if (parent.lastChild == finalAnswer) {
-        $('#final-answer').toggle(200);
-      } else {
-        $('#final-answer').hide();
-        parent.appendChild(finalAnswer);
-        $('#final-answer').show(200);
-      }
-      cleanMCEAnswer();
-
-      const formChildren = finalAnswer.children[3].children;
-      const answerDivField = formChildren[2].children[1];
-      const answerField = answerDivField.children[1];
-      answerField.innerHTML = parent.parentNode.children[1].children[0].innerText;
-
-      const float = parent.children[3].children
-      const faqField = formChildren[2].children[6];
-      faqField.style.display = float.length == 0 ?
-                                  parent.children[7].children.length == 2 ? 'none' : 'inline-flex'
-                                : float.length == 2 ? 'none' : 'inline-flex';
-      const replyId = parent.parentNode.children[0].children[1].innerText.split('#')[1];
+      // Show/hide the faq field
+      faqField.style.display = float ? 'none' : 'inline-flex'
 
       $.ajax({
-        url: '/apoioaempresas/replies/attachments/' + replyId,
+        url: '/apoioaempresas/replies/attachments/' + replyID,
         type: "GET",
         dataType: "json",
         success: data => {
-
-          // Set the ids
-          answerFileIds = data.map(val => val.id).reduce((acc, val) => acc.concat(val), [])
-          $('#uuid-files-answer').val(answerFileIds);
+          const dropzone = $('#answer-dropzone')[0].dropzone
 
           // Fake their adittion in the reply-dropzone
+          dropzone.removeAllFiles();
           data.forEach( val => {
             let mockFile = {
                       name: val.filename,
@@ -461,13 +444,31 @@ $("#reply_box").hide(200);
                       type: val.type,
                       accepted: true            // required if using 'MaxFiles' option
                   };
-            dropzone = $('#answer-dropzone')[0].dropzone
+
             dropzone.files.push(mockFile);
             dropzone.emit('addedfile', mockFile);
             dropzone.emit('complete', mockFile);
             $(dropzone.files[dropzone.files.length - 1]
-                                            .previewElement).find('.dz-remove').attr('id', val.id);
+                      .previewElement).find('.dz-remove')
+                                      .attr('id', val.id);
           })
+
+          // Set the ids
+          answerFileIds = data.map(val => val.id).reduce((acc, val) => acc.concat(val), [])
+          $('#uuid-files-answer').val(answerFileIds);
+
+          //Update the divs
+          if (parent.lastChild == finalAnswer) {
+            $('#final-answer').toggle(200);
+          } else {
+            $('#final-answer').hide();
+            parent.appendChild(finalAnswer);
+            $('#final-answer').show(200);
+          }
+
+          // Update tinyMCE
+          cleanMCE('tinymceAnswer');
+          tinyMCE.get('tinymceAnswer').setContent(parent.parentNode.children[1].children[0].innerText);
         }
       });
     }
