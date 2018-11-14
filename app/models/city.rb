@@ -2,7 +2,7 @@
 
 class City < ApplicationRecord
   belongs_to :state
-  has_many :unities
+  has_many :unities, -> { order('name ASC') }
   has_many :users
   has_one :contract
   validates :name, presence: true
