@@ -267,6 +267,8 @@ class ControversiesController < ApplicationController
 
   def in_controversy?
     # User in the controversy or admin of the company involved in the controversy
-    @controversy.all_users.include?(current_user) || @controversy.sei == current_user.sei
+    params[:action] == 'index' ||
+      @controversy.all_users.include?(current_user) ||
+      @controversy.sei == current_user.sei
   end
 end

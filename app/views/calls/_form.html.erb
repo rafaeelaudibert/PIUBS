@@ -305,7 +305,7 @@
 
       if (arr.length >= 1) {
         jQuery.ajax({
-          url: '/answers/query/' + textField.value,
+          url: '/answers/query_call/' + textField.value,
           type: "GET",
           dataType: "json",
           success: data => {

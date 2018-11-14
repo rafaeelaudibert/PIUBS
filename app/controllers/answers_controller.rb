@@ -25,11 +25,31 @@ class AnswersController < ApplicationController
       Answer,
       params[:filterrific],
       select_options: {
-        with_category: Category.all.map { |a| [a.name, a.id] }
+        with_category: Category.where(source: :from_call).map { |a| [a.name, a.id] }
       },
       persistence_id: false
     )) || return
-    @answers = Answer.filterrific_find(@filterrific).order(:category_id).page(params[:page])
+
+    @answers = retrieve_faq_answers :from_call
+
+    respond_to do |format|
+      format.html
+      format.js
+    end
+  end
+
+  # get /faq_controversy
+  def faq_controversy
+    (@filterrific = initialize_filterrific(
+      Answer,
+      params[:filterrific],
+      select_options: {
+        with_category: Category.where(source: :from_controversy).map { |a| [a.name, a.id] }
+      },
+      persistence_id: false
+    )) || return
+
+    @answers = retrieve_faq_answers :from_controversy
 
     respond_to do |format|
       format.html
@@ -94,11 +114,21 @@ class AnswersController < ApplicationController
     end
   end
 
-  # GET /answers/query/:search
-  def search
+  # GET /answers/query_call/:search
+  def search_call
     respond_to do |format|
       format.js do
-        render json: Answer.where(faq: true)
+        render json: Answer.where(faq: true, source: :from_call)
+                           .search_for(params[:search]).with_pg_search_rank.limit(15)
+      end
+    end
+  end
+
+  # GET /answers/query_controversy/:search
+  def search_controversy
+    respond_to do |format|
+      format.js do
+        render json: Answer.where(faq: true, source: :from_controversy)
                            .search_for(params[:search]).with_pg_search_rank.limit(15)
       end
     end
@@ -137,6 +167,16 @@ class AnswersController < ApplicationController
 
   def retrieve_files(ans_params)
     ans_params.delete(:files).split(',') if ans_params[:files]
+  end
+
+  def retrieve_faq_answers(source)
+    if params[:filterrific]
+      Answer.filterrific_find(@filterrific).order(:category_id).page(params[:page])
+    else
+      Answer.where(faq: true, source: source)
+            .order(:category_id)
+            .page(params[:page])
+    end
   end
 
   def mark_as_final_answer(answer)

@@ -33,7 +33,8 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   # /answers
   resources :answers do
     collection do
-      get 'query/:search', to: 'answers#search'
+      get 'query_call/:search', to: 'answers#search_call'
+      get 'query_controversy/:search', to: 'answers#search_controversy'
       get 'attachments/:id', to: 'answers#attachments'
     end
   end
@@ -113,7 +114,10 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   scope '/controversias' do
     # /controversias
     get '/', to: 'controversies#index', as: 'controversias_root' # Controversias root
-
+    
+    # /controversias/faq
+    get 'faq', to: 'answers#faq_controversy', as: 'faq_controversy'
+    
     resources :controversies do
       collection do
         post 'link_controversy', to: 'controversies#link_controversy',

@@ -19,7 +19,7 @@
   button.addEventListener('click', () => {
     if (textField.value.length > 3) {
       jQuery.ajax({
-        url: '/answers/query/' + textField.value.split('.').join(' '),
+        url: '/answers/query_controversy/' + textField.value.split('.').join(' '),
         type: "GET",
         dataType: "json",
         success: data => {

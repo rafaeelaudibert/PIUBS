@@ -14,6 +14,8 @@ class Answer < ApplicationRecord
                                message: 'this one is not allowed.
                                           Choose from True or False' }
 
+  enum source: %i[from_call from_controversy]
+
   # PgSearch stuff
   include PgSearch
   pg_search_scope :search_for,
@@ -32,7 +34,8 @@ class Answer < ApplicationRecord
 
   filterrific(
     default_filter_params: { with_category: 'category_any' },
-    available_filters: %i[with_category search_query_faq search_query]
+    available_filters: %i[with_category search_query_faq_call
+                          search_query_faq_controversy search_query]
   )
 
   scope :search_query, lambda { |query|
@@ -41,10 +44,16 @@ class Answer < ApplicationRecord
     search_for query
   }
 
-  scope :search_query_faq, lambda { |query|
+  scope :search_query_faq_call, lambda { |query|
     return nil if query.blank?
 
-    search_for query
+    where(faq: true, source: :from_call).search_for query
+  }
+
+  scope :search_query_faq_controversy, lambda { |query|
+    return nil if query.blank?
+
+    where(faq: true, source: :from_controversy).search_for query
   }
 
   scope :with_category, lambda { |category_id|
