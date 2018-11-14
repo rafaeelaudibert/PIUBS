@@ -117,16 +117,21 @@ class CompaniesController < ApplicationController
     if %w[index new create destroy edit update].include? action
       redirect_to denied_path unless admin?
     elsif %w[states users cities unities].include? action
-      unless admin? ||
-             support_user? ||
-             (company_user? && params[:id].to_i == current_user.sei)
-        redirect_to denied_path
-      end
+      redirect_to denied_path unless can_see_company_api?
     elsif action == 'show'
-      unless (current_user.try(:company_admin?) && @company.sei == current_user.sei) ||
-             admin?
-        redirect_to denied_path
-      end
+      redirect_if_cant_show
     end
+  end
+
+  def redirect_if_cant_show
+    redirect_to denied_path unless sei_company_admin_or_admin?
+  end
+
+  def can_see_company_api?
+    admin? || support_user? || params[:id].to_i == current_user.sei
+  end
+
+  def sei_company_admin_or_admin?
+    (current_user.company_admin? && @company.sei == current_user.sei) || admin?
   end
 end
