@@ -255,20 +255,18 @@ class ControversiesController < ApplicationController
   end
 
   def filter_role
+    redirect_to denied_path if faq_inserter?
+
     action = params[:action]
     if %w[edit update].include? action
       redirect_to denied_path unless admin?
-    elsif %w[new create index destroy].include? action
-      redirect_to denied_path unless admin? || support_user? || company_user? ||
-                                     city_user? || ubs_user?
-    elsif action == 'show'
-      unless (company_user? && @controversy.company_user_id == current_user.id) ||
-             (ubs_user? && @controversy.unity_user_id == current_user.id) ||
-             (city_user? && @controversy.unity_user_id == current_user.id) ||
-             support_user? ||
-             admin?
-        redirect_to denied_path
-      end
+    else
+      redirect_to denied_path unless in_controversy? || support_like?
     end
+  end
+
+  def in_controversy?
+    # User in the controversy or admin of the company involved in the controversy
+    @controversy.all_users.include?(current_user) || @controversy.sei == current_user.sei
   end
 end
