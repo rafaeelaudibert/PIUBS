@@ -114,10 +114,10 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   scope '/controversias' do
     # /controversias
     get '/', to: 'controversies#index', as: 'controversias_root' # Controversias root
-    
+
     # /controversias/faq
     get 'faq', to: 'answers#faq_controversy', as: 'faq_controversy'
-    
+
     resources :controversies do
       collection do
         post 'link_controversy', to: 'controversies#link_controversy',
