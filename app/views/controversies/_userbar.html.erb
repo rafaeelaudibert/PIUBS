@@ -1,23 +1,25 @@
 <div id="resumed-controversy">
-  <div class="row align-items-center">
-    <div class="col-md-3 text-center">
+  <div class="row align-items-around">
+    <div class="col-md-<%= @controversy.open? ? 3 : 4 %> text-center">
       <span class="badge badge-pill badge-dark"><%= @controversy.company ? "Empresa #{@controversy.company.sei}" : "Nenhuma em específico (contate o suporte) " %></span>
     </div>
-    <div class="col-md-3 text-center">
+    <div class="col-md-<%= @controversy.open? ? 3 : 4 %> text-center">
       <span class="badge badge-pill badge-dark"><%= "#{@controversy.city.name} - #{@controversy.city.state.name}" %></span>
     </div>
-    <div class="col-md-3 text-center">
-      <span class="badge badge-pill badge-dark"><%= @controversy.unity.name || 'Nenhuma em específico' %></span>
+    <div class="col-md-<%= @controversy.open? ? 3 : 4 %> text-center">
+      <span class="badge badge-pill badge-dark"><%= @controversy.unity.try(:name) || 'Nenhuma em específico' %></span>
     </div>
-    <div class="col-md-3 text-center">
-      <button type="button" id="show-detailed" class="btn btn-primary">Mostrar detalhes</button>
-    </div>
+    <% if @controversy.open? %>
+      <div class="col-md-3 text-center">
+        <button type="button" id="show-detailed" class="btn btn-primary">Mostrar detalhes</button>
+      </div>
+    <% end %>
   </div>
 </div>
 
 <div id="detailed-controversy" class="hidden">
   <!-- HEADER -->
-  <div class="row align-items-center mt-4">
+  <div class="row align-items-center mt-3">
     <div class="col-md-3">
       <!-- Nothing here -->
     </div>

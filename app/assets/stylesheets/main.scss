@@ -18,6 +18,7 @@
 }
 
 .form-control {
+  height: 2.2rem;
   border-radius: 0.1rem !important;
 
   &:focus {
@@ -265,13 +266,21 @@ label {
 
 // -------- Controversies
 
+.description {
+  font-size: .9rem;
+}
+
 //user-reference
 .controversy-user-reference {
 
-  font-size: 1.1rem;
+  font-size: .85rem;
 
   b {
-    font-size: 1.2rem;
+    font-size: 1rem;
+  }
+
+  .badge {
+    font-size: 85%;
   }
 
   .input-group {
