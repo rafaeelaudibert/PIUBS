@@ -14,7 +14,7 @@
         <em class="fa fa-bullhorn m-2"></em>
         Parte Requerente :
         <span class="badge badge-pill badge-dark m-2">
-          <a><%= @controversy.creator.titleize %></a>
+          <a><%= t "activerecord.enums.controversy.creator.#{@controversy.creator}" %></a>
         </span>
         | Usuário Requerente :
         <span class="badge badge-pill badge-dark m-2">
