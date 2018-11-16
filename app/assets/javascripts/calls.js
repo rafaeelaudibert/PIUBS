@@ -722,4 +722,57 @@
     $("input[data-role=tagsinput], select[multiple][data-role=tagsinput]")
       .tagsinput();
   });
+  
+  /**
+  * validate finalAnswer form
+  */
+  $("#finalAnswerForm").submit(function(){
+    tinyMCE.triggerSave();
+  });
+  $.validator.setDefaults({
+      ignore: ":hidden:not('textarea, input')"
+  });
+  var validator = $('#finalAnswerForm').validate({
+      rules: {
+          "answer[keywords]": {
+              required: true
+          },
+          "answer[answer]": {
+            required: true
+          }
+      },
+      messages :{
+          "answer[keywords]" : {
+              required : 'O campo Palavras-chave é obrigatório.'
+          },
+          "answer[answer]": {
+            required: 'O campo Resposta é obrigatório.'
+          },
+          "answer[question]": {
+            required: 'O campo Questão é obrigatório.'
+          }
+      }
+  });
+
+  /**
+  * validate reply form
+  */
+  $("#replyForm").submit(function(){
+    tinyMCE.triggerSave();
+  });
+  $.validator.setDefaults({
+      ignore: ":hidden:not('textarea')"
+  });
+  var validator = $('#replyForm').validate({
+      rules: {
+          "reply[description]": {
+              required: true
+          }
+      },
+      messages :{
+          "reply[description]" : {
+              required : 'O campo Descrição é obrigatório.'
+          }
+      }
+  });
 })(window.jQuery);
