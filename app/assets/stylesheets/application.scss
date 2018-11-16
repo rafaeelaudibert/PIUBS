@@ -20,6 +20,7 @@
 @import "animate.min.scss";
 @import "answers.scss";
 @import "calls.scss";
+@import "controversies.scss";
 @import "index.scss";
 @import "main.scss";
 @import "notification.scss";
@@ -1386,10 +1387,6 @@ textarea {
 /* Input groups */
 .input-group {
   margin-bottom: 10px;
-}
-
-.input-group .form-control {
-  padding-left: 5px;
 }
 
 .input-group .input-group-btn .btn {

@@ -3,6 +3,7 @@
 class AnswersController < ApplicationController
   before_action :set_answer, only: %i[show edit update destroy]
   before_action :authenticate_user!
+  before_action :verify_source, only: :new
   before_action :filter_role, except: %i[faq]
   include ApplicationHelper
 
@@ -25,16 +26,32 @@ class AnswersController < ApplicationController
       Answer,
       params[:filterrific],
       select_options: {
-        with_category: Category.all.map { |a| [a.name, a.id] }
+        with_category: Category.where(source: :from_call).map { |a| [a.name, a.id] }
       },
       persistence_id: false
     )) || return
-    @answers = Answer.filterrific_find(@filterrific).order(:category_id).page(params[:page])
 
-    respond_to do |format|
-      format.html
-      format.js
-    end
+    @answers = Answer.where(faq: true, source: :from_call)
+                     .filterrific_find(@filterrific)
+                     .order(:category_id)
+                     .page(params[:page])
+  end
+
+  # get /faq_controversy
+  def faq_controversy
+    (@filterrific = initialize_filterrific(
+      Answer,
+      params[:filterrific],
+      select_options: {
+        with_category: Category.where(source: :from_controversy).map { |a| [a.name, a.id] }
+      },
+      persistence_id: false
+    )) || return
+
+    @answers = Answer.where(faq: true, source: :from_controversy)
+                     .filterrific_find(@filterrific)
+                     .order(:category_id)
+                     .page(params[:page])
   end
 
   # GET /answers/1
@@ -60,7 +77,10 @@ class AnswersController < ApplicationController
     if @answer.save
       mark_as_final_answer @answer if params[:question_id]
       create_file_links @answer, files
-      redirect_to (@call || faq_path || root_path), notice: 'Resposta final marcada com sucesso.'
+
+      # Answer created from a call or from the FAQ
+      redirect_to @call, notice: 'Resposta final marcada com sucesso' if @call
+      redirect_to @answer || root_path, notice: 'Questão criada com sucesso.'
     else
       render :new
     end
@@ -94,11 +114,21 @@ class AnswersController < ApplicationController
     end
   end
 
-  # GET /answers/query/:search
-  def search
+  # GET /answers/query_call/:search
+  def search_call
     respond_to do |format|
       format.js do
-        render json: Answer.where(faq: true)
+        render json: Answer.where(faq: true, source: :from_call)
+                           .search_for(params[:search]).with_pg_search_rank.limit(15)
+      end
+    end
+  end
+
+  # GET /answers/query_controversy/:search
+  def search_controversy
+    respond_to do |format|
+      format.js do
+        render json: Answer.where(faq: true, source: :from_controversy)
                            .search_for(params[:search]).with_pg_search_rank.limit(15)
       end
     end
@@ -131,7 +161,7 @@ class AnswersController < ApplicationController
   def answer_params
     params[:answer][:keywords] = params[:answer][:keywords].split(',').join(' ; ')
     params.require(:answer).permit(:keywords, :question, :answer, :category_id,
-                                   :user_id, :faq, :question_id,
+                                   :user_id, :faq, :question_id, :source,
                                    :reply_attachments, :files)
   end
 
@@ -140,8 +170,8 @@ class AnswersController < ApplicationController
   end
 
   def mark_as_final_answer(answer)
-    update_call
-    update_reply
+    @call = Call.find(params[:question_id])
+    update_call_reply @call
 
     # Retira a answer caso ela nao esteja no FAQ + attach_links
     if @call.answer.try(:faq) == false
@@ -155,22 +185,16 @@ class AnswersController < ApplicationController
     end
   end
 
-  def update_call
-    @call = Call.find(params[:question_id])
-    @call.closed!
-    @call.update(finished_at: Time.now)
-  end
-
-  def update_reply
-    @reply = Reply.find(params[:reply_id])
-    @reply.update(last_call_ref_reply_closed_at: Time.now)
+  def update_call_reply(call)
+    call.update(status: 'closed', finished_at: 0.seconds.from_now)
+    Reply.find(params[:reply_id]).update(last_call_ref_reply_closed_at: 0.seconds.from_now)
   end
 
   def update_answer_id(call, answer)
     call.answer_id = answer.id
     raise 'Não conseguimos salvar a answer de maneira correta.' unless call.save
 
-    AnswerMailer.notify(call, answer, current_user).deliver_later
+    AnswerMailer.new_answer(call, answer, current_user).deliver_later
   end
 
   def create_file_links(answer, files)
@@ -208,6 +232,10 @@ class AnswersController < ApplicationController
     else
       show_or_faq?(action)
     end
+  end
+
+  def verify_source
+    redirect_to not_found_path unless %w[call controversy].include?(params[:source])
   end
 
   def admin_support_faq?

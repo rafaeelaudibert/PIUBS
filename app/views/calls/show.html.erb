@@ -46,7 +46,7 @@
   <hr/>
   <p>
     <strong><%= t 'activerecord.models.call.description' %>:</strong>
-    <%= @call.description.html_safe %>
+    <span class="description"><%= @call.description.html_safe %></span>
   </p>
   <p>
     <strong><%= t 'activerecord.models.call.access_profile' %>:
@@ -217,7 +217,7 @@
       </div>
       <div class="card-body" style="padding: 5px 30px 15px">
         <p class="card-text">
-          <span>
+          <span class="description">
             <%= reply.description.html_safe %>
           </span>
 

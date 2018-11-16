@@ -52,6 +52,17 @@ en:
           normal: "Normal"
           high: "Alta"
           huge: "Muito alta"
+      controversy:
+        status:
+          open: "Aberto"
+          closed: "Fechado"
+          on_hold: "No aguardo"
+          on_ministry: "Com Ministério"
+        creator:
+          company: "Empresa"
+          unity: "UBS"
+          city: "Cidade"
+          support: "Suporte PIUBS"
       category:
         severity:
           low: "Baixa"

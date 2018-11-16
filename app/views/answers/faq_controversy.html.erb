@@ -3,7 +3,7 @@
   <h4 class="display-5">FAQ</h4>
 </div>
 <div class="right create-new">
-  <%= link_to 'Cadastrar nova questão', new_answer_path(source: 'call'), class: 'btn btn-primary btn-lg' %>
+  <%= link_to 'Cadastrar nova questão', new_answer_path(source: 'controversy'), class: 'btn btn-primary btn-lg' %>
 </div>
 <%end%>
 </hr>
@@ -27,7 +27,7 @@
                  style: 'margin-top: 0.375em') if params[:filterrific] %>
   </div>
   <div class="right input-group" style="width: 40%; margin: 15px auto !important">
-    <input name="filterrific[search_query_faq_call]" id="filterrific_search_query_faq_call" class="form-control mr-sm-2" type="search" aria-label="Search">
+    <input name="filterrific[search_query_faq_controversy]" id="filterrific_search_query_faq_controversy" class="form-control mr-sm-2" type="search" aria-label="Search">
     <label>
       <i class="fa fa-search"></i>
       &nbsp;Pesquise no FAQ
@@ -50,6 +50,10 @@
     <div id="my-answers">
       <%= render @answers %>
     </div>
+  </div>
+
+  <div id="infinite-scrolling">
+    <%= will_paginate @answers %>
   </div>
   <% else %>
   <h3>

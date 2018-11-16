@@ -52,7 +52,7 @@ class CallsController < ApplicationController
     if @call.save
       create_file_links @call, files
 
-      CallMailer.notify(@call, @call.user).deliver_later
+      CallMailer.new_answer(@call, @call.user).deliver_later
       redirect_to @call, notice: 'Call was successfully created.'
     else
       render :new
@@ -151,10 +151,10 @@ class CallsController < ApplicationController
 
   def update_call(call, params)
     call.reopened!
-    call.update(reopened_at: Time.now)
+    call.update(reopened_at: 0.seconds.from_now)
     call.answer_id = nil
 
-    Reply.find(params[:reply_id]).update(last_call_ref_reply_reopened_at: Time.now)
+    Reply.find(params[:reply_id]).update(last_call_ref_reply_reopened_at: 0.seconds.from_now)
 
     call
   end
@@ -247,28 +247,28 @@ class CallsController < ApplicationController
       show_or_index?(action)
     end
   end
-end
 
-def show_or_index?(action)
-  if action == 'show'
-    redirect_to denied_path unless alloweds_users
-  elsif action == 'index'
-    redirect_to faq_path unless admin_support_company?
+  def show_or_index?(action)
+    if action == 'show'
+      redirect_to denied_path unless alloweds_users
+    elsif action == 'index'
+      redirect_to faq_path unless admin_support_company?
+    end
   end
-end
 
-def alloweds_users
-  creator_company_admin? || creator_company_user? || support_user? || admin?
-end
+  def alloweds_users
+    creator_company_admin? || creator_company_user? || support_user? || admin?
+  end
 
-def creator_company_admin?
-  current_user.try(:company_admin?) && @call.sei == current_user.sei
-end
+  def creator_company_admin?
+    current_user.try(:company_admin?) && @call.sei == current_user.sei
+  end
 
-def creator_company_user?
-  current_user.try(:company_user?) && @call.user_id == current_user.id
-end
+  def creator_company_user?
+    current_user.try(:company_user?) && @call.user_id == current_user.id
+  end
 
-def admin_support_company?
-  admin? || support_user? || company_user?
+  def admin_support_company?
+    admin? || support_user? || company_user?
+  end
 end

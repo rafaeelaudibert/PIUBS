@@ -6,7 +6,18 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   # /users
   devise_for :users, controllers: { invitations: 'users/invitations',
                                     registrations: 'users/registrations' }
-  resources :users
+  resources :users do
+    collection do
+      get :autocomplete_user_company, to: 'users#autocomplete_company_users',
+                                      as: 'autocomplete_company'
+      get :autocomplete_user_city, to: 'users#autocomplete_city_users',
+                                   as: 'autocomplete_city'
+      get :autocomplete_user_unity, to: 'users#autocomplete_unity_users',
+                                    as: 'autocomplete_unity'
+      get :autocomplete_user_support, to: 'users#autocomplete_support_users',
+                                      as: 'autocomplete_support'
+    end
+  end
 
   # Errors
   get '404', to: 'application#page_not_found', as: 'not_found'
@@ -22,8 +33,10 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   # /answers
   resources :answers do
     collection do
-      get 'query/:search', to: 'answers#search'
+      get 'query_call/:search', to: 'answers#search_call'
+      get 'query_controversy/:search', to: 'answers#search_controversy'
       get 'attachments/:id', to: 'answers#attachments'
+      get 'new/:source', to: 'answers#new'
     end
   end
 
@@ -102,6 +115,9 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   scope '/controversias' do
     # /controversias
     get '/', to: 'controversies#index', as: 'controversias_root' # Controversias root
+
+    # /controversias/faq
+    get 'faq', to: 'answers#faq_controversy', as: 'faq_controversy'
 
     resources :controversies do
       collection do

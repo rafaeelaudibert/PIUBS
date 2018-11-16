@@ -36,8 +36,8 @@
       <div class="field">
         <%= form.label :state_id, 'Estado', class: 'required' %>
         <%= form.select :state_id,
-                        State.where(id: current_user.company.state_ids)
-                             .order('name ASC')
+                        State.where(id: City.where(id: current_user.company.contracts.map(&:city_id)).map(&:state_id))
+                             .order(name: :ASC)
                              .map { |state| [state.name, state.id]},
                         {include_blank: 'Selecione um estado'},
                         {class: 'form-control boxed', required: true } %>

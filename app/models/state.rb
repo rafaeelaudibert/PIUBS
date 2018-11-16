@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class State < ApplicationRecord
+  default_scope { order(:name) }
   has_many :cities, -> { order('name ASC') }
   validates :name, presence: true, uniqueness: true
 

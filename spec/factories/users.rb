@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :user do
-    confirmed_at Time.now
+    confirmed_at 0.seconds.from_now
     name 'Test User'
     email 'test@example.com'
     password 'please123'

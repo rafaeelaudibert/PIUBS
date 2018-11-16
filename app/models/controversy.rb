@@ -17,7 +17,7 @@ class Controversy < ApplicationRecord
 
   enum creator: %i[company unity city support]
   enum category: %i[hardware software]
-  enum status: %i[open closed]
+  enum status: %i[open closed on_hold on_ministry]
 
   before_create :generate_protocol
 
@@ -46,6 +46,6 @@ class Controversy < ApplicationRecord
   protected
 
   def generate_protocol
-    self.protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
+    self.protocol = 0.seconds.from_now.strftime('%Y%m%d%H%M%S%L').to_i
   end
 end

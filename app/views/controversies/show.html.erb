@@ -9,33 +9,48 @@
 <div class="card card-primary">
   <!-- Default panel contents -->
   <div class="card-header " style="color: white; font-weight: bold;">
-    <em class="fa fa-bullhorn m-2"></em>
-    Parte Requerente :
-    <span class="badge badge-pill badge-dark m-2">
-      <a><%= @controversy.creator.titleize %></a>
-    </span>
-    | Usuário Requerente :
-    <span class="badge badge-pill badge-dark m-2">
-      <a><%= @user_creator %></a>
-    </span>
+    <div class="row">
+      <div class="col">
+        <em class="fa fa-bullhorn m-2"></em>
+        Parte Requerente :
+        <span class="badge badge-pill badge-dark m-2">
+          <a><%= t "activerecord.enums.controversy.creator.#{@controversy.creator}" %></a>
+        </span>
+        | Usuário Requerente :
+        <span class="badge badge-pill badge-dark m-2">
+          <a><%= @user_creator %></a>
+        </span>
 
-    <% if @controversy.open? %>
-      | Data de criação :
-      <span class="badge badge-pill badge-dark m-2">
-        <%= @controversy.created_at %>
-      </span>
-    <%elsif @controversy.closed?%>
-      | Data de fechamento :
-      <span class="badge badge-pill badge-dark m-2">
-        <%= @controversy.closed_at %>
-      </span>
-    <%end%>
+        <% if @controversy.open? %>
+          | Data de criação :
+          <span class="badge badge-pill badge-dark m-2">
+            <%= @controversy.created_at %>
+          </span>
+        <%elsif @controversy.closed?%>
+          | Data de fechamento :
+          <span class="badge badge-pill badge-dark m-2">
+            <%= @controversy.closed_at %>
+          </span>
+        <%end%>
+      </div>
+    </div>
+    <div class="col-md-3 col-offset-md-9 text-center">
+      <% if support_user? && @controversy.open? && @controversy.support_1 == current_user %>
+        <%= button_to 'Soltar Controvérsia', unlink_controversies_path(id: @controversy.id, user_id: current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Soltar este atendimento' }, method: :post,
+                      form_class: 'ml-2', class: "btn btn-danger btn-sm" %>
+      <% elsif support_user? && @controversy.open? %>
+        <%= button_to 'Pegar Controvérsia', link_controversies_path(id: @controversy.id, user_id: current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Soltar este atendimento' }, method: :post,
+                      form_clas: 'ml-2', class: "btn btn-dark btn-sm" %>
+      <% end %>
+    </div>
+
+
   </div>
 
   <div class="card-block">
     <h4><%= @controversy.title %></h4>
     <hr/>
-    <p>
+    <p class="description">
       <%= @controversy.description.html_safe %>
     </p>
 
@@ -53,111 +68,31 @@
         <%end%>
       <% end %>
     <% end %>
+    <hr class="mb-2"/>
 
-    <hr/>
-    Empresa: <span class="badge badge-pill badge-light m-2"><%= @controversy.sei %> - <%= @controversy.company_user.try(:name) || 'Sem usuário na conversa' %></span>
-    UBS: <span class="badge badge-pill badge-light m-2"><%= @controversy.unity.try(:name) || 'Nenhuma em específico' %> - <%= @controversy.unity_user.try(:name) || 'Sem usuário na conversa' %></span>
-    Cidade: <span class="badge badge-pill badge-light m-2"><%= "#{@controversy.city.name}//#{@controversy.city.state.name}" %> - <%= @controversy.city_user.try(:name) || 'Sem usuário na conversa' %></span>
+    <div class="controversy-user-reference">
+      <%= render 'userbar' %>
+    </div>
 
-    <% if support_like? && @controversy.open? && @controversy.support_1 == current_user %>
-      <hr/>
-      <div class="row mr-1">
-        <div class="input-group col-lg-3 col-md-6 p-2">
-          <% if @controversy.company_user_id != nil %>
-            <button class="btn btn-danger btn-sm col-12" onclick="toggleCompany()" type="button">Remover Usuário da Empresa</button>
+
+    <% if @controversy.open? %>
+        <% if @controversy.support_1 && current_user != @controversy.support_1 && !admin?%>
+          <% if current_user.call_center_admin? %>
+            <div style="color: red; font-weight: 400; margin:1em 0; background-color:#CCC; padding:20px;">Esta controvérsia pertence ao usuário <%= "#{@controversy.support_1.name} #{@controversy.support_1.last_name}" %></div>
           <% else %>
-          <select class="custom-select" id="companySelect">
-            <option selected>Adicionar usuário Empresa</option>
-            <% User.where(sei: @controversy.sei).each do |user| %>
-              <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
-            <% end %>
-          </select>
-          <div class="input-group-append">
-            <button class="btn btn-primary btn-outline-secondary" onclick="toggleCompany()" type="button"><em class="fa fa-plus"></em></button>
-          </div>
+            <div style="color: red; font-weight: 400; margin:1em 0; background-color:#CCC; padding:20px;">Esta controvérsia já pertence a outro usuário do suporte.</div>
           <% end %>
-        </div>
-        <div class="input-group col-lg-3 col-md-6 p-2">
-          <% if @controversy.unity_user_id != nil %>
-            <button class="btn btn-danger btn-sm col-12" onclick="toggleUnity()" type="button">Remover Usuário da UBS</button>
-          <% else %>
-            <select class="custom-select" id="unitySelect">
-              <option selected>Adicionar usuário UBS</option>
-              <% if @controversy.unity %>
-                <% User.where(unity: @controversy.unity).each do |user| %>
-                  <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
-                <% end %>
-              <% else %>
-                <% User.where(city_id: @controversy.city_id).where.not(cnes: nil).each do |user| %>
-                  <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
-                <% end %>
-              <% end %>
-            </select>
-            <div class="input-group-append">
-              <button class="btn btn-primary btn-outline-secondary" onclick="toggleUnity()" type="button"><em class="fa fa-plus"></em></button>
-            </div>
-          <% end %>
-        </div>
-        <div class="input-group col-lg-3 col-md-6 p-2">
-          <% if @controversy.city_user_id != nil %>
-            <button class="btn btn-danger btn-sm col-12" onclick="toggleCity()" type="button">Remover Usuário da Cidade</button>
-          <% else %>
-          <select class="custom-select" id="citySelect">
-            <option selected>Adicionar usuário Cidade</option>
-            <% User.where(city_id: @controversy.city_id, cnes: nil).each do |user| %>
-              <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
-            <% end %>
-          </select>
-          <div class="input-group-append">
-            <button class="btn btn-primary btn-outline-secondary" onclick="toggleCity()" type="button"><em class="fa fa-plus"></em></button>
-          </div>
-          <% end %>
-        </div>
-        <div class="input-group col-lg-3 col-md-6 p-2">
-          <% if @controversy.support_2_user_id != nil %>
-            <button class="btn btn-danger btn-sm col-12" onclick="toggleSupport()" type="button">Remover Suporte Adicional</button>
-          <% else %>
-          <select class="custom-select" id="supportSelect">
-            <option selected>Adicionar suporte adicional</option>
-            <% User.where(role: ['call_center_user', 'call_center_admin']).each do |user| %>
-              <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
-            <% end %>
-          </select>
-          <div class="input-group-append">
-            <button class="btn btn-primary btn-outline-secondary" onclick="toggleSupport()" type="button"><em class="fa fa-plus"></em></button>
-          </div>
-          <% end %>
-        </div>
-      </div>
-        <hr>
-      <div class="row mr-1 justify-content-around">
-        <%= button_to 'Soltar Controvérsia', unlink_controversies_path(id: @controversy.id, user_id: current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Soltar este atendimento' }, method: :post,
-                      form_class: 'col-md-12', class: "btn btn-danger col-sm-3 right" %>
-      </div>
-    <% elsif support_like? %>
-      <% if @controversy.open? %>
-          <% if @controversy.support_1 != nil && !admin?%>
-            <% if current_user.call_center_admin? %>
-              <div style="color: red; font-weight: 400; margin:1em 0; background-color:#CCC; padding:20px;">Esta controvérsia pertence ao usuário <%= "#{@controversy.support_1.name} #{@controversy.support_1.last_name}" %></div>
-            <% else %>
-              <div style="color: red; font-weight: 400; margin:1em 0; background-color:#CCC; padding:20px;">Esta controvérsia já pertence a outro usuário do suporte.</div>
-            <% end %>
-          <% elsif !admin? %>
-            <hr/>
-            <%= button_to 'Pegar Controvérsia', link_controversies_path(id: @controversy.id, user_id: current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Soltar este atendimento' }, method: :post,
-                          class: "btn right", :style => "color:#FFF; background-color: #084B8A; margin-bottom: 1em;" %>
-          <% end %>
-      <% else %> <!-- Chamado fechado -->
-        <div class="closed-call" style="margin-top: 1rem">
-          <p>Controvérsia fechada <br>
-          <% if @controversy.closed_at %>
-            <span style="font-size: 1rem;">
-            (<%= @controversy.closed_at.strftime("%d %b %y - %H:%M:%S") %>)
-            </span>
-          <% end %>
-          </p>
-      </div>
-      <% end %>
+        <% end %>
+    <% else %> <!-- Chamado fechado -->
+      <div class="closed-call" style="margin-top: 1rem">
+        <p>Controvérsia fechada <br>
+        <% if @controversy.closed_at %>
+          <span style="font-size: 1rem;">
+          (<%= @controversy.closed_at.strftime("%d %b %y - %H:%M:%S") %>)
+          </span>
+        <% end %>
+        </p>
+    </div>
     <% end %>
   </div> <!-- Card block END -->
 </div>
@@ -257,7 +192,7 @@
     <% if @controversy.replies.length == 0 %>
       <!-- Zero replies message -->
       <div class="row justify-content-around">
-        <h3 class="mt-3"> Nenhuma resposta para mostrar ainda </h4>
+        <h3 class="mt-3"> Nenhuma resposta para mostrar ainda </h3>
       </div>
     <% end %>
 
@@ -276,7 +211,7 @@
         </div>
 
         <div class="card-block">
-          <span>
+          <span class="description">
             <%= reply.description.html_safe %>
           </span>
 
@@ -329,11 +264,43 @@
           $.ajaxSetup({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
           })
+
+          $('#show-detailed, #hide-detailed').click( e => {
+            $('#resumed-controversy').slideToggle(150);
+            $('#detailed-controversy').slideToggle(150);
+          })
+
+          $('#company_search, #city_search, #unity_search, #support_search').click(() => {
+              $('.ui-menu').click(e => {
+                let attr = e.target.parentNode.parentNode.getAttribute('data-origin')
+                $(`#button-add-${attr}`).show(80);
+              });
+          })
+
+          $('#company_search').keyup(() => {
+            $('#button-add-company').hide(80);
+            $('.ui-autocomplete').attr('data-origin', 'company');
+          })
+
+          $('#city_search').keyup(e => {
+            $('#button-add-city').hide(80);
+            $('.ui-autocomplete').attr('data-origin', 'city');
+          })
+
+          $('#unity_search').keyup(e => {
+            $('#button-add-unity').hide(80);
+            $('.ui-autocomplete').attr('data-origin', 'unity');
+          })
+
+          $('#support_search').keyup(e => {
+            $('#button-add-support').hide(80);
+            $('.ui-autocomplete').attr('data-origin', 'support');
+          })
         })
 
         function toggleSupport(){
           const protocol = document.getElementById('protocol').innerHTML;
-          const select = document.getElementById('supportSelect');
+          const select = document.getElementById('support_user_id_text');
           const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
 
           $.ajax({
@@ -344,7 +311,7 @@
 
         function toggleCompany(){
           const protocol = document.getElementById('protocol').innerHTML;
-          const select = document.getElementById('companySelect');
+          const select = document.getElementById('company_user_id_text');
           const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
 
           $.ajax({
@@ -355,7 +322,7 @@
 
         function toggleUnity(){
           const protocol = document.getElementById('protocol').innerHTML;
-          const select = document.getElementById('unitySelect');
+          const select = document.getElementById('unity_user_id_text');
           const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
 
           $.ajax({
@@ -366,7 +333,7 @@
 
         function toggleCity(){
           const protocol = document.getElementById('protocol').innerHTML;
-          const select = document.getElementById('citySelect');
+          const select = document.getElementById('city_user_id_text');
           const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
 
           $.ajax({

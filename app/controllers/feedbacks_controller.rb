@@ -90,7 +90,7 @@ class FeedbacksController < ApplicationController
 
   def update_controversy(feedback)
     feedback.controversy.closed!
-    feedback.controversy.closed_at = Time.now
+    feedback.controversy.closed_at = 0.seconds.from_now
     feedback.controversy.save!
   end
 

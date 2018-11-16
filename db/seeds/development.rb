@@ -170,58 +170,65 @@ def seed_categories
 
   begin
     category = Category.new(name: 'Orientações básicas sobre a estratégia e-SUS AB',
-                            severity: :low).save!
+                            severity: :low, source: 0).save!
     category = Category.new(name: 'Orientações básicas sobre a utilização do sistema',
-                            severity: :low).save!
+                            severity: :low, source: 0).save!
     category = Category.new(name: 'Instalação do Sistema',
-                            severity: :low).save!
+                            severity: :low, source: 0).save!
     category = Category.new(name: 'Gerenciamento do cadastro do cidadão',
-                            severity: :medium).save!
+                            severity: :medium, source: 0).save!
 
     #########
     c_fichas = Category.new(name: 'Fichas do e-SUS AB',
-                            severity: :medium)
+                            severity: :medium, source: 0)
     c_fichas.save!
     category = Category.new(name: 'Ficha Domiciliar',
                             severity: :medium,
                             parent: c_fichas,
-                            parent_depth: 1 + c_fichas.parent_depth).save!
+                            parent_depth: 1 + c_fichas.parent_depth,
+                            source: 0).save!
     category = Category.new(name: 'Ficha de Cadastro Individual',
                             severity: :medium,
                             parent: c_fichas,
-                            parent_depth: 1 + c_fichas.parent_depth).save!
+                            parent_depth: 1 + c_fichas.parent_depth,
+                            source: 0).save!
     category = Category.new(name: 'Ficha de Atendimento Odontológico Individual',
                             severity: :medium,
                             parent: c_fichas,
-                            parent_depth: 1 + c_fichas.parent_depth).save!
+                            parent_depth: 1 + c_fichas.parent_depth,
+                            source: 0).save!
     category = Category.new(name: 'Ficha de Atividade Coletiva',
                             severity: :medium,
                             parent: c_fichas,
-                            parent_depth: 1 + c_fichas.parent_depth).save!
+                            parent_depth: 1 + c_fichas.parent_depth,
+                            source: 0).save!
     category = Category.new(name: 'Ficha de Procedimentos',
                             severity: :medium,
                             parent: c_fichas,
-                            parent_depth: 1 + c_fichas.parent_depth).save!
+                            parent_depth: 1 + c_fichas.parent_depth,
+                            source: 0).save!
 
     category = Category.new(name: 'Coleta de Dados Simplificada (CDS)',
-                            severity: :high).save!
+                            severity: :high, source: 0).save!
     category = Category.new(name: 'Relatório',
-                            severity: :high).save!
+                            severity: :high, source: 0).save!
     category = Category.new(name: 'Transmissão dos Dados',
-                            severity: :high).save!
+                            severity: :high, source: 0).save!
 
     ###############
     catg_pec = Category.new(name: 'PEC',
-                            severity: :low)
+                            severity: :low, source: 0)
     catg_pec.save!
     category = Category.new(name: 'Agenda dos Profissionais',
                             severity: :low,
                             parent: catg_pec,
-                            parent_depth: 1 + catg_pec.parent_depth).save!
+                            parent_depth: 1 + catg_pec.parent_depth,
+                            source: 0).save!
     category = Category.new(name: 'Atendimentos',
                             severity: :low,
                             parent: catg_pec,
-                            parent_depth: 1 + catg_pec.parent_depth).save!
+                            parent_depth: 1 + catg_pec.parent_depth,
+                            source: 0).save!
   rescue StandardError
     Rails.logger.error('ERROR creating a CATEGORY')
     Rails.logger.error(category.errors.full_messages)
@@ -239,7 +246,8 @@ def seed_answers
                         category_id: categories.sample.id,
                         user: allowed_users.sample,
                         faq: Random.rand > 0.90,
-                        keywords: Faker::Lorem.sentence(1, true, 3))
+                        keywords: Faker::Lorem.sentence(1, true, 3),
+                        source: %i[from_call from_controversy].sample)
     if answer.save
       Rails.logger.debug('Inserted a new answer')
     else
@@ -261,7 +269,7 @@ def seed_calls
     city = City.find(ubs.city_id)
     contract = Contract.where(city_id: city.id).first
     user = User.where(sei: contract.sei).sample
-    protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
+    protocol = 0.seconds.from_now.strftime('%Y%m%d%H%M%S%L').to_i
     call = Call.new(title: Faker::Lorem.sentence(15, true, 2),
                     description: Faker::Lorem.sentence(80, true, 6),
                     version: ['1.0.0', '1.0.1', '2.0.0', '3.0.0-beta'].sample,
@@ -292,15 +300,15 @@ def seed_controversies
   companies = Company.all
 
   Rails.logger.info('[START]  -- Controversy insertion')
-  (1..15).each do |_|
+  (1..300).each do |_|
     city = cities.sample
     unity = city.unities.sample
     company = companies.sample
     contract = city.contract
-    protocol = Time.now.strftime('%Y%m%d%H%M%S%L').to_i
+    protocol = 0.seconds.from_now.strftime('%Y%m%d%H%M%S%L').to_i
     controversy = Controversy.new(title: Faker::Lorem.sentence(15, true, 2),
                                   description: Faker::Lorem.sentence(80, true, 6),
-                                  status: %w[open closed].sample,
+                                  status: Controversy.statuses.to_a.sample[1],
                                   protocol: protocol,
                                   city: city,
                                   unity: unity,
@@ -409,16 +417,16 @@ end
 
 def main
   Rails.logger.warn('[START]  SEED')
-  seed_companies
-  seed_users
-  seed_states
-  seed_cities
-  seed_unities
-  seed_categories
-  seed_answers
-  seed_calls
+  # seed_companies
+  # seed_users
+  # seed_states
+  # seed_cities
+  # seed_unities
+  # seed_categories
+  # seed_answers
+  # seed_calls
   seed_controversies
-  seed_replies
+  # seed_replies
   Rails.logger.warn('[FINISH] SEED')
 end
 

@@ -52,11 +52,13 @@ gem 'devise_invitable'
 gem 'high_voltage'
 gem 'jbuilder', '~> 2.5'
 gem 'jquery-rails'
+gem 'jquery-ui-rails'
 gem 'json'
 gem 'pg'
 gem 'popper_js', '~> 1.14.3'
 gem 'puma', '~> 3.11'
 gem 'rails', '~> 5.2.1'
+gem 'rambulance'
 gem 'sass-rails', '~> 5.0'
 gem 'sidekiq'
 gem 'sqlite3'
@@ -74,6 +76,7 @@ gem 'font-awesome-rails'        # Icons
 gem 'mail_form', '>= 1.3.0'     # Mailer gem
 gem 'mini_racer'                # Fix "Autoprefixer doesn't support Node v4.2.6"
 gem 'pg_search'                 # Full-text search gem
+gem 'rails-jquery-autocomplete' # Auto complete
 gem 'shog'                      # Colorized console logging
 gem 'tinymce-rails'             # WSYCWYG Text Editor
 gem 'tinymce-rails-langs'       # Language packs for TinyMCE Text Editor

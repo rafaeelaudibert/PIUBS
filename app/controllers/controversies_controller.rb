@@ -35,6 +35,13 @@ class ControversiesController < ApplicationController
   # GET /controversies/new
   def new
     @controversy = Controversy.new
+
+    # rubocop:disable Style/GuardClause
+    if (city_user? || ubs_user?) && current_user.city.contract_id.nil?
+      redirect_back(fallback_location: controversies_path,
+                    notice: 'A sua cidade não possui contratos')
+    end
+    # rubocop:enable Style/GuardClause
   end
 
   # GET /controversies/1/edit
@@ -51,7 +58,7 @@ class ControversiesController < ApplicationController
 
     if @controversy.save
       create_file_links @controversy, files
-      ControversyMailer.notify(@controversy.protocol, current_user.id).deliver_later
+      ControversyMailer.new_controversy(@controversy.protocol, current_user.id).deliver_later
       redirect_to @controversy, notice: 'Controvérsia criada com sucesso.'
     else
       render :new
@@ -127,6 +134,7 @@ class ControversiesController < ApplicationController
                   notice: (@controversy.save ? 'Usuário removido' : 'Erro na remoção de usuário')
     elsif @user.sei == @controversy.sei
       @controversy.company_user = @user
+      ControversyMailer.user_added(@controversy.id, @user.id).deliver_later
       redirect_to @controversy,
                   notice: (@controversy.save ? 'Usuário adicionado' : 'Erro na adição de usuário')
     else
@@ -140,8 +148,9 @@ class ControversiesController < ApplicationController
       @controversy.city_user_id = nil
       redirect_to @controversy,
                   notice: (@controversy.save ? 'Usuário removido' : 'Erro na remoção de usuário')
-    elsif @user.city_id == @controversy.city_id && @user.cnes.nil?
+    elsif city_user_eligible?
       @controversy.city_user = @user
+      ControversyMailer.user_added(@controversy.id, @user.id).deliver_later
       redirect_to @controversy,
                   notice: (@controversy.save ? 'Usuário adicionado' : 'Erro na adição de usuário')
     else
@@ -155,8 +164,9 @@ class ControversiesController < ApplicationController
       @controversy.unity_user_id = nil
       redirect_to @controversy,
                   notice: (@controversy.save ? 'Usuário removido' : 'Erro na remoção de usuário')
-    elsif @controversy.cnes.nil? || @user.cnes == @controversy.cnes
+    elsif unity_user_elegible?
       @controversy.unity_user = @user
+      ControversyMailer.user_added(@controversy.id, @user.id).deliver_later
       redirect_to @controversy,
                   notice: (@controversy.save ? 'Usuário adicionado' : 'Erro na adição de usuário')
     else
@@ -172,6 +182,7 @@ class ControversiesController < ApplicationController
                   notice: (@controversy.save ? 'Usuário removido' : 'Erro na remoção de usuário')
     elsif support_like?(@user)
       @controversy.support_2 = @user
+      ControversyMailer.user_added(@controversy.id, @user.id).deliver_later
       redirect_to @controversy,
                   notice: (@controversy.save ? 'Usuário adicionado' : 'Erro na adição de usuário')
     else
@@ -204,8 +215,17 @@ class ControversiesController < ApplicationController
     controversy.contract_id = controversy.city.contract.id
     controversy.creator ||= map_role_to_creator
     controversy[controversy.creator + '_user_id'] = user_creator_id || current_user.id
-    controversy.support_1_user_id = current_user.id if admin? || support_user?
+    controversy.support_1_user_id = current_user.id if support_user?
     controversy
+  end
+
+  def city_user_elegible?
+    @user.city_id == @controversy.city_id && @user.cnes.nil?
+  end
+
+  def unity_user_elegible?
+    (@controversy.cnes.nil? && @user.city_id == @controversy.city_id) ||
+      @user.cnes == @controversy.cnes
   end
 
   def map_role_to_creator
@@ -242,20 +262,23 @@ class ControversiesController < ApplicationController
   end
 
   def filter_role
+    redirect_to denied_path if faq_inserter?
+
     action = params[:action]
     if %w[edit update].include? action
       redirect_to denied_path unless admin?
-    elsif %w[new create index destroy].include? action
-      redirect_to denied_path unless admin? || support_user? || company_user? ||
-                                     city_user? || ubs_user?
     elsif action == 'show'
-      unless (company_user? && @controversy.company_user_id == current_user.id) ||
-             (ubs_user? && @controversy.unity_user_id == current_user.id) ||
-             (city_user? && @controversy.unity_user_id == current_user.id) ||
-             support_user? ||
-             admin?
-        redirect_to denied_path
-      end
+      redirect_if_not_in_call
     end
+  end
+
+  def redirect_if_not_in_call
+    redirect_to denied_path unless in_controversy? || support_like?
+  end
+
+  def in_controversy?
+    # User in the controversy or admin of the company involved in the controversy
+    @controversy.all_users.include?(current_user) ||
+      @controversy.sei == current_user.sei
   end
 end

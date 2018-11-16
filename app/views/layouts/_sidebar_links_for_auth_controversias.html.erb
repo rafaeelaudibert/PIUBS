@@ -3,6 +3,7 @@
 <% if current_user.try(:admin?) %>
   <li><%= link_to(controversies_path, class: 'nav-item nav-link') do %> <i class="fa fa-bar-chart-o"></i> Estatísticas <%end%></li>
   <li <%= "class=active" if current_page?(controversies_path)%> > <%= link_to(controversies_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Controvérsias <%end%></li>
+  <li <%= "class=active" if current_page?(faq_controversy_path) %> > <%= link_to(faq_controversy_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ<%end%></li>
   <li <%= "class=active" if current_page?(states_path) %> > <%= link_to(states_path, class: 'nav-item nav-link') do %> <i class="fa fa-globe"></i> Estados<%end%></li>
   <li <%= "class=active" if current_page?(cities_path) %> > <%= link_to(cities_path, class: 'nav-item nav-link') do %> <i class="fa fa-map-marker"></i> Cidades<%end%></li>
   <li <%= "class=active" if current_page?(unities_path) %> > <%= link_to(unities_path, class: 'nav-item nav-link') do %> <i class="fa fa-medkit"></i> UBS <%end%></li>
@@ -72,6 +73,7 @@
 <!-- Call Center Admin Sidebar-->
 <% if current_user.try(:call_center_admin?) %>
   <li <%= "class=active" if current_page?(controversies_path)%> > <%= link_to(controversies_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Controvérsias <%end%></li>
+  <li <%= "class=active" if current_page?(faq_controversy_path) %> > <%= link_to(faq_controversy_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ<%end%></li>
   <li <%= "class=active" if current_page?(users_path) || current_page?(new_user_invitation_path) %> > <%= link_to(users_path, class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Colaboradores <i class="fa arrow"></i><%end%>
     <ul class="sidebar-nav collapse">
       <li> <%= link_to(users_path, class: 'nav-item nav-link') do %> Listar Usuários <% end %> </li>
@@ -83,6 +85,7 @@
 <!-- Call Center User Sidebar-->
 <% if current_user.try(:call_center_user?) %>
   <li <%= "class=active" if current_page?(controversies_path)%> > <%= link_to(controversies_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Controvérsias <%end%></li>
+  <li <%= "class=active" if current_page?(faq_controversy_path) %> > <%= link_to(faq_controversy_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ<%end%></li>
 <% end %>
 
 <!-- Faq inserter Sidebar-->

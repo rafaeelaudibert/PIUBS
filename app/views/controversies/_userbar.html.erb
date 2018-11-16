@@ -1,0 +1,193 @@
+<div id="resumed-controversy">
+  <div class="row align-items-around">
+    <div class="col-md-<%= @controversy.open? ? 3 : 4 %> text-center">
+      <span class="badge badge-pill badge-dark"><%= @controversy.company ? "Empresa #{@controversy.company.sei}" : "Nenhuma em específico (contate o suporte) " %></span>
+    </div>
+    <div class="col-md-<%= @controversy.open? ? 3 : 4 %> text-center">
+      <span class="badge badge-pill badge-dark"><%= "#{@controversy.city.name} - #{@controversy.city.state.name}" %></span>
+    </div>
+    <div class="col-md-<%= @controversy.open? ? 3 : 4 %> text-center">
+      <span class="badge badge-pill badge-dark"><%= @controversy.unity.try(:name) || 'Nenhuma em específico' %></span>
+    </div>
+    <% if @controversy.open? %>
+      <div class="col-md-3 text-center">
+        <button type="button" id="show-detailed" class="btn btn-primary">Mostrar detalhes</button>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div id="detailed-controversy" class="hidden">
+  <!-- HEADER -->
+  <div class="row align-items-center mt-3">
+    <div class="col-md-3">
+      <!-- Nothing here -->
+    </div>
+    <div class="col-md-4">
+      <!-- Nothing here -->
+    </div>
+    <div class="col-md-5">
+      <b> Usuário responsável: </b>
+    </div>
+  </div>
+
+  <!-- USUÁRIO DA EMPRESA -->
+  <div class="row align-items-center pt-2">
+    <div class="col-md-3">
+      <b> Empresa: </b>
+    </div>
+    <div class="col-md-4">
+      <%= @controversy.sei || 'Nenhuma empresa em específico (relate ao suporte)' %>
+    </div>
+    <% if @controversy.company_user %>
+      <div class="col-md-5">
+        <div class="input-group">
+          <span class="form-control no-border"> <%= @controversy.company_user.name %> </span>
+          <% if current_user == @controversy.support_1 && @controversy.open? %>
+            <div class="input-group-append">
+              <button class="btn btn-danger btn-outline-secondary" onclick="toggleCompany()" type="button"><em class="fa fa-trash"></em></button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% elsif current_user == @controversy.support_1 && @controversy.open? %>
+      <div class="col-md-5">
+        <div class="input-group">
+          <%= text_field_tag :sei, @controversy.sei, type: :hidden %>
+          <%= text_field_tag :company_user_id_text, 1, type: :hidden %>
+          <%= autocomplete_field_tag :company_search, params[:search], autocomplete_company_users_path, size: 75, class: "form-control search-query", placeholder: "Adicionar Usuário para a Empresa", 'data-auto-focus' => true, fields: {sei: '#sei'}, update_elements: {company_user_id: '#company_user_id_text'}, 'data-showNoMatches' => false, 'min-length' => 1 %>
+          <div class="input-group-append">
+            <button id='button-add-company' class="btn btn-primary btn-outline-secondary hidden" onclick="toggleCompany()" type="button"><em class="fa fa-check"></em></button>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <div class="col-md-5">
+        <span class="form-control no-border"> Nenhum usuário ativo na controvérsia </span>
+      </div>
+    <% end %>
+  </div>
+  <hr class="mt-2 mb-0"/>
+
+  <!-- USUÁRIO DA CIDADE -->
+  <div class="row align-items-center pt-2">
+    <div class="col-md-3">
+      <b> Cidade: </b>
+    </div>
+    <div class="col-md-4">
+      <%= "#{@controversy.city.name} - #{@controversy.city.state.name}" %>
+    </div>
+    <% if @controversy.city_user %>
+      <div class="col-md-5">
+        <div class="input-group">
+          <span class="form-control no-border"> <%= @controversy.city_user.name %> </span>
+          <% if current_user == @controversy.support_1 && @controversy.open? %>
+            <div class="input-group-append">
+              <button class="btn btn-danger btn-outline-secondary" onclick="toggleCity()" type="button"><em class="fa fa-trash"></em></button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% elsif current_user == @controversy.support_1 && @controversy.open? %>
+      <div class="col-md-5">
+        <div class="input-group">
+          <%= text_field_tag :city_id, @controversy.city_id, type: :hidden %>
+          <%= text_field_tag :city_user_id_text, 1, type: :hidden %>
+          <%= autocomplete_field_tag :city_search, params[:search], autocomplete_city_users_path, size: 75, class: "form-control search-query", placeholder: "Adicionar Usuário para a Cidade", 'data-auto-focus' => true, fields: {city_id: '#city_id'}, update_elements: {city_user_id: '#city_user_id_text'}, 'data-showNoMatches' => false, 'min-length' => 1 %>
+          <div class="input-group-append">
+            <button id='button-add-city' class="btn btn-primary btn-outline-secondary hidden" onclick="toggleCity()" type="button"><em class="fa fa-check"></em></button>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <div class="col-md-5">
+        <span class="form-control no-border"> Nenhum usuário ativo na controvérsia </span>
+      </div>
+    <% end %>
+  </div>
+  <hr class="mt-2 mb-0"/>
+
+  <!-- USUÁRIO DA UBS -->
+  <div class="row align-items-center pt-2">
+    <div class="col-md-3">
+      <b> UBS: </b>
+    </div>
+    <div class="col-md-4">
+      <%= @controversy.unity.try(:name) || 'Nenhuma em específico' %>
+    </div>
+    <% if @controversy.unity_user %>
+      <div class="col-md-5">
+        <div class="input-group">
+          <span class="form-control no-border"> <%= @controversy.unity_user.name %> </span>
+          <% if current_user == @controversy.support_1 && @controversy.open? %>
+            <div class="input-group-append">
+              <button class="btn btn-danger btn-outline-secondary" onclick="toggleUnity()" type="button"><em class="fa fa-trash"></em></button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% elsif current_user == @controversy.support_1 && @controversy.open? %>
+      <div class="col-md-5">
+        <div class="input-group">
+          <%= text_field_tag :cnes, @controversy.cnes || @controversy.city.unities.map(&:cnes).to_s, type: :hidden %>
+          <%= text_field_tag :unity_user_id_text, 1, type: :hidden %>
+          <%= autocomplete_field_tag :unity_search, params[:search], autocomplete_unity_users_path, size: 75, class: "form-control search-query", placeholder: "Adicionar Usuário para a UBS", 'data-auto-focus' => true, fields: {cnes: '#cnes'}, update_elements: {unity_user_id: '#unity_user_id_text'}, 'data-showNoMatches' => false, 'min-length' => 1  %>
+          <div class="input-group-append">
+            <button id='button-add-unity' class="btn btn-primary btn-outline-secondary hidden" onclick="toggleUnity()" type="button"><em class="fa fa-check"></em></button>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <div class="col-md-5">
+        <span class="form-control no-border"> Nenhum usuário ativo na controvérsia </span>
+      </div>
+    <% end %>
+  </div>
+  <hr class="mt-2 mb-0"/>
+
+  <!-- USUÁRIO ADICIONAL DE SUPORTE -->
+  <% if support_like? %>
+    <div class="row align-items-center pt-2 pb-2">
+      <div class="col-md-3">
+        <b> Suporte adicional: </b>
+      </div>
+      <div class="col-md-4">
+        <!-- Nothing to show here -->
+      </div>
+      <% if @controversy.support_2 %>
+        <div class="col-md-5">
+          <div class="input-group">
+            <span class="form-control no-border"> <%= @controversy.support_2.name %> </span>
+            <% if current_user == @controversy.support_1 && @controversy.open? %>
+              <div class="input-group-append">
+                <button class="btn btn-danger btn-outline-secondary" onclick="toggleSupport()" type="button"><em class="fa fa-trash"></em></button>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% elsif current_user == @controversy.support_1 && @controversy.open? %>
+        <div class="col-md-5">
+          <div class="input-group">
+            <%= text_field_tag :user_id, @controversy.support_1_user_id, type: :hidden %>
+            <%= text_field_tag :support_user_id_text, 1, type: :hidden %>
+            <%= autocomplete_field_tag :support_search, params[:search], autocomplete_support_users_path, size: 75, class: "form-control search-query", placeholder: "Adicionar Suporte Adicional", 'data-auto-focus' => true, fields: {user_id: '#user_id'}, update_elements: {support_user_id: '#support_user_id_text'}, 'data-showNoMatches' => false, 'min-length' => 1 %>
+            <div class="input-group-append">
+              <button id='button-add-support' class="btn btn-primary btn-outline-secondary hidden" onclick="toggleSupport()" type="button"><em class="fa fa-check"></em></button>
+            </div>
+          </div>
+        </div>
+      <% else %>
+      <div class="col-md-5">
+        <span class="form-control no-border"> Nenhum suporte adicional ativo na controvérsia </span>
+      </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- BUTTON -->
+  <div class="row align-items-center mt-2">
+    <div class="offset-md-8 col-md-4 text-right">
+      <button type="button" id="hide-detailed" class="btn btn-primary">Esconder detalhes</button>
+    </div>
+  </div>
+</div>
