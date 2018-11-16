@@ -247,7 +247,7 @@ def seed_answers
                         user: allowed_users.sample,
                         faq: Random.rand > 0.90,
                         keywords: Faker::Lorem.sentence(1, true, 3),
-                        source: Random.rand > 0.50)
+                        source: %i[from_call from_controversy].sample)
     if answer.save
       Rails.logger.debug('Inserted a new answer')
     else
