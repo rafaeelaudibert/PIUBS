@@ -56,6 +56,8 @@ en:
         status:
           open: "Aberto"
           closed: "Fechado"
+          on_hold: "No aguardo"
+          on_ministry: "Com Ministério"
         creator:
           company: "Empresa"
           unity: "UBS"

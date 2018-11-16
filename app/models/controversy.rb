@@ -17,7 +17,7 @@ class Controversy < ApplicationRecord
 
   enum creator: %i[company unity city support]
   enum category: %i[hardware software]
-  enum status: %i[open closed]
+  enum status: %i[open closed on_hold on_ministry]
 
   before_create :generate_protocol
 
