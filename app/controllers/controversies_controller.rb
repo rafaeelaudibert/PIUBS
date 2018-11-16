@@ -35,6 +35,13 @@ class ControversiesController < ApplicationController
   # GET /controversies/new
   def new
     @controversy = Controversy.new
+
+    # rubocop:disable Style/GuardClause
+    if (city_user? || ubs_user?) && current_user.city.contract_id.nil?
+      redirect_back(fallback_location: controversies_path,
+                    notice: 'A sua cidade não possui contratos')
+    end
+    # rubocop:enable Style/GuardClause
   end
 
   # GET /controversies/1/edit
@@ -260,15 +267,18 @@ class ControversiesController < ApplicationController
     action = params[:action]
     if %w[edit update].include? action
       redirect_to denied_path unless admin?
-    else
-      redirect_to denied_path unless in_controversy? || support_like?
+    elsif action == 'show'
+      redirect_if_not_in_call
     end
+  end
+
+  def redirect_if_not_in_call
+    redirect_to denied_path unless in_controversy? || support_like?
   end
 
   def in_controversy?
     # User in the controversy or admin of the company involved in the controversy
-    params[:action] == 'index' || params[:action] == 'new' ||
-      @controversy.all_users.include?(current_user) ||
+    @controversy.all_users.include?(current_user) ||
       @controversy.sei == current_user.sei
   end
 end

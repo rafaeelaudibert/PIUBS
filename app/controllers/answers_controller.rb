@@ -31,12 +31,10 @@ class AnswersController < ApplicationController
       persistence_id: false
     )) || return
 
-    @answers = retrieve_faq_answers :from_call
-
-    respond_to do |format|
-      format.html
-      format.js
-    end
+    @answers = Answer.where(faq: true, source: :from_call)
+                     .filterrific_find(@filterrific)
+                     .order(:category_id)
+                     .page(params[:page])
   end
 
   # get /faq_controversy
@@ -50,12 +48,10 @@ class AnswersController < ApplicationController
       persistence_id: false
     )) || return
 
-    @answers = retrieve_faq_answers :from_controversy
-
-    respond_to do |format|
-      format.html
-      format.js
-    end
+    @answers = Answer.where(faq: true, source: :from_controversy)
+                     .filterrific_find(@filterrific)
+                     .order(:category_id)
+                     .page(params[:page])
   end
 
   # GET /answers/1
@@ -171,16 +167,6 @@ class AnswersController < ApplicationController
 
   def retrieve_files(ans_params)
     ans_params.delete(:files).split(',') if ans_params[:files]
-  end
-
-  def retrieve_faq_answers(source)
-    if params[:filterrific]
-      Answer.filterrific_find(@filterrific).order(:category_id).page(params[:page])
-    else
-      Answer.where(faq: true, source: source)
-            .order(:category_id)
-            .page(params[:page])
-    end
   end
 
   def mark_as_final_answer(answer)
