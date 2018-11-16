@@ -87,14 +87,10 @@
 
 <% if @calls.length > 0 %>
   <div id="accordion" class="accordion-calls">
-    <div id="my-calls">
-      <%= render @calls %>
-    </div>
+    <%= render @calls %>
   </div>
 
-  <div id="infinite-scrolling">
-    <%= will_paginate @calls %>
-  </div>
+  <%= will_paginate @calls %>
 <% else %>
   <h3>
     Ainda não foram realizados atendimentos

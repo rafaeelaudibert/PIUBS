@@ -1,0 +1,49 @@
+<div class="card<%= controversy.support_1 == current_user.id ? ' card-mine' : '' %>">
+  <div class="card-header" id="heading<%= controversy.protocol %>">
+    <div class="question">
+      <h5><%= controversy.title %></h5>
+    </div>
+    <div class="protocol">
+      <span>Protocolo:
+        <b><%= controversy.protocol %></b></span>
+    </div>
+    <div class="requirer">
+      <span>Requisitante:
+        <b><%= t "activerecord.enums.controversy.creator.#{controversy.creator}" %></b></span>
+    </div>
+
+    <div class="company">
+      Empresa
+      <%= controversy.sei %>
+    </div>
+    <div class="city">
+      <b><%= controversy.unity.name%><hr/><%= controversy.city.name %></b>
+      <%= controversy.city.state.name %>
+    </div>
+    <div class="info">
+      <span class="badge badge-pill badge-<%= controversy.open? ? 'success' : controversy.closed? ? 'dark' : 'warning'%>"><%= (t "activerecord.enums.controversy.status.#{controversy.status}").upcase %></span>
+    </div>
+    <div class="dropdown">
+      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#<%= controversy.protocol %>" aria-expanded="true" aria-controls="<%= controversy.protocol %>">
+        <i class="fa fa-angle-down"></i>
+      </button>
+    </div>
+  </div>
+
+  <div id="<%= controversy.protocol %>" class="collapse" aria-labelledby="header<%= controversy.protocol %>" data-parent="#accordion">
+    <div class="card-body">
+      <hr/>
+      <%= controversy.description.html_safe %>
+
+      <div class="left">
+        <% controversy.attachments.each do |_attachment| %>
+          <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+            <i class="fa fa-file-text mr-1"></i>
+            <%= truncate(_attachment.filename, length: 30, omission: '...')%>
+          <% end %>
+        <% end %>
+      </div>
+      <%= link_to 'Ir para Controvérsia', controversy , class: 'btn btn-primary right'%>
+    </div>
+  </div>
+</div>
