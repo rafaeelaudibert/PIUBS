@@ -300,7 +300,7 @@ def seed_controversies
   companies = Company.all
 
   Rails.logger.info('[START]  -- Controversy insertion')
-  (1..15).each do |_|
+  (1..300).each do |_|
     city = cities.sample
     unity = city.unities.sample
     company = companies.sample
@@ -308,7 +308,7 @@ def seed_controversies
     protocol = 0.seconds.from_now.strftime('%Y%m%d%H%M%S%L').to_i
     controversy = Controversy.new(title: Faker::Lorem.sentence(15, true, 2),
                                   description: Faker::Lorem.sentence(80, true, 6),
-                                  status: %w[open closed].sample,
+                                  status: Controversy.statuses.to_a.sample[1],
                                   protocol: protocol,
                                   city: city,
                                   unity: unity,
@@ -417,16 +417,16 @@ end
 
 def main
   Rails.logger.warn('[START]  SEED')
-  seed_companies
-  seed_users
-  seed_states
-  seed_cities
-  seed_unities
-  seed_categories
-  seed_answers
-  seed_calls
+  # seed_companies
+  # seed_users
+  # seed_states
+  # seed_cities
+  # seed_unities
+  # seed_categories
+  # seed_answers
+  # seed_calls
   seed_controversies
-  seed_replies
+  # seed_replies
   Rails.logger.warn('[FINISH] SEED')
 end
 

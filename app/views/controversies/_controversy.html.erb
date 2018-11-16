@@ -21,7 +21,7 @@
       <%= controversy.city.state.name %>
     </div>
     <div class="info">
-      <span class="badge badge-pill badge-<%= controversy.open? ? 'success' : controversy.closed? ? 'dark' : 'warning'%>"><%= (t "activerecord.enums.controversy.status.#{controversy.status}").upcase %></span>
+      <span class="badge badge-pill badge-<%= controversy.open? ? 'success' : controversy.closed? ? 'dark' : 'primary'%>"><%= (t "activerecord.enums.controversy.status.#{controversy.status}").upcase %></span>
     </div>
     <div class="dropdown">
       <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#<%= controversy.protocol %>" aria-expanded="true" aria-controls="<%= controversy.protocol %>">
