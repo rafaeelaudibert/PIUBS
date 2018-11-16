@@ -16,6 +16,6 @@ class City < ApplicationRecord
     return nil if query.blank?
 
     query_search = "%#{query}%"
-    where('name ILIKE :search', search: query_search)
+    where('cities.name ILIKE :search', search: query_search)
   }
 end

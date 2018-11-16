@@ -7,10 +7,15 @@ class User < ApplicationRecord
   has_many :calls
   has_many :answer
 
+  # If update here, update to en.yml
   enum role: %i[admin city_admin faq_inserter
                 ubs_admin ubs_user
                 company_admin company_user
                 call_center_admin call_center_user]
+
+  # If update here, update to en.yml
+  enum system: %i[companies controversies both]
+
   validates_cpf_format_of :cpf, options: { allow_blank: true, allow_nil: true }
   validates :cpf, presence: true, uniqueness: true
 
@@ -42,7 +47,8 @@ class User < ApplicationRecord
   }
 
   scope :sorted_by_name, lambda { |sort_key|
-    sort = (sort_key =~ /asc$/) ? 'asc' : 'desc'
+    sort = sort_key.match?(/asc$/) ? 'asc' : 'desc'
+
     case sort_key.to_s
     when /^name_/
       order(name: sort)
@@ -58,7 +64,7 @@ class User < ApplicationRecord
   }
 
   scope :with_status_adm, lambda { |status|
-    return nil if status == '' || status == 'all'
+    return nil if ['', 'all'].include? status
 
     if status == 'registered'
       where('invitation_accepted_at IS NOT NULL')

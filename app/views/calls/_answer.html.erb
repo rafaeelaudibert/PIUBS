@@ -19,7 +19,7 @@
   button.addEventListener('click', () => {
     if (textField.value.length > 3) {
       jQuery.ajax({
-        url: '/apoioaempresas/answers/query/' + textField.value.split('.').join(' '),
+        url: '/answers/query/' + textField.value.split('.').join(' '),
         type: "GET",
         dataType: "json",
         success: data => {
@@ -64,7 +64,7 @@
     const id = button.parentNode.parentNode.children[0].innerHTML;
 
     $.ajax({
-      url: '/apoioaempresas/answers/attachments/' + id,
+      url: '/answers/attachments/' + id,
       type: "GET",
       dataType: "json",
       success: data => {

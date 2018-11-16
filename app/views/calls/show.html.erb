@@ -21,17 +21,17 @@
   <% if @call.open? %>
     Data de criação :
     <span class="badge badge-pill badge-dark m-2">
-      <%= @call.created_at %>
+      <%= @call.created_at.strftime("%d %b %y - %H:%M:%S") if @call.created_at %>
     </span>
   <%elsif @call.reopened?%>
     Data de reabertura :
     <span class="badge badge-pill badge-dark m-2">
-      <%= @call.reopened_at %>
+      <%= @call.reopened_at.strftime("%d %b %y - %H:%M:%S") if @call.reopened_at %>
     </span>
   <%elsif @call.closed?%>
     Data de fechamento :
     <span class="badge badge-pill badge-dark m-2">
-      <%= @call.finished_at %>
+      <%= @call.finished_at.strftime("%d %b %y - %H:%M:%S") if @call.finished_at %>
     </span>
   <%end%>
 
@@ -122,13 +122,26 @@
   <!-- Chamado fechado -->
   <div class="closed-call">
     <% if admin? || support_user? %>
-      <p>Chamado fechado <br> <span style="font-size: 1rem;"> (<%= @call.finished_at %>) </span></p>
+      <p>Chamado fechado <br>
+        <% if @call.finished_at %>
+          <span style="font-size: 1rem;">
+          (<%= @call.finished_at.strftime("%d %b %y - %H:%M:%S") %>)
+          </span>
+        <% end %>
+      </p>
     <% else %>
-      <p>Chamado fechado em <%= @call.finished_at %>. <br>Somente reabra caso a solução oferecida pelo atendente <br>não tenha resolvido o seu problema.</br>
-    </p>
-    <a data-confirm="Tens certeza?" class="btn btn-danger btn-lg" rel="nofollow" data-method="post" href="/apoioaempresas/calls/reopen_call?call=<%= @call.id %>&reply_id=<%= @call.replies.order(:id).last.id %>">
-      Reabrir chamado
-    </a>
+      <% if @call.finished_at %>
+        <p>
+          Chamado fechado em <%= @call.finished_at.strftime("%d %b %y - %H:%M:%S") %>.
+          <br>
+          Somente reabra caso a solução oferecida pelo atendente não tenha resolvido o seu problema.</br>
+        </p>
+      <% end %>
+      <% if @call.replies.order(:id).last %>
+        <a data-confirm="Tens certeza?" class="btn btn-danger btn-lg" rel="nofollow" data-method="post" href="/apoioaempresas/calls/reopen_call?call=<%= @call.id %>&reply_id=<%= @call.replies.order(:id).last.id %>">
+          Reabrir chamado
+        </a>
+      <% end %>
   <% end %>
 </div>
 <% end %>
@@ -172,18 +185,23 @@
 </div>
 <div class="card-block">
 
-<% first_reply = true %>
-<% @call.replies.order(:id).each do |reply| %>
+<% @call.replies.order(id: :desc).each do |reply| %>
 
-  <% if first_reply %>
-    <span style="width:100%; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.#{reply.status}" %>">
-      <%= t "activerecord.enums.call.status.#{reply.status}" if reply.status%>
-    </span>
-    <% first_reply = false %>
+  <% if reply.last_call_ref_reply_closed_at %>
+    <% if reply.last_call_ref_reply_reopened_at && reply.last_call_ref_reply_reopened_at > reply.last_call_ref_reply_closed_at %>
+      <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.reopened" %>">
+        <%= t "activerecord.enums.call.status.reopened"%> em <%= reply.last_call_ref_reply_reopened_at.strftime("%d %b %y - %H:%M:%S") %>
+      </span>
+    <% end %>
   <% end %>
 
-  <% if reply.category == 'reply' %>
+  <% if reply.last_call_ref_reply_closed_at %>
+    <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.closed" %>">
+      <%= t "activerecord.enums.call.status.closed"%> em <%= reply.last_call_ref_reply_closed_at.strftime("%d %b %y - %H:%M:%S") %>
+    </span>
+  <% end %>
 
+  <% if reply.category == 'company' %>
     <div class="card card-default mb-3" style="box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
       <div class="card-header">
         <em class="fa fa-comment-o m-2"></em>
@@ -192,7 +210,9 @@
         <strong class="m-2">
           <%= User.find(reply.user_id).name %>
         </strong>
-        Adicionou uma resposta em <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+        <% if reply.created_at %>
+          Adicionou uma resposta em <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+        <% end %>
 
       </div>
       <div class="card-body" style="padding: 5px 30px 15px">
@@ -231,7 +251,9 @@
         <span class="badge badge-pill badge-dark m-1">
           <%= User.find(reply.user_id).name %>
         </span>
-        Adicionou uma resposta em <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+        <% if reply.created_at %>
+          Adicionou uma resposta em <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+        <% end %>
       </div>
       <div class="card-block">
           <span>
@@ -285,6 +307,14 @@
 
 <% end  %>
 
+<% if @call.replies.order(id: :desc).last %>
+  <span style="width:100%; opacity: 0.8; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.#{@call.replies.order(id: :desc).last.status}" %>">
+    <%= t "activerecord.enums.call.status.#{@call.replies.order(id: :desc).last.status}" if @call.replies.order(id: :desc).last.status%>
+    em
+    <%= @call.created_at.strftime("%d %b %y - %H:%M:%S") if @call.created_at %>
+  </span>
+<% end %>
+
   <% if @call.open? || @call.reopened? %>
     <% if @my_call %>
       <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
@@ -305,30 +335,31 @@
   <div class="card-header" id="headingTwo">
     <div class="header-block">
       <p class="title" style="color: white">
-        <i class="fa fa-envelope mr-2"></i> Resposta final
-      </p>
+      <i class="fa fa-envelope mr-2"></i>
+      Resposta final</p>
     </div>
   </div>
   <div class="card-block">
     <% answer = Answer.find(@call.answer_id) %>
-      <span class="badge badge-pill badge-dark m-1">suporte</span>
-      <span class="badge badge-pill badge-dark m-1">
-      <%= User.find(answer.user_id).name %>
-     </span>
-      Resposta final adicionada em <%= answer.created_at %>
-      <hr/>
-      <%= answer.answer.html_safe %>
-      <% if answer.attachments.length > 0 %>
-      <hr/>
-      <strong class='m-2'>Attachments</strong><br/>
-      <div class='mt-2'>
-        <% answer.attachments.each do |_attachment| %>
-          <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+    <span class="badge badge-pill badge-dark m-1">suporte</span>
+    <span class="badge badge-pill badge-dark m-1">
+    <%= User.find(answer.user_id).name %></span>
+    <% if answer.created_at %>
+      Marcada como resposta final em <%= answer.created_at.strftime("%d %b %y - %H:%M:%S") %>
+    <% end %>
+    <hr/>
+    <%= answer.answer.html_safe %>
+    <% if answer.attachments.length > 0 %>
+    <hr/>
+    <strong class='m-2'>Attachments</strong><br/>
+    <div class='mt-2'>
+      <% answer.attachments.each do |_attachment| %>
+        <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
           <i class="fa fa-file-text mr-1"></i>
           <%= truncate(_attachment.filename, length: 10, omission: '...')%>
-        <%end%>
+        <% end %>
       <% end %>
-      </div>
+    </div>
     <% end %>
   </div>
 </div>
@@ -429,7 +460,7 @@
       faqField.style.display = float ? 'none' : 'inline-flex'
 
       $.ajax({
-        url: '/apoioaempresas/replies/attachments/' + replyID,
+        url: '/replies/attachments/' + replyId,
         type: "GET",
         dataType: "json",
         success: data => {

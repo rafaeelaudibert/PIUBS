@@ -1,0 +1,442 @@
+<%= tinymce_assets %>
+<%= tinymce language: 'pt_BR' %>
+
+<%= content_for :body_title do%>
+  <h4 class="display-5">Controvérsia nº <span id="protocol"><%= @controversy.protocol %></span>
+  </h4>
+<% end %>
+
+<div class="card card-primary">
+  <!-- Default panel contents -->
+  <div class="card-header " style="color: white; font-weight: bold;">
+    <em class="fa fa-bullhorn m-2"></em>
+    Parte Requerente :
+    <span class="badge badge-pill badge-dark m-2">
+      <a><%= @controversy.creator.titleize %></a>
+    </span>
+    | Usuário Requerente :
+    <span class="badge badge-pill badge-dark m-2">
+      <a><%= @user_creator %></a>
+    </span>
+
+    <% if @controversy.open? %>
+      | Data de criação :
+      <span class="badge badge-pill badge-dark m-2">
+        <%= @controversy.created_at %>
+      </span>
+    <%elsif @controversy.closed?%>
+      | Data de fechamento :
+      <span class="badge badge-pill badge-dark m-2">
+        <%= @controversy.closed_at %>
+      </span>
+    <%end%>
+  </div>
+
+  <div class="card-block">
+    <h4><%= @controversy.title %></h4>
+    <hr/>
+    <p>
+      <%= @controversy.description.html_safe %>
+    </p>
+
+    <% if @controversy.attachments.length > 0 %>
+      <hr/>
+      <strong class='m-2'>
+        Attachments
+      </strong>
+      <br/>
+      <br/>
+      <% @controversy.attachments.each do |_attachment| %>
+        <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+          <i class="fa fa-file-text mr-1"></i>
+          <%= truncate(_attachment.filename, length: 30, omission: '...')%>
+        <%end%>
+      <% end %>
+    <% end %>
+
+    <hr/>
+    Empresa: <span class="badge badge-pill badge-light m-2"><%= @controversy.sei %> - <%= @controversy.company_user.try(:name) || 'Sem usuário na conversa' %></span>
+    UBS: <span class="badge badge-pill badge-light m-2"><%= @controversy.unity.try(:name) || 'Nenhuma em específico' %> - <%= @controversy.unity_user.try(:name) || 'Sem usuário na conversa' %></span>
+    Cidade: <span class="badge badge-pill badge-light m-2"><%= "#{@controversy.city.name}//#{@controversy.city.state.name}" %> - <%= @controversy.city_user.try(:name) || 'Sem usuário na conversa' %></span>
+
+    <% if support_like? && @controversy.open? && @controversy.support_1 == current_user %>
+      <hr/>
+      <div class="row mr-1">
+        <div class="input-group col-lg-3 col-md-6 p-2">
+          <% if @controversy.company_user_id != nil %>
+            <button class="btn btn-danger btn-sm col-12" onclick="toggleCompany()" type="button">Remover Usuário da Empresa</button>
+          <% else %>
+          <select class="custom-select" id="companySelect">
+            <option selected>Adicionar usuário Empresa</option>
+            <% User.where(sei: @controversy.sei).each do |user| %>
+              <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
+            <% end %>
+          </select>
+          <div class="input-group-append">
+            <button class="btn btn-primary btn-outline-secondary" onclick="toggleCompany()" type="button"><em class="fa fa-plus"></em></button>
+          </div>
+          <% end %>
+        </div>
+        <div class="input-group col-lg-3 col-md-6 p-2">
+          <% if @controversy.unity_user_id != nil %>
+            <button class="btn btn-danger btn-sm col-12" onclick="toggleUnity()" type="button">Remover Usuário da UBS</button>
+          <% else %>
+            <select class="custom-select" id="unitySelect">
+              <option selected>Adicionar usuário UBS</option>
+              <% if @controversy.unity %>
+                <% User.where(unity: @controversy.unity).each do |user| %>
+                  <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
+                <% end %>
+              <% else %>
+                <% User.where(city_id: @controversy.city_id).where.not(cnes: nil).each do |user| %>
+                  <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
+                <% end %>
+              <% end %>
+            </select>
+            <div class="input-group-append">
+              <button class="btn btn-primary btn-outline-secondary" onclick="toggleUnity()" type="button"><em class="fa fa-plus"></em></button>
+            </div>
+          <% end %>
+        </div>
+        <div class="input-group col-lg-3 col-md-6 p-2">
+          <% if @controversy.city_user_id != nil %>
+            <button class="btn btn-danger btn-sm col-12" onclick="toggleCity()" type="button">Remover Usuário da Cidade</button>
+          <% else %>
+          <select class="custom-select" id="citySelect">
+            <option selected>Adicionar usuário Cidade</option>
+            <% User.where(city_id: @controversy.city_id, cnes: nil).each do |user| %>
+              <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
+            <% end %>
+          </select>
+          <div class="input-group-append">
+            <button class="btn btn-primary btn-outline-secondary" onclick="toggleCity()" type="button"><em class="fa fa-plus"></em></button>
+          </div>
+          <% end %>
+        </div>
+        <div class="input-group col-lg-3 col-md-6 p-2">
+          <% if @controversy.support_2_user_id != nil %>
+            <button class="btn btn-danger btn-sm col-12" onclick="toggleSupport()" type="button">Remover Suporte Adicional</button>
+          <% else %>
+          <select class="custom-select" id="supportSelect">
+            <option selected>Adicionar suporte adicional</option>
+            <% User.where(role: ['call_center_user', 'call_center_admin']).each do |user| %>
+              <option value="<%= user.id %>"> <%= "#{user.name} - #{user.cpf}" %></option>
+            <% end %>
+          </select>
+          <div class="input-group-append">
+            <button class="btn btn-primary btn-outline-secondary" onclick="toggleSupport()" type="button"><em class="fa fa-plus"></em></button>
+          </div>
+          <% end %>
+        </div>
+      </div>
+        <hr>
+      <div class="row mr-1 justify-content-around">
+        <%= button_to 'Soltar Controvérsia', unlink_controversies_path(id: @controversy.id, user_id: current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Soltar este atendimento' }, method: :post,
+                      form_class: 'col-md-12', class: "btn btn-danger col-sm-3 right" %>
+      </div>
+    <% elsif support_like? %>
+      <% if @controversy.open? %>
+          <% if @controversy.support_1 != nil && !admin?%>
+            <% if current_user.call_center_admin? %>
+              <div style="color: red; font-weight: 400; margin:1em 0; background-color:#CCC; padding:20px;">Esta controvérsia pertence ao usuário <%= "#{@controversy.support_1.name} #{@controversy.support_1.last_name}" %></div>
+            <% else %>
+              <div style="color: red; font-weight: 400; margin:1em 0; background-color:#CCC; padding:20px;">Esta controvérsia já pertence a outro usuário do suporte.</div>
+            <% end %>
+          <% elsif !admin? %>
+            <hr/>
+            <%= button_to 'Pegar Controvérsia', link_controversies_path(id: @controversy.id, user_id: current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Soltar este atendimento' }, method: :post,
+                          class: "btn right", :style => "color:#FFF; background-color: #084B8A; margin-bottom: 1em;" %>
+          <% end %>
+      <% else %> <!-- Chamado fechado -->
+        <div class="closed-call" style="margin-top: 1rem">
+          <p>Controvérsia fechada <br>
+          <% if @controversy.closed_at %>
+            <span style="font-size: 1rem;">
+            (<%= @controversy.closed_at.strftime("%d %b %y - %H:%M:%S") %>)
+            </span>
+          <% end %>
+          </p>
+      </div>
+      <% end %>
+    <% end %>
+  </div> <!-- Card block END -->
+</div>
+
+<% if @controversy.feedback %>
+  <!-- Card do Parecer final -->
+  <div class="card card-primary">
+    <div class="card-header" id="headingTwo">
+      <div class="header-block">
+        <p class="title" style="color: white">
+          <i class="fa fa-bookmark mr-2"></i>
+          Parecer Final
+        </p>
+      </div>
+    </div>
+    <div class="card-block">
+      <%= @controversy.feedback.description.html_safe %>
+      <% if @controversy.feedback.attachments.length > 0 %>
+        <hr/>
+        <strong class='m-2'>Attachments</strong><br/>
+        <div class='mt-2'>
+          <% @controversy.feedback.attachments.each do |_attachment| %>
+            <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+              <i class="fa fa-file-text mr-1"></i>
+              <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<!-- Card das replies -->
+<div class="card card-primary">
+  <div class="card-block">
+
+    <% if @controversy.open? %>
+      <% if [@controversy.support_1, @controversy.support_2, @controversy.company_user, @controversy.unity_user, @controversy.city_user].include? current_user %>
+        <div class="row justify-content-around mb-3">
+          <button type="button" id="reply-top" class="col-md-4 col-sm-5 btn btn-primary btn-lg">Adicionar Nova Resposta</button>
+
+          <% if @controversy.support_1 == current_user %>
+            <button type="button" id="faq-top" class="col-md-4 col-sm-5 btn btn-primary btn-lg">Pesquisar no FAQ</button>
+            <button type="button" id="feedback-bottom" class="col-md-3 col-sm-5 btn btn-primary btn-lg">Adicionar Parecer Final</button>
+          <% end %>
+        </div>
+      <% end %>
+
+
+      <!-- Card para escrever resposta -->
+      <div class="card card-primary" style="display: none" id="reply_box">
+        <div class="card-header pl-2">
+          <div class="header-block">
+          <p class="title" style="color: white;">
+            <i class="fa fa-mail-forward mr-2"></i>
+            Resposta ao atendimento
+          </p>
+          </div>
+        </div>
+        <div class="card-body">
+          <%= render 'reply', reply: @reply %>
+        </div>
+      </div>
+
+      <% if support_like? %>
+        <!-- Card para pegar informações do FAQ -->
+        <div class="card card-primary" style="display: none" id="faq_box">
+          <div class="card-header pl-2">
+            <div class="header-block">
+              <p class="title" style="color: white;">
+                <i class="fa fa-mail-forward mr-2"></i>FAQ
+              </p>
+            </div>
+          </div>
+          <div class="card-body">
+            <%= render 'faq' %>
+          </div>
+        </div>
+
+        <!-- Card para colocar parecer final -->
+        <div class="card card-primary" style="display: none" id="feedback_box">
+          <div class="card-header pl-2">
+            <div class="header-block">
+              <p class="title" style="color: white;">
+                <i class="fa fa-mail-forward mr-2"></i>Parecer Final
+              </p>
+            </div>
+          </div>
+          <div class="card-body">
+            <%= render 'feedback', feedback: @feedback %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+
+    <% if @controversy.replies.length == 0 %>
+      <!-- Zero replies message -->
+      <div class="row justify-content-around">
+        <h3 class="mt-3"> Nenhuma resposta para mostrar ainda </h4>
+      </div>
+    <% end %>
+
+    <% @controversy.replies.order(created_at: :desc).each do |reply| %>
+      <div class="card card-default mb-3 <%= reply.category %>-border">
+        <div class="card-header">
+          <em class="fa fa-comment-o m-2"></em>
+          <span style="display: none"><%= '#' << reply.id.to_s %></span>
+          <% if reply.category == 'support' %>
+            <span class="badge badge-pill badge-dark m-1">suporte</span>
+          <% end %>
+          <span class="badge badge-pill badge-dark m-1">
+            <%= User.find(reply.user_id).name %>
+          </span>
+          Adicionou uma resposta em <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+        </div>
+
+        <div class="card-block">
+          <span>
+            <%= reply.description.html_safe %>
+          </span>
+
+          <% if reply.attachments.length > 0 %>
+            <hr/>
+            <strong class='m-2'>
+              Attachments
+            </strong>
+            <br/>
+            <div>
+              <% reply.attachments.each do |_attachment| %>
+                <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+                  <i class="fa fa-file-text mr-1"></i>
+                  <%= truncate _attachment.filename, length: 10, omission: '...' %>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+          <hr/>
+
+          <% if reply.faq == true %>
+            <div class="right">
+                <span class="badge badge-pill badge-dark">
+                  Resposta no FAQ
+                </span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if @controversy.replies.length > 6 && @controversy.open? && @controversy.support_1 == current_user %>
+      <div class="row justify-content-around mb-3">
+          <button type="button" id="reply-bottom" class="col-md-4 col-sm-5 btn btn-primary btn-lg">Adicionar Nova Resposta</button>
+          <% if admin? || support_user? %>
+            <button type="button" id="faq-bottom" class="col-md-4 col-sm-5 btn btn-primary btn-lg">Pesquisar no FAQ</button>
+          <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<% if @controversy.open? %>
+  <% if current_user.admin? || current_user.call_center_user? || current_user.call_center_admin? %>
+    <script>
+
+        $(document).ready(() => {
+
+          // Configure cross-reference ajax request
+          $.ajaxSetup({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
+          })
+        })
+
+        function toggleSupport(){
+          const protocol = document.getElementById('protocol').innerHTML;
+          const select = document.getElementById('supportSelect');
+          const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
+
+          $.ajax({
+            url: `/controversias/controversies/${protocol}/support_user/${user_id}`,
+            method: 'post'
+          }).then(() => window.location.reload());
+        }
+
+        function toggleCompany(){
+          const protocol = document.getElementById('protocol').innerHTML;
+          const select = document.getElementById('companySelect');
+          const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
+
+          $.ajax({
+            url: `/controversias/controversies/${protocol}/company_user/${user_id}`,
+            method: 'post'
+          }).then(() => window.location.reload());
+        }
+
+        function toggleUnity(){
+          const protocol = document.getElementById('protocol').innerHTML;
+          const select = document.getElementById('unitySelect');
+          const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
+
+          $.ajax({
+            url: `/controversias/controversies/${protocol}/unity_user/${user_id}`,
+            method: 'post'
+          }).then(() => window.location.reload());
+        }
+
+        function toggleCity(){
+          const protocol = document.getElementById('protocol').innerHTML;
+          const select = document.getElementById('citySelect');
+          const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
+
+          $.ajax({
+            url: `/controversias/controversies/${protocol}/city_user/${user_id}`,
+            method: 'post'
+          }).then(() => window.location.reload());
+        }
+
+    </script>
+  <% end %>
+
+  <script>
+    const cleanMCE = () => {
+      tinymce.EditorManager.execCommand('mceRemoveEditor', true, 'tinymce-reply');
+      tinymce.EditorManager.execCommand('mceAddEditor', true, 'tinymce-reply');
+      tinymce.EditorManager.execCommand('mceRemoveEditor', true, 'tinymce-feedback');
+      tinymce.EditorManager.execCommand('mceAddEditor', true, 'tinymce-feedback');
+      $('#tinymce-reply_ifr').css('height', '300px');
+      $('#tinymce-feedback_ifr').css('height', '300px');
+    }
+
+    // Reply buttons
+    $("#reply-top, #reply-bottom").click(e => {
+      if (e.target.parentNode.nextElementSibling == $("#reply_box")[0]) {
+        $("#reply_box").toggle(200);
+      } else {
+        $("#reply_box").hide(0);
+        e.target.parentNode.insertAdjacentElement('afterend', document.getElementById('reply_box'));
+        $("#reply_box").show(200);
+      }
+
+      cleanMCE();
+      $("#faq_box").hide(200);
+      $("#feedback_box").hide(200);
+    });
+
+    $("#faq-top, #faq-bottom").click(e => {
+      if (e.target.parentNode.nextElementSibling == $("#faq_box")[0]) {
+        $("#faq_box").toggle(200);
+      } else {
+        $("#faq_box").hide(0);
+        e.target.parentNode.insertAdjacentElement('afterend', document.getElementById('faq_box'));
+        $("#faq_box").show(200);
+      }
+
+      cleanMCE();
+      $("#reply_box").hide(200);
+      $("#feedback_box").hide(200);
+    });
+
+    $("#feedback-bottom").click(e => {
+      if (e.target.parentNode.nextElementSibling == $("#feedback_box")[0]) {
+        $("#feedback_box").toggle(200);
+      } else {
+        $("#feedback_box").hide(0);
+        e.target.parentNode.insertAdjacentElement('afterend', document.getElementById('feedback_box'));
+        $("#feedback_box").show(200);
+      }
+
+      cleanMCE();
+      $("#faq_box").hide(200);
+      $("#reply_box").hide(200);
+    });
+
+    $("#cancel").click(() => {
+      $("#reply_box").hide(200);
+    });
+
+    $("#cancel-feedback").click(() => {
+      $("#feedback_box").hide(200);
+    });
+  </script>
+<% end %>

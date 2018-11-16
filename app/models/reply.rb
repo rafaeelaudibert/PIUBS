@@ -2,10 +2,9 @@
 
 class Reply < ApplicationRecord
   belongs_to :user
-  belongs_to :call, class_name: 'Call', foreign_key: :protocol
   has_many :attachment_links
   has_many :attachments, through: :attachment_links
-
+  belongs_to :repliable, polymorphic: true
   enum status: %i[open closed reopened]
 
   filterrific(
@@ -15,8 +14,8 @@ class Reply < ApplicationRecord
 
   scope :search_query, lambda { |query|
     return nil if query.blank?
+    return where(repliable_id: query) if query.class == Integer
 
-    query_search = "%#{query}%"
-    where('protocol ILIKE :search OR description ILIKE :search', search: query_search)
+    where('description ILIKE :search', search: "%#{query}%")
   }
 end

@@ -1,8 +1,14 @@
 <p id="notice"><%= notice %></p>
 
 <p>
+  <strong>Apoio ou Controversia: </strong>
+  <%= @reply.repliable_type == 'Call' ? 'Apoio' : 'Controvérsia'%>
+</p>
+
+
+<p>
   <strong>Protocolo:</strong>
-  <%= @reply.protocol %>
+  <%= @reply.repliable_id %>
 </p>
 
 <p>
@@ -12,7 +18,7 @@
 
 <p>
   <strong>Usuário:</strong>
-  <%= @reply.user_id %>
+  <%= @reply.user.name %>
 </p>
 
 <%= link_to 'Editar', edit_reply_path(@reply) %> |

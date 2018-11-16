@@ -7,6 +7,10 @@
     color: #050805;
   }
 }
+
+.btn.btn-oval {
+  border-radius: 25px !important;
+}
 //form
 
 .form-control.boxed.faq {
@@ -239,4 +243,21 @@ label {
   input {
     border: 2px solid red !important;
   }
+}
+
+// Reply borders
+.support-border {
+  border-left: 5px solid #6DC8BF !important;
+}
+
+.unity-border {
+  border-left: 5px solid #FFC107 !important;
+}
+
+.city-border {
+  border-left: 5px solid #FE974B !important;
+}
+
+.company-border {
+  border-left: 5px solid #28A745 !important;
 }

@@ -1,0 +1,27 @@
+<div style="text-align: center;background-color: #FFFFFF; width: 80%; box-shadow: 0px 0px 15px 7px rgba(0, 0, 0, 0.2); padding:1rem 1rem; margin: 2.5rem auto">
+  <div style="width: 100%; height: 4rem; background-color: #444444; vertical-align: middle; border-top:1rem; margin-bottom: 1rem">
+    <h1 style="font-size: 3rem;color: #ffffff;">PIUBS</h1>
+  </div>
+  <p>
+    <span style="font-size: 2rem">Olá,
+      <b style="color: #007bff"><%= @current_user.name %>!</b>
+    </span>
+    <br/>
+    Você abriu uma nova controvérsia!
+    <br/>
+  </p>
+
+  <p>
+    Protocolo:
+    <b><%= @controversy.protocol %></b>
+  </p>
+
+  <p>
+    Título da Controvérsia:
+    <b><%= @controversy.title %></b>
+  </p>
+
+  <p>
+    <a href="<%= @link %>">Clique aqui para acessar o PIUBS - Solução de Controvérsias e visualizar a controvérsia completa</a>
+  </p>
+</div>

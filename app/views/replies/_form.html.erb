@@ -15,8 +15,13 @@
 <% end %>
 
 <div class="field">
-  <%= form.label :protocol, 'Nº de Protocolo', class: 'required' %>
-  <%= form.text_field :protocol, required: true %>
+  <%= form.label :repliable_id, 'Nº de Protocolo', class: 'required' %>
+  <%= form.text_field :repliable_id, required: true %>
+</div>
+
+<div class="field">
+  <%= form.label :repliable_type, 'Tipo de origem', class: 'required' %>
+  <%= form.select :repliable_type, %w[Call Controversy], required: true %>
 </div>
 
 <div class="field">

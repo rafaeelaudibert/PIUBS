@@ -120,7 +120,7 @@
 
     const stateSelect = document.getElementById('filterrific_with_state');
     const citySelect = document.getElementById('filterrific_with_city');
-    const triggeredByState = () => jQuery.ajax({url: `/apoioaempresas/cities/states/${stateSelect.value}`,
+    const triggeredByState = () => jQuery.ajax({url: `/cities/states/${stateSelect.value}`,
                                                 type: "GET",
                                                 dataType: "json",
                                                 success: insertCitiesData})

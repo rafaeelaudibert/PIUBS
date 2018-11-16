@@ -51,20 +51,19 @@ class Users::RegistrationsController < Devise::RegistrationsController
                                       keys: %i[name last_name cpf email
                                                current_password password password_confirmation])
     begin
-      params.require(:user).require(:name)
-      params.require(:user).require(:last_name)
-      params.require(:user).require(:cpf)
-      params.require(:user).require(:email)
-      params.require(:user).require(:current_password)
+      params.require(:user).require(:name, :last_name, :cpf, :email, :current_password)
     rescue StandardError
       redirect_back fallback_location: not_found_path, alert: 'Por favor, preencha todos os campos.'
     end
   end
 
-  # The path used after sign up.
-  # def after_sign_up_path_for(resource)
-  #   super(resource)
-  # end
+  def after_sign_up_path_for(resource)
+    signed_in_root_path(resource)
+  end
+
+  def after_update_path_for(resource)
+    signed_in_root_path(resource)
+  end
 
   # The path used after sign up for inactive accounts.
   # def after_inactive_sign_up_path_for(resource)
