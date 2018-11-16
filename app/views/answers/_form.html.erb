@@ -75,6 +75,16 @@
       <%= form.text_field :user_id, value: current_user.id, required: true %>
     </div>
 
+    <% puts '-------------' %>
+    <% puts params %>
+    <div class="field">
+      <% if params[:source] == 'controversy' && !@reply && params[:action] == 'new' %>
+        <%= form.text_field :source, value: :from_controversy, required: true, class: 'hidden' %>
+      <% elsif params[:source] == 'call' && !@reply && params[:action] == 'new'  %>
+        <%= form.text_field :source, value: :from_call, required: true, class: 'hidden' %>
+      <% end %>
+    </div>
+
     <% if action_name == 'edit' && current_user.role == 'admin' %>
       <div class="form-check form-check-inline">
         <%= form.check_box :faq, class: "form-check-input" %>

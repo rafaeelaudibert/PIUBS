@@ -3,6 +3,7 @@
 class AnswersController < ApplicationController
   before_action :set_answer, only: %i[show edit update destroy]
   before_action :authenticate_user!
+  before_action :verify_source, only: :new
   before_action :filter_role, except: %i[faq]
   include ApplicationHelper
 
@@ -161,7 +162,7 @@ class AnswersController < ApplicationController
   def answer_params
     params[:answer][:keywords] = params[:answer][:keywords].split(',').join(' ; ')
     params.require(:answer).permit(:keywords, :question, :answer, :category_id,
-                                   :user_id, :faq, :question_id,
+                                   :user_id, :faq, :question_id, :source,
                                    :reply_attachments, :files)
   end
 
@@ -242,6 +243,10 @@ class AnswersController < ApplicationController
     else
       show_or_faq?(action)
     end
+  end
+
+  def verify_source
+    redirect_to not_found_path unless %w[call controversy].include?(params[:source])
   end
 
   def admin_support_faq?
