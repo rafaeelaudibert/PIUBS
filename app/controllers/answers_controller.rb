@@ -81,7 +81,10 @@ class AnswersController < ApplicationController
     if @answer.save
       mark_as_final_answer @answer if params[:question_id]
       create_file_links @answer, files
-      redirect_to (@call || faq_path || root_path), notice: 'Resposta final marcada com sucesso.'
+
+      # Answer created from a call or from the FAQ
+      redirect_to @call, notice: 'Resposta final marcada com sucesso' if @call
+      redirect_to @answer || root_path, notice: 'Questão criada com sucesso.'
     else
       render :new
     end

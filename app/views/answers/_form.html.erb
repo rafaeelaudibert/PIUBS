@@ -63,7 +63,7 @@
         <%= form.label :category_id, 'Categoria', class: 'required' %>
         <select skip_default_ids="false" allow_method_names_outside_object="true" name="answer[category_id]" id="answer_category_id" class="form-control" required="required">
           <option value="0">Selecione uma categoria:</option>
-          <%= inside_layout "categories/category_select", {categ: Category.all, selected: @answer.category} do %>
+          <%= inside_layout "categories/category_select", {categ: Category.where(source: params[:source] == 'call' ? :from_call : :from_controversy), selected: @answer.category} do %>
             <%= yield %>
           <% end %>
         </select>
@@ -75,8 +75,6 @@
       <%= form.text_field :user_id, value: current_user.id, required: true %>
     </div>
 
-    <% puts '-------------' %>
-    <% puts params %>
     <div class="field">
       <% if params[:source] == 'controversy' && !@reply && params[:action] == 'new' %>
         <%= form.text_field :source, value: :from_controversy, required: true, class: 'hidden' %>
