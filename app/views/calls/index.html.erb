@@ -114,16 +114,23 @@
 
     const stateSelect = document.getElementById('filterrific_with_state');
     const citySelect = document.getElementById('filterrific_with_city');
+    const unitySelect = document.getElementById('filterrific_with_ubs');
     const triggeredByState = () => jQuery.ajax({url: `/cities/states/${stateSelect.value}`,
                                                 type: "GET",
                                                 dataType: "json",
                                                 success: insertCitiesData})
+    const triggeredByCity = () => jQuery.ajax({url: `/cities/unities/${citySelect.value}`,
+                                               type: "GET",
+                                               dataType: "json",
+                                               success: insertUnitiesData})
 
     stateSelect.addEventListener('change', triggeredByState);
+    citySelect.addEventListener('change', triggeredByCity);
 
     function insertCitiesData(cities) {
       let queried_city = parseQuery()['filterrific[with_city]']
       let innerHTML = '<option value>Todas Cidades</option>';
+      console.log(cities);
       for (let city of cities) {
         innerHTML += `<option ${queried_city == city.id ? 'selected="selected"' : ''} value=${city.id}>
                         ${city.name}
@@ -132,7 +139,19 @@
       citySelect.innerHTML = innerHTML;
     }
 
+    function insertUnitiesData(unities) {
+      let queried_unity = parseQuery()['filterrific[with_ubs]']
+      let innerHTML = '<option value>Todas UBS</option>';
+      for (let unity of unities) {
+        innerHTML += `<option ${queried_unity == unity.cnes ? 'selected="selected"' : ''} value=${unity.cnes}>
+                        ${unity.name}
+                      </option>`
+      }
+      unitySelect.innerHTML = innerHTML;
+    }
+
     triggeredByState();
+    triggeredByCity();
 
     $('#filterrific_search_query').on('focusout', function () {
       changeState($(this));
