@@ -64,7 +64,7 @@
 
         <select skip_default_ids="false" allow_method_names_outside_object="true" name="answer[category_id]" id="answer_category_id" class="form-control" required="required">
           <option value="0">Selecione uma categoria:</option>
-          <%= inside_layout "categories/category_select", {categ: Category.where(source: params[:source] == 'call' ? :from_call : :from_controversy), selected: @answer.category} do %>
+          <%= inside_layout "categories/category_select", {categ: @categories, selected: @answer.category} do %>
             <%= yield %>
           <% end %>
         </select>

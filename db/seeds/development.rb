@@ -417,16 +417,16 @@ end
 
 def main
   Rails.logger.warn('[START]  SEED')
-  # seed_companies
-  # seed_users
-  # seed_states
-  # seed_cities
-  # seed_unities
-  # seed_categories
-  # seed_answers
-  # seed_calls
+  seed_companies
+  seed_users
+  seed_states
+  seed_cities
+  seed_unities
+  seed_categories
+  seed_answers
+  seed_calls
   seed_controversies
-  # seed_replies
+  seed_replies
   Rails.logger.warn('[FINISH] SEED')
 end
 
