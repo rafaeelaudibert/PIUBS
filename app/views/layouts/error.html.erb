@@ -1,0 +1,31 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= content_for?(:title) ? yield(:title) : "Apoio Piubs" %></title>
+    <meta name="description" content="<%= content_for?(:description) ? yield(:description) : "Apoio Piubs" %>">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= favicon_link_tag asset_path('icon.png'), :rel => 'icon', :type => 'image/png' %>
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'jquery', 'data-turbolinks-track': 'reload' %>
+
+  </head>
+  <body>
+    <% if user_signed_in? %>
+      <%= render 'layouts/auth_application' %>
+    <% else %>
+      <%= render 'layouts/not_auth_application' %>
+    <% end %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= yield :javascript %>
+    <%= yield :java %>
+    <script>
+      $(document).ready(function () {
+        $(".dropdown-toggle").dropdown();
+      });
+    </script>
+  </body>
+</html>

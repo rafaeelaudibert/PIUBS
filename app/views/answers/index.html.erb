@@ -2,21 +2,25 @@
 <div class="left">
   <h4 class="display-5">Respostas finais</h4>
 </div>
-<div class="right create-new">
-  <%= link_to 'Cadastrar nova Resposta', new_answer_path, class: 'btn btn-primary btn-lg' %>
-</div>
 <%end%>
 
 <div class="right" style="display: inline-block !important">
 <form role="search">
   <div class="right input-group" style="margin: 15px auto !important">
-    <input name="filterrific[search_query_faq]" id="filterrific_search_query_faq" class="form-control mr-sm-2" type="search" aria-label="Search">
+    <input name="filterrific[search_query]" id="filterrific_search_query" class="form-control mr-sm-2" type="search" aria-label="Search">
     <label>
       <i class="fa fa-search"></i>
       &nbsp;Pesquisar resposta final
     </label>
     <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
   </div>
+  <br>
+  <p style="width: 100%; text-align: right;">
+    <%= (link_to 'Desfazer pesquisa',
+                 reset_filterrific_url,
+                 class: 'btn btn-danger',
+                 style: 'margin-top: 0.375em; border: 1px solid red;') if params[:filterrific] %>
+  </p>
 </form>
 </div>
 <hr class="under-header" style="margin-top: <%= params[:filterrific] ? '8em' : '5em'%>"/>

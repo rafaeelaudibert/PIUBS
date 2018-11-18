@@ -84,7 +84,7 @@
           const citySelect = document.getElementById('user_city_id');
           const unitySelect = document.getElementById('user_cnes');
           const unityRequest = () => jQuery.ajax({
-            url: '/apoioaempresas/cities/unities/' + citySelect.value,
+            url: '/cities/unities/' + citySelect.value,
             type: "GET",
             dataType: "json",
             success: insertUnityData
@@ -92,7 +92,7 @@
 
 
           stateSelect.addEventListener('change', () => jQuery.ajax({
-            url: '/apoioaempresas/cities/states/' + stateSelect.value,
+            url: '/cities/states/' + stateSelect.value,
             type: "GET",
             dataType: "json",
             success: insertCityData
@@ -160,6 +160,15 @@
   <% if current_user.ubs_admin? %>
     <%= f.hidden_field :city_id, value: current_user.city_id %>
     <%= f.hidden_field :cnes, value: current_user.cnes %>
+  <% end %>
+
+  <% unless current_user.ubs_admin? %>
+    <div class="form-group">
+      <%= f.label "Acesso aos sistemas", class: "required" %>
+      <%= f.radio_button :system, :companies, :checked => true %> Apoio à Empresas <br>
+      <%= f.radio_button :system, :controversies %> Solução de Controvérsias <Br>
+      <%= f.radio_button :system, :both %> Ambos
+    </div>
   <% end %>
 
   <p><%= f.submit "Enviar convite", :class => 'btn btn-primary' %></p>

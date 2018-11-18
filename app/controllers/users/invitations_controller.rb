@@ -4,10 +4,9 @@ class Users::InvitationsController < Devise::InvitationsController
   before_action :admin_only, only: :new
   before_action :update_sanitized_params, only: :update
   before_action :create_sanitized_params, only: :create
-  before_action :sanitize_optional_params, only: :create
+  before_action :set_roles_allowed, only: %i[new create]
 
   def new
-    @roles_allowed = set_roles_allowed
     @role = params[:role] || @roles_allowed[0] if @roles_allowed.length == 1
     @sei = params[:sei].to_i if params[:sei]
     @city_id = params[:city_id].to_i if params[:city_id]
@@ -15,6 +14,7 @@ class Users::InvitationsController < Devise::InvitationsController
   end
 
   def create
+    sanitize_optional_params if params[:user]
     super
   end
 
@@ -31,34 +31,35 @@ class Users::InvitationsController < Devise::InvitationsController
   private
 
   def set_roles_allowed
-    if current_user.admin?
-      %i[faq_inserter admin city_admin ubs_admin company_admin call_center_admin]
-    elsif current_user.city_admin?
-      [:ubs_admin]
-    elsif current_user.ubs_admin?
-      [:ubs_user]
-    elsif current_user.company_admin?
-      [:company_user]
-    elsif current_user.call_center_admin?
-      [:call_center_user]
-    else
-      []
-    end
+    @roles_allowed = if current_user.admin?
+                       %i[faq_inserter admin city_admin ubs_admin company_admin call_center_admin]
+                     elsif current_user.city_admin?
+                       [:ubs_admin]
+                     elsif current_user.ubs_admin?
+                       [:ubs_user]
+                     elsif current_user.company_admin?
+                       [:company_user]
+                     elsif current_user.call_center_admin?
+                       [:call_center_user]
+                     else
+                       []
+                     end
   end
 
   def sanitize_optional_params
-    if params[:user]
-      params[:user][:cnes] = sanitize_cnes
-      params[:user][:city_id] = sanitize_city_id
-      params[:user][:state_id] = sanitize_state_id
-      params[:user][:sei] = sanitize_sei
-    end
+    params[:user][:cnes] = sanitize_cnes
+    params[:user][:city_id] = sanitize_city_id
+    params[:user][:state_id] = sanitize_state_id
+    params[:user][:sei] = sanitize_sei
+    params[:user][:system] = sanitize_system
+  end
+
+  def sanitize_system
+    %w[company_admin company_user].include?(params[:user][:role]) ? params[:user][:system] : 1
   end
 
   def sanitize_cnes
-    return params[:user][:cnes] if %w[ubs_admin ubs_user].include?(params[:user][:role])
-
-    ''
+    %w[ubs_admin ubs_user].include?(params[:user][:role]) ? params[:user][:cnes] : ''
   end
 
   def sanitize_city_id
@@ -97,7 +98,7 @@ class Users::InvitationsController < Devise::InvitationsController
   end
 
   def create_sanitized_params
-    devise_parameter_sanitizer.permit(:invite, keys: %i[email role sei cnes city_id])
+    devise_parameter_sanitizer.permit(:invite, keys: %i[email role sei cnes city_id system])
   end
 
   def admin_only

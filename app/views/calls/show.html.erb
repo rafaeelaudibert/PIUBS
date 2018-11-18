@@ -1,5 +1,5 @@
 <%= tinymce_assets %>
-<%= tinymce %>
+<%= tinymce language: 'pt_BR' %>
 
 <%= content_for :body_title do%>
 <h5>
@@ -21,17 +21,17 @@
   <% if @call.open? %>
     Data de criação :
     <span class="badge badge-pill badge-dark m-2">
-      <%= @call.created_at %>
+      <%= @call.created_at.strftime("%d %b %y - %H:%M:%S") if @call.created_at %>
     </span>
   <%elsif @call.reopened?%>
     Data de reabertura :
     <span class="badge badge-pill badge-dark m-2">
-      <%= @call.reopened_at %>
+      <%= @call.reopened_at.strftime("%d %b %y - %H:%M:%S") if @call.reopened_at %>
     </span>
   <%elsif @call.closed?%>
     Data de fechamento :
     <span class="badge badge-pill badge-dark m-2">
-      <%= @call.finished_at %>
+      <%= @call.finished_at.strftime("%d %b %y - %H:%M:%S") if @call.finished_at %>
     </span>
   <%end%>
 
@@ -46,7 +46,7 @@
   <hr/>
   <p>
     <strong><%= t 'activerecord.models.call.description' %>:</strong>
-    <%= @call.description.html_safe %>
+    <span class="description"><%= @call.description.html_safe %></span>
   </p>
   <p>
     <strong><%= t 'activerecord.models.call.access_profile' %>:
@@ -122,13 +122,26 @@
   <!-- Chamado fechado -->
   <div class="closed-call">
     <% if admin? || support_user? %>
-      <p>Chamado fechado <br> <span style="font-size: 1rem;"> (<%= @call.finished_at %>) </span></p>
+      <p>Chamado fechado <br>
+        <% if @call.finished_at %>
+          <span style="font-size: 1rem;">
+          (<%= @call.finished_at.strftime("%d %b %y - %H:%M:%S") %>)
+          </span>
+        <% end %>
+      </p>
     <% else %>
-      <p>Chamado fechado em <%= @call.finished_at %>. <br>Somente reabra caso a solução oferecida pelo atendente <br>não tenha resolvido o seu problema.</br>
-    </p>
-    <a data-confirm="Tens certeza?" class="btn btn-danger btn-lg" rel="nofollow" data-method="post" href="/apoioaempresas/calls/reopen_call?call=<%= @call.id %>">
-      Reabrir chamado
-    </a>
+      <% if @call.finished_at %>
+        <p>
+          Chamado fechado em <%= @call.finished_at.strftime("%d %b %y - %H:%M:%S") %>.
+          <br>
+          Somente reabra caso a solução oferecida pelo atendente não tenha resolvido o seu problema.</br>
+        </p>
+      <% end %>
+      <% if @call.replies.order(:id).last %>
+        <a data-confirm="Tens certeza?" class="btn btn-danger btn-lg" rel="nofollow" data-method="post" href="/apoioaempresas/calls/reopen_call?call=<%= @call.id %>&reply_id=<%= @call.replies.order(:id).last.id %>">
+          Reabrir chamado
+        </a>
+      <% end %>
   <% end %>
 </div>
 <% end %>
@@ -171,25 +184,78 @@
 </div>
 </div>
 <div class="card-block">
-<% @call.replies.each do |reply| %>
 
-  <% if reply.category == 'reply' %>
+<% @call.replies.order(id: :desc).each do |reply| %>
+
+  <% if reply.last_call_ref_reply_closed_at %>
+    <% if reply.last_call_ref_reply_reopened_at && reply.last_call_ref_reply_reopened_at > reply.last_call_ref_reply_closed_at %>
+      <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.reopened" %>">
+        <%= t "activerecord.enums.call.status.reopened"%> em <%= reply.last_call_ref_reply_reopened_at.strftime("%d %b %y - %H:%M:%S") %>
+      </span>
+    <% end %>
+  <% end %>
+
+  <% if reply.last_call_ref_reply_closed_at %>
+    <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.closed" %>">
+      <%= t "activerecord.enums.call.status.closed"%> em <%= reply.last_call_ref_reply_closed_at.strftime("%d %b %y - %H:%M:%S") %>
+    </span>
+  <% end %>
+
+  <% if reply.category == 'company' %>
     <div class="card card-default mb-3" style="box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
       <div class="card-header">
         <em class="fa fa-comment-o m-2"></em>
         <span class="badge badge-pill badge-dark m-1" style="display: none"><%= '#' << reply.id.to_s %></span>
-        <span class="badge badge-pill badge-dark m-2">
-          <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
-        </span>
         -
         <strong class="m-2">
           <%= User.find(reply.user_id).name %>
         </strong>
-        Adicionou uma resposta.
+        <% if reply.created_at %>
+          Adicionou uma resposta em <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+        <% end %>
 
       </div>
       <div class="card-body" style="padding: 5px 30px 15px">
         <p class="card-text">
+          <span class="description">
+            <%= reply.description.html_safe %>
+          </span>
+
+          <% if reply.attachments.length > 0 %>
+            <hr/>
+            <strong class='m-2'>
+              Attachments
+            </strong>
+            <br/>
+            <div>
+              <% reply.attachments.each do |_attachment| %>
+                <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+                  <i class="fa fa-file-text mr-1"></i>
+                  <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+                <%end%>
+              <% end %>
+            </div>
+          <% end %>
+        </p>
+      </div>
+    </div>
+
+  <% end  %>
+
+  <% if reply.category == 'support' %>
+    <div class="card card-default mb-3" style="border-left: 5px solid #85CE36; box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
+      <div class="card-header">
+        <em class="fa fa-comment-o m-2"></em>
+        <span class="badge badge-pill badge-dark m-1" style="display: none"><%= '#' << reply.id.to_s %></span>
+        <span class="badge badge-pill badge-dark m-1">suporte</span>
+        <span class="badge badge-pill badge-dark m-1">
+          <%= User.find(reply.user_id).name %>
+        </span>
+        <% if reply.created_at %>
+          Adicionou uma resposta em <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+        <% end %>
+      </div>
+      <div class="card-block">
           <span>
             <%= reply.description.html_safe %>
           </span>
@@ -203,80 +269,62 @@
             <div>
               <% reply.attachments.each do |_attachment| %>
                 <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
-                <i class="fa fa-file-text mr-1"></i>
-                <%= truncate(_attachment.filename, length: 10, omission: '...')%>
-              <%end%>
+                  <i class="fa fa-file-text mr-1"></i>
+                  <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+                <%end%>
+              <% end %>
+            </div>
+          <% end %>
+
+          <hr/>
+          <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
+            <% if @my_call %>
+              <a style="color: white" onclick="toggleFinalAnswer(this)" class="btn btn-primary btn-sm">Marcar como resposta final</a>
+            <% end %>
+          <% end %>
+          <div style="float: right">
+            <% if reply.faq == true %>
+              <span id="faq-<%= reply.id %>" class="badge badge-pill badge-dark">
+                Resposta no FAQ
+              </span>
             <% end %>
           </div>
-        <% end %>
-      </p>
-    </div>
-  </div>
-<%end%>
-
-<% if reply.category == 'support' %>
-  <div class="card card-default mb-3" style="border-left: 5px solid #85CE36; box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
-    <div class="card-header">
-      <em class="fa fa-comment-o m-2"></em>
-      <span class="badge badge-pill badge-dark m-1" style="display: none"><%= '#' << reply.id.to_s %></span>
-      <span class="badge badge-pill badge-dark m-1">
-        <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
-      </span>
-      <span class="badge badge-pill badge-dark m-1">suporte</span>
-      -
-      <strong class="m-2">
-        <%= User.find(reply.user_id).name %>
-      </strong>
-      Adicionou uma resposta.
-    </div>
-    <div class="card-block">
-      <span>
-        <%= reply.description.html_safe %>
-      </span>
-
-      <% if reply.attachments.length > 0 %>
-        <hr/>
-        <strong class='m-2'>
-          Attachments
-        </strong>
-        <br/>
-        <div>
-          <% reply.attachments.each do |_attachment| %>
-            <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
-            <i class="fa fa-file-text mr-1"></i>
-            <%= truncate(_attachment.filename, length: 10, omission: '...')%>
-          <%end%>
-        <% end %>
       </div>
-    <% end %>
-
-    <hr/>
-    <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-      <% if @my_call %>
-        <a style="color: white" onclick="toggleFinalAnswer(this)" class="btn btn-primary btn-sm">Marcar como resposta final</a>
-      <% end %>
-    <% end %>
-    <div style="float: right">
-      <% if reply.faq == true %>
-        <span class="badge badge-pill badge-dark">
-          Resposta no FAQ
-        </span>
-      <% end %>
-      <span class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.#{reply.status}" %>">
-        <%= t "activerecord.enums.call.status.#{reply.status}" if reply.status%>
-      </span>
     </div>
-  </div>
-</div>
-<%end%>
+  <% end  %>
+
+  <% if reply.last_call_ref_reply_closed_at %>
+    <span style="width:100%; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.closed" %>">
+      <%= t "activerecord.enums.call.status.closed"%> em <%= reply.last_call_ref_reply_closed_at %>
+    </span>
+  <% end %>
+
+  <% if reply.last_call_ref_reply_reopened_at && reply.last_call_ref_reply_reopened_at > reply.last_call_ref_reply_closed_at %>
+    <span style="width:100%; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.reopened" %>">
+      <%= t "activerecord.enums.call.status.reopened"%> em <%= reply.last_call_ref_reply_reopened_at %>
+    </span>
+  <% end %>
+
+<% end  %>
+
+<% if @call.replies.order(id: :desc).last %>
+  <span style="width:100%; opacity: 0.8; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.#{@call.replies.order(id: :desc).last.status}" %>">
+    <%= t "activerecord.enums.call.status.#{@call.replies.order(id: :desc).last.status}" if @call.replies.order(id: :desc).last.status%>
+    em
+    <%= @call.created_at.strftime("%d %b %y - %H:%M:%S") if @call.created_at %>
+  </span>
 <% end %>
 
-<% if @my_call %>
-<button type="button" id="reply-2" class="btn btn-primary">Nova Resposta</button>
-<% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-<button type="button" id="faq-reply-2" class="btn btn-primary">Resposta do FAQ</button>
-<% end %>
-<% end %>
+  <% if @call.open? || @call.reopened? %>
+    <% if @my_call %>
+      <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
+        <button type="button" id="reply-2" class="btn btn-primary">Nova Resposta</button>
+        <button type="button" id="faq-reply-2" class="btn btn-primary">Resposta do FAQ</button>
+      <% end %>
+    <% elsif @call.user_id == current_user.id %>
+      <button type="button" id="reply-2" class="btn btn-primary">Nova Resposta</button>
+    <% end %>
+  <% end %>
 
 </div>
 </div>
@@ -284,176 +332,117 @@
 
 <% if @call.answer_id %>
 <div class="card card-primary">
-<div class="card-header" id="headingTwo">
-<div class="header-block">
-<p class="title" style="color: white">
-<i class="fa fa-envelope mr-2"></i>
-Final Answer</p>
-</div>
-</div>
-<div class="card-block">
-<% answer = Answer.find(@call.answer_id) %>
-<span class="badge badge-pill badge-dark m-1">
-<%= answer.created_at %></span>
-<span class="badge badge-pill badge-dark m-1">
-<%= User.find(answer.user_id).name %></span>
-<span class="badge badge-pill badge-dark m-1">suporte</span><hr/>
-<%= answer.answer.html_safe %>
-<% if answer.attachments.length > 0 %>
-<hr/>
-<strong class='m-2'>Attachments</strong><br/>
-<div class='mt-2'>
-  <% answer.attachments.each do |_attachment| %>
-    <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
-    <i class="fa fa-file-text mr-1"></i>
-    <%= truncate(_attachment.filename, length: 10, omission: '...')%>
-  <%end%>
-<% end %>
-</div>
-<% end %>
-</div>
+  <div class="card-header" id="headingTwo">
+    <div class="header-block">
+      <p class="title" style="color: white">
+      <i class="fa fa-envelope mr-2"></i>
+      Resposta final</p>
+    </div>
+  </div>
+  <div class="card-block">
+    <% answer = Answer.find(@call.answer_id) %>
+    <span class="badge badge-pill badge-dark m-1">suporte</span>
+    <span class="badge badge-pill badge-dark m-1">
+    <%= User.find(answer.user_id).name %></span>
+    <% if answer.created_at %>
+      Marcada como resposta final em <%= answer.created_at.strftime("%d %b %y - %H:%M:%S") %>
+    <% end %>
+    <hr/>
+    <%= answer.answer.html_safe %>
+    <% if answer.attachments.length > 0 %>
+    <hr/>
+    <strong class='m-2'>Attachments</strong><br/>
+    <div class='mt-2'>
+      <% answer.attachments.each do |_attachment| %>
+        <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+          <i class="fa fa-file-text mr-1"></i>
+          <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+        <% end %>
+      <% end %>
+    </div>
+    <% end %>
+  </div>
 </div>
 <% end %>
 
 <div id="final-answer" style="display: none">
-<%= render 'finalAnswer', answer: @answer %>
+  <%= render 'finalAnswer', answer: @answer %>
 </div>
 
 <script>
 
-const cleanMCE = () => {
-tinymce.EditorManager.execCommand('mceRemoveEditor', true, 'tinymce');
-tinymce.EditorManager.execCommand('mceAddEditor', true, 'tinymce');
-$('#tinymce_ifr').css('height', '300px');
-}
-// Reply buttons
-$("#reply").click(e => {
-extraFilesFaq = 0;
-$('#reply_file').trigger('change', 'answer');
-if ($('#reply_faq_attachments')[0]) {
-$('#reply_faq_attachments')[0].value = ''
-}
-if (e.target.parentNode == $("#reply_box")[0].parentNode) {
-$("#reply_box").toggle(200);
-} else {
-$("#reply_box").hide(0);
-e.target.parentNode.appendChild(document.getElementById('reply_box'));
-cleanMCE();
-$("#reply_box").show(200);
-}
-$("#faq_box").hide(200);
-});
+  const cleanMCE = id => {
+    tinymce.EditorManager.execCommand('mceRemoveEditor', true, id);
+    tinymce.EditorManager.execCommand('mceAddEditor', true, id);
+    $('#tinymce_ifr').css('height', '300px');
+  }
 
-$("#reply-2").click(e => {
-if (e.target.parentNode == $("#reply_box")[0].parentNode) {
-$("#reply_box").toggle(200);
-} else {
-$("#reply_box").hide(0);
-e.target.parentNode.appendChild(document.getElementById('reply_box'));
-cleanMCE();
-$("#reply_box").show(200);
-}
-$("#faq_box").hide(200);
-});
+  // Reply buttons
+  $("#reply").click(e => {
+    extraFilesFaq = 0;
 
-// FAQ buttons
-$("#faq-reply").click(e => {
-if (e.target.parentNode == $("#faq_box")[0].parentNode) {
-$("#faq_box").toggle(200);
-} else {
-$("#faq_box").hide(0);
-e.target.parentNode.appendChild(document.getElementById('faq_box'));
-cleanMCE();
-$("#faq_box").show(200);
-}
-$("#reply_box").hide(200);
-});
-$("#faq-reply-2").click(e => {
-if (e.target.parentNode == $("#faq_box")[0].parentNode) {
-$("#faq_box").toggle(200);
-} else {
-$("#faq_box").hide(0);
-e.target.parentNode.appendChild(document.getElementById('faq_box'));
-cleanMCE();
-$("#faq_box").show(200);
-}
-$("#reply_box").hide(200);
-});
+    $('#reply_file').trigger('change', 'answer');
+    if ($('#reply_faq_attachments')[0]) {
+      $('#reply_faq_attachments')[0].value = ''
+    }
 
-// CANCEL button
-$("#cancel").click(() => {
-$("#reply_box").hide(200);
-});
+    if (e.target.parentNode == $("#reply_box")[0].parentNode) {
+      $("#reply_box").toggle(200);
+    } else {
+      $("#reply_box").hide(0);
+      e.target.parentNode.appendChild(document.getElementById('reply_box'));
+      cleanMCE('tinymce');
+      $("#reply_box").show(200);
+    }
 
-function validateFiles(inputFile) {
+    $("#faq_box").hide(200);
+  });
 
-var size = 0;
-var maxFileSize = $(inputFile).data('max-file-size');
-var maxFileQuantity = $(inputFile).data('max-file-quantity');
+  $("#reply-2").click(e => {
+    if (e.target.parentNode == $("#reply_box")[0].parentNode) {
+      $("#reply_box").toggle(200);
+    } else {
+      $("#reply_box").hide(0);
+      e.target.parentNode.appendChild(document.getElementById('reply_box'));
+      cleanMCE('tinymce');
+      $("#reply_box").show(200);
+    }
 
-$.each(inputFile.files, function () {
-if (this.size) {
-size += this.size;
-}
-});
+    $("#faq_box").hide(200);
+  });
 
-if (size && maxFileSize && size > parseInt(maxFileSize)) {
-const animation = {
-"in": "bounceIn",
-"out": "fadeOutUpBig"
-};
-const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
-Notification.create("<%= 'Alerta' %>", '<%= "Esses anexos excedem o tamanho máximo permitido (20 MB)" %>', heart, animation, 2, 5);
-$(inputFile).val('');
-} else if (inputFile.files.length > maxFileQuantity) {
-const animation = {
-"in": "bounceIn",
-"out": "fadeOutUpBig"
-};
-const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
-Notification.create("<%= 'Alerta' %>", '<%= "Esses anexos excedem a quantidade máxima permitida (10 arquivos)" %>', heart, animation, 2, 5);
-$(inputFile).val('');
-};
-}
+  // FAQ buttons
+  $("#faq-reply").click(e => {
+    if (e.target.parentNode == $("#faq_box")[0].parentNode) {
+      $("#faq_box").toggle(200);
+    } else {
+      $("#faq_box").hide(0);
+      e.target.parentNode.appendChild(document.getElementById('faq_box'));
+      cleanMCE('tinymce');
+      $("#faq_box").show(200);
+    }
 
-$(function () {
+    $("#reply_box").hide(200);
+  });
 
-// We can attach the `fileselect` event to all file inputs on the page
-$(document).on('change', ':file', function (event, where) {
-var input = $(this),
-numFiles = input.get(0).files
-? input.get(0).files.length
-: 1,
-label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-input.trigger('fileselect', [numFiles, label, where]);
-});
+  $("#faq-reply-2").click(e => {
+    if (e.target.parentNode == $("#faq_box")[0].parentNode) {
+      $("#faq_box").toggle(200);
+    } else {
+      $("#faq_box").hide(0);
+      e.target.parentNode.appendChild(document.getElementById('faq_box'));
+      cleanMCE('tinymce');
+      $("#faq_box").show(200);
+    }
 
-// We can watch for our custom `fileselect` event like this
-$(document).ready(function () {
-$(':file').on('fileselect', function (event, numFiles, label, where) {
-var input = $(this).parents('.input-group').find(':text');
-var log;
-if (where == 'reply') {
-log = numFiles + extraFilesReply > 1
-  ? numFiles + extraFilesReply + ' files selected'
-  : label;
-} else {
-log = numFiles + extraFilesFaq > 1
-  ? numFiles + extraFilesFaq + ' files selected'
-  : label;
-}
+    $("#reply_box").hide(200);
+  });
 
-if (input.length) {
-input.val(log);
-} else {
-if (log)
-  alert(log);
-}
+  // CANCEL button
+  $("#cancel").click(() => {
+    $("#reply_box").hide(200);
+  });
 
-});
-});
-
-});
 </script>
 
 <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
@@ -463,38 +452,22 @@ if (log)
 
       const finalAnswer = $('#final-answer')[0];
       const parent = button.parentNode;
+      const replyID = parent.parentNode.children[0].children[1].innerHTML.split('#')[1];
+      const float = $(`#faq-${replyID}`);
+      const faqField = $('#faq-form')[0];
 
-      if (parent.lastChild == finalAnswer) {
-        $('#final-answer').toggle(200);
-      } else {
-        $('#final-answer').hide();
-        parent.appendChild(finalAnswer);
-        $('#final-answer').show(200);
-      }
-
-      const formChildren = finalAnswer.children[3].children;
-      const answerDivField = formChildren[2].children[1];
-      const answerField = answerDivField.children[1];
-      answerField.innerHTML = parent.parentNode.children[1].children[0].innerText;
-
-      const float = parent.children[3].children
-      const faqField = formChildren[2].children[6];
-      faqField.style.display = float.length == 0 ?
-                                  parent.children[7].children.length == 2 ? 'none' : 'inline-flex'
-                                : float.length == 2 ? 'none' : 'inline-flex';
-      const replyId = parent.parentNode.children[0].children[1].innerText.split('#')[1];
+      // Show/hide the faq field
+      faqField.style.display = float ? 'none' : 'inline-flex'
 
       $.ajax({
-        url: '/apoioaempresas/replies/attachments/' + replyId,
+        url: '/replies/attachments/' + replyId,
         type: "GET",
         dataType: "json",
         success: data => {
-
-          // Set the ids
-          answerFileIds = data.map(val => val.id).reduce((acc, val) => acc.concat(val), [])
-          $('#uuid-files-answer').val(answerFileIds);
+          const dropzone = $('#answer-dropzone')[0].dropzone
 
           // Fake their adittion in the reply-dropzone
+          dropzone.removeAllFiles();
           data.forEach( val => {
             let mockFile = {
                       name: val.filename,
@@ -502,29 +475,33 @@ if (log)
                       type: val.type,
                       accepted: true            // required if using 'MaxFiles' option
                   };
-            dropzone = $('#answer-dropzone')[0].dropzone
+
             dropzone.files.push(mockFile);
             dropzone.emit('addedfile', mockFile);
             dropzone.emit('complete', mockFile);
             $(dropzone.files[dropzone.files.length - 1]
-                                            .previewElement).find('.dz-remove').attr('id', val.id);
+                      .previewElement).find('.dz-remove')
+                                      .attr('id', val.id);
           })
+
+          // Set the ids
+          answerFileIds = data.map(val => val.id).reduce((acc, val) => acc.concat(val), [])
+          $('#uuid-files-answer').val(answerFileIds);
+
+          //Update the divs
+          if (parent.lastChild == finalAnswer) {
+            $('#final-answer').toggle(200);
+          } else {
+            $('#final-answer').hide();
+            parent.appendChild(finalAnswer);
+            $('#final-answer').show(200);
+          }
+
+          // Update tinyMCE
+          cleanMCE('tinymceAnswer');
+          tinyMCE.get('tinymceAnswer').setContent(parent.parentNode.children[1].children[0].innerText);
         }
       });
     }
   </script>
 <% end %>
-
-<style>
-  #reply_description_ifr {
-    height: 250px !important;
-  }
-
-  #mceu_30 {
-    display: none;
-  }
-
-  .btn.btn-oval {
-    border-radius: 25px !important;
-  }
-</style>

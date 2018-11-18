@@ -14,6 +14,13 @@
       </label>
       <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
     </div>
+    <br>
+    <p style="width: 100%; text-align: right;">
+      <%= (link_to 'Desfazer pesquisa',
+                   reset_filterrific_url,
+                   class: 'btn btn-danger',
+                   style: 'margin-top: 0.375em; border: 1px solid red;') if params[:filterrific] %>
+    </p>
   </form>
 </div>
 <hr class="under-header" style="margin-top: <%= params[:filterrific] ? '8em' : '5em'%>"/>
@@ -25,6 +32,7 @@
   <table class="table table-striped table-hover">
     <thead class="thead-dark">
       <tr>
+      <th>Apoio ou Controvérsias?</th>
         <th>Protocolo</th>
         <th>Descrição</th>
         <th>Usuário</th>
@@ -35,8 +43,9 @@
     <tbody>
       <% @replies.each do |reply| %>
         <tr>
-          <td><%= reply.protocol %></td>
-          <td><%= truncate strip_tags(reply.description), length: 40 %></td>
+          <td><%= reply.repliable_type == 'Call' ? 'Apoio' : 'Controvérsia'%></td>
+          <td><%= reply.repliable_id %></td>
+          <td><%= truncate strip_tags(reply.description), length: 36 %></td>
           <td><%= reply.user.name %></td>
           <td><%= link_to 'Mostrar', reply , class: 'btn btn-primary btn-sm'%></td>
         </tr>

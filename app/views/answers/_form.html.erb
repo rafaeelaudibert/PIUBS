@@ -1,6 +1,6 @@
 <%= tinymce_assets %>
 <%= tinymce language: 'pt_BR' %>
-<%= form_with(model: answer, local: true) do |form| %>
+<%= form_with(model: answer, local: true, :html => { :id => "faqForm"} ) do |form| %>
 <% if answer.errors.any? %>
   <div id="error_explanation">
     <h2><%= pluralize(answer.errors.count, "error") %>
@@ -61,9 +61,10 @@
     <% else %>
       <div class="field">
         <%= form.label :category_id, 'Categoria', class: 'required' %>
+
         <select skip_default_ids="false" allow_method_names_outside_object="true" name="answer[category_id]" id="answer_category_id" class="form-control" required="required">
           <option value="0">Selecione uma categoria:</option>
-          <%= inside_layout "categories/category_select", {categ: Category.all, selected: @answer.category} do %>
+          <%= inside_layout "categories/category_select", {categ: Category.where(source: params[:source] == 'call' ? :from_call : :from_controversy), selected: @answer.category} do %>
             <%= yield %>
           <% end %>
         </select>
@@ -73,6 +74,14 @@
     <div class="field" style="display: none">
       <%= form.label :user_id, 'Usuário', class: 'required' %>
       <%= form.text_field :user_id, value: current_user.id, required: true %>
+    </div>
+
+    <div class="field">
+      <% if params[:source] == 'controversy' && !@reply && params[:action] == 'new' %>
+        <%= form.text_field :source, value: :from_controversy, required: true, class: 'hidden' %>
+      <% elsif params[:source] == 'call' && !@reply && params[:action] == 'new'  %>
+        <%= form.text_field :source, value: :from_call, required: true, class: 'hidden' %>
+      <% end %>
     </div>
 
     <% if action_name == 'edit' && current_user.role == 'admin' %>
@@ -108,7 +117,7 @@
 
         // grap our upload form by its id
       $('#dropzone').dropzone({
-          url: '/apoioaempresas/attachments',
+          url: '/attachments',
 
           // restrict image size to a maximum 20MB
           maxFilesize: 20,
@@ -156,7 +165,7 @@
               // make a DELETE ajax request to delete the file
               $.ajax({
                   type: 'DELETE',
-                  url: '/apoioaempresas/attachments/' + id,
+                  url: '/attachments/' + id,
                   success: () => $(file.previewTemplate).fadeOut(),
                   error: e => console.error(e)
               });
@@ -167,7 +176,7 @@
       <% if action_name == 'edit' %>
       const l = location.href.split('/')
       $.ajax({
-        url: '/apoioaempresas/answers/attachments/' + l[l.length-2],
+        url: '/answers/attachments/' + l[l.length-2],
         type: "GET",
         dataType: "json",
         success: data => {

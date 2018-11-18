@@ -2,6 +2,19 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+
+.btn.btn-oval {
+  border-radius: 25px !important;
+}
+
+.error {
+  padding: 3px;
+  color: red;
+  border: 1px solid red;
+  font-weight : normal;
+  margin-top: 2px;
+}
+
 .mark-call {
   color: #084B8A;
   font-weight: 500 !important;
@@ -146,7 +159,7 @@
 
   p {
     line-height: 1.5rem;
-    font-size: 1.6rem;
+    font-size: 1.0rem;
     font-weight: 800 !important;
     margin-bottom: 0;
   }
@@ -159,6 +172,7 @@
 .digg_pagination {
   margin-bottom: 1rem;
 }
+
 // Accordion
 .accordion-calls {
   button {

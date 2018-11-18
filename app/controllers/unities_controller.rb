@@ -61,6 +61,13 @@ class UnitiesController < ApplicationController
     redirect_to unities_url, notice: 'Unity was successfully destroyed.'
   end
 
+  # GET /cities/:cnes/users
+  def users
+    respond_to do |format|
+      format.js { render json: User.where(cnes: params[:cnes]).order('id ASC') }
+    end
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.

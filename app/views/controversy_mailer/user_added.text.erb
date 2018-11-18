@@ -1,0 +1,13 @@
+PIUBS
+
+Olá, <%= @current_user.name %>, você foi adicionado a uma Controvérsia no sistema PIUBS.
+
+Protocolo: <%= @controversy.protocol %>
+
+Parte e Usuário requerente: <%= @controversy.creator.titleize %> - <%= @user_creator %>
+
+Título da Controvérsia: <%= @controversy.title %>
+
+Descrição da Controvérsia: <%= @controversy.description.html_safe %>
+
+<%= link_to "Clique aqui para acessar o PIUBS e visualizar a controvérsia completa", @link %>

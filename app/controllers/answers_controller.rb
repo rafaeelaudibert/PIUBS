@@ -3,6 +3,7 @@
 class AnswersController < ApplicationController
   before_action :set_answer, only: %i[show edit update destroy]
   before_action :authenticate_user!
+  before_action :verify_source, only: :new
   before_action :filter_role, except: %i[faq]
   include ApplicationHelper
 
@@ -25,16 +26,32 @@ class AnswersController < ApplicationController
       Answer,
       params[:filterrific],
       select_options: {
-        with_category: Category.all.map { |a| [a.name, a.id] }
+        with_category: Category.where(source: :from_call).map { |a| [a.name, a.id] }
       },
       persistence_id: false
     )) || return
-    @answers = Answer.filterrific_find(@filterrific).order(:category_id).page(params[:page])
 
-    respond_to do |format|
-      format.html
-      format.js
-    end
+    @answers = Answer.where(faq: true, source: :from_call)
+                     .filterrific_find(@filterrific)
+                     .order(:category_id)
+                     .page(params[:page])
+  end
+
+  # get /faq_controversy
+  def faq_controversy
+    (@filterrific = initialize_filterrific(
+      Answer,
+      params[:filterrific],
+      select_options: {
+        with_category: Category.where(source: :from_controversy).map { |a| [a.name, a.id] }
+      },
+      persistence_id: false
+    )) || return
+
+    @answers = Answer.where(faq: true, source: :from_controversy)
+                     .filterrific_find(@filterrific)
+                     .order(:category_id)
+                     .page(params[:page])
   end
 
   # GET /answers/1
@@ -53,47 +70,17 @@ class AnswersController < ApplicationController
   # POST /answers
   def create
     ans_params = answer_params
-    files = ans_params.delete(:files).split(',') if ans_params[:files]
+
+    files = retrieve_files ans_params
     @answer = Answer.new(ans_params)
 
     if @answer.save
-      if params[:question_id]
-        @call = Call.find(params[:question_id])
-        @call.closed!
-        @call.update(:finished_at => Time.now)
+      mark_as_final_answer @answer if params[:question_id]
+      create_file_links @answer, files
 
-        # Retira a answer caso ela nao esteja no FAQ + attach_links
-        if @call.answer_id && @call.answer.faq == false
-          @old_answer = Answer.find(@call.answer_id)
-          @old_answer.attachment_links.each(&:destroy)
-
-          # Atualiza o answer_id
-          @call.answer_id = @answer.id
-          AnswerMailer.notify(@call, @answer, current_user).deliver_later
-          raise 'Não conseguimos salvar a answer de maneira correta.' unless @call.save
-
-          # Destroi a anterior
-          @old_answer.destroy
-        else
-          # Atualiza o answer_id
-          @call.answer_id = @answer.id
-          AnswerMailer.notify(@call, @answer, current_user).deliver_later
-          raise 'Não conseguimos salvar a answer de maneira correta.' unless @call.save
-        end
-
-      end
-
-      files.each do |file_uuid|
-        @link = AttachmentLink.new(attachment_id: file_uuid,
-                                   answer_id: @answer.id,
-                                   source: 'answer')
-        unless @link.save
-          raise 'Não consegui criar o link entre arquivo e resposta final.'\
-                ' Por favor tente mais tarde'
-        end
-      end
-
-      redirect_to (@call || faq_path || root_path), notice: 'Resposta final marcada com sucesso.'
+      # Answer created from a call or from the FAQ
+      redirect_to @call, notice: 'Resposta final marcada com sucesso' if @call
+      redirect_to @answer || root_path, notice: 'Questão criada com sucesso.'
     else
       render :new
     end
@@ -102,36 +89,18 @@ class AnswersController < ApplicationController
   # PATCH/PUT /answers/1
   # PATCH/PUT /answers/1.json
   def update
-    respond_to do |format|
-      ans_params = answer_params
-      files = ans_params.delete(:files).split(',') if ans_params[:files]
+    ans_params = answer_params
+    files = retrieve_files ans_params
 
-      # Remove todos os links que foram removidos
-      @answer.attachment_links.each do |link|
-        unless files.include?(link)
-          link.destroy
-          files.delete(link)
-        end
-      end
+    if @answer.update(ans_params)
 
-      # Cria novos links
-      files.each do |file_uuid|
-        @link = AttachmentLink.new(attachment_id: file_uuid,
-                                   answer_id: @answer.id,
-                                   source: 'answer')
-        unless @link.save
-          raise 'Não consegui criar o link entre arquivo e resposta final.'\
-                ' Por favor tente mais tarde'
-        end
-      end
+      # Remove do DB os links que foram removidos do front_end
+      @answer.attachment_links.each { |link| remove_link(link, files) unless files.include?(link) }
 
-      if @answer.update(ans_params)
-        format.html { redirect_to @answer, notice: 'Resposta atualizada com sucesso.' }
-        format.json { render :show, status: :ok, location: @answer }
-      else
-        format.html { render :edit }
-        format.json { render json: @answer.errors, status: :unprocessable_entity }
-      end
+      create_file_links @answer, files
+      redirect_to @answer, notice: 'Resposta atualizada com sucesso.'
+    else
+      render :edit
     end
   end
 
@@ -145,13 +114,22 @@ class AnswersController < ApplicationController
     end
   end
 
-  # GET /answers/query/:search
-  def search
+  # GET /answers/query_call/:search
+  def search_call
     respond_to do |format|
       format.js do
-        render json: Answer.where('faq = true')
-                           .search_for(params[:search])
-          .with_pg_search_rank.limit(15)
+        render json: Answer.where(faq: true, source: :from_call)
+                           .search_for(params[:search]).with_pg_search_rank.limit(15)
+      end
+    end
+  end
+
+  # GET /answers/query_controversy/:search
+  def search_controversy
+    respond_to do |format|
+      format.js do
+        render json: Answer.where(faq: true, source: :from_controversy)
+                           .search_for(params[:search]).with_pg_search_rank.limit(15)
       end
     end
   end
@@ -166,12 +144,7 @@ class AnswersController < ApplicationController
                        { filename: attachment.filename,
                          type: attachment.content_type,
                          id: attachment.id,
-                         bytes: Answer.connection
-                                      .select_all(Answer.sanitize_sql_array(
-                                                    ['SELECT octet_length(file_contents) FROM '\
-                                                     'attachments WHERE attachments.id = ?',
-                                                     attachment.id]
-                                                  ))[0]['octet_length'] }
+                         bytes: retrieve_file_bytes(attachment) }
                      end)
       end
     end
@@ -188,8 +161,66 @@ class AnswersController < ApplicationController
   def answer_params
     params[:answer][:keywords] = params[:answer][:keywords].split(',').join(' ; ')
     params.require(:answer).permit(:keywords, :question, :answer, :category_id,
-                                   :user_id, :faq, :question_id,
+                                   :user_id, :faq, :question_id, :source,
                                    :reply_attachments, :files)
+  end
+
+  def retrieve_files(ans_params)
+    ans_params.delete(:files).split(',') if ans_params[:files]
+  end
+
+  def mark_as_final_answer(answer)
+    @call = Call.find(params[:question_id])
+    update_call_reply @call
+
+    # Retira a answer caso ela nao esteja no FAQ + attach_links
+    if @call.answer.try(:faq) == false
+      @old_answer = Answer.find(@call.answer_id)
+      @old_answer.attachment_links.each(&:destroy)
+
+      update_answer_id @call, answer
+      @old_answer.destroy
+    else
+      update_answer_id @call, answer
+    end
+  end
+
+  def update_call_reply(call)
+    call.update(status: 'closed', finished_at: 0.seconds.from_now)
+    Reply.find(params[:reply_id]).update(last_call_ref_reply_closed_at: 0.seconds.from_now)
+  end
+
+  def update_answer_id(call, answer)
+    call.answer_id = answer.id
+    raise 'Não conseguimos salvar a answer de maneira correta.' unless call.save
+
+    AnswerMailer.new_answer(call, answer, current_user).deliver_later
+  end
+
+  def create_file_links(answer, files)
+    files.each do |file_uuid|
+      @link = AttachmentLink.new(attachment_id: file_uuid,
+                                 answer_id: answer.id,
+                                 source: 'answer')
+      unless @link.save
+        raise 'Não consegui criar o link entre arquivo e resposta final.'\
+              ' Por favor tente mais tarde'
+      end
+    end
+  end
+
+  def remove_links(link, files)
+    link.destroy
+    files.delete(link)
+  end
+
+  def retrieve_file_bytes(attachment)
+    Answer.connection
+          .select_all(Answer.sanitize_sql_array([
+                                                  'SELECT octet_length(file_contents) FROM '\
+                                                  'attachments WHERE attachments.id = ?',
+                                                  attachment.id
+                                                ]))[0]['octet_length']
   end
 
   def filter_role
@@ -197,16 +228,37 @@ class AnswersController < ApplicationController
     if %w[index edit update].include? action
       redirect_to denied_path unless admin? || faq_inserter?
     elsif %w[new create destroy].include? action
-      redirect_to denied_path unless admin? || support_user? || faq_inserter?
-    elsif action == 'show'
-      unless (@answer.faq && !city_user? && !ubs_user?) ||
-             admin? ||
-             (support_user? && @answer.user_id == current_user.id) ||
-             faq_inserter?
-        redirect_to denied_path
-      end
+      redirect_to denied_path unless admin_support_faq?
+    else
+      show_or_faq?(action)
+    end
+  end
+
+  def verify_source
+    redirect_to not_found_path unless %w[call controversy].include?(params[:source])
+  end
+
+  def admin_support_faq?
+    admin? || support_user? || faq_inserter?
+  end
+
+  def show_or_faq?(action)
+    if action == 'show'
+      redirect_to denied_path unless alloweds_users_to_show?
     elsif action == 'faq'
       redirect_to denied_path if city_user? || ubs_user?
     end
+  end
+
+  def alloweds_users_to_show?
+    faq_and_not_city_ubs_users? || admin? || faq_inserter? || support_and_answer_creator?
+  end
+
+  def faq_and_not_city_ubs_users?
+    @answer.faq && !city_user? && !ubs_user?
+  end
+
+  def support_and_answer_creator?
+    support_user? && @answer.user_id == current_user.id
   end
 end

@@ -11,6 +11,7 @@ class Category < ApplicationRecord
            class_name: :Category
 
   enum severity: %i[low medium high]
+  enum source: %i[from_call from_controversy]
 
   filterrific(
     default_filter_params: {}, # em breve

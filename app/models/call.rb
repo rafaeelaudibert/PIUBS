@@ -8,8 +8,7 @@ class Call < ApplicationRecord
   belongs_to :company, class_name: 'Company', foreign_key: :sei
   belongs_to :answer, optional: true
   belongs_to :unity, class_name: 'Unity', foreign_key: :cnes
-  validates :protocol, presence: true, uniqueness: true
-  has_many :replies, class_name: 'Reply', foreign_key: :protocol
+  has_many :replies, as: :repliable
   has_many :attachment_links
   has_many :attachments, through: :attachment_links
 
@@ -110,5 +109,18 @@ class Call < ApplicationRecord
     [
       ['Cidade', 0]
     ]
+  end
+
+  before_create :generate_id
+  before_create :generate_protocol
+
+  protected
+
+  def generate_id
+    self.id = 0.seconds.from_now.strftime('%Y%m%d%H%M%S%L').to_i
+  end
+
+  def generate_protocol
+    self.protocol = 0.seconds.from_now.strftime('%Y%m%d%H%M%S%L').to_i
   end
 end

@@ -40,6 +40,6 @@
         </div>
       <% end %> <hr/>
       <%= link_to 'Editar', edit_answer_path(@answer), class: 'btn btn-primary' %>
-      <%= link_to 'Voltar', faq_path, class: 'btn btn-primary' %>
+      <%= link_to 'Voltar', @answer.from_call? ? faq_path : faq_controversy_path, class: 'btn btn-primary' %>
 </div>
 </div>
