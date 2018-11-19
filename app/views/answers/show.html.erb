@@ -39,7 +39,9 @@
           <% end %>
         </div>
       <% end %> <hr/>
-      <%= link_to 'Editar', edit_answer_path(@answer), class: 'btn btn-primary' %>
+      <% if @answer.user == current_user || admin? %>
+        <%= link_to 'Editar', edit_answer_path(@answer), class: 'btn btn-primary' %>
+      <% end %>
       <%= link_to 'Voltar', @answer.from_call? ? faq_path : faq_controversy_path, class: 'btn btn-primary' %>
 </div>
 </div>
