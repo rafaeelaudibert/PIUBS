@@ -70,7 +70,12 @@ class CompaniesController < ApplicationController
   def states
     @company = Company.find(params[:sei])
     respond_to do |format|
-      format.js { render json: State.where(id: @company.state_ids).order('name ASC') }
+      format.js do
+        render json: State.where(id: @company
+                                       .contracts
+                                       .map { |c| c.city.state_id }
+                                       .sort.uniq!)
+      end
     end
   end
 
