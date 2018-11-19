@@ -1,22 +1,25 @@
 <div class="card card-severity-<%= answer.category.severity %>">
   <div class="card-header" id="heading<%= answer.id %>">
-    <div class="question">
-      <h5><%= answer.question %></h5>
+    <div class="row">
+      <div class="col-md-9">
+        <h5><%= answer.question %></h5>
+      </div>
+      <div class="col-md-3 info align-self-center">
+        <span class="badge badge-pill badge-<%= answer.category.low? ? 'success' : answer.category.high? ? 'danger' : 'warning'%>"><%= answer.category.name %></span>
+      </div>
     </div>
-    <div class="tags">
-      <% answer.keywords.split(';').each do |_keyword| %>
-        <span class="tag label label-info"><%= _keyword %></span>
-      <% end %>
+    <div class="row mt-2">
+      <div class="col-md-9 tags align-self-center">
+        <% answer.keywords.split(';').each do |_keyword| %>
+          <span class="tag label label-info"><%= _keyword %></span>
+        <% end %>
+      </div>
+      <div class="col-md-3 dropdown">
+        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#<%= answer.id %>" aria-expanded="true" aria-controls="<%= answer.id %>">
+          <i class="fa fa-angle-down"></i>
+        </button>
+      </div>
     </div>
-    <div class="info">
-      <span class="badge badge-pill badge-<%= answer.category.low? ? 'success' : answer.category.high? ? 'danger' : 'warning'%>"><%= answer.category.name %></span>
-    </div>
-    <div class="dropdown">
-      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#<%= answer.id %>" aria-expanded="true" aria-controls="<%= answer.id %>">
-        <i class="fa fa-angle-down"></i>
-      </button>
-    </div>
-
   </div>
 
   <div id="<%= answer.id %>" class="collapse" aria-labelledby="header<%= answer.id %>" data-parent="#accordion">

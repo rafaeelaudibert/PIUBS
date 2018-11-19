@@ -58,11 +58,8 @@
 
 <div id="filterrific_results">
   <% if @answers.length > 0 %>
-  <div id="accordion" class="accordion-faq">
-    <div id="my-answers">
-      <%= render @answers %>
-    </div>
-  </div>
+  <div class="accordion-faq" id="accordion">
+    <%= render @answers %>
   <% else %>
   <h3>
     Não há perguntas no FAQ
