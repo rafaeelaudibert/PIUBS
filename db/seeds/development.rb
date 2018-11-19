@@ -177,6 +177,9 @@ def seed_categories
   category = Category.new # placeholder
 
   begin
+
+    ## APOIO A EMPRESAS CATEGORIES
+    ############
     category = Category.new(name: 'Orientações básicas sobre a estratégia e-SUS AB',
                             severity: :low, source: 0).save!
     category = Category.new(name: 'Orientações básicas sobre a utilização do sistema',
@@ -237,6 +240,13 @@ def seed_categories
                             parent: catg_pec,
                             parent_depth: 1 + catg_pec.parent_depth,
                             source: 0).save!
+
+    ## SOLUCAO DE CONTROVERSIAS CATEGORIES
+    ##################
+    category = Category.new(name: 'Hardware',
+                            severity: :low, source: 1).save!
+    category = Category.new(name: 'Software',
+                            severity: :low, source: 1).save!
   rescue StandardError
     Rails.logger.error('ERROR creating a CATEGORY')
     Rails.logger.error(category.errors.full_messages)
