@@ -12,13 +12,13 @@ require 'csv'
 Rails.logger = Logger.new(STDOUT)
 Rails.logger.level = Logger::INFO
 
-# Creates the users, except company_admin and company_user ones
 def seed_users
   return unless Company.new(sei: 0).save
 
   admin = User.new(cpf: CPF.generate, name: 'Admin Master',
                    email: 'admin@piubs.com', role: 'admin', sei: 0,
-                   password: '19550410', password_confirmation: '19550410')
+                   password: '19550410', password_confirmation: '19550410',
+                   system: :both)
   if admin.save
     Rails.logger.info('[INFO]   -- Created ADMIN MASTER USER!')
   else

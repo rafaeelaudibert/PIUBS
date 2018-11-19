@@ -15,7 +15,8 @@ def seed_users
 
   if User.new(cpf: CPF.generate, name: 'Admin Master',
               email: 'admin@piubs.com', role: 'admin', sei: 0,
-              password: 'changeme', password_confirmation: 'changeme').save
+              password: 'changeme', password_confirmation: 'changeme',
+              system: :both).save
     User.roles.each do |role|
       # Prevent from creating this, as they will be/have already been handled
       next if %w[admin company_admin company_user].include? role[0]
@@ -23,7 +24,13 @@ def seed_users
       email = role[0] + '@piubs.com'
       user = User.new(cpf: CPF.generate, name: role[0].capitalize,
                       email: email, role: role[0],
-                      password: 'changeme', password_confirmation: 'changeme')
+                      password: 'changeme', password_confirmation: 'changeme',
+                      system: if ['call_center_admin', 'call_center_user'].include? role[0]
+                                :both
+                              else
+                                :companies
+                              end
+                      )
       if user.save
         Rails.logger.debug("User #{email} was created successfuly!")
       else
@@ -46,7 +53,8 @@ def seed_company_user(company, role_name)
                   email: email,
                   password: 'changeme',
                   password_confirmation: 'changeme',
-                  role: role_name)
+                  role: role_name,
+                  system: :both)
   if user.save
     Rails.logger.debug("User #{email} was created successfuly!")
   else
