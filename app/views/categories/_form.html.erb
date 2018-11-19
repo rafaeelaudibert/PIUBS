@@ -25,12 +25,14 @@
 </div>
 
 <div class="field">
+  <%= form.label :source, 'Origem', class: 'required' %>
+  <%= form.select :source, [['Apoio', :from_call], ['Controversia', :from_controversy]], {include_blank: 'Selecione uma origem'}, {class: 'form-control boxed'} %>
+</div>
+
+<div class="field">
   <%= form.label :parent_id, 'Categoria-pai' %>
   <select class="form-control boxed" name="category[parent_id]" id="category_parent_id">
     <option value>Sem categoria-pai</option>
-    <%= inside_layout "categories/category_select", {categ: Category.all} do %>
-      <%= yield %>
-    <% end %>
   </select>
 </div>
 
@@ -40,3 +42,14 @@
 
 </div>
 <% end %>
+
+<script>
+  const category_source_select = $('#category_source');
+
+  $('#category_source').change(() => {
+    jQuery.ajax({url: `/categories/category_select/${category_source_select.val()}`,
+                        type: "GET",
+                        success: response => $('#category_parent_id').html(response),
+                        error: console.error})
+  })
+</script>

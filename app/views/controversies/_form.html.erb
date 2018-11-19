@@ -213,7 +213,7 @@
           <div class="field">
             <%= form.label :category, 'Categoria', class: 'required' %>
             <%= form.select :category,
-                            Controversy.categories.keys.map { |cat| [cat.titleize, cat] },
+                            Category.where(source: :from_controversy),
                             { include_blank: 'Selecione uma categoria' },
                             {class: 'form-control boxed', required: true } %>
           </div>

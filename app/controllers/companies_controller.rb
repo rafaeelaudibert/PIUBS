@@ -70,7 +70,12 @@ class CompaniesController < ApplicationController
   def states
     @company = Company.find(params[:sei])
     respond_to do |format|
-      format.js { render json: State.where(id: @company.state_ids).order('name ASC') }
+      format.js do
+        render json: State.where(id: @company
+                                       .contracts
+                                       .map { |c| c.city.state_id }
+                                       .sort.uniq!)
+      end
     end
   end
 
@@ -83,20 +88,21 @@ class CompaniesController < ApplicationController
 
   # GET /companies/1/cities/1
   def cities
-    @company = Company.find(params[:id])
+    cities = retrieve_cities_for_company
+
     respond_to do |format|
       format.js do
-        render(json: City.where(id: @company.city_ids,
-                                state_id: params[:state_id]).order('name ASC'))
+        render json: cities
       end
     end
   end
 
   # GET /companies/1/unities/1
   def unities
-    @company = Company.find(params[:id])
     respond_to do |format|
-      format.js { render json: Unity.where(city_id: params[:city_id]).order('cnes ASC') }
+      format.js do
+        render json: City.find(params[:city_id]).unities
+      end
     end
   end
 
@@ -110,6 +116,15 @@ class CompaniesController < ApplicationController
   # Never trust parameters from internet, only allow the white list through.
   def company_params
     params.require(:company).permit(:sei)
+  end
+
+  def retrieve_cities_for_company
+    if params[:id] == '0'
+      City.where(state_id: params[:state_id])
+    else
+      City.where(id: Company.find(params[:id]).contracts.map(&:city_id),
+                 state_id: params[:state_id])
+    end.order('name')
   end
 
   def filter_role

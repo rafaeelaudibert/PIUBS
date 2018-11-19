@@ -67,6 +67,17 @@ class CategoriesController < ApplicationController
     end
   end
 
+  # GET /categories/category_select/:source
+  def category_select
+    @source = params[:source]
+
+    puts '----------------------'
+    pp Category.all
+    puts '----------------------'
+    puts Category.where(source: @source)
+    render 'category_select', layout: nil
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.
@@ -80,7 +91,7 @@ class CategoriesController < ApplicationController
     parent_id = params[:category][:parent_id]
     params[:category][:parent_depth] = 1 + Category.find(parent_id).parent_depth if parent_id != ''
     params.require(:category).permit(:name, :parent_id,
-                                     :parent_depth, :severity)
+                                     :parent_depth, :severity, :source)
   end
 
   def filter_role

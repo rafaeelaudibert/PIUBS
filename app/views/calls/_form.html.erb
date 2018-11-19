@@ -176,7 +176,10 @@
             <option value="0">
               Selecione um Estado
             </option>
-            <% State.where(id: @company.contracts.map { |c| c.city.state_id }.uniq!).each do |_state| %>
+            <%  State.where(id: @company
+                                 .contracts
+                                 .map { |c| c.city.state_id }
+                                 .sort.uniq!).each do |_state| %>
               <option value="<%= _state.id %>">
                 <%= _state.name %>
               </option>

@@ -17,7 +17,7 @@
       <%= controversy.sei %>
     </div>
     <div class="city">
-      <b><%= controversy.unity.name%><hr/><%= controversy.city.name %></b>
+      <b><%= controversy.unity.try(:name) || 'Nenhuma UBS em Específico'%><hr/><%= controversy.city.name %></b>
       <%= controversy.city.state.name %>
     </div>
     <div class="info">

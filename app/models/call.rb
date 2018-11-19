@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class Call < ApplicationRecord
+  before_create :generate_id
+  before_create :generate_protocol
+
   belongs_to :city
   belongs_to :category
   belongs_to :state
@@ -104,15 +107,6 @@ class Call < ApplicationRecord
       %w[Reabertos status_reopened]
     ]
   end
-
-  def self.options_for_with_city
-    [
-      ['Cidade', 0]
-    ]
-  end
-
-  before_create :generate_id
-  before_create :generate_protocol
 
   protected
 

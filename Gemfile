@@ -30,9 +30,14 @@ end
 
 # Development + Tests only gems
 group :development, :test do
+  gem 'awesome_rails_console'
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'factory_bot_rails'
   gem 'faker'
+  gem 'hirb'
+  gem 'hirb-unicode-steakknife', require: 'hirb-unicode'
+  gem 'pry-byebug'
+  gem 'pry-stack_explorer'
   gem 'rspec-rails'
 end
 

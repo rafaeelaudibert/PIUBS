@@ -62,7 +62,7 @@ class CitiesController < ApplicationController
     redirect_to cities_url, notice: 'Cidade apagada com sucesso.'
   end
 
-  # GET /cities/states
+  # GET /cities/states/:id
   def states
     respond_to do |format|
       format.js { render json: State.find(params[:id]).cities }
@@ -99,7 +99,7 @@ class CitiesController < ApplicationController
     action = params[:action]
     if %w[new create destroy edit update show].include? action
       redirect_to denied_path unless admin?
-    elsif %w[index show states].include? action
+    elsif %w[index show].include? action
       redirect_to denied_path unless admin? || support_user?
     end
   end
