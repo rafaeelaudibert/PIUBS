@@ -9,40 +9,52 @@
 </hr>
 
 <%= form_for_filterrific @filterrific do |f| %>
-  <div class="left form-group" style="width:50%;">
-    <%= f.label :filterrific_with_category, 'Filtro de Categorias'%>
-    <select name="filterrific[with_category]" id="filterrific_with_category" class="form-control">
-      <option value>Todas categorias</option>
-      <%= inside_layout "categories/category_select",
-                        {categ: Category.where(source: :from_controversy),
-                         selected: params[:filterrific] &&
-                                   params[:filterrific][:with_category].to_i != 0 &&
-                                   Category.find(params[:filterrific][:with_category].to_i)} do %>
-        <%= yield %>
-      <% end %>
-    </select>
-    <%= (link_to 'Desfazer filtros',
-                 reset_filterrific_url,
-                 class: 'btn btn-danger',
-                 style: 'margin-top: 0.375em') if params[:filterrific] %>
+  <div class="row">
+    <div class="col-md-8">
+      <div class="row">
+        <div class="form-group col-md-6">
+          <%= f.label :filterrific_with_category, 'Filtro de Categorias'%>
+          <select name="filterrific[with_category]" id="filterrific_with_category" class="form-control">
+            <option value>Todas categorias</option>
+            <%= inside_layout "categories/category_select",
+                              {categ: Category.where(source: :from_call),
+                               selected: params[:filterrific] &&
+                                         params[:filterrific][:with_category].to_i != 0 &&
+                                         Category.find(params[:filterrific][:with_category].to_i)} do %>
+              <%= yield %>
+            <% end %>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <%= link_to 'Desfazer filtros',
+                    reset_filterrific_url,
+                    class: 'btn btn-danger offset-md-1 col-md-4' if params[:filterrific] %>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="row mt-3">
+        <div class="col-md-8">
+          <input name="filterrific[search_query]" id="filterrific_search_query"
+                 class="form-control" type="search" aria-label="Search">
+          <label>
+            <i class="fa fa-search"></i>
+            &nbsp;Pesquisar no FAQ
+          </label>
+        </div>
+        <div class="col-md-4">
+           <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
+         </div>
+       </div>
+       <div class="row">
+         <%= f.submit "Mostrar",
+                      id: 'mostrar-filter',
+                      class: 'btn btn-link invisible right' %>
+       </div>
+    </div>
   </div>
-  <div class="right input-group" style="width: 40%; margin: 15px auto !important">
-    <input name="filterrific[search_query_faq_call]" id="filterrific_search_query_faq_call" class="form-control mr-sm-2" type="search" aria-label="Search">
-    <label>
-      <i class="fa fa-search"></i>
-      &nbsp;Pesquise no FAQ
-    </label>
-    <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
-  </div>
-  <%= f.submit "Mostrar",
-               id: 'mostrar-filter',
-               class: 'btn btn-link invisible right' %>
-
-  <%# add an automated spinner to your form when the list is refreshed %>
-  <%= render_filterrific_spinner %>
 <% end %>
-
-<hr class="under-header" style="margin-top: <%= params[:filterrific] ? '8em' : '5em'%>"/>
+<hr/>
 
 <div id="filterrific_results">
   <% if @answers.length > 0 %>
@@ -66,7 +78,7 @@ $('document').ready(function () {
     $('#mostrar-filter').click();
   })
 
-  $('#filterrific_search_query_faq').on('focusout', function () {
+  $('#filterrific_search_query').on('focusout', function () {
     changeState($(this));
   });
 
