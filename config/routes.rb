@@ -88,6 +88,14 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   # /states
   resources :states
 
+  # /categories
+  resources :categories do
+    collection do
+      get 'all'
+      get 'category_select/:source', to: 'categories#category_select'
+    end
+  end
+
   scope '/apoioaempresas' do
     # /apoioaempresas
     get '/', to: 'calls#index', as: 'apoio_root' # Apoio a Empresas root
@@ -101,13 +109,6 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
         post 'link_call_support_user'
         post 'unlink_call_support_user'
         post 'reopen_call'
-      end
-    end
-
-    # /apoioaempresas/categories
-    resources :categories do
-      collection do
-        get 'all'
       end
     end
   end
