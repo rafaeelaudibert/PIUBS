@@ -88,12 +88,7 @@ class CompaniesController < ApplicationController
 
   # GET /companies/1/cities/1
   def cities
-    cities = if params[:id] == '0'
-               City.where(state_id: params[:state_id]).order('name')
-             else
-               City.where(id: Company.find(params[:id]).contracts.map(&:city_id),
-                          state_id: params[:state_id]).order('name')
-             end
+    cities = retrieve_cities_for_company
 
     respond_to do |format|
       format.js do
@@ -121,6 +116,15 @@ class CompaniesController < ApplicationController
   # Never trust parameters from internet, only allow the white list through.
   def company_params
     params.require(:company).permit(:sei)
+  end
+
+  def retrieve_cities_for_company
+    if params[:id] == '0'
+      City.where(state_id: params[:state_id])
+    else
+      City.where(id: Company.find(params[:id]).contracts.map(&:city_id),
+                 state_id: params[:state_id])
+    end.order('name')
   end
 
   def filter_role

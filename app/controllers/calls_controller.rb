@@ -143,15 +143,19 @@ class CallsController < ApplicationController
     {
       sorted_by_creation: Call.options_for_sorted_by_creation,
       with_status: Call.options_for_with_status,
-      with_state: if current_user.cnes
-                    State.find(@contracts.map { |c| c.city.state_id }).map { |s| [s.name, s.id] }
-                  else
-                    State.all.map { |s| [s.name, s.id] }
-                  end,
+      with_state: retrieve_states_for_filterrific,
       with_city: [],
       with_ubs: [],
       with_company: Company.all.map(&:sei)
     }
+  end
+
+  def retrieve_states_for_filterrific
+    if current_user.cnes
+      State.find(@contracts.map { |c| c.city.state_id }).map { |s| [s.name, s.id] }
+    else
+      State.all.map { |s| [s.name, s.id] }
+    end
   end
 
   def update_call(call, params)
@@ -165,14 +169,10 @@ class CallsController < ApplicationController
   end
 
   def filtered_calls
-    if current_user.try(:call_center_user?)
-      calls_from_support
-    elsif support_user?
-      calls_for_support
-    elsif current_user.try(:company_admin?)
-      calls_for_company_admin
+    if support_user?
+      current_user.call_center_user? ? calls_from_support : calls_for_support
     elsif company_user?
-      calls_for_company_user
+      current_user.company_admin? ? calls_for_company_admin : calls_form_company_user
     elsif admin?
       calls_for_admin
     else
