@@ -88,20 +88,26 @@ class CompaniesController < ApplicationController
 
   # GET /companies/1/cities/1
   def cities
-    @company = Company.find(params[:id])
+    cities = if params[:id] == '0'
+               City.where(state_id: params[:state_id]).order('name')
+             else
+               City.where(id: Company.find(params[:id]).contracts.map(&:city_id),
+                          state_id: params[:state_id]).order('name')
+             end
+
     respond_to do |format|
       format.js do
-        render(json: City.where(id: @company.city_ids,
-                                state_id: params[:state_id]).order('name ASC'))
+        render json: cities
       end
     end
   end
 
   # GET /companies/1/unities/1
   def unities
-    @company = Company.find(params[:id])
     respond_to do |format|
-      format.js { render json: Unity.where(city_id: params[:city_id]).order('cnes ASC') }
+      format.js do
+        render json: City.find(params[:city_id]).unities
+      end
     end
   end
 

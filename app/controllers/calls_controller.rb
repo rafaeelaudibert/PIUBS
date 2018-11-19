@@ -10,7 +10,6 @@ class CallsController < ApplicationController
   # GET /calls
   # GET /calls.json
   def index
-    @contracts = Contract.where(sei: current_user.sei)
     (@filterrific = initialize_filterrific(Call, params[:filterrific],
                                            select_options: options_for_filterrific,
                                            persistence_id: false)) || return
@@ -141,12 +140,18 @@ class CallsController < ApplicationController
   end
 
   def options_for_filterrific
-    { sorted_by_creation: Call.options_for_sorted_by_creation,
+    {
+      sorted_by_creation: Call.options_for_sorted_by_creation,
       with_status: Call.options_for_with_status,
-      with_state: State.all.map { |s| [s.name, s.id] },
-      with_city: Call.options_for_with_city,
-      with_ubs: Unity.where(city_id: @contracts.map(&:city_id)).map { |u| [u.name, u.cnes] },
-      with_company: Company.all.map(&:sei) }
+      with_state: if current_user.cnes
+                    State.find(@contracts.map { |c| c.city.state_id }).map { |s| [s.name, s.id] }
+                  else
+                    State.all.map { |s| [s.name, s.id] }
+                  end,
+      with_city: [],
+      with_ubs: [],
+      with_company: Company.all.map(&:sei)
+    }
   end
 
   def update_call(call, params)

@@ -42,7 +42,7 @@
         <div class="form-group col-md-4">
           <%= f.label :filterrific_with_city, 'Filtro por Cidades'%>
           <%= f.select(:with_city, @filterrific.select_options[:with_city],
-                       {multiple: true},
+                       {multiple: true, include_blank: "Todas Cidades"},
                        class: 'form-control filterrific') %>
         </div>
         <div class="form-group col-md-4">
@@ -115,28 +115,31 @@
     const stateSelect = document.getElementById('filterrific_with_state');
     const citySelect = document.getElementById('filterrific_with_city');
     const unitySelect = document.getElementById('filterrific_with_ubs');
-    const triggeredByState = () => jQuery.ajax({url: `/cities/states/${stateSelect.value}`,
+    const sei = <%= current_user.sei || 0 %>;
+    const triggeredByState = () => jQuery.ajax({url: `/companies/${sei}/cities/${stateSelect.value}`,
                                                 type: "GET",
                                                 dataType: "json",
-                                                success: insertCitiesData})
-    const triggeredByCity = () => jQuery.ajax({url: `/cities/unities/${citySelect.value}`,
+                                                success: insertCitiesData,
+                                                error: console.error})
+    const triggeredByCity = () => jQuery.ajax({url: `/companies/${sei}/unities/${citySelect.value}`,
                                                type: "GET",
                                                dataType: "json",
-                                               success: insertUnitiesData})
+                                               success: insertUnitiesData,
+                                               error: console.error})
 
-    stateSelect.addEventListener('change', triggeredByState);
-    citySelect.addEventListener('change', triggeredByCity);
+    triggeredByState();
 
     function insertCitiesData(cities) {
       let queried_city = parseQuery()['filterrific[with_city]']
       let innerHTML = '<option value>Todas Cidades</option>';
-      console.log(cities);
       for (let city of cities) {
         innerHTML += `<option ${queried_city == city.id ? 'selected="selected"' : ''} value=${city.id}>
                         ${city.name}
                       </option>`
       }
       citySelect.innerHTML = innerHTML;
+
+      triggeredByCity();
     }
 
     function insertUnitiesData(unities) {
@@ -148,10 +151,10 @@
                       </option>`
       }
       unitySelect.innerHTML = innerHTML;
+
+      triggeredByCity();
     }
 
-    triggeredByState();
-    triggeredByCity();
 
     $('#filterrific_search_query').on('focusout', function () {
       changeState($(this));
