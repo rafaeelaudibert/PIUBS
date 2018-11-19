@@ -62,10 +62,13 @@ class AnswersController < ApplicationController
     @answer = Answer.new
     @reply = Reply.find(params[:reply]) if params[:reply]
     @question = Call.find(params[:question]) if params[:question]
+    @categories = Category.where(source: params[:source] == 'call' ? :from_call : :from_controversy)
   end
 
   # GET /answers/1/edit
-  def edit; end
+  def edit
+    @categories = Category.where(source: (@answer.from_call? ? :from_call : :from_controversy))
+  end
 
   # POST /answers
   def create

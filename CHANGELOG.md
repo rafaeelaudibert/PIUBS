@@ -1,10 +1,38 @@
 # Change Log
 
+## [v0.4.0](https://github.com/rafaeelaudibert/PIUBS/tree/v0.4.0) (18-11-2018)
+[Full Changelog](https://github.com/rafaeelaudibert/PIUBS/compare/v0.3.0...v0.4.0)
+
+**Merged pull requests:**
+
+- :bug: Fixes bugs with TinyMCE and validates some forms [\#168](https://github.com/rafaeelaudibert/PIUBS/pull/168) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :bug: :recycle: :construction: Fixes bugs and refactores calls and answers controllers [\#167](https://github.com/rafaeelaudibert/PIUBS/pull/167) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :recycle: :construction: Refactores calls and users controller's [\#166](https://github.com/rafaeelaudibert/PIUBS/pull/166) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :sparkles: Improves Controversy Solution stuff [\#165](https://github.com/rafaeelaudibert/PIUBS/pull/165) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :bug: Fix bugs in filterrific [\#164](https://github.com/rafaeelaudibert/PIUBS/pull/164) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :sparkles: Introduces filterrific \(search\) in controversies [\#163](https://github.com/rafaeelaudibert/PIUBS/pull/163) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :sparkles: Introduces system access options to invitation and backend [\#162](https://github.com/rafaeelaudibert/PIUBS/pull/162) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :recycle: :construction: Improves user page layout and infos [\#161](https://github.com/rafaeelaudibert/PIUBS/pull/161) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :bug::hankey: Refixes bug with any\_login redirecting [\#160](https://github.com/rafaeelaudibert/PIUBS/pull/160) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :recycle: :lipstick: Fixes replies order in call show and improves layout [\#159](https://github.com/rafaeelaudibert/PIUBS/pull/159) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :bug: :sparkles: Fixes answer update, exceptions in call show view and introduces "system" migrate [\#158](https://github.com/rafaeelaudibert/PIUBS/pull/158) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :bug: Fixes bugs introduced with Controversies [\#157](https://github.com/rafaeelaudibert/PIUBS/pull/157) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :recycle: Fixes dates format [\#155](https://github.com/rafaeelaudibert/PIUBS/pull/155) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :recycle: Removes signed in/out flash messages [\#154](https://github.com/rafaeelaudibert/PIUBS/pull/154) ([mgfzemor](https://github.com/mgfzemor))
+- :bug: Fixes the FAQ link [\#153](https://github.com/rafaeelaudibert/PIUBS/pull/153) ([mgfzemor](https://github.com/mgfzemor))
+- :recycle: :fire: Updates user profile picture [\#152](https://github.com/rafaeelaudibert/PIUBS/pull/152) ([mgfzemor](https://github.com/mgfzemor))
+- :whale: Improves Docker setup [\#151](https://github.com/rafaeelaudibert/PIUBS/pull/151) ([mgfzemor](https://github.com/mgfzemor))
+- :recycle::lipstick: Fixes text and layout in pre new-call [\#150](https://github.com/rafaeelaudibert/PIUBS/pull/150) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :sparkles::recycle: Improves and fixes in timeline replies \(in calls\#show\) [\#149](https://github.com/rafaeelaudibert/PIUBS/pull/149) ([felipefcomerlato](https://github.com/felipefcomerlato))
+- :rotating\_light: Fixes tons of Linter \(rubocop\) warnings [\#148](https://github.com/rafaeelaudibert/PIUBS/pull/148) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+- :sparkles::construction: Implements Controversy Solution [\#141](https://github.com/rafaeelaudibert/PIUBS/pull/141) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
+
 ## [v0.3.0](https://github.com/rafaeelaudibert/PIUBS/tree/v0.3.0) (25-10-2018)
 [Full Changelog](https://github.com/rafaeelaudibert/PIUBS/compare/v0.2.4...v0.3.0)
 
 **Merged pull requests:**
 
+- :twisted\_rightwards\_arrows: Merges v0.3.0 [\#146](https://github.com/rafaeelaudibert/PIUBS/pull/146) ([rafaeelaudibert](https://github.com/rafaeelaudibert))
 - :sparkles::card\_file\_box: Introduces record and view call status update dates [\#145](https://github.com/rafaeelaudibert/PIUBS/pull/145) ([felipefcomerlato](https://github.com/felipefcomerlato))
 - :sparkles::bug: Adds TinyMCE configuration to always paste text in Plain Text. [\#144](https://github.com/rafaeelaudibert/PIUBS/pull/144) ([mgfzemor](https://github.com/mgfzemor))
 - :recycle: Improves calls index [\#143](https://github.com/rafaeelaudibert/PIUBS/pull/143) ([felipefcomerlato](https://github.com/felipefcomerlato))
