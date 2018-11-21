@@ -1,25 +1,18 @@
 # frozen_string_literal: true
 
 class FeedbacksController < ApplicationController
-  before_action :set_feedback, only: %i[show edit update destroy]
+  before_action :authenticate_user!
+  before_action :filter_role
 
   # GET /feedbacks
-  # GET /feedbacks.json
   def index
-    @feedbacks = Feedback.all
+    @feedbacks = Feedback.all.page(params[:page])
   end
 
   # GET /feedbacks/1
-  # GET /feedbacks/1.json
-  def show; end
-
-  # GET /feedbacks/new
-  def new
-    @feedback = Feedback.new
+  def show
+    @feedback = Feedback.find(params[:id])
   end
-
-  # GET /feedbacks/1/edit
-  def edit; end
 
   # POST /feedbacks
   # POST /feedbacks.json
@@ -42,36 +35,7 @@ class FeedbacksController < ApplicationController
     end
   end
 
-  # PATCH/PUT /feedbacks/1
-  # PATCH/PUT /feedbacks/1.json
-  def update
-    respond_to do |format|
-      if @feedback.update(feedback_params)
-        format.html { redirect_to @feedback, notice: 'Feedback was successfully updated.' }
-        format.json { render :show, status: :ok, location: @feedback }
-      else
-        format.html { render :edit }
-        format.json { render json: @feedback.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /feedbacks/1
-  # DELETE /feedbacks/1.json
-  def destroy
-    @feedback.destroy
-    respond_to do |format|
-      format.html { redirect_to feedbacks_url, notice: 'Feedback was successfully destroyed.' }
-      format.json { head :no_content }
-    end
-  end
-
   private
-
-  # Use callbacks to share common setup or constraints between actions.
-  def set_feedback
-    @feedback = Feedback.find(params[:id])
-  end
 
   def retrieve_files(parameters)
     parameters.delete(:files).split(',') if parameters[:files]
@@ -103,5 +67,9 @@ class FeedbacksController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def feedback_params
     params.require(:feedback).permit(:description, :controversy_id, :files)
+  end
+
+  def filter_role
+    redirect_to not_found_path unless admin? || support_user?
   end
 end

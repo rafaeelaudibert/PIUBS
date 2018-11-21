@@ -1,7 +1,0 @@
-$('#my-calls').append('<%= j render @calls %>');
-<% if @calls.next_page %>
-  $('.pagination').replaceWith('<%= j will_paginate @calls %>');
-<% else %>
-  $(window).off('scroll');
-  $('.pagination').remove();
-<% end %>

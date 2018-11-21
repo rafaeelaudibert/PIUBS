@@ -1,4 +1,406 @@
+<%= tinymce_assets %>
+<%= tinymce %>
+
 <%= content_for :body_title do%>
 <h4 class="display-5">Novo Atendimento</h4>
 <%end%>
-<%= render 'form', call: @call %>
+
+<%= form_with(model: @call, local: true) do |form| %>
+<% if @call.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@call.errors.count, "error") %>
+      prohibited this call from being saved:</h2>
+
+    <ul>
+      <% @call.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+<div class="col-8 mb-8">
+  <div id="pre_search" class="search">
+    <div class='text_explain'>
+      <h6>Antes de solicitar um novo atendimento...<h6>
+        <p>Por favor,</p>
+        <p>
+          <ul>
+            <li>Evite solicitar novos atendimentos que <b>já tenham sido resolvidos anteriormente</b>.</li>
+            <li>Para isso, <b>disponibilizamos um FAQ</b>, para que você possa buscar respostas.</li>
+            <li>Você pode pesquisar no FAQ <b>digitando no campo abaixo</b> ou clicando <%= link_to('aqui', faq_path)%>.</li>
+            <li>Se você tiver certeza de que sua dúvida não se encontra no FAQ,
+              clique no checkbox abaixo dos resultados de pesquisa e preencha todos os campos necessários
+              para detalhar o seu problema.</li>
+          </ul>
+        </p>
+    </div>
+    <div class="required_info"></div><br/>
+    <div class="field">
+      <%= form.label :title, 'Título', class: 'required' %>
+      <%= form.text_field :title, class: 'form-control boxed', autocomplete: :off, id:'search' %>
+    </div>
+    <div id="table" class="m-2" style="max-height: 600px; overflow-y: scroll; padding: 5px"></div>
+  </div>
+
+  <div class="hidden">
+    <%# Admin ou call_center_user %>
+      <% if !@company || @company.sei == 0 %>
+        <div class="form-group">
+          <%= form.label :state_id, 'Empresa', class: 'required' %>
+          <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[sei]" id="call_sei" class="form-control boxed" required="required">
+            <option value="0">
+              Selecione uma Empresa
+            </option>
+            <% Company.all.each do |_company| %>
+              <option value="<%= _company.sei %>">
+                <%= _company.sei %>
+              </option>
+            <% end %>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :user_id, 'Usuário', class: 'required' %>
+          <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[user_id]" id="call_user_id" class="form-control boxed" required="required">
+            <option value="0">
+              Selecione uma Empresa primeiro
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :state_id, 'Estado', class: 'required' %>
+          <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[state_id]" id="call_state_id" class="form-control boxed" required="required">
+            <option value="0">
+              Selecione uma Empresa primeiro
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :city_id, 'Cidade', class: 'required' %>
+          <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[city_id]" id="call_city_id" class="form-control boxed" required="required">
+            <option value="0">
+              Selecione um Estado primeiro
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :cnes, 'UBS', class: 'required' %>
+          <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[cnes]" id="call_cnes" class="form-control boxed" required="required">
+            <option value="0">
+              Selecione uma Cidade primeiro
+            </option>
+          </select>
+        </div>
+        <hr style="margin: 1.5rem 0 2rem"></hr>
+
+        <script>
+
+          const companySelect = document.getElementById('call_sei');
+          const userSelect = document.getElementById('call_user_id');
+          const stateSelect = document.getElementById('call_state_id');
+          const citySelect = document.getElementById('call_city_id');
+          const ubsSelect = document.getElementById('call_cnes')
+
+          const triggeredByCompany = () => {
+            jQuery.ajax({url: `/companies/${companySelect.value}/states`, type: "GET", dataType: "json", success: insertStatesData, error: console.log});
+            jQuery.ajax({url: `/companies/${companySelect.value}/users`, type: "GET", dataType: "json", success: insertUsersData, error: console.log});
+          }
+          const triggeredByState = () => jQuery.ajax({url: `/companies/${companySelect.value}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
+          const triggeredByCity = () => jQuery.ajax({url: `/companies/${companySelect.value}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
+
+          companySelect.addEventListener('change', triggeredByCompany);
+          stateSelect.addEventListener('change', triggeredByState);
+          citySelect.addEventListener('change', triggeredByCity);
+
+          function insertUsersData(users) {
+            let innerHTML = '<option value="0"> Selecione o Usuário </option>';
+            for (user of users) {
+              innerHTML += '<option value=' + user.id + '>' + `${user.name} - ${user.cpf}` + '</option>'
+            }
+            userSelect.innerHTML = innerHTML;
+          }
+
+          function insertStatesData(states) {
+            let innerHTML = '<option value="0"> Selecione o Estado </option>';
+            for (state of states) {
+              innerHTML += '<option value=' + state.id + '>' + state.name + '</option>'
+            }
+            stateSelect.innerHTML = innerHTML;
+          }
+
+          function insertCitiesData(cities) {
+            let innerHTML = '<option value="0"> Selecione a cidade </option>';
+            for (city of cities) {
+              innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
+            }
+            citySelect.innerHTML = innerHTML;
+          }
+
+          function insertUBSData(unities) {
+            let innerHTML = '<option value="0"> Selecione a UBS </option>';
+            for (unity of unities) {
+              innerHTML += '<option value=' + unity.cnes + '>' + unity.name + '</option>'
+            }
+            ubsSelect.innerHTML = innerHTML
+          }
+        </script>
+      <% end %>
+
+      <div class="field">
+        <%= form.label :title, 'Título', class: 'required' %>
+        <%= form.text_field :title, class: 'form-control boxed', autocomplete: :off, required: true, id: 'title'%>
+      </div>
+
+      <div class="field">
+        <%= form.label :description, 'Descrição (Descreva seu problema, o que estava fazendo quando ele aconteceu, quais procedimos já tentou, etc...)', class: 'required' %>
+        <%= form.text_area :description, class: 'tinymce', :rows => 30, :cols => 120, style: 'height:250px'%>
+      </div>
+
+      <div class="field">
+        <%= form.label :version, 'Versão', class: 'required' %>
+        <%= form.text_field :version, class: 'form-control boxed', required: true %>
+      </div>
+
+      <div class="field">
+        <%= form.label :access_profile, 'Perfil de Acesso', class: 'required' %>
+        <%= form.text_field :access_profile, class: 'form-control boxed', required: true %>
+      </div>
+
+      <div class="field">
+        <%= form.label :feature_detail, 'Detalhe da Funcionalidade' %>
+        <%= form.text_field :feature_detail, class: 'form-control boxed' %>
+      </div>
+
+      <% if @company && @company.sei != 0%>
+        <div class="form-group">
+          <%= form.label :state_id, 'Estado', class: 'required' %>
+          <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[state_id]" id="call_state_id" class="form-control boxed" required="required">
+            <option value="0">
+              Selecione um Estado
+            </option>
+            <%  State.where(id: @company
+                                 .contracts
+                                 .map { |c| c.city.state_id }
+                                 .sort.uniq!).each do |_state| %>
+              <option value="<%= _state.id %>">
+                <%= _state.name %>
+              </option>
+            <% end %>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :city_id, 'Cidade', class: 'required' %>
+          <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[city_id]" id="call_city_id" class="form-control boxed" required="required">
+            <option value="0">
+              Selecione um Estado primeiro
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :cnes, 'UBS', class: 'required' %>
+          <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[cnes]" id="call_cnes" class="form-control boxed" required="required">
+            <option value="0">
+              Selecione uma Cidade primeiro
+            </option>
+          </select>
+        </div>
+
+        <script>
+          const retrieveQuery = () => {
+            const data = {};
+            location.search.slice(1).split('&').forEach(parte => data[parte.split('=')[0]] = parte.split('=')[1]);
+
+            return data;
+          }
+          const query = retrieveQuery();
+
+          const stateSelect = document.getElementById('call_state_id');
+          const citySelect = document.getElementById('call_city_id');
+          const ubsSelect = document.getElementById('call_cnes')
+          const triggeredByState = () => jQuery.ajax({url: `/companies/${query.sei}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
+          const trigerredByCity = () => jQuery.ajax({url: `/companies/${query.sei}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
+          stateSelect.addEventListener('change', triggeredByState);
+          citySelect.addEventListener('change', trigerredByCity);
+
+          function insertCitiesData(cities) {
+            let innerHTML = '<option value="0"> Selecione a cidade </option>';;
+            for (city of cities) {
+              innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
+            }
+            citySelect.innerHTML = innerHTML;
+          }
+
+          function insertUBSData(unities) {
+            let innerHTML = '<option value="0"> Selecione a UBS </option>';
+            for (unity of unities) {
+              innerHTML += '<option value=' + unity.cnes + '>' + unity.name + '</option>'
+            }
+            ubsSelect.innerHTML = innerHTML;
+          }
+        </script>
+
+      <% end %>
+      <div class="field">
+        <%= form.label :category_id, 'Categoria', class: 'required' %>
+        <select skip_default_ids="false" allow_method_names_outside_object="true" name="call[category_id]" id="answer_category_id" class="form-control" required="required">
+          <option value="0">Selecione uma categoria:</option>
+          <%= inside_layout "categories/category_select", {categ: Category.all} do %>
+            <%= yield %>
+          <% end %>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :files, 'Arquivos (selecione todos os arquivos necessários pressionando a tecla CTRL)' %>
+        <%= form.text_field :files, id:'uuid-files', style: 'display: none'%>
+        <div id="dropzone" class="future-dropzone">
+          <div class="dz-default dz-message">
+            Arraste arquivos aqui para adicioná-los
+          </div>
+        </div>
+      </div>
+
+      <%= form.submit 'Criar atendimento', :class => 'btn btn-primary btn-sm' %>
+      <%= link_to 'Cancelar', calls_path, :class => 'btn btn-danger btn-sm' %>
+    </div>
+
+    <div class="field ml-4">
+      <%= form.check_box :faq, class: "form-check-input", id: 'create_call' %>
+      <%= form.label :faq, value: 'Declaro que a informação que será solicitada não foi encontrada no FAQ', class: 'form-check-label' %>
+    </div>
+
+  </div>
+<% end %>
+
+<script>
+  $("#create_call").click(function () {
+    var id = 'create_call';
+    var checked = $("#create_call:checked").length;
+    if (checked) {
+      var query = $("#search").val();
+      $("#title").val(query);
+      $(".hidden").show(300);
+      $("#pre_search").hide();
+    } else {
+      $(".hidden").hide();
+      $("#pre_search").show(300);
+
+    }
+  });
+
+  let tableDiv = document.getElementById('table');
+  let textField = document.getElementById('search');
+  var xTriggered = 0;
+  $("#search").keyup(function (event) {
+    var str = $("#search").val();
+    if (event.which == 13) {
+      event.preventDefault();
+    } else if (event.which == 8) {
+      console.log('backspace');
+      if (str == '') {
+        tableDiv.innerHTML = "";
+      }
+    }
+
+    if (str) {
+      var arr = str.match(/\S+/g);
+      var newstr = arr.join()
+
+      if (arr.length >= 1) {
+        jQuery.ajax({
+          url: '/answers/query_call/' + textField.value,
+          type: "GET",
+          dataType: "json",
+          success: data => {
+            if (data.length > 0) {
+              tableDiv.innerHTML = "";
+              //Add the data rows.
+              for (let entry of data) {
+                // let row = table.insertRow(-1);
+                let header = '<div class="card card-default"><div class="card-header"><div class="header-block">';
+                let title = '<p class="title"><em class="fa fa-question-circle mr-2"></em> <strong>' + entry.question + '</strong></p></div></div>';
+                let content = '<div class="card-block"><p>' + entry.answer + '</p>';
+                let view = '<a href="/answers/' + entry.id + '"class="btn btn-primary btn-sm right" target="_blank"> <em class="fa fa-eye"></em> Mostrar</a></div></div>';
+                tableDiv.innerHTML += header + title + content + view;
+              }
+
+            } else if (textField != 0) {
+              tableDiv.innerHTML = "Não há questões no FAQ sobre essa pergunta"
+            }
+          }
+        })
+      } else {
+        tableDiv.innerHTML = "Você precisa fazer uma pesquisa com no mínimo 4 letras";
+      }
+    }
+  });
+
+  let fileIds = []
+  $(document).ready(function(){
+      // Adds the actual class, to prevent errors
+      document.querySelector('.future-dropzone').classList.add('dropzone');
+
+        // grap our upload form by its id
+      $('#dropzone').dropzone({
+          url: '/attachments',
+
+          // restrict image size to a maximum 20MB
+          maxFilesize: 20,
+
+          // restrict to the maximum of 3 files
+          maxFiles: 3,
+
+          // Translations
+          dictCancelUpload: 'Cancelar Upload',
+          dictCancelUploadConfirmation: 'Deseja mesmo cancelar o Upload?',
+          dictRemoveFile: 'Remover arquivo',
+          dictDefaultMessage: 'Arraste arquivos aqui para adicioná-los',
+          dictFallbackMessage: 'Esse browser não suporta o anexo de arquivos.',
+          dictFileTooBig: 'Tamanho dos anexos excedido',
+          dictInvalidFileType: 'Extensão de arquivo Inválida',
+          dictMaxFilesExceeded: 'Quantidade de arquivos excedida',
+
+          // show remove links on each image upload
+          addRemoveLinks: true,
+
+          // if the upload was successful
+          success: (file, response) => {
+              // find the remove button link of the uploaded file and give it an id
+              // based of the attachmentID response from the server
+              $(file.previewTemplate).find('.dz-remove').attr('id', response.attachmentID);
+
+              // Add to array
+              fileIds.push(response.attachmentID);
+              $('#uuid-files').val(fileIds);
+
+              // add the dz-success class (the green tick sign)
+              $(file.previewElement).addClass("dz-success");
+
+          },
+          //when the remove button is clicked
+          removedfile: file => {
+
+              // grap the id of the uploaded file we set earlier
+              let id = $(file.previewTemplate).find('.dz-remove').attr('id');
+
+              // Remove from array
+              fileIds = fileIds.filter(uuid => uuid != id)
+              $('#uuid-files').val(fileIds);
+
+              // make a DELETE ajax request to delete the file
+              $.ajax({
+                  type: 'DELETE',
+                  url: '/attachments/' + id,
+                  success: () => $(file.previewTemplate).fadeOut(),
+                  error: e => console.error(e)
+              });
+          }
+      });
+  });
+
+</script>

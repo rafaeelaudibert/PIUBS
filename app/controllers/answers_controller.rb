@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AnswersController < ApplicationController
-  before_action :set_answer, only: %i[show edit update destroy]
+  before_action :set_answer, only: %i[show edit update]
   before_action :authenticate_user!
   before_action :verify_source, only: :new
   before_action :filter_role, except: %i[faq]
@@ -104,16 +104,6 @@ class AnswersController < ApplicationController
       redirect_to @answer, notice: 'Resposta atualizada com sucesso.'
     else
       render :edit
-    end
-  end
-
-  # DELETE /answers/1
-  # DELETE /answers/1.json
-  def destroy
-    @answer.destroy
-    respond_to do |format|
-      format.html { redirect_to answers_url, notice: 'Resposta excluída com sucesso.' }
-      format.json { head :no_content }
     end
   end
 

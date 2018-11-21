@@ -125,6 +125,16 @@ en:
         functional_detail: "Detalhe da funcionalidade"
         severity: "Severidade"
         category: "Categoria"
+      feedback:
+        zero: "pareceres"
+        one: "parecer"
+        few: "os pareceres"
+        other: "pareceres"
+      controversy:
+        zero: "controvérsias"
+        one: "controvérsia"
+        few: "as controvérsias"
+        other: "controvérsias"
       category:
         zero: "categorias"
         one: "categoria"
