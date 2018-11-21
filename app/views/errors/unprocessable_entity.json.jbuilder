@@ -1,1 +1,2 @@
-json.error_message "The change you wanted was rejected. Maybe you tried to change something you didn't have access to."
+json.error_message 'A mudança que você solicitou foi rejeitada. Você deve ter tentado alterar algo
+                    que você não tem permissão.'
