@@ -128,9 +128,11 @@ class ContractsController < ApplicationController
     if %w[index new create destroy edit update].include? action
       redirect_to denied_path unless admin?
     elsif %w[show download].include? action
-      unless admin? || (current_user.try(:company_admin?) && @contract.sei == current_user.sei)
-        redirect_to denied_path
-      end
+      redirect_to denied_path unless admin? || sei_company_admin?
     end
+  end
+
+  def sei_company_admin?
+    current_user.try(:company_admin?) && @contract.sei == current_user.sei
   end
 end
