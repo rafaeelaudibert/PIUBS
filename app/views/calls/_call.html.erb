@@ -1,7 +1,7 @@
 <div class="card<%= call.support_user == current_user.id ? ' card-mine' : '' %>">
   <div class="card-header" id="heading<%= call.protocol %>">
     <div class="question">
-      <h5><%= call.title %></h5>
+      <h5><%= link_to call.title, call %></h5>
     </div>
     <div class="protocol">
       <span>Protocolo:
