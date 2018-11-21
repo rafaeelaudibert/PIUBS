@@ -31,7 +31,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   # /answers
-  resources :answers do
+  resources :answers, except: :destroy do
     collection do
       get 'query_call/:search', to: 'answers#search_call'
       get 'query_controversy/:search', to: 'answers#search_controversy'
