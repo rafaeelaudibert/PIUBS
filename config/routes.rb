@@ -86,7 +86,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   # /states
-  resources :states
+  resources :states, except: %i[edit update destroy]
 
   # /categories
   resources :categories do
