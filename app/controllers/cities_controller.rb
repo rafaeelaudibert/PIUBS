@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class CitiesController < ApplicationController
-  before_action :set_city, only: %i[show destroy]
   before_action :authenticate_user!
   before_action :filter_role
   include ApplicationHelper
@@ -22,6 +21,7 @@ class CitiesController < ApplicationController
 
   # GET /cities/1
   def show
+    @city = City.find(params[:id])
     @ubs = @city.unity_ids.sort
     @contract = @city.contract
   end
@@ -42,12 +42,6 @@ class CitiesController < ApplicationController
     else
       render :new
     end
-  end
-
-  # DELETE /cities/1
-  def destroy
-    @city.destroy
-    redirect_to cities_url, notice: 'Cidade apagada com sucesso.'
   end
 
   # GET /cities/states/:id
@@ -73,11 +67,6 @@ class CitiesController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
-  def set_city
-    @city = City.find(params[:id])
-  end
-
   # Never trust parameters from internet, only allow the white list through.
   def city_params
     params.require(:city).permit(:name, :state_id)
@@ -85,7 +74,7 @@ class CitiesController < ApplicationController
 
   def filter_role
     action = params[:action]
-    if %w[new create destroy show].include? action
+    if %w[new create].include? action
       redirect_to denied_path unless admin?
     elsif %w[index show].include? action
       redirect_to denied_path unless admin? || support_user?
