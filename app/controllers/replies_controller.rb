@@ -116,9 +116,9 @@ class RepliesController < ApplicationController
 
   def filter_role
     action = params[:action]
-    if %w[index destroy edit update show].include? action
+    if %w[index show].include? action
       redirect_to denied_path unless admin?
-    elsif %w[attachments].include? action
+    elsif action == 'attachments'
       redirect_to denied_path unless admin? || support_user?
     end
   end
