@@ -62,7 +62,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   # /unities
-  resources :unities, param: :cnes do
+  resources :unities, param: :cnes, except: %i[edit update] do
     collection do
       get ':cnes/users', to: 'unities#users',
                          as: 'unity_users'
