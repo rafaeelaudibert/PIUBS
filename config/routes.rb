@@ -137,6 +137,6 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
       end
     end
 
-    resources :feedbacks
+    resources :feedbacks, only: %i[create index show]
   end
 end
