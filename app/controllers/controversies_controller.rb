@@ -236,7 +236,7 @@ class ControversiesController < ApplicationController
 
   def filter_role
     redirect_to denied_path if faq_inserter?
-    redirect_if_not_in_call if action == 'show'
+    redirect_if_not_in_call if params[:action] == 'show'
   end
 
   def redirect_if_not_in_call
