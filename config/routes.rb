@@ -104,7 +104,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     get 'faq', to: 'answers#faq', as: 'faq'
 
     # /apoioaempresas/calls
-    resources :calls do
+    resources :calls, except: %i[edit update destroy] do
       collection do
         post 'link_call_support_user'
         post 'unlink_call_support_user'
