@@ -2,7 +2,7 @@
 
 class AttachmentsController < ApplicationController
   protect_from_forgery
-  before_action :set_attachment, only: %i[show edit update destroy download]
+  before_action :set_attachment, only: %i[destroy download]
   before_action :filter_role
   include ApplicationHelper
 
@@ -10,11 +10,6 @@ class AttachmentsController < ApplicationController
   # GET /attachments.json
   def index
     @attachments = Attachment.order(:id).paginate(page: params[:page], per_page: 25)
-  end
-
-  # GET /attachments/new
-  def new
-    @attachment = Attachment.new
   end
 
   # POST /attachments
@@ -66,7 +61,7 @@ class AttachmentsController < ApplicationController
 
   def filter_role
     action = params[:action]
-    if %w[index show edit update].include? action
+    if action == 'edit'
       redirect_to denied_path unless admin?
     elsif action == 'download'
       sei = current_user.sei

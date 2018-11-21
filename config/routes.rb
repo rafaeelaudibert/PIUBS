@@ -24,7 +24,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   get '422', to: 'application#acess_denied', as: 'denied'
 
   # /attachments
-  resources :attachments, except: %i[show edit update show] do
+  resources :attachments, only: %i[index create destroy] do
     collection do
       get ':id/download', to: 'attachments#download', as: 'download'
     end
