@@ -48,7 +48,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   # /companies
-  resources :companies, param: :sei do
+  resources :companies, param: :sei, except: %i[edit update] do
     collection do
       get ':sei/states', to: 'companies#states',
                          as: 'company_states'
