@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CitiesController < ApplicationController
-  before_action :set_city, only: %i[show edit update destroy]
+  before_action :set_city, only: %i[show destroy]
   before_action :authenticate_user!
   before_action :filter_role
   include ApplicationHelper
@@ -32,27 +32,15 @@ class CitiesController < ApplicationController
     @state = State.find(params[:state]) if params[:state]
   end
 
-  # GET /cities/1/edit
-  def edit; end
-
   # POST /cities
   def create
     @city = City.new(city_params)
     if @city.save
       redirect_to new_user_invitation_path(city_id: @city.id,
                                            role: 'city_admin'),
-                  notice: 'City successfully created. Please add its responsible'
+                  notice: 'Cidade criada com sucesso. Por favor, adicione seu responsável'
     else
       render :new
-    end
-  end
-
-  # PATCH/PUT /cities/1
-  def update
-    if @city.update(city_params)
-      redirect_to @city, notice: 'Cidade atualizada com sucesso.'
-    else
-      render :edit
     end
   end
 
@@ -97,7 +85,7 @@ class CitiesController < ApplicationController
 
   def filter_role
     action = params[:action]
-    if %w[new create destroy edit update show].include? action
+    if %w[new create destroy show].include? action
       redirect_to denied_path unless admin?
     elsif %w[index show].include? action
       redirect_to denied_path unless admin? || support_user?
