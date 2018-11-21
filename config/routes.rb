@@ -120,7 +120,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     # /controversias/faq
     get 'faq', to: 'answers#faq_controversy', as: 'faq_controversy'
 
-    resources :controversies do
+    resources :controversies, except: %i[edit update destroy] do
       collection do
         post 'link_controversy', to: 'controversies#link_controversy',
                                  as: 'link'
