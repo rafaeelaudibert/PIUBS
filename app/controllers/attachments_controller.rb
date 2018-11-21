@@ -12,16 +12,10 @@ class AttachmentsController < ApplicationController
     @attachments = Attachment.order(:id).paginate(page: params[:page], per_page: 25)
   end
 
-  # GET /attachments/1
-  def show; end
-
   # GET /attachments/new
   def new
     @attachment = Attachment.new
   end
-
-  # GET /attachments/1/edit
-  def edit; end
 
   # POST /attachments
   def create
@@ -34,22 +28,13 @@ class AttachmentsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /attachments/1
-  def update
-    if @attachment.update(attachment_params)
-      redirect_to @attachment, notice: 'Attachment was successfully updated.'
-    else
-      render :edit
-    end
-  end
-
   # DELETE /attachments/1
   def destroy
-    unless @attachment.attachment_links.length
+    if @attachment.attachment_links.length.zero?
       @attachment.destroy
       render json: { message: 'success' }, status: 200
     end
-    render json: { message: 'Não será apagado, pois tem links' }, status: 200
+    render json: { message: 'Não será apagado, pois possui links' }, status: 200
   end
 
   # GET /attachment/:id/download
