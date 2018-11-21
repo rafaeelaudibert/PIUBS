@@ -70,7 +70,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   # /contracts
-  resources :contracts do
+  resources :contracts, except: %i[show edit update] do
     collection do
       get '/:id/download', to: 'contracts#download', as: 'download'
     end
