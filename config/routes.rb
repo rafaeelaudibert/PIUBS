@@ -89,7 +89,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   resources :states, except: %i[edit update destroy]
 
   # /categories
-  resources :categories do
+  resources :categories, except: %i[edit update show] do
     collection do
       get 'all'
       get 'category_select/:source', to: 'categories#category_select'
