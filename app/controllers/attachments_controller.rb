@@ -60,47 +60,41 @@ class AttachmentsController < ApplicationController
   end
 
   def filter_role
-    action = params[:action]
-    if action == 'edit'
-      redirect_to denied_path unless admin?
-    elsif action == 'download'
-      sei = current_user.sei
-      links = @attachment.attachment_links
-      unless admin? || support_user?
-        if company_user?
-          links.each do |link|
-            # Answer check
-            if link.answer? &&
-               !link.answer.faq &&
-               ((current_user.try(:company_admin?) &&
-                 Call.where(answer_id: link.answer_id).first.sei != sei) ||
-                (current_user.try(:company_user?) &&
-                 Call.where(answer_id: link.answer_id).first.user_id != id))
-              redirect_to denied_path
-            end
-
-            # Reply check
-            if link.reply? &&
-               ((current_user.try(:company_admin?) &&
-                 Call.find(link.reply.protocol).sei != sei) ||
-                (current_user.try(:company_user?) &&
-                 Call.find(link.reply.protocol).user_id != id))
-              redirect_to denied_path
-            end
-
-            # Call check
-            next unless link.call? &&
-                        ((current_user.try(:company_admin?) &&
-                          link.call.sei != sei) ||
-                         (current_user.try(:company_user?) &&
-                          link.call.user_id != id))
-
-            redirect_to denied_path
-          end
-        else
-          redirect_to denied_path
-        end
-      end
+    if params[:action] == 'download' && !admin? && !support_user?
+      filter_roles_for_download
+    else
+      redirect_to not_found_path unless admin?
     end
+  end
+
+  def filter_roles_for_download
+    @attachment.attachment_links.each do |link|
+      downloadable?(link)
+    end
+  end
+
+  def downloadable?(link)
+    redirect_to denied_path if cant_download_answer(link, Call.where(answer_id: link.answer_id)
+                                                              .first)
+    redirect_to denied_path if cant_download_reply link, Call.find(link.reply.protocol)
+    redirect_to denied_path if cant_download_call(link)
+  end
+
+  def cant_download_answer(link, call)
+    !link.answer.try(:faq) &&
+      ((current_user.company_admin? && call.sei != current_user.sei) ||
+       (current_user.company_user? && call.user_id != current_user.id))
+  end
+
+  def cant_download_reply(link, call)
+    link.reply? &&
+      ((current_user.company_admin? && call.sei != current_user.sei) ||
+       (current_user.company_user? && call.user_id != current_user.id))
+  end
+
+  def cant_download_call(link)
+    link.call? &&
+      ((current_user.company_admin? && link.call.sei != current_user.sei) ||
+       (current_user.company_user? && link.call.user_id != current_user.id))
   end
 end
