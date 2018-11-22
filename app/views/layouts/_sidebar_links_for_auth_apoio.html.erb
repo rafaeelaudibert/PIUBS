@@ -38,7 +38,7 @@
 <% if current_user.try(:company_admin?) %>
   <li <%= "class=active" if current_page?(calls_path)%> > <%= link_to(calls_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Atendimentos <%end%></li>
   <li <%= "class=active" if current_page?(faq_path) %> > <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ<%end%></li>
-  <li <%= "class=active" if current_page?(companies_path) %> > <%= link_to(companies_path, class: 'nav-item nav-link') do %> <i class="fa fa-building-o"></i> Empresa <%end%></li>
+  <li <%= "class=active" if current_page?(companies_path) %> > <%= link_to("/companies/#{current_user.sei}", class: 'nav-item nav-link') do %> <i class="fa fa-building-o"></i> Empresa <%end%></li>
   <li <%= "class=active" if current_page?(contracts_path) %> > <%= link_to(contracts_path, class: 'nav-item nav-link') do %> <i class="fa fa-clipboard"></i> Contratos<%end%></li>
   <li <%= "class=active" if current_page?(users_path) || current_page?(new_user_invitation_path) %> > <%= link_to(users_path, class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Colaboradores <i class="fa arrow"></i><%end%>
     <ul class="sidebar-nav collapse">
