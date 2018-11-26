@@ -11,6 +11,7 @@
 /tmp/
 /log/
 /public/uploads/
+/.idea/
 
 # Used by dotenv library to load environment variables.
 # .env
