@@ -7,7 +7,7 @@ class Users::InvitationsController < Devise::InvitationsController
   before_action :set_roles_allowed, only: %i[new create]
 
   def new
-    @role = params[:role] || @roles_allowed[0] if @roles_allowed.length == 1
+    @role = params[:role] || (@roles_allowed[0] if @roles_allowed.length == 1)
     @sei = params[:sei].to_i if params[:sei]
     @city_id = params[:city_id].to_i if params[:city_id]
     super
