@@ -295,7 +295,6 @@
 
   let tableDiv = document.getElementById('table');
   let textField = document.getElementById('search');
-  var xTriggered = 0;
   $("#search").keyup(function (event) {
     var str = $("#search").val();
     if (event.which == 13) {
@@ -309,7 +308,6 @@
 
     if (str) {
       var arr = str.match(/\S+/g);
-      var newstr = arr.join()
 
       if (arr.length >= 1) {
         jQuery.ajax({
@@ -329,7 +327,7 @@
                 tableDiv.innerHTML += header + title + content + view;
               }
 
-            } else if (textField != 0) {
+            } else if (textField !== 0) {
               tableDiv.innerHTML = "Não há questões no FAQ sobre essa pergunta"
             }
           }
