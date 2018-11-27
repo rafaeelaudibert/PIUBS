@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class ContractsController < ApplicationController
-  before_action :set_contract, only: %i[destroy download]
   before_action :authenticate_user!
   before_action :filter_role
+  before_action :set_contract, only: %i[destroy download]
   include ApplicationHelper
 
   # GET /contracts

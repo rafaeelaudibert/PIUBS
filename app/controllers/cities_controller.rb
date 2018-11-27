@@ -3,6 +3,7 @@
 class CitiesController < ApplicationController
   before_action :authenticate_user!
   before_action :filter_role
+  before_action :set_city, only: %i[show edit update destroy]
   include ApplicationHelper
 
   # GET /cities
