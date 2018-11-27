@@ -4,7 +4,6 @@ class CallsController < ApplicationController
   before_action :authenticate_user!
   before_action :restrict_system!
   before_action :filter_role
-  before_action :set_call, only: %i[show edit update destroy]
   before_action :set_company, only: %i[create new]
   include ApplicationHelper
 

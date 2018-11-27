@@ -132,7 +132,6 @@
   <li <%= "class=active" if current_page?(states_path) %> > <%= link_to(states_path, class: 'nav-item nav-link') do %> <i class="fa fa-globe"></i> Estados<%end%></li>
   <li <%= "class=active" if current_page?(cities_path) %> > <%= link_to(cities_path, class: 'nav-item nav-link') do %> <i class="fa fa-map-marker"></i> Cidades<%end%></li>
   <li <%= "class=active" if current_page?(unities_path) %> > <%= link_to(unities_path, class: 'nav-item nav-link') do %> <i class="fa fa-medkit"></i> UBS <%end%></li>
-  <li <%= "class=active" if current_page?(companies_path) %> > <%= link_to(companies_path, class: 'nav-item nav-link') do %> <i class="fa fa-building-o"></i> Empresas <%end%></li>
   <li <%= "class=active" if current_page?(users_path) || current_page?(new_user_invitation_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Colaboradores <i class="fa arrow"></i><%end%>
     <ul class="sidebar-nav collapse">
       <li> <%= link_to(users_path, class: 'nav-item nav-link') do %> <i class="fa fa-list-ul"></i> Listar Usuários <% end %></li>
