@@ -206,6 +206,11 @@
     .question {
       grid-area: question;
       text-align: left;
+
+      a, a:hover {
+        text-decoration: none;
+        color: rgb(79, 95, 111);
+      }
     }
 
     .protocol {

@@ -3,16 +3,15 @@
 class FeedbacksController < ApplicationController
   before_action :authenticate_user!
   before_action :restrict_system!
+
   before_action :filter_role
 
   # GET /feedbacks
-  # GET /feedbacks.json
   def index
-    @feedbacks = Feedback.all
+    @feedbacks = Feedback.all.page(params[:page])
   end
 
   # GET /feedbacks/1
-  # GET /feedbacks/1.json
   def show
     @feedback = Feedback.find(params[:id])
   end
@@ -77,6 +76,6 @@ class FeedbacksController < ApplicationController
   end
 
   def filter_role
-    redirect_to denied_path if %w[index show].include?(params[:action]) && !admin? && !support_user?
+    redirect_to not_found_path unless admin? || support_user?
   end
 end

@@ -13,17 +13,6 @@ class AttachmentsController < ApplicationController
     @attachments = Attachment.order(:id).paginate(page: params[:page], per_page: 25)
   end
 
-  # GET /attachments/1
-  def show; end
-
-  # GET /attachments/new
-  def new
-    @attachment = Attachment.new
-  end
-
-  # GET /attachments/1/edit
-  def edit; end
-
   # POST /attachments
   def create
     @attachment = Attachment.new(attachment_params)
@@ -35,22 +24,13 @@ class AttachmentsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /attachments/1
-  def update
-    if @attachment.update(attachment_params)
-      redirect_to @attachment, notice: 'Attachment was successfully updated.'
-    else
-      render :edit
-    end
-  end
-
   # DELETE /attachments/1
   def destroy
-    unless @attachment.attachment_links.length
+    if @attachment.attachment_links.length.zero?
       @attachment.destroy
       render json: { message: 'success' }, status: 200
     end
-    render json: { message: 'Não será apagado, pois tem links' }, status: 200
+    render json: { message: 'Não será apagado, pois possui links' }, status: 200
   end
 
   # GET /attachment/:id/download
@@ -81,47 +61,41 @@ class AttachmentsController < ApplicationController
   end
 
   def filter_role
-    action = params[:action]
-    if %w[index show edit update].include? action
-      redirect_to denied_path unless admin?
-    elsif action == 'download'
-      sei = current_user.sei
-      links = @attachment.attachment_links
-      unless admin? || support_user?
-        if company_user?
-          links.each do |link|
-            # Answer check
-            if link.answer? &&
-               !link.answer.faq &&
-               ((current_user.try(:company_admin?) &&
-                 Call.where(answer_id: link.answer_id).first.sei != sei) ||
-                (current_user.try(:company_user?) &&
-                 Call.where(answer_id: link.answer_id).first.user_id != id))
-              redirect_to denied_path
-            end
-
-            # Reply check
-            if link.reply? &&
-               ((current_user.try(:company_admin?) &&
-                 Call.find(link.reply.protocol).sei != sei) ||
-                (current_user.try(:company_user?) &&
-                 Call.find(link.reply.protocol).user_id != id))
-              redirect_to denied_path
-            end
-
-            # Call check
-            next unless link.call? &&
-                        ((current_user.try(:company_admin?) &&
-                          link.call.sei != sei) ||
-                         (current_user.try(:company_user?) &&
-                          link.call.user_id != id))
-
-            redirect_to denied_path
-          end
-        else
-          redirect_to denied_path
-        end
-      end
+    if params[:action] == 'download' && !admin? && !support_user?
+      filter_roles_for_download
+    else
+      redirect_to not_found_path unless admin?
     end
+  end
+
+  def filter_roles_for_download
+    @attachment.attachment_links.each do |link|
+      downloadable?(link)
+    end
+  end
+
+  def downloadable?(link)
+    redirect_to denied_path if cant_download_answer(link, Call.where(answer_id: link.answer_id)
+                                                              .first)
+    redirect_to denied_path if cant_download_reply link, Call.find(link.reply.protocol)
+    redirect_to denied_path if cant_download_call(link)
+  end
+
+  def cant_download_answer(link, call)
+    !link.answer.try(:faq) &&
+      ((current_user.company_admin? && call.sei != current_user.sei) ||
+       (current_user.company_user? && call.user_id != current_user.id))
+  end
+
+  def cant_download_reply(link, call)
+    link.reply? &&
+      ((current_user.company_admin? && call.sei != current_user.sei) ||
+       (current_user.company_user? && call.user_id != current_user.id))
+  end
+
+  def cant_download_call(link)
+    link.call? &&
+      ((current_user.company_admin? && link.call.sei != current_user.sei) ||
+       (current_user.company_user? && link.call.user_id != current_user.id))
   end
 end

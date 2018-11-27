@@ -1,27 +1,34 @@
-<p id="notice"><%= notice %></p>
+<%= content_for :body_title do%>
+<div class="left">
+  <h4 class="display-5">Pareceres</h4>
+</div>
+<%end%>
 
-<h1>Feedbacks</h1>
-
-<table>
-  <thead>
-    <tr>
-      <th>Description</th>
-      <th>Controversy</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @feedbacks.each do |feedback| %>
+<% if @feedbacks.length > 0 %>
+  <%= render './pagination', value: @feedbacks %>
+  <table class="table table-striped table-hover">
+    <thead class="thead-dark">
       <tr>
-        <td><%= feedback.description %></td>
-        <td><%= feedback.controversy_id %></td>
-        <td><%= link_to 'Show', feedback %></td>
+        <th>Descrição</th>
+        <th>Protocolo da Controvérsia</th>
+        <th colspan="3">Ações</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @feedbacks.each do |feedback| %>
+        <tr>
+          <td><%= feedback.description %></td>
+          <td><%= feedback.controversy_id %></td>
+          <td><%= link_to 'Mostrar', feedback , class: 'btn btn-primary btn-sm' %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= render './pagination', value: @feedbacks %>
+<% else %>
+  <h3>
+    Não existe nenhum feedback com a pesquisa realizada
+  </h3>
+<% end %>
 
 <br>
-
-<%= link_to 'New Feedback', new_feedback_path %>

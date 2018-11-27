@@ -11,23 +11,17 @@ class CallsController < ApplicationController
   # GET /calls
   # GET /calls.json
   def index
+    redirect_to new_user_session_path unless user_signed_in?
+
     (@filterrific = initialize_filterrific(Call, params[:filterrific],
                                            select_options: options_for_filterrific,
                                            persistence_id: false)) || return
-    if user_signed_in?
-      @calls = filtered_calls
-    else
-      redirect_to new_user_session_path
-    end
-
-    respond_to do |format|
-      format.html
-      format.js
-    end
+    @calls = filtered_calls
   end
 
   # GET /calls/1
   def show
+    @call = Call.find(params[:id])
     @answer = Answer.new
     @reply = Reply.new
     @categories = Category.all
@@ -39,9 +33,6 @@ class CallsController < ApplicationController
   def new
     @call = Call.new
   end
-
-  # GET /calls/1/edit
-  def edit; end
 
   # POST /calls
   def create
@@ -57,22 +48,6 @@ class CallsController < ApplicationController
     else
       render :new
     end
-  end
-
-  # PATCH/PUT /calls/1
-  def update
-    if @call.update(call_params)
-      redirect_to @call, notice: 'Call was successfully updated.'
-    else
-      render :edit
-    end
-  end
-
-  # DELETE /calls/1
-  # DELETE /calls/1.json
-  def destroy
-    @call.destroy
-    redirect_to calls_url, notice: 'Call was successfully destroyed.'
   end
 
   # POST calls/link_call_support_user
@@ -130,11 +105,6 @@ class CallsController < ApplicationController
   end
 
   private
-
-  # Use callbacks to share common setup or constraints between actions.
-  def set_call
-    @call = Call.find(params[:id])
-  end
 
   def set_company
     @company = Company.find(current_user.sei) if current_user.sei

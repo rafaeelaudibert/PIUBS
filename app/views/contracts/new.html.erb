@@ -3,4 +3,123 @@
   <% company = ' para a empresa ' << @company.sei.to_s if @company %>
     <%= 'Novo contrato' << (city || ' ') << (company || ' ')%>
   <%end%>
-  <%= render 'form', contract: @contract %>
+
+  <div class="required_info"></div><br/>
+  <%= form_with(model: @contract, local: true) do |form| %>
+    <% if @contract.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(@contract.errors.count, "error") %>
+          prohibited this contract from being saved:</h2>
+
+        <ul>
+          <% @contract.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-group">
+      <%= form.label :file, 'Contrato', class: 'required' %>
+      <%= form.file_field :file, class: 'form-control boxed', required: true, onchange: 'validateFiles(this)', data: {format: 'PDF'}%>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :contract_number, 'Nº do Contrato', class: 'required' %>
+      <%= form.text_field :contract_number , class: 'form-control', required: true%>
+    </div>
+
+    <% if @city %>
+      <div class="form-group" style="display: none">
+        <%= form.label :city_id, 'Cidade', class: 'required' %>
+        <%= form.text_field :city_id , name: 'contract[city_id]', id:'contract_city_id', class: 'form-control', value: @city.id, required: true %>
+      </div>
+    <% else %>
+      <div class="form-group">
+        <%= form.label :state_id, 'Estado', class: 'required' %>
+        <select skip_default_ids="false" allow_method_names_outside_object="true" name="contract[state_id]" id="contract_state_id" class="form-control" required="required">
+          <option value="0">
+            Selecione um Estado
+          </option>
+          <% State.all.each do |_state| %>
+            <option value="<%= _state.id %>">
+              <%= _state.name %>
+            </option>
+          <% end %>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :city_id, 'Cidade', class: 'required' %>
+        <select skip_default_ids="false" allow_method_names_outside_object="true" name="contract[city_id]" id="contract_city_id" class="form-control" required="required">
+          <option value="0">
+            Selecione um Estado primeiro
+          </option>
+        </select>
+      </div>
+    <% end %>
+
+    <% if @company %>
+      <div class="form-group" style="display:none">
+        <%= form.label :sei, 'SEI da Empresa', class: 'required' %>
+        <%= form.text_field :sei, class: 'form-control', value: @company.sei, required: true%>
+      </div>
+    <% else %>
+      <div class="form-group">
+        <%= form.label :sei, 'SEI da Empresa', class: 'required' %>
+        <select skip_default_ids="false" allow_method_names_outside_object="true" name="contract[sei]" id="contract_sei" class="form-control" required="required">
+          <option value="0">
+            Selecione uma empresa
+          </option>
+          <% Company.all.each do |_company| %>
+            <option value="<%= _company.id %>">
+              <%= _company.sei %>
+            </option>
+          <% end %>
+        </select>
+      </div>
+    <% end %>
+
+    <%= form.submit 'Salvar', class: 'btn btn-primary btn-sm' %>
+    <%= link_to 'Cancelar', contracts_path, class: 'btn btn-danger btn-sm' %>
+  <% end %>
+
+  <script>
+
+  let stateSelect = document.getElementById('contract_state_id');
+  let citySelect = document.getElementById('contract_city_id');
+
+  stateSelect.addEventListener('change', () => jQuery.ajax({
+    url: '/cities/states/' + stateSelect.value,
+    type: "GET",
+    dataType: "json",
+    success: insertData
+  }));
+
+  function insertData(cities) {
+    let innerHTML = '';
+    for (city of cities) {
+      innerHTML += '<option value=' + city.id + '>' + city.name + '</option>'
+    }
+    citySelect.innerHTML = innerHTML || '<option value="0"> Selecione um Estado primeiro </option>';
+  }
+
+  function validateFiles(inputFile) {
+
+    var size = 0;
+    var format = $(inputFile).data('format').toUpperCase();
+    let extensao = inputFile.value.split('.')[1].toUpperCase();
+
+    console.log(extensao, format);
+
+    if (extensao != format) {
+      const animation = {
+        "in": "bounceIn",
+        "out": "fadeOutUpBig"
+      };
+      const heart = "/assets/icons/heart-7b7db7682d22d7e720bd648d44141160ecebc8dace0e3d9f2effd12a41c7f6a9.png";
+      Notification.create("<%= 'Alerta' %>", '<%= "Esse contrato não possui uma extensão permitida. Anexe um arquivo PDF!" %>', heart, animation, 2, 5);
+      $(inputFile).val('');
+    }
+  }
+  </script>

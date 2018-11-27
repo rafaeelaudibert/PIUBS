@@ -3,7 +3,7 @@
 class ContractsController < ApplicationController
   before_action :authenticate_user!
   before_action :filter_role
-  before_action :set_contract, only: %i[show edit update destroy download]
+  before_action :set_contract, only: %i[destroy download]
   include ApplicationHelper
 
   # GET /contracts
@@ -15,20 +15,11 @@ class ContractsController < ApplicationController
     @contracts = @filterrific.find.order(:sei).page(params[:page])
   end
 
-  # GET /contracts/1
-  def show; end
-
   # GET /contracts/new
   def new
     @contract = Contract.new
     @city = City.find(params[:city]) if params[:city]
     @company = Company.find(params[:company]) if params[:company]
-  end
-
-  # GET /contracts/1/edit
-  def edit
-    @city = City.find(@contract.city_id)
-    @company = Company.find(@contract.sei)
   end
 
   # POST /contracts
@@ -42,33 +33,16 @@ class ContractsController < ApplicationController
                            message: 'Você precisa inserir um contrato em formato PDF')
       render :new
     elsif @contract.save
-      redirect_to @contract, notice: 'Contract was successfully created.'
+      redirect_to @contract, notice: 'Contrato criado com sucesso.'
     else
       render :new
-    end
-  end
-
-  # PATCH/PUT /contracts/1
-  def update
-    # If there already is a city with this ID in the database
-    if one_city_edit?(@contract.city_id)
-      @contract.errors.add(:city_id, :blank, message: 'Essa cidade já possui um contrato')
-      render :edit
-    elsif !check_pdf
-      @contract.errors.add(:filename, :blank,
-                           message: 'Você precisa inserir um contrato em formato PDF')
-      render :edit
-    elsif @contract.update(contract_params)
-      redirect_to @contract, notice: 'Contrato atualizado.'
-    else
-      render :edit
     end
   end
 
   # DELETE /contracts/1
   def destroy
     @contract.destroy
-    redirect_to contracts_url, notice: 'Contract was successfully destroyed.'
+    redirect_to contracts_url, notice: 'Contrato apagado com sucesso.'
   end
 
   # GET /contract/:id/download
@@ -106,15 +80,6 @@ class ContractsController < ApplicationController
     !ans.nil? # Returns true if there already is a city with this
   end
 
-  # Try to see if the city already have a contract during the edit
-  def one_city_edit?(id)
-    city_id = params.require(:contract).require(:city_id)
-    ans = Contract.where(city_id: city_id).first
-
-    # If this city doesn't have a contract or is the same city that we have in the contract now
-    !(ans.nil? || city_id == id.to_s)
-  end
-
   # Checks if the file is a PDF
   def check_pdf
     file = params.require(:contract).require(:file)
@@ -125,12 +90,14 @@ class ContractsController < ApplicationController
 
   def filter_role
     action = params[:action]
-    if %w[index new create destroy edit update].include? action
+    if %w[index new create destroy].include? action
       redirect_to denied_path unless admin?
-    elsif %w[show download].include? action
-      unless admin? || (current_user.try(:company_admin?) && @contract.sei == current_user.sei)
-        redirect_to denied_path
-      end
+    elsif action == 'download'
+      redirect_to denied_path unless admin? || sei_company_admin?
     end
+  end
+
+  def sei_company_admin?
+    current_user.try(:company_admin?) && @contract.sei == current_user.sei
   end
 end

@@ -1,3 +1,27 @@
 <%= content_for :body_title do%> Nova empresa <%end%>
 
-<%= render 'form', company: @company %>
+<div class="required_info"></div><br />
+<%= form_with(model: @company, local: true) do |form| %>
+<% if @company.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@company.errors.count, "error") %>
+      prohibited this company from being saved:</h2>
+
+    <ul>
+      <% @company.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+<div class="col-4">
+  <div class="form-group">
+    <%= form.label :sei, 'SEI', class: 'required' %>
+    <%= form.number_field :sei, class: 'form-control', required: true%>
+  </div>
+
+  <%= form.submit 'Salvar', :class => 'btn btn-primary btn-sm' %>
+  <%= link_to 'Cancelar', companies_path, :class => 'btn btn-danger btn-sm' %>
+  <br>
+</div>
+<% end %>

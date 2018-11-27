@@ -3,7 +3,7 @@
 class CompaniesController < ApplicationController
   before_action :authenticate_user!
   before_action :filter_role
-  before_action :set_company, only: %i[show edit update destroy]
+  before_action :set_company, only: %i[show destroy]
   include ApplicationHelper
 
   # GET /companies
@@ -33,33 +33,21 @@ class CompaniesController < ApplicationController
     @company = Company.new
   end
 
-  # GET /companies/1/edit
-  def edit; end
-
   # POST /companies
   def create
     @company = Company.new(company_params)
     if @company.save
       redirect_to new_user_invitation_path(sei: @company.sei, role: 'company_admin'),
-                  notice: 'Company successfully created. Please add its admin'
+                  notice: 'Empresa criada com sucesso. Por favor adicione o administrador dela.'
     else
       render :new
-    end
-  end
-
-  # PATCH/PUT /companies/1
-  def update
-    if @company.update(company_params)
-      redirect_to @company, notice: 'Company was successfully updated.'
-    else
-      render :edit
     end
   end
 
   # DELETE /companies/1
   def destroy
     @company.destroy
-    redirect_to companies_url, notice: 'Company was successfully destroyed.'
+    redirect_to companies_url, notice: 'Empresa apagada com sucesso.'
   rescue StandardError
     redirect_back fallback_location: companies_url,
                   alert: 'A empresa não pode ser apagada pois possui'\
@@ -129,19 +117,24 @@ class CompaniesController < ApplicationController
 
   def filter_role
     action = params[:action]
-    if %w[index new create destroy edit update].include? action
+    if %w[index new create destroy].include? action
       redirect_to denied_path unless admin?
     elsif %w[states users cities unities].include? action
-      unless admin? ||
-             support_user? ||
-             (company_user? && params[:id].to_i == current_user.sei)
-        redirect_to denied_path
-      end
+      redirect_to denied_path unless can_see_company_api?
     elsif action == 'show'
-      unless (current_user.try(:company_admin?) && @company.sei == current_user.sei) ||
-             admin?
-        redirect_to denied_path
-      end
+      redirect_if_cant_show
     end
+  end
+
+  def redirect_if_cant_show
+    redirect_to denied_path unless sei_company_admin_or_admin?
+  end
+
+  def can_see_company_api?
+    admin? || support_user? || params[:id].to_i == current_user.sei
+  end
+
+  def sei_company_admin_or_admin?
+    (current_user.company_admin? && @company.sei == current_user.sei) || admin?
   end
 end

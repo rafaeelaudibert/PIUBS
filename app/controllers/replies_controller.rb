@@ -19,15 +19,9 @@ class RepliesController < ApplicationController
   end
 
   # GET /replies/1
-  def show; end
-
-  # GET /replies/new
-  def new
-    @reply = Reply.new
+  def show
+    @reply = Reply.find(params[:id])
   end
-
-  # GET /replies/1/edit
-  def edit; end
 
   # POST /replies
   def create
@@ -42,21 +36,6 @@ class RepliesController < ApplicationController
     else
       render :new
     end
-  end
-
-  # PATCH/PUT /replies/1
-  def update
-    if @reply.update(reply_params)
-      redirect_to @reply, notice: 'Resposta atualizada com sucesso.'
-    else
-      render :edit
-    end
-  end
-
-  # DELETE /replies/1
-  def destroy
-    @reply.destroy
-    redirect_to replies_url, notice: 'Resposta apagada com sucesso.'
   end
 
   # GET /replies/attachments/:id
@@ -76,11 +55,6 @@ class RepliesController < ApplicationController
   end
 
   private
-
-  # Use callbacks to share common setup or constraints between actions.
-  def set_reply
-    @reply = Reply.find(params[:id])
-  end
 
   def retrieve_files(rep_params)
     rep_params[:files] ? rep_params.delete(:files).split(',') : []
@@ -117,7 +91,7 @@ class RepliesController < ApplicationController
                        ['SELECT octet_length(file_contents) FROM '\
                         'attachments WHERE attachments.id = ?',
                         attachment.id]
-                     ))[0]['octet_length']
+         ))[0]['octet_length']
   end
 
   def create_path(reply)
@@ -143,9 +117,9 @@ class RepliesController < ApplicationController
 
   def filter_role
     action = params[:action]
-    if %w[index destroy edit update show].include? action
+    if %w[index show].include? action
       redirect_to denied_path unless admin?
-    elsif %w[attachments].include? action
+    elsif action == 'attachments'
       redirect_to denied_path unless admin? || support_user?
     end
   end

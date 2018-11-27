@@ -22,6 +22,7 @@ class CitiesController < ApplicationController
 
   # GET /cities/1
   def show
+    @city = City.find(params[:id])
     @ubs = @city.unity_ids.sort
     @contract = @city.contract
   end
@@ -32,34 +33,16 @@ class CitiesController < ApplicationController
     @state = State.find(params[:state]) if params[:state]
   end
 
-  # GET /cities/1/edit
-  def edit; end
-
   # POST /cities
   def create
     @city = City.new(city_params)
     if @city.save
       redirect_to new_user_invitation_path(city_id: @city.id,
                                            role: 'city_admin'),
-                  notice: 'City successfully created. Please add its responsible'
+                  notice: 'Cidade criada com sucesso. Por favor, adicione seu responsável'
     else
       render :new
     end
-  end
-
-  # PATCH/PUT /cities/1
-  def update
-    if @city.update(city_params)
-      redirect_to @city, notice: 'Cidade atualizada com sucesso.'
-    else
-      render :edit
-    end
-  end
-
-  # DELETE /cities/1
-  def destroy
-    @city.destroy
-    redirect_to cities_url, notice: 'Cidade apagada com sucesso.'
   end
 
   # GET /cities/states/:id
@@ -85,11 +68,6 @@ class CitiesController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
-  def set_city
-    @city = City.find(params[:id])
-  end
-
   # Never trust parameters from internet, only allow the white list through.
   def city_params
     params.require(:city).permit(:name, :state_id)
@@ -97,7 +75,7 @@ class CitiesController < ApplicationController
 
   def filter_role
     action = params[:action]
-    if %w[new create destroy edit update show].include? action
+    if %w[new create].include? action
       redirect_to denied_path unless admin?
     elsif %w[index show].include? action
       redirect_to denied_path unless admin? || support_user?
