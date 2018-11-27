@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class UnitiesController < ApplicationController
-  before_action :set_unity, only: %i[show edit update destroy]
   before_action :authenticate_user!
   before_action :filter_role
+  before_action :set_unity, only: %i[show destroy]
   include ApplicationHelper
 
   # GET /unities
@@ -29,9 +29,6 @@ class UnitiesController < ApplicationController
     @city = City.find(params[:city]) if params[:city]
   end
 
-  # GET /unities/1/edit
-  def edit; end
-
   # POST /unities
   def create
     @unity = Unity.new(unity_params)
@@ -42,15 +39,6 @@ class UnitiesController < ApplicationController
                   notice: 'Unity successfully created. Please add its responsible'
     else
       render :new
-    end
-  end
-
-  # PATCH/PUT /unities/1
-  def update
-    if @unity.update(unity_params)
-      redirect_to @unity, notice: 'Unity was successfully updated.'
-    else
-      render :edit
     end
   end
 
@@ -82,7 +70,7 @@ class UnitiesController < ApplicationController
 
   def filter_role
     action = params[:action]
-    if %w[new create destroy edit update show].include? action
+    if %w[new create destroy show].include? action
       redirect_to denied_path unless admin?
     elsif %w[index show].include? action
       redirect_to denied_path unless admin? || support_user?

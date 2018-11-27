@@ -24,14 +24,14 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   get '422', to: 'application#acess_denied', as: 'denied'
 
   # /attachments
-  resources :attachments do
+  resources :attachments, only: %i[index create destroy] do
     collection do
       get ':id/download', to: 'attachments#download', as: 'download'
     end
   end
 
   # /answers
-  resources :answers do
+  resources :answers, except: :destroy do
     collection do
       get 'query_call/:search', to: 'answers#search_call'
       get 'query_controversy/:search', to: 'answers#search_controversy'
@@ -41,14 +41,14 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   # /replies
-  resources :replies do
+  resources :replies, only: %i[create index show] do
     collection do
       get 'attachments/:id', to: 'replies#attachments'
     end
   end
 
   # /companies
-  resources :companies, param: :sei do
+  resources :companies, param: :sei, except: %i[edit update] do
     collection do
       get ':sei/states', to: 'companies#states',
                          as: 'company_states'
@@ -62,7 +62,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   # /unities
-  resources :unities, param: :cnes do
+  resources :unities, param: :cnes, except: %i[edit update] do
     collection do
       get ':cnes/users', to: 'unities#users',
                          as: 'unity_users'
@@ -70,14 +70,14 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   # /contracts
-  resources :contracts do
+  resources :contracts, except: %i[show edit update] do
     collection do
       get '/:id/download', to: 'contracts#download', as: 'download'
     end
   end
 
   # /cities
-  resources :cities do
+  resources :cities, except: %i[edit update destroy] do
     collection do
       get 'states/:id', to: 'cities#states', as: 'city_states'
       get 'unities/:id', to: 'cities#unities', as: 'city_unities'
@@ -86,7 +86,15 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   end
 
   # /states
-  resources :states
+  resources :states, except: %i[edit update destroy]
+
+  # /categories
+  resources :categories, except: %i[edit update show] do
+    collection do
+      get 'all'
+      get 'category_select/:source', to: 'categories#category_select'
+    end
+  end
 
   scope '/apoioaempresas' do
     # /apoioaempresas
@@ -96,18 +104,11 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     get 'faq', to: 'answers#faq', as: 'faq'
 
     # /apoioaempresas/calls
-    resources :calls do
+    resources :calls, except: %i[edit update destroy] do
       collection do
         post 'link_call_support_user'
         post 'unlink_call_support_user'
         post 'reopen_call'
-      end
-    end
-
-    # /apoioaempresas/categories
-    resources :categories do
-      collection do
-        get 'all'
       end
     end
   end
@@ -119,7 +120,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     # /controversias/faq
     get 'faq', to: 'answers#faq_controversy', as: 'faq_controversy'
 
-    resources :controversies do
+    resources :controversies, except: %i[edit update destroy] do
       collection do
         post 'link_controversy', to: 'controversies#link_controversy',
                                  as: 'link'
@@ -136,6 +137,6 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
       end
     end
 
-    resources :feedbacks
+    resources :feedbacks, only: %i[create index show]
   end
 end

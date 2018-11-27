@@ -9,123 +9,116 @@
   <br/>
 
 </div>
-<div id="table"></div>
+  <div id="table" class="m-2" style="max-height: 600px; overflow-y: scroll; padding: 5px"></div>
 
-<script>
-  let textField = document.getElementById('search_field');
-  let button = document.getElementById('search_button');
-  let tableDiv = document.getElementById('table');
+  <script>
+      let textField = document.getElementById('search_field');
+      let tableDiv = document.getElementById('table');
 
-  button.addEventListener('click', () => {
-    if (textField.value.length > 3) {
-      jQuery.ajax({
-        url: '/answers/query_controversy/' + textField.value.split('.').join(' '),
-        type: "GET",
-        dataType: "json",
-        success: data => {
-          if (data.length > 0) {
-
-            //Create a HTML Table element.
-            const table = document.createElement("table");
-            table.classList.add('table', 'table-striped', 'table-hover')
-            table.border = "1";
-
-            //Add the header row.
-            let row = table.insertRow(-1);
-            row.classList.add('thead-dark')
-            for (let header of["Id", "Questão", "Resposta", "Ações"])
-              row.appendChild(document.createElement("TH")).innerHTML = header;
-
-            //Add the data rows.
-            for (let entry of data) {
-              let row = table.insertRow(-1);
-              row.insertCell(-1).innerHTML = entry.id;
-              row.insertCell(-1).innerHTML = entry.question;
-              row.insertCell(-1).innerHTML = entry.answer;
-              row.insertCell(-1).innerHTML = '<button onclick="faq_click(this)" type="button" class="btn btn-primary btn-sm">Selecionar</button>'
-            }
-
-            //Add the table in the DOM
-            tableDiv.innerHTML = "";
-            tableDiv.appendChild(table);
-
-          } else if (textField != 0) {
-            tableDiv.innerHTML = "Não há questões no FAQ sobre essa pergunta"
+      function triggerSearch(event) {
+          let str = $("#search_field").val();
+          if (event.which === 13) {
+              event.preventDefault();
+          } else if (event.which === 8) {
+              if (str === '') {
+                  tableDiv.innerHTML = "";
+              }
           }
-        }
-      })
-    } else {
-      tableDiv.innerHTML = "Você precisa fazer uma pesquisa com no mínimo 4 letras";
-    }
-  });
 
-  const faq_click = button => {
-    const answer = button.parentNode.parentNode.children[2].innerHTML;
-    const id = button.parentNode.parentNode.children[0].innerHTML;
+          if (str) {
+              let arr = str.match(/\S+/g);
 
-
-    $.ajax({
-      url: '/answers/attachments/' + id,
-      type: "GET",
-      dataType: "json",
-      success: data => {
-        const dropzone = $('#reply-dropzone')[0].dropzone
-        tinyMCE.get(0).setContent(`${answer}<br/>Essa resposta foi retirada do FAQ. Ela estava disponível <a href="/answers/${id}" target='_blank'>aqui</a></b>`);
-
-        // Fake their adittion in the reply-dropzone
-        dropzone.removeAllFiles();
-        data.forEach( val => {
-          let mockFile = {
-                    name: val.filename,
-                    size: val.bytes,
-                    type: val.type,
-                    accepted: true            // required if using 'MaxFiles' option
-                };
-
-          dropzone.files.push(mockFile);
-          dropzone.emit('addedfile', mockFile);
-          dropzone.emit('complete', mockFile);
-          $(dropzone.files[dropzone.files.length - 1]
-                                          .previewElement).find('.dz-remove').attr('id', val.id);
-        })
-
-        // Set the ids
-        replyFileIds = data.map(val => val.id).reduce((acc, val) => acc.concat(val), [])
-        $('#uuid-files-controversy').val(replyFileIds);
-
-        // Update the divs
-        $("#reply_box").show(200);
-        $("#faq_box").hide(200);
-        $("#on-faq").prop('checked', true);
+              if (arr.length >= 1) {
+                  jQuery.ajax({
+                      url: '/answers/query_controversy/' + textField.value.split('.').join(' '),
+                      type: "GET",
+                      dataType: "json",
+                      success: data => {
+                          if (data.length > 0) {
+                              tableDiv.innerHTML = "";
+                              //Add the data rows.
+                              for (let entry of data) {
+                                  // let row = table.insertRow(-1);
+                                  let header = '<div class="card card-default"><div class="card-header"><div class="header-block">';
+                                  let title = '<p class="title"><em class="fa fa-question-circle mr-2"></em> <strong>' + entry.question + '</strong></p></div></div>';
+                                  let content = '<div class="card-block"><p>' + entry.answer + '</p>';
+                                  let view = '<a href="/answers/' + entry.id + '" class="btn btn-primary btn-sm right" target="_blank"> <em class="fa fa-eye"></em> Mostrar</a></div></div>';
+                                  tableDiv.innerHTML += header + title + content + view;
+                              }
+                          } else if (textField !== 0) {
+                              tableDiv.innerHTML = "Não há questões no FAQ sobre essa pergunta"
+                          }
+                      }
+                  })
+              } else {
+                  tableDiv.innerHTML = "Você precisa fazer uma pesquisa com no mínimo 1 palavra";
+              }
+          }
       }
-    });
-  }
 
-  $('document').ready(function () {
+      $("#search_field").keyup(triggerSearch);
+      $('#search_button').click(triggerSearch);
 
-    $('#search_field').on('focusout', function () {
-      changeState($(this));
-    });
+      const faq_click = button => {
+          const answer = button.parentNode.parentNode.children[2].innerHTML;
+          const id = button.parentNode.parentNode.children[0].innerHTML;
 
-    function changeState(form) {
-      if (form.val().length > 0) {
-        form.addClass('has-value');
-      } else {
-        form.removeClass('has-value');
+          $.ajax({
+              url: '/answers/attachments/' + id,
+              type: "GET",
+              dataType: "json",
+              success: data => {
+                  const dropzone = $('#reply-dropzone')[0].dropzone
+                  tinyMCE.get('tinymce').setContent(`${answer}<br/><br>Essa resposta foi retirada do FAQ. Ela estava disponível <a href="/answers/${id}" target='_blank'>aqui</a></b>`);
+
+                  // Fake their adittion in the reply-dropzone
+                  dropzone.removeAllFiles();
+                  data.forEach( val => {
+                      const mockFile = {
+                          name: val.filename,
+                          size: val.bytes,
+                          type: val.type,
+                          accepted: true            // required if using 'MaxFiles' option
+                      };
+
+                      dropzone.files.push(mockFile);
+                      dropzone.emit('addedfile', mockFile);
+                      dropzone.emit('complete', mockFile);
+                      $(dropzone.files[dropzone.files.length - 1]
+                          .previewElement).find('.dz-remove').attr('id', val.id);
+                  })
+
+                  // Set the ids
+                  replyFileIds = data.map(val => val.id).reduce((acc, val) => acc.concat(val), [])
+                  $('#uuid-files-reply').val(replyFileIds);
+
+                  // Updates the divs
+                  $("#reply_box").show(200);
+                  $("#faq_box").hide(200);
+                  $("#on-faq").prop('checked', true);
+              }
+          });
       }
-    }
 
-    const questionTitle = "<%= @controversy.title %>";
-    textField.value = questionTitle;
-    $('#search_button').trigger('click');
-    $('#search_field').trigger('focusout');
-  });
+      $('document').ready(function () {
 
-  $('#search_field').on('keydown', e => {
-    if (e.keyCode == 13) {
-      e.preventDefault();
-      button.click();
-    }
-  });
-</script>
+          $('#search_field').on('focusout', function () {
+              changeState($(this));
+          });
+
+          function changeState(form) {
+              if (form.val().length > 0) {
+                  form.addClass('has-value');
+              } else {
+                  form.removeClass('has-value');
+              }
+          }
+
+          const questionTitle = "<%= @controversy.title %>";
+          textField.value = questionTitle;
+          $('#search_button').trigger('click');
+          $('#search_field').trigger('focusout');
+      });
+
+  </script>
 <% end %>

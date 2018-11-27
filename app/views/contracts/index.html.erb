@@ -7,26 +7,30 @@
 </div>
 <%end%>
 
-<div class="right" style="display: inline-block !important">
-  <form role="search">
-    <div class="right input-group" style="margin: 15px auto !important">
-      <input name="filterrific[search_query]" id="filterrific_search_query" class="form-control mr-sm-2" type="search" aria-label="Search">
-      <label>
-        <i class="fa fa-search"></i>
-        &nbsp;Nº do Contrato
-      </label>
-      <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
+<%= form_for_filterrific @filterrific do |f| %>
+  <div class="row">
+    <div class="offset-md-8 col-md-4">
+      <div class="row mt-3">
+        <div class="col-md-8">
+          <input name="filterrific[search_query]" id="filterrific_search_query" class="form-control mr-sm-2" type="search" aria-label="Search">
+          <label>
+            <i class="fa fa-search"></i>
+            &nbsp;Nº do Contrato
+          </label>
+        </div>
+          <div class="col-md-4">
+           <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <%= link_to 'Desfazer filtros',
+                       reset_filterrific_url,
+                       class: 'btn btn-danger col-md-8' if params[:filterrific] %>
+      </div>
     </div>
-    <br>
-    <p style="width: 100%; text-align: right;">
-      <%= (link_to 'Desfazer pesquisa',
-                   reset_filterrific_url,
-                   class: 'btn btn-danger',
-                   style: 'margin-top: 0.375em; border: 1px solid red;') if params[:filterrific] %>
-    </p>
-  </form>
-</div>
-<hr class="under-header" style="margin-top: <%= params[:filterrific] ? '8em' : '5em'%>"/>
+  </div>
+<% end %>
+<hr/>
 
 <div id="filterrific_results">
 

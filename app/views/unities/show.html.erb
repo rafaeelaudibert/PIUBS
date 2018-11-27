@@ -19,7 +19,7 @@
     <tr>
       <td><%= @contract.contract_number %></td>
       <td><%= @contract.sei %></td>
-      <td><%= link_to 'Download', download_contracts_path , class: 'btn btn-primary btn-sm' %></td>
+      <td><%= link_to 'Download', download_contracts_path(@contract) , class: 'btn btn-primary btn-sm' %></td>
     </tr>
   </tbody>
 </table>

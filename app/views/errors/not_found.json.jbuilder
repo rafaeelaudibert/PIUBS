@@ -1,1 +1,2 @@
-json.error_message "The page you were looking for doesn't exist. You may have mistyped the address or the page may have moved."
+json.error_message 'A página que você está procurando não existe. Você digitou algo errado ou a
+                    página se mudou.'

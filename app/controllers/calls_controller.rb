@@ -1,33 +1,26 @@
 # frozen_string_literal: true
 
 class CallsController < ApplicationController
-  before_action :set_call, only: %i[show edit update destroy]
-  before_action :set_company, only: %i[create new]
   before_action :authenticate_user!
+  before_action :restrict_system!
   before_action :filter_role
+  before_action :set_company, only: %i[create new]
   include ApplicationHelper
 
   # GET /calls
   # GET /calls.json
   def index
-    @contracts = Contract.where(sei: current_user.sei)
+    redirect_to new_user_session_path unless user_signed_in?
+
     (@filterrific = initialize_filterrific(Call, params[:filterrific],
                                            select_options: options_for_filterrific,
                                            persistence_id: false)) || return
-    if user_signed_in?
-      @calls = filtered_calls
-    else
-      redirect_to new_user_session_path
-    end
-
-    respond_to do |format|
-      format.html
-      format.js
-    end
+    @calls = filtered_calls
   end
 
   # GET /calls/1
   def show
+    @call = Call.find(params[:id])
     @answer = Answer.new
     @reply = Reply.new
     @categories = Category.all
@@ -40,9 +33,6 @@ class CallsController < ApplicationController
     @call = Call.new
   end
 
-  # GET /calls/1/edit
-  def edit; end
-
   # POST /calls
   def create
     call_parameters = call_params
@@ -52,27 +42,11 @@ class CallsController < ApplicationController
     if @call.save
       create_file_links @call, files
 
-      CallMailer.new_answer(@call, @call.user).deliver_later
+      CallMailer.new_call(@call, @call.user).deliver_later
       redirect_to @call, notice: 'Call was successfully created.'
     else
       render :new
     end
-  end
-
-  # PATCH/PUT /calls/1
-  def update
-    if @call.update(call_params)
-      redirect_to @call, notice: 'Call was successfully updated.'
-    else
-      render :edit
-    end
-  end
-
-  # DELETE /calls/1
-  # DELETE /calls/1.json
-  def destroy
-    @call.destroy
-    redirect_to calls_url, notice: 'Call was successfully destroyed.'
   end
 
   # POST calls/link_call_support_user
@@ -131,22 +105,27 @@ class CallsController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
-  def set_call
-    @call = Call.find(params[:id])
-  end
-
   def set_company
     @company = Company.find(current_user.sei) if current_user.sei
   end
 
   def options_for_filterrific
-    { sorted_by_creation: Call.options_for_sorted_by_creation,
+    {
+      sorted_by_creation: Call.options_for_sorted_by_creation,
       with_status: Call.options_for_with_status,
-      with_state: State.all.map { |s| [s.name, s.id] },
-      with_city: Call.options_for_with_city,
-      with_ubs: Unity.where(city_id: @contracts.map(&:city_id)).map { |u| [u.name, u.cnes] },
-      with_company: Company.all.map(&:sei) }
+      with_state: retrieve_states_for_filterrific,
+      with_city: [],
+      with_ubs: [],
+      with_company: Company.all.map(&:sei)
+    }
+  end
+
+  def retrieve_states_for_filterrific
+    if current_user.cnes
+      State.find(@contracts.map { |c| c.city.state_id }).map { |s| [s.name, s.id] }
+    else
+      State.all.map { |s| [s.name, s.id] }
+    end
   end
 
   def update_call(call, params)
@@ -160,14 +139,10 @@ class CallsController < ApplicationController
   end
 
   def filtered_calls
-    if current_user.try(:call_center_user?)
-      calls_from_support
-    elsif support_user?
-      calls_for_support
-    elsif current_user.try(:company_admin?)
-      calls_for_company_admin
+    if support_user?
+      current_user.call_center_user? ? calls_from_support : calls_for_support
     elsif company_user?
-      calls_for_company_user
+      current_user.company_admin? ? calls_for_company_admin : calls_form_company_user
     elsif admin?
       calls_for_admin
     else
@@ -235,6 +210,10 @@ class CallsController < ApplicationController
                                  :answer_summary, :severity, :protocol,
                                  :city_id, :category_id, :state_id,
                                  :company_id, :cnes, :files)
+  end
+
+  def restrict_system!
+    redirect_to denied_path unless current_user.both? || current_user.companies?
   end
 
   def filter_role

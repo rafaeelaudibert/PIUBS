@@ -1,81 +1,181 @@
 <hr/>
 <!-- Admin Sidebar-->
 <% if current_user.try(:admin?) %>
+  <li <%= "class=active" if current_page?(calls_path) || current_page?(faq_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-building"></i> Apoio a Empresas <i class="fa arrow"></i><%end%>
+    <ul class="sidebar-nav collapse">
+      <li> <%= link_to(calls_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Atendimentos <%end%></li>
+      <li> <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ <%end%></li>
+    </ul>
+  </li>
+  <li <%= "class=active" if current_page?(controversies_path) || current_page?(faq_controversy_path) || current_page?(feedbacks_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-gavel"></i> Solução de Controvérsias <i class="fa arrow"></i><%end%>
+    <ul class="sidebar-nav collapse">
+      <li> <%= link_to(controversies_path, class: 'nav-item nav-link') do %> <i class="fa fa-user"></i> Controvérsias <%end%></li>
+      <li> <%= link_to(faq_controversy_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ <%end%></li>
+      <li> <%= link_to(feedbacks_path, class: 'nav-item nav-link') do %> <i class="fa fa-comments"></i> Feedbacks <%end%></li>
+    </ul>
+  </li>
   <li <%= "class=active" if current_page?(states_path) %> > <%= link_to(states_path, class: 'nav-item nav-link') do %> <i class="fa fa-globe"></i> Estados<%end%></li>
   <li <%= "class=active" if current_page?(cities_path) %> > <%= link_to(cities_path, class: 'nav-item nav-link') do %> <i class="fa fa-map-marker"></i> Cidades<%end%></li>
   <li <%= "class=active" if current_page?(unities_path) %> > <%= link_to(unities_path, class: 'nav-item nav-link') do %> <i class="fa fa-medkit"></i> UBS <%end%></li>
   <li <%= "class=active" if current_page?(companies_path) %> > <%= link_to(companies_path, class: 'nav-item nav-link') do %> <i class="fa fa-building-o"></i> Empresas <%end%></li>
-  <li <%= "class=active" if current_page?(contracts_path) %> > <%= link_to(contracts_path, class: 'nav-item nav-link') do %> <i class="fa fa-clipboard"></i> Contratos<%end%></li>
+  <li <%= "class=active" if current_page?(contracts_path) %> > <%= link_to(contracts_path, class: 'nav-item nav-link') do %> <i class="fa fa-file"></i> Contratos<%end%></li>
   <li <%= "class=active" if current_page?(replies_path) || current_page?(answers_path) || current_page?(attachments_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-dashboard"></i> Misc <i class="fa arrow"></i><%end%>
     <ul class="sidebar-nav collapse">
-      <li> <%= link_to(replies_path, class: 'nav-item nav-link') do %> <i class="fa fa-pencil"></i> Respostas <%end%></li>
-      <li> <%= link_to(answers_path, class: 'nav-item nav-link') do %> <i class="fa fa-th-list"></i> Respostas Finais <%end%></li>
-      <li> <%= link_to(attachments_path, class: 'nav-item nav-link') do %> <i class="fa fa-files-o"></i> Anexos <%end%></li>
+      <li> <%= link_to(replies_path, class: 'nav-item nav-link') do %> <i class="fa fa-reply-all"></i> Respostas <%end%></li>
+      <li> <%= link_to(answers_path, class: 'nav-item nav-link') do %> <i class="fa fa-comment"></i> Respostas Finais <%end%></li>
+      <li> <%= link_to(attachments_path, class: 'nav-item nav-link') do %> <i class="fa fa-paperclip"></i> Anexos <%end%></li>
     </ul>
   </li>
   <li <%= "class=active" if current_page?(users_path) || current_page?(new_user_invitation_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Colaboradores <i class="fa arrow"></i><%end%>
     <ul class="sidebar-nav collapse">
-      <li> <%= link_to(users_path, class: 'nav-item nav-link') do %> Listar Usuários <% end %></li>
-      <li> <%= link_to(new_user_invitation_path, class: 'nav-item nav-link') do %> Adicionar Usuários <%end%></li>
+      <li> <%= link_to(users_path, class: 'nav-item nav-link') do %> <i class="fa fa-list-ul"></i> Listar Usuários <% end %></li>
+      <li> <%= link_to(new_user_invitation_path, class: 'nav-item nav-link') do %> <i class="fa fa-plus-square"></i>  Adicionar Usuários <%end%></li>
     </ul>
   </li>
 <% end %>
 
 <!-- City Admin Sidebar-->
 <% if current_user.try(:city_admin?) %>
+  <li <%= "class=active" if current_page?(controversies_path) %> > <%= link_to(controversies_path, class: 'nav-item nav-link') do %> <i class="fa fa-gavel"></i> Solução de Controvérsias <%end%></li>
+  <li <%= "class=active" if current_page?(faq_controversy_path) %> > <%= link_to(faq_controversy_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ <%end%></li>
   <li <%= "class=active" if current_page?(unities_path) %> > <%= link_to(unities_path, class: 'nav-item nav-link') do %> <i class="fa fa-medkit"></i> UBS <%end%></li>
-  <li <%= "class=active" if current_page?(contracts_path) %> > <%= link_to(contracts_path, class: 'nav-item nav-link') do %> <i class="fa fa-clipboard"></i> Contratos<%end%></li>
-  <li <%= "class=active" if current_page?(users_path) || current_page?(new_user_invitation_path) %> > <%= link_to(users_path, class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Colaboradores <i class="fa arrow"></i><%end%>
+  <li <%= "class=active" if current_page?(users_path) || current_page?(new_user_invitation_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Colaboradores <i class="fa arrow"></i><%end%>
     <ul class="sidebar-nav collapse">
-      <li> <%= link_to(users_path, class: 'nav-item nav-link') do %> Listar Usuários <% end %> </li>
-      <li> <%= link_to(new_user_invitation_path, class: 'nav-item nav-link') do %> Adicionar Usuários <%end%> </li>
+      <li> <%= link_to(users_path, class: 'nav-item nav-link') do %> <i class="fa fa-list-ul"></i> Listar Usuários <% end %></li>
+      <li> <%= link_to(new_user_invitation_path, class: 'nav-item nav-link') do %> <i class="fa fa-plus-square"></i>  Adicionar Usuários <%end%></li>
     </ul>
   </li>
 <% end %>
 
 <!-- UBS Admin Sidebar-->
 <% if current_user.try(:ubs_admin?) %>
+  <li <%= "class=active" if current_page?(controversies_path) %> > <%= link_to(controversies_path, class: 'nav-item nav-link') do %> <i class="fa fa-gavel"></i> Solução de Controvérsias <%end%></li>
+  <li <%= "class=active" if current_page?(faq_controversy_path) %> > <%= link_to(faq_controversy_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ <%end%></li>
   <li <%= "class=active" if current_page?(unities_path) %> > <%= link_to(unities_path, class: 'nav-item nav-link') do %> <i class="fa fa-medkit"></i> UBS <%end%></li>
-  <li <%= "class=active" if current_page?(users_path) || current_page?(new_user_invitation_path) %> > <%= link_to(users_path, class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Colaboradores <i class="fa arrow"></i><%end%>
+  <li <%= "class=active" if current_page?(users_path) || current_page?(new_user_invitation_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Colaboradores <i class="fa arrow"></i><%end%>
     <ul class="sidebar-nav collapse">
-      <li> <%= link_to(users_path, class: 'nav-item nav-link') do %> Listar Usuários <% end %> </li>
-      <li> <%= link_to(new_user_invitation_path, class: 'nav-item nav-link') do %> Adicionar Usuários <%end%> </li>
+      <li> <%= link_to(users_path, class: 'nav-item nav-link') do %> <i class="fa fa-list-ul"></i> Listar Usuários <% end %></li>
+      <li> <%= link_to(new_user_invitation_path, class: 'nav-item nav-link') do %> <i class="fa fa-plus-square"></i>  Adicionar Usuários <%end%></li>
     </ul>
   </li>
 <% end %>
 
 <!-- UBS User Sidebar-->
-<!-- Nothing -->
+<% if current_user.try(:ubs_user?) %>
+  <li <%= "class=active" if current_page?(controversies_path) %> > <%= link_to(controversies_path, class: 'nav-item nav-link') do %> <i class="fa fa-gavel"></i> Solução de Controvérsias <%end%></li>
+  <li <%= "class=active" if current_page?(faq_controversy_path) %> > <%= link_to(faq_controversy_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ <%end%></li>
+<% end %>
 
 <!-- Company Admin Sidebar-->
 <% if current_user.try(:company_admin?) %>
-  <li <%= "class=active" if current_page?(companies_path) %> > <%= link_to(companies_path, class: 'nav-item nav-link') do %> <i class="fa fa-building-o"></i> Empresa <%end%></li>
-  <li <%= "class=active" if current_page?(contracts_path) %> > <%= link_to(contracts_path, class: 'nav-item nav-link') do %> <i class="fa fa-clipboard"></i> Contratos<%end%></li>
-  <li <%= "class=active" if current_page?(users_path) || current_page?(new_user_invitation_path) %> > <%= link_to(users_path, class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Colaboradores <i class="fa arrow"></i><%end%>
+  <li <%= "class=active" if current_page?(calls_path) || current_page?(faq_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-building"></i> Apoio a Empresas <i class="fa arrow"></i><%end%>
     <ul class="sidebar-nav collapse">
-      <li> <%= link_to(users_path, class: 'nav-item nav-link') do %> Listar Usuários <% end %> </li>
-      <li> <%= link_to(new_user_invitation_path, class: 'nav-item nav-link') do %> Adicionar Usuários <%end%> </li>
+      <li> <%= link_to(calls_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Atendimentos <%end%></li>
+      <li> <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ <%end%></li>
+    </ul>
+  </li>
+  <li <%= "class=active" if current_page?(controversies_path) || current_page?(faq_controversy_path) || current_page?(feedbacks_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-gavel"></i> Solução de Controvérsias <i class="fa arrow"></i><%end%>
+    <ul class="sidebar-nav collapse">
+      <li> <%= link_to(controversies_path, class: 'nav-item nav-link') do %> <i class="fa fa-user"></i> Controvérsias <%end%></li>
+      <li> <%= link_to(faq_controversy_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ <%end%></li>
+    </ul>
+  </li>
+  <li <%= "class=active" if current_page?(companies_path) %> > <%= link_to(companies_path, class: 'nav-item nav-link') do %> <i class="fa fa-building-o"></i> Empresas <%end%></li>
+  <li <%= "class=active" if current_page?(contracts_path) %> > <%= link_to(contracts_path, class: 'nav-item nav-link') do %> <i class="fa fa-file"></i> Contratos<%end%></li>
+  <li <%= "class=active" if current_page?(users_path) || current_page?(new_user_invitation_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Colaboradores <i class="fa arrow"></i><%end%>
+    <ul class="sidebar-nav collapse">
+      <li> <%= link_to(users_path, class: 'nav-item nav-link') do %> <i class="fa fa-list-ul"></i> Listar Usuários <% end %></li>
+      <li> <%= link_to(new_user_invitation_path, class: 'nav-item nav-link') do %> <i class="fa fa-plus-square"></i>  Adicionar Usuários <%end%></li>
     </ul>
   </li>
 <% end %>
 
 <!-- Company User Sidebar-->
-<!-- Nothing -->
+<% if current_user.try(:company_user?) %>
+  <% if current_user.both? %>
+    <li <%= "class=active" if current_page?(calls_path) || current_page?(faq_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-building"></i> Apoio a Empresas <i class="fa arrow"></i><%end%>
+      <ul class="sidebar-nav collapse">
+        <li> <%= link_to(calls_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Atendimentos <%end%></li>
+        <li> <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ <%end%></li>
+      </ul>
+    </li>
+    <li <%= "class=active" if current_page?(controversies_path) || current_page?(faq_controversy_path) || current_page?(feedbacks_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-gavel"></i> Solução de Controvérsias <i class="fa arrow"></i><%end%>
+      <ul class="sidebar-nav collapse">
+        <li> <%= link_to(controversies_path, class: 'nav-item nav-link') do %> <i class="fa fa-user"></i> Controvérsias <%end%></li>
+        <li> <%= link_to(faq_controversy_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ <%end%></li>
+      </ul>
+    </li>
+  <% elsif current_user.controversies? %>
+    <li <%= "class=active" if current_page?(controversies_path) %> > <%= link_to(controversies_path, class: 'nav-item nav-link') do %> <i class="fa fa-user"></i> Controvérsias <%end%></li>
+    <li <%= "class=active" if current_page?(faq_controversy_path) %> > <%= link_to(faq_controversy_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ <%end%></li>
+  <% else %>
+    <li <%= "class=active" if current_page?(calls_path) %> > <%= link_to(calls_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Atendimentos <%end%></li>
+    <li <%= "class=active" if current_page?(faq_path) %> > <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ <%end%></li>
+  <% end %>
+<% end %>
 
 <!-- Call Center Admin Sidebar-->
 <% if current_user.try(:call_center_admin?) %>
-  <li <%= "class=active" if current_page?(users_path) || current_page?(new_user_invitation_path) %> > <%= link_to(users_path, class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Colaboradores <i class="fa arrow"></i><%end%>
+  <li <%= "class=active" if current_page?(calls_path) || current_page?(faq_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-building"></i> Apoio a Empresas <i class="fa arrow"></i><%end%>
     <ul class="sidebar-nav collapse">
-      <li> <%= link_to(users_path, class: 'nav-item nav-link') do %> Listar Usuários <% end %> </li>
-      <li> <%= link_to(new_user_invitation_path, class: 'nav-item nav-link') do %> Adicionar Usuários <%end%> </li>
+      <li> <%= link_to(calls_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Atendimentos <%end%></li>
+      <li> <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ <%end%></li>
+    </ul>
+  </li>
+  <li <%= "class=active" if current_page?(controversies_path) || current_page?(faq_controversy_path) || current_page?(feedbacks_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-gavel"></i> Solução de Controvérsias <i class="fa arrow"></i><%end%>
+    <ul class="sidebar-nav collapse">
+      <li> <%= link_to(controversies_path, class: 'nav-item nav-link') do %> <i class="fa fa-user"></i> Controvérsias <%end%></li>
+      <li> <%= link_to(faq_controversy_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ <%end%></li>
+      <li> <%= link_to(feedbacks_path, class: 'nav-item nav-link') do %> <i class="fa fa-comments"></i> Feedbacks <%end%></li>
+    </ul>
+  </li>
+  <li <%= "class=active" if current_page?(states_path) %> > <%= link_to(states_path, class: 'nav-item nav-link') do %> <i class="fa fa-globe"></i> Estados<%end%></li>
+  <li <%= "class=active" if current_page?(cities_path) %> > <%= link_to(cities_path, class: 'nav-item nav-link') do %> <i class="fa fa-map-marker"></i> Cidades<%end%></li>
+  <li <%= "class=active" if current_page?(unities_path) %> > <%= link_to(unities_path, class: 'nav-item nav-link') do %> <i class="fa fa-medkit"></i> UBS <%end%></li>
+  <li <%= "class=active" if current_page?(users_path) || current_page?(new_user_invitation_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-group"></i> Colaboradores <i class="fa arrow"></i><%end%>
+    <ul class="sidebar-nav collapse">
+      <li> <%= link_to(users_path, class: 'nav-item nav-link') do %> <i class="fa fa-list-ul"></i> Listar Usuários <% end %></li>
+      <li> <%= link_to(new_user_invitation_path, class: 'nav-item nav-link') do %> <i class="fa fa-plus-square"></i>  Adicionar Usuários <%end%></li>
     </ul>
   </li>
 <% end %>
 
 <!-- Call Center User Sidebar-->
-<!-- Nothing -->
+<% if current_user.try(:call_center_user?) %>
+  <% if current_user.both? %>
+    <li <%= "class=active" if current_page?(calls_path) || current_page?(faq_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-building"></i> Apoio a Empresas <i class="fa arrow"></i><%end%>
+      <ul class="sidebar-nav collapse">
+        <li> <%= link_to(calls_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Atendimentos <%end%></li>
+        <li> <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ <%end%></li>
+      </ul>
+    </li>
+    <li <%= "class=active" if current_page?(controversies_path) || current_page?(faq_controversy_path) || current_page?(feedbacks_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-gavel"></i> Solução de Controvérsias <i class="fa arrow"></i><%end%>
+      <ul class="sidebar-nav collapse">
+        <li> <%= link_to(controversies_path, class: 'nav-item nav-link') do %> <i class="fa fa-user"></i> Controvérsias <%end%></li>
+        <li> <%= link_to(faq_controversy_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ <%end%></li>
+      </ul>
+    </li>
+  <% elsif current_user.controversies? %>
+    <li <%= "class=active" if current_page?(controversies_path) %> > <%= link_to(controversies_path, class: 'nav-item nav-link') do %> <i class="fa fa-user"></i> Controvérsias <%end%></li>
+    <li <%= "class=active" if current_page?(faq_controversy_path) %> > <%= link_to(faq_controversy_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ <%end%></li>
+  <% else %>
+    <li <%= "class=active" if current_page?(calls_path) %> > <%= link_to(calls_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> Atendimentos <%end%></li>
+    <li <%= "class=active" if current_page?(faq_path) %> > <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-question-circle"></i> FAQ <%end%></li>
+  <% end %>
+  <li <%= "class=active" if current_page?(states_path) %> > <%= link_to(states_path, class: 'nav-item nav-link') do %> <i class="fa fa-globe"></i> Estados<%end%></li>
+  <li <%= "class=active" if current_page?(cities_path) %> > <%= link_to(cities_path, class: 'nav-item nav-link') do %> <i class="fa fa-map-marker"></i> Cidades<%end%></li>
+  <li <%= "class=active" if current_page?(unities_path) %> > <%= link_to(unities_path, class: 'nav-item nav-link') do %> <i class="fa fa-medkit"></i> UBS <%end%></li>
+<% end %>
 
 <!-- Faq inserter Sidebar-->
-<!-- Nothing -->
+<% if current_user.try(:faq_inserter?) %>
+  <% if current_user.both? || current_user.controversies? %>
+    <li <%= "class=active" if current_link?(faq_path) %> > <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-gavel"></i> FAQ - Solução de Controvérsias <%end%></li>
+  <% end %>
+  <% if current_user.both? || current_user.companies? %>
+    <li <%= "class=active" if current_link?(faq_controversy_path) %> > <%= link_to(faq_controversy_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> FAQ - Apoio a Empresas <%end%></li>
+  <% end %>
+
+<% end %>
 
 <hr/>

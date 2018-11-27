@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class AnswersController < ApplicationController
-  before_action :set_answer, only: %i[show edit update destroy]
   before_action :authenticate_user!
+  before_action :restrict_system!
+  before_action :filter_role
+  before_action :set_answer, only: %i[show edit update]
   before_action :verify_source, only: :new
-  before_action :filter_role, except: %i[faq]
   include ApplicationHelper
 
   # GET /answers
@@ -104,16 +105,6 @@ class AnswersController < ApplicationController
       redirect_to @answer, notice: 'Resposta atualizada com sucesso.'
     else
       render :edit
-    end
-  end
-
-  # DELETE /answers/1
-  # DELETE /answers/1.json
-  def destroy
-    @answer.destroy
-    respond_to do |format|
-      format.html { redirect_to answers_url, notice: 'Resposta excluída com sucesso.' }
-      format.json { head :no_content }
     end
   end
 
@@ -226,6 +217,11 @@ class AnswersController < ApplicationController
                                                 ]))[0]['octet_length']
   end
 
+  def restrict_system!
+    redirect_to denied_path if params[:action] == 'faq' && current_user.controversies?
+    redirect_to denied_path if params[:action] == 'faq_controversy' && current_user.companies?
+  end
+
   def filter_role
     action = params[:action]
     if %w[index edit update].include? action
@@ -233,7 +229,7 @@ class AnswersController < ApplicationController
     elsif %w[new create destroy].include? action
       redirect_to denied_path unless admin_support_faq?
     else
-      show_or_faq?(action)
+      show?(action)
     end
   end
 
@@ -245,12 +241,8 @@ class AnswersController < ApplicationController
     admin? || support_user? || faq_inserter?
   end
 
-  def show_or_faq?(action)
-    if action == 'show'
-      redirect_to denied_path unless alloweds_users_to_show?
-    elsif action == 'faq'
-      redirect_to denied_path if city_user? || ubs_user?
-    end
+  def show?(action)
+    redirect_to denied_path if action == 'show' && !alloweds_users_to_show?
   end
 
   def alloweds_users_to_show?

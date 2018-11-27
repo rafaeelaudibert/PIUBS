@@ -15,7 +15,8 @@ def seed_users
 
   if User.new(cpf: CPF.generate, name: 'Admin Master',
               email: 'admin@piubs.com', role: 'admin', sei: 0,
-              password: 'changeme', password_confirmation: 'changeme').save
+              password: 'changeme', password_confirmation: 'changeme',
+              system: :both).save
     User.roles.each do |role|
       # Prevent from creating this, as they will be/have already been handled
       next if %w[admin company_admin company_user].include? role[0]
@@ -23,7 +24,13 @@ def seed_users
       email = role[0] + '@piubs.com'
       user = User.new(cpf: CPF.generate, name: role[0].capitalize,
                       email: email, role: role[0],
-                      password: 'changeme', password_confirmation: 'changeme')
+                      password: 'changeme', password_confirmation: 'changeme',
+                      system: if ['call_center_admin', 'call_center_user'].include? role[0]
+                                :both
+                              else
+                                :companies
+                              end
+                      )
       if user.save
         Rails.logger.debug("User #{email} was created successfuly!")
       else
@@ -46,7 +53,8 @@ def seed_company_user(company, role_name)
                   email: email,
                   password: 'changeme',
                   password_confirmation: 'changeme',
-                  role: role_name)
+                  role: role_name,
+                  system: :both)
   if user.save
     Rails.logger.debug("User #{email} was created successfuly!")
   else
@@ -169,6 +177,9 @@ def seed_categories
   category = Category.new # placeholder
 
   begin
+
+    ## APOIO A EMPRESAS CATEGORIES
+    ############
     category = Category.new(name: 'Orientações básicas sobre a estratégia e-SUS AB',
                             severity: :low, source: 0).save!
     category = Category.new(name: 'Orientações básicas sobre a utilização do sistema',
@@ -229,6 +240,13 @@ def seed_categories
                             parent: catg_pec,
                             parent_depth: 1 + catg_pec.parent_depth,
                             source: 0).save!
+
+    ## SOLUCAO DE CONTROVERSIAS CATEGORIES
+    ##################
+    category = Category.new(name: 'Hardware',
+                            severity: :low, source: 1).save!
+    category = Category.new(name: 'Software',
+                            severity: :low, source: 1).save!
   rescue StandardError
     Rails.logger.error('ERROR creating a CATEGORY')
     Rails.logger.error(category.errors.full_messages)
@@ -317,7 +335,7 @@ def seed_controversies
                                   creator: 'company',
                                   company_user_id: User.where(sei: company.sei).sample.id,
                                   city_user_id: User.where(city: city, cnes: nil).sample.try(:id),
-                                  unity_user_id: Random.rand > 0.6 ? User.where(cnes: unity.cnes).sample.try(:id) : nil,
+                                  unity_user_id: Random.rand > 0.6 ? User.where(cnes: unity.try(:cnes)).sample.try(:id) : nil,
                                   id: protocol)
     if controversy.save
       Rails.logger.debug('Inserted a new controversy')

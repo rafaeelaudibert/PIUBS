@@ -1,1 +1,1 @@
-json.error_message "We're sorry, but something went wrong."
+json.error_message 'Nos desculpe, algo deu errado.'

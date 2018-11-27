@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class ControversiesController < ApplicationController
+  before_action :authenticate_user!
+  before_action :restrict_system!
+  before_action :filter_role
   before_action :set_controversy, except: %i[index new create]
   before_action :set_user, only: %i[company_user city_user support_user unity_user]
-  before_action :authenticate_user!
-  before_action :filter_role
 
   # GET /controversies
   # GET /controversies.json
@@ -44,9 +45,6 @@ class ControversiesController < ApplicationController
     # rubocop:enable Style/GuardClause
   end
 
-  # GET /controversies/1/edit
-  def edit; end
-
   # POST /controversies
   # POST /controversies.json
   def create
@@ -62,30 +60,6 @@ class ControversiesController < ApplicationController
       redirect_to @controversy, notice: 'Controvérsia criada com sucesso.'
     else
       render :new
-    end
-  end
-
-  # PATCH/PUT /controversies/1
-  # PATCH/PUT /controversies/1.json
-  def update
-    respond_to do |format|
-      if @controversy.update(controversy_params)
-        format.html { redirect_to @controversy, notice: 'Controvérsia atualizada com sucesso' }
-        format.json { render :show, status: :ok, location: @controversy }
-      else
-        format.html { render :edit }
-        format.json { render json: @controversy.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /controversies/1
-  # DELETE /controversies/1.json
-  def destroy
-    @controversy.destroy
-    respond_to do |format|
-      format.html { redirect_to controversies_url, notice: 'Controvérsia apagada com sucesso' }
-      format.json { head :no_content }
     end
   end
 
@@ -261,15 +235,13 @@ class ControversiesController < ApplicationController
                                         :files)
   end
 
+  def restrict_system!
+    redirect_to denied_path unless current_user.both? || current_user.controversies?
+  end
+
   def filter_role
     redirect_to denied_path if faq_inserter?
-
-    action = params[:action]
-    if %w[edit update].include? action
-      redirect_to denied_path unless admin?
-    elsif action == 'show'
-      redirect_if_not_in_call
-    end
+    redirect_if_not_in_call if params[:action] == 'show'
   end
 
   def redirect_if_not_in_call

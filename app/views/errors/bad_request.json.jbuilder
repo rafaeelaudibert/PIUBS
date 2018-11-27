@@ -1,1 +1,1 @@
-json.error_message "The service received a incomplete request."
+json.error_message 'O serviço recebeu uma requisição incompleta'
