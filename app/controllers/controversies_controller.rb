@@ -2,6 +2,7 @@
 
 class ControversiesController < ApplicationController
   before_action :authenticate_user!
+  before_action :restrict_system!
   before_action :filter_role
   before_action :set_controversy, except: %i[index new create]
   before_action :set_user, only: %i[company_user city_user support_user unity_user]
@@ -259,6 +260,10 @@ class ControversiesController < ApplicationController
                                         :unity_user_id, :creator, :category, :complexity,
                                         :support_1_id, :support_2_id, :user_creator, :feedback,
                                         :files)
+  end
+
+  def restrict_system!
+    redirect_to denied_path unless current_user.both? || current_user.controversies?
   end
 
   def filter_role

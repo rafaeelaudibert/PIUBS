@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class FeedbacksController < ApplicationController
-  before_action :authenticate_user
+  before_action :authenticate_user!
+  before_action :restrict_system!
   before_action :filter_role
 
   # GET /feedbacks
@@ -69,6 +70,10 @@ class FeedbacksController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def feedback_params
     params.require(:feedback).permit(:description, :controversy_id, :files)
+  end
+
+  def restrict_system!
+    redirect_to denied_path unless current_user.both? || current_user.controversies?
   end
 
   def filter_role
