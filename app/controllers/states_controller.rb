@@ -3,7 +3,6 @@
 class StatesController < ApplicationController
   before_action :authenticate_user!
   before_action :filter_role
-  before_action :set_state, only: %i[show edit update destroy]
   include ApplicationHelper
 
   # GET /states
