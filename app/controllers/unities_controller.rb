@@ -3,7 +3,7 @@
 class UnitiesController < ApplicationController
   before_action :authenticate_user!
   before_action :filter_role
-  before_action :set_unity, only: %i[show destroy]]
+  before_action :set_unity, only: %i[show destroy]
   include ApplicationHelper
 
   # GET /unities
