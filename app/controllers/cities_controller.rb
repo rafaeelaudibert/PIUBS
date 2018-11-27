@@ -11,8 +11,7 @@ class CitiesController < ApplicationController
     (@filterrific = initialize_filterrific(
       City,
       params[:filterrific],
-      select_options: { # em breve
-      },
+      select_options: options_for_filterrific,
       persistence_id: false
     )) || return
     @cities = @filterrific.find.joins(:state).order('states.name', 'cities.name')
@@ -66,6 +65,13 @@ class CitiesController < ApplicationController
   end
 
   private
+
+  def options_for_filterrific
+    {
+      with_state: State.all.map { |s| [s.name, s.id] },
+      sorted_by_name: City.all.options_for_sorted_by_name
+    }
+  end
 
   # Never trust parameters from internet, only allow the white list through.
   def city_params
