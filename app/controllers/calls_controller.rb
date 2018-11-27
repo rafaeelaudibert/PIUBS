@@ -2,7 +2,7 @@
 
 class CallsController < ApplicationController
   before_action :authenticate_user!
-  before_action :restrict_system
+  before_action :restrict_system!
   before_action :filter_role
   before_action :set_call, only: %i[show edit update destroy]
   before_action :set_company, only: %i[create new]
@@ -213,7 +213,7 @@ class CallsController < ApplicationController
                                  :company_id, :cnes, :files)
   end
 
-  def restrict_system
+  def restrict_system!
     redirect_to denied_path unless current_user.both? || current_user.companies?
   end
 

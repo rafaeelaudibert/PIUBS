@@ -2,7 +2,7 @@
 
 class AnswersController < ApplicationController
   before_action :authenticate_user!
-  before_action :restrict_system
+  before_action :restrict_system!
   before_action :filter_role
   before_action :set_answer, only: %i[show edit update]
   before_action :verify_source, only: :new
@@ -217,7 +217,7 @@ class AnswersController < ApplicationController
                                                 ]))[0]['octet_length']
   end
 
-  def restrict_system
+  def restrict_system!
     redirect_to denied_path if params[:action] == 'faq' && current_user.controversies?
     redirect_to denied_path if params[:action] == 'faq_controversy' && current_user.companies?
   end
