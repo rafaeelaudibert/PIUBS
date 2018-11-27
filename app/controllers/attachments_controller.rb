@@ -2,8 +2,9 @@
 
 class AttachmentsController < ApplicationController
   protect_from_forgery
-  before_action :set_attachment, only: %i[show edit update destroy download]
+  before_action :authenticate_user!
   before_action :filter_role
+  before_action :set_attachment, only: %i[show edit update destroy download]
   include ApplicationHelper
 
   # GET /attachments

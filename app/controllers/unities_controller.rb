@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class UnitiesController < ApplicationController
-  before_action :set_unity, only: %i[show edit update destroy]
   before_action :authenticate_user!
   before_action :filter_role
+  before_action :set_unity, only: %i[show edit update destroy]
   include ApplicationHelper
 
   # GET /unities

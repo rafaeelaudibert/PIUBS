@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class ControversiesController < ApplicationController
-  before_action :set_controversy, except: %i[index new create]
-  before_action :set_user, only: %i[company_user city_user support_user unity_user]
   before_action :authenticate_user!
   before_action :filter_role
+  before_action :set_controversy, except: %i[index new create]
+  before_action :set_user, only: %i[company_user city_user support_user unity_user]
 
   # GET /controversies
   # GET /controversies.json

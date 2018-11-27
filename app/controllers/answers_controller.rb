@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class AnswersController < ApplicationController
-  before_action :set_answer, only: %i[show edit update destroy]
   before_action :authenticate_user!
-  before_action :verify_source, only: :new
   before_action :filter_role, except: %i[faq]
+  before_action :set_answer, only: %i[show edit update destroy]
+  before_action :verify_source, only: :new
   include ApplicationHelper
 
   # GET /answers
