@@ -3,8 +3,8 @@
 class AnswersController < ApplicationController
   before_action :authenticate_user!
   before_action :restrict_system!
-  before_action :filter_role
   before_action :set_answer, only: %i[show edit update]
+  before_action :filter_role
   before_action :verify_source, only: :new
   include ApplicationHelper
 
