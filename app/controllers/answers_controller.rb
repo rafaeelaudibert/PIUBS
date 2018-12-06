@@ -18,7 +18,10 @@ class AnswersController < ApplicationController
       },
       persistence_id: false
     )) || return
-    @answers = @filterrific.find.order(:category_id).page(params[:page])
+    @answers = @filterrific.find
+                           .joins(:category)
+                           .order('categories.name', :question, :answer)
+                           .page(params[:page])
   end
 
   # get /faq
@@ -34,7 +37,8 @@ class AnswersController < ApplicationController
 
     @answers = Answer.where(faq: true, source: :from_call)
                      .filterrific_find(@filterrific)
-                     .order(:category_id)
+                     .joins(:category)
+                     .order('categories.name', :question, :answer)
                      .page(params[:page])
   end
 
@@ -51,7 +55,8 @@ class AnswersController < ApplicationController
 
     @answers = Answer.where(faq: true, source: :from_controversy)
                      .filterrific_find(@filterrific)
-                     .order(:category_id)
+                     .joins(:category)
+                     .order('categories.name', :question, :answer)
                      .page(params[:page])
   end
 
