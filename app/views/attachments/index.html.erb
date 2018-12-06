@@ -3,7 +3,7 @@
 <%end%>
 
 <% if @attachments.length > 0 %>
-  <%= render './pagination', value: @attachments %>
+  <%= render './pagination', value: @attachments, position: :top %>
   <table class="table table-striped table-hover">
     <thead class="thead-dark">
       <tr>
@@ -21,7 +21,7 @@
       <% end %>
     </tbody>
   </table>
-  <%= render './pagination', value: @attachments %>
+  <%= render './pagination', value: @attachments, position: :bottom %>
 <% else %>
     <h4> Ainda não existem anexos no sistema! </h4>
 <% end %>

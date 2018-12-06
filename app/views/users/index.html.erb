@@ -99,6 +99,7 @@
 
 <div id="filterrific_results">
 <% if @users.length > 0 %>
+  <%= render './pagination', value: @users, position: :top %>
   <table class="table table-bordered table-striped table-hover table-users">
     <thead class="thead-dark">
       <tr>
@@ -120,6 +121,7 @@
         <% end %>
       </tbody>
   </table>
+  <%= render './pagination', value: @users, position: :bottom %>
 <% else %>
   <h3> Não existem usuários com os filtros selecionados </h3>
 <% end %>

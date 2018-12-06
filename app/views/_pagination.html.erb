@@ -1,6 +1,15 @@
-<div class="digg_pagination">
-  <div class="page_info">
-    <%= page_entries_info value%>
+<% if local_assigns[:position] == :top %>
+  <div class="row justify-content-center">
+      <%= page_entries_info value %>
   </div>
-  <%= will_paginate value, :previous_label => '<<', :next_label => '>>', inner_window: 2, outer_window: 0 %>
+<% end %>
+
+<div class="row justify-content-center">
+  <%= will_paginate value, :previous_label => '<<', :next_label => '>>', inner_window: 3, outer_window: 0 %>
 </div>
+
+<% if local_assigns[:position] == :bottom %>
+  <div class="row justify-content-center">
+      <%= page_entries_info value %>
+  </div>
+<% end %>

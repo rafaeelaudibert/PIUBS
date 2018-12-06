@@ -88,3 +88,4 @@ gem 'tinymce-rails-langs'       # Language packs for TinyMCE Text Editor
 gem 'validators'                # Validators, such as CPF/e-mail
 gem 'whenever', require: false  # Cron-like jobs
 gem 'will_paginate', '~> 3.1.0' # Pagination
+gem 'will_paginate-bootstrap4'  # Bootstrap for pagination

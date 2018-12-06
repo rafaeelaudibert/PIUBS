@@ -32,7 +32,7 @@
 
 <div id="filterrific_results">
   <% if @replies.length > 0 %>
-  <%= render './pagination', value: @replies %>
+  <%= render './pagination', value: @replies, position: :top %>
   <table class="table table-striped table-hover">
     <thead class="thead-dark">
       <tr>
@@ -56,7 +56,7 @@
       <% end %>
     </tbody>
   </table>
-  <%= render './pagination', value: @replies %>
+  <%= render './pagination', value: @replies, position: :bottom %>
   <% else %>
     <h3>
       Não existe nenhuma resposta com o termo pesquisado

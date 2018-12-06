@@ -56,7 +56,7 @@
 <div id="filterrific_results">
 
   <% if @cities.length > 0 %>
-    <%= render './pagination', value: @cities %>
+    <%= render './pagination', value: @cities, position: :top %>
     <table class="table table-striped table-hover">
       <thead class="thead-dark">
         <tr>
@@ -75,7 +75,7 @@
         <% end %>
       </tbody>
     </table>
-    <%= render './pagination', value: @cities %>
+    <%= render './pagination', value: @cities, position: :bottom %>
   <% else %>
     <h3>
       Não existe nenhuma cidade com a pesquisa realizada
