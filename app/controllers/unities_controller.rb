@@ -2,9 +2,9 @@
 
 class UnitiesController < ApplicationController
   before_action :authenticate_user!
-  before_action :filter_role
   before_action :set_unity, only: %i[show destroy]
   include ApplicationHelper
+  load_and_authorize_resource
 
   # GET /unities
   def index
@@ -16,6 +16,8 @@ class UnitiesController < ApplicationController
       persistence_id: false
     )) || return
     @unities = @filterrific.find.joins(:city).order('cities.name', 'name').page(params[:page])
+    puts '----------------------------------'
+    puts can? :show, @unities
   end
 
   # GET /unities/1
@@ -68,12 +70,7 @@ class UnitiesController < ApplicationController
     params.require(:unity).permit(:cnes, :name, :city_id)
   end
 
-  def filter_role
-    action = params[:action]
-    if %w[new create destroy show].include? action
-      redirect_to denied_path unless admin?
-    elsif %w[index show].include? action
-      redirect_to denied_path unless admin? || support_user?
-    end
+  def current_ability
+    @current_ability ||= UnityAbility.new(current_user)
   end
 end
