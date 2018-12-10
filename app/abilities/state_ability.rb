@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class StateAbility
   include CanCan::Ability
   include ApplicationHelper

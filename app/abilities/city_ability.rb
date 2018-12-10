@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CityAbility
   include CanCan::Ability
   include ApplicationHelper
