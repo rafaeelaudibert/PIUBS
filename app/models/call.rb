@@ -3,6 +3,7 @@
 class Call < ApplicationRecord
   before_create :generate_id
   before_create :generate_protocol
+  after_save :send_mail
 
   belongs_to :city
   belongs_to :category
@@ -116,5 +117,9 @@ class Call < ApplicationRecord
 
   def generate_protocol
     self.protocol = 0.seconds.from_now.strftime('%Y%m%d%H%M%S%L').to_i
+  end
+
+  def send_mail
+    CallMailer.new_call(self, user).deliver_later
   end
 end
