@@ -2,8 +2,8 @@
 
 class CitiesController < ApplicationController
   before_action :authenticate_user!
-  before_action :filter_role
   include ApplicationHelper
+  load_and_authorize_resource
 
   # GET /cities
   # GET /cities.json
@@ -78,12 +78,7 @@ class CitiesController < ApplicationController
     params.require(:city).permit(:name, :state_id)
   end
 
-  def filter_role
-    action = params[:action]
-    if %w[new create].include? action
-      redirect_to denied_path unless admin?
-    elsif %w[index show].include? action
-      redirect_to denied_path unless admin? || support_user?
-    end
+  def current_ability
+    @current_ability ||= CityAbility.new(current_user)
   end
 end
