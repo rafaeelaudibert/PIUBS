@@ -178,8 +178,8 @@ en:
         other: "Mostrando %{count} %{model}"
       single_page_html:
         zero:  "Modelo %{model} não encontrado"
-        one:   "Mostrando <b>1</b> %{model}"
-        other: "Mostrando <b>%{count}</b> %{model}"
+        one:   "Mostrando <b&nbsp;>1&nbsp;</b> %{model}"
+        other: "Mostrando <b>&nbsp;%{count}&nbsp;</b> %{model}"
 
       multi_page: "Mostrando %{model} %{from} até %{to} de %{count} no total"
-      multi_page_html: "Mostrando %{model} <b>%{from}&nbsp;até&nbsp;%{to}</b> de <b>%{count}</b> no total"
+      multi_page_html: "Mostrando %{model} <b>&nbsp;%{from}&nbsp;até&nbsp;%{to}&nbsp;</b> de <b>&nbsp;%{count}&nbsp;</b> no total"

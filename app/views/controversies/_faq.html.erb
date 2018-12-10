@@ -12,113 +12,125 @@
   <div id="table" class="m-2" style="max-height: 600px; overflow-y: scroll; padding: 5px"></div>
 
   <script>
-      let textField = document.getElementById('search_field');
-      let tableDiv = document.getElementById('table');
+    function searchQuery() {
+      const arr = $("#search_field").val().match(/\S+/g);
 
-      function triggerSearch(event) {
-          let str = $("#search_field").val();
-          if (event.which === 13) {
-              event.preventDefault();
-          } else if (event.which === 8) {
-              if (str === '') {
-                  tableDiv.innerHTML = "";
+      if (arr && arr.length >= 1) {
+        jQuery.ajax({
+          url: '/answers/query_call/' + textField.value,
+          type: "GET",
+          dataType: "json",
+          success: data => {
+            if (data.length > 0) {
+              let parsedHTML = "";
+
+              //Add the data rows.
+              for (let entry of data) {
+                const header = '<div class="card card-default"><div class="card-header"><div class="header-block">';
+                const title = '<p class="title"><em class="fa fa-question-circle mr-2"></em> <strong>' + entry.question + '</strong></p></div></div>';
+                const content = '<div class="card-block"><p>' + entry.answer + '</p>';
+                const view = '<a href="/answers/' + entry.id + '"class="btn btn-primary btn-sm right" target="_blank"> <em class="fa fa-eye"></em> Mostrar</a></div></div>';
+                parsedHTML += header + title + content + view;
               }
-          }
 
-          if (str) {
-              let arr = str.match(/\S+/g);
-
-              if (arr.length >= 1) {
-                  jQuery.ajax({
-                      url: '/answers/query_controversy/' + textField.value.split('.').join(' '),
-                      type: "GET",
-                      dataType: "json",
-                      success: data => {
-                          if (data.length > 0) {
-                              tableDiv.innerHTML = "";
-                              //Add the data rows.
-                              for (let entry of data) {
-                                  // let row = table.insertRow(-1);
-                                  let header = '<div class="card card-default"><div class="card-header"><div class="header-block">';
-                                  let title = '<p class="title"><em class="fa fa-question-circle mr-2"></em> <strong>' + entry.question + '</strong></p></div></div>';
-                                  let content = '<div class="card-block"><p>' + entry.answer + '</p>';
-                                  let view = '<a href="/answers/' + entry.id + '" class="btn btn-primary btn-sm right" target="_blank"> <em class="fa fa-eye"></em> Mostrar</a></div></div>';
-                                  tableDiv.innerHTML += header + title + content + view;
-                              }
-                          } else if (textField !== 0) {
-                              tableDiv.innerHTML = "Não há questões no FAQ sobre essa pergunta"
-                          }
-                      }
-                  })
-              } else {
-                  tableDiv.innerHTML = "Você precisa fazer uma pesquisa com no mínimo 1 palavra";
-              }
+              tableDiv.innerHTML = parsedHTML;
+            } else {
+              tableDiv.innerHTML = "Não há questões no FAQ sobre essa pergunta"
+            }
           }
+        })
+      } else {
+        tableDiv.innerHTML = "Você precisa fazer uma pesquisa com no mínimo 4 letras";
       }
+    }
 
-      $("#search_field").keyup(triggerSearch);
-      $('#search_button').click(triggerSearch);
+    function triggerSearch(e) {
+      {
+        const str = $("#search_field").val();
 
-      const faq_click = button => {
-          const answer = button.parentNode.parentNode.children[2].innerHTML;
-          const id = button.parentNode.parentNode.children[0].innerHTML;
+        if (e.which == 13) { // Enter
+          e.preventDefault();
+        }
+        else if (e.which == 8 && str == '') { // Backspace com string vazia
+          tableDiv.innerHTML = "";
+        }
 
-          $.ajax({
-              url: '/answers/attachments/' + id,
-              type: "GET",
-              dataType: "json",
-              success: data => {
-                  const dropzone = $('#reply-dropzone')[0].dropzone
-                  tinyMCE.get('tinymce').setContent(`${answer}<br/><br>Essa resposta foi retirada do FAQ. Ela estava disponível <a href="/answers/${id}" target='_blank'>aqui</a></b>`);
+        if (str.length % 4 == 0) { // Query
+          searchQuery();
+        }
 
-                  // Fake their adittion in the reply-dropzone
-                  dropzone.removeAllFiles();
-                  data.forEach( val => {
-                      const mockFile = {
-                          name: val.filename,
-                          size: val.bytes,
-                          type: val.type,
-                          accepted: true            // required if using 'MaxFiles' option
-                      };
-
-                      dropzone.files.push(mockFile);
-                      dropzone.emit('addedfile', mockFile);
-                      dropzone.emit('complete', mockFile);
-                      $(dropzone.files[dropzone.files.length - 1]
-                          .previewElement).find('.dz-remove').attr('id', val.id);
-                  })
-
-                  // Set the ids
-                  replyFileIds = data.map(val => val.id).reduce((acc, val) => acc.concat(val), [])
-                  $('#uuid-files-reply').val(replyFileIds);
-
-                  // Updates the divs
-                  $("#reply_box").show(200);
-                  $("#faq_box").hide(200);
-                  $("#on-faq").prop('checked', true);
-              }
-          });
+        clearTimeout(timeout);
+        timeout = setTimeout(() => searchQuery(), 300);
       }
+    }
 
-      $('document').ready(function () {
+    const tableDiv = document.getElementById('table');
+    const textField = document.getElementById('search_field');
+    let timeout;
 
-          $('#search_field').on('focusout', function () {
-              changeState($(this));
-          });
+    $("#search_field").keyup(triggerSearch);
+    $('#search_button').click(triggerSearch);
 
-          function changeState(form) {
-              if (form.val().length > 0) {
-                  form.addClass('has-value');
-              } else {
-                  form.removeClass('has-value');
-              }
-          }
+    const faq_click = button => {
+        const answer = button.parentNode.parentNode.children[2].innerHTML;
+        const id = button.parentNode.parentNode.children[0].innerHTML;
 
-          const questionTitle = "<%= @controversy.title %>";
-          textField.value = questionTitle;
-          $('#search_button').trigger('click');
-          $('#search_field').trigger('focusout');
-      });
+        $.ajax({
+            url: '/answers/attachments/' + id,
+            type: "GET",
+            dataType: "json",
+            success: data => {
+                const dropzone = $('#reply-dropzone')[0].dropzone
+                tinyMCE.get('tinymce').setContent(`${answer}<br/><br>Essa resposta foi retirada do FAQ. Ela estava disponível <a href="/answers/${id}" target='_blank'>aqui</a></b>`);
+
+                // Fake their adittion in the reply-dropzone
+                dropzone.removeAllFiles();
+                data.forEach( val => {
+                    const mockFile = {
+                        name: val.filename,
+                        size: val.bytes,
+                        type: val.type,
+                        accepted: true            // required if using 'MaxFiles' option
+                    };
+
+                    dropzone.files.push(mockFile);
+                    dropzone.emit('addedfile', mockFile);
+                    dropzone.emit('complete', mockFile);
+                    $(dropzone.files[dropzone.files.length - 1]
+                        .previewElement).find('.dz-remove').attr('id', val.id);
+                })
+
+                // Set the ids
+                replyFileIds = data.map(val => val.id).reduce((acc, val) => acc.concat(val), [])
+                $('#uuid-files-reply').val(replyFileIds);
+
+                // Updates the divs
+                $("#reply_box").show(200);
+                $("#faq_box").hide(200);
+                $("#on-faq").prop('checked', true);
+            }
+        });
+    }
+
+    $('document').ready(function () {
+
+        $('#search_field').on('focusout', function () {
+            changeState($(this));
+        });
+
+        function changeState(form) {
+            if (form.val().length > 0) {
+                form.addClass('has-value');
+            } else {
+                form.removeClass('has-value');
+            }
+        }
+
+        const questionTitle = "<%= @controversy.title.split('.')[0] %>";
+        textField.value = questionTitle;
+        $('#search_button').trigger('click');
+        $('#search_field').trigger('focusout');
+    });
 
   </script>
 <% end %>

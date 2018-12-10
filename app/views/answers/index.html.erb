@@ -32,7 +32,7 @@
 <div id="filterrific_results">
 
   <% if @answers.length > 0 %>
-    <%= render './pagination', value: @answers %>
+    <%= render './pagination', value: @answers, position: :top %>
     <table class="table table-striped table-hover">
       <thead class="thead-dark">
         <tr>
@@ -58,7 +58,7 @@
         <% end %>
       </tbody>
     </table>
-    <%= render './pagination', value: @answers %>
+    <%= render './pagination', value: @answers, position: :bottom %>
   <% else %>
     <h4 class="mt-4"> Não há respostas finais para esses filtros </h4>
   <% end %>

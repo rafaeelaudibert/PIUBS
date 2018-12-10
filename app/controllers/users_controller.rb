@@ -15,7 +15,7 @@ class UsersController < ApplicationController
                                           select_options: create_options_for_filterrific,
                                           persistence_id: false) || return
 
-    @users = allowed_users
+    @users = allowed_users.page(params[:page])
   end
 
   def show

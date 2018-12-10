@@ -13,49 +13,62 @@
 <div id="table" class="m-2" style="max-height: 600px; overflow-y: scroll; padding: 5px"></div>
 
 <script>
-  let textField = document.getElementById('search_field');
-  let tableDiv = document.getElementById('table');
 
-  function triggerSearch(event) {
-      let str = $("#search_field").val();
-      if (event.which === 13) {
-          event.preventDefault();
-      } else if (event.which === 8) {
-          if (str === '') {
-              tableDiv.innerHTML = "";
-          }
-      }
+  function searchQuery() {
+    const arr = $("#search_field").val().match(/\S+/g);
 
-      if (str) {
-          let arr = str.match(/\S+/g);
+    if (arr && arr.length >= 1) {
+      jQuery.ajax({
+        url: '/answers/query_call/' + textField.value,
+        type: "GET",
+        dataType: "json",
+        success: data => {
+          if (data.length > 0) {
+            let parsedHTML = "";
 
-          if (arr.length >= 1) {
-              jQuery.ajax({
-                  url: '/answers/query_call/' + textField.value.split('.').join(' '),
-                  type: "GET",
-                  dataType: "json",
-                  success: data => {
-                      if (data.length > 0) {
-                          tableDiv.innerHTML = "";
-                          //Add the data rows.
-                          for (let entry of data) {
-                              // let row = table.insertRow(-1);
-                              let header = '<div class="card card-default"><div class="card-header"><div class="header-block">';
-                              let title = '<p class="title"><em class="fa fa-question-circle mr-2"></em> <strong>' + entry.question + '</strong></p></div></div>';
-                              let content = '<div class="card-block"><p>' + entry.answer + '</p>';
-                              let view = '<a href="/answers/' + entry.id + '" class="btn btn-primary btn-sm right" target="_blank"> <em class="fa fa-eye"></em> Mostrar</a></div></div>';
-                              tableDiv.innerHTML += header + title + content + view;
-                          }
-                      } else if (textField !== 0) {
-                          tableDiv.innerHTML = "Não há questões no FAQ sobre essa pergunta"
-                      }
-                  }
-              })
+            //Add the data rows.
+            for (let entry of data) {
+              const header = '<div class="card card-default"><div class="card-header"><div class="header-block">';
+              const title = '<p class="title"><em class="fa fa-question-circle mr-2"></em> <strong>' + entry.question + '</strong></p></div></div>';
+              const content = '<div class="card-block"><p>' + entry.answer + '</p>';
+              const view = '<a href="/answers/' + entry.id + '"class="btn btn-primary btn-sm right" target="_blank"> <em class="fa fa-eye"></em> Mostrar</a></div></div>';
+              parsedHTML += header + title + content + view;
+            }
+
+            tableDiv.innerHTML = parsedHTML;
           } else {
-              tableDiv.innerHTML = "Você precisa fazer uma pesquisa com no mínimo 1 palavra";
+            tableDiv.innerHTML = "Não há questões no FAQ sobre essa pergunta"
           }
-      }
+        }
+      })
+    } else {
+      tableDiv.innerHTML = "Você precisa fazer uma pesquisa com no mínimo 4 letras";
+    }
   }
+
+  function triggerSearch(e) {
+    {
+      const str = $("#search_field").val();
+
+      if (e.which == 13) { // Enter
+        e.preventDefault();
+      }
+      else if (e.which == 8 && str == '') { // Backspace com string vazia
+        tableDiv.innerHTML = "";
+      }
+
+      if (str.length % 4 == 0) { // Query
+        searchQuery();
+      }
+
+      clearTimeout(timeout);
+      timeout = setTimeout(() => searchQuery(), 300);
+    }
+  }
+
+  const tableDiv = document.getElementById('table');
+  const textField = document.getElementById('search_field');
+  let timeout;
 
   $("#search_field").keyup(triggerSearch);
   $('#search_button').click(triggerSearch);
@@ -115,7 +128,7 @@
       }
     }
 
-    const questionTitle = "<%= @call.title %>";
+    const questionTitle = "<%= @call.title.split('.')[0] %>";
     textField.value = questionTitle;
     $('#search_button').trigger('click');
     $('#search_field').trigger('focusout');

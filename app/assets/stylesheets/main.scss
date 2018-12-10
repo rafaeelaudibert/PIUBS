@@ -133,51 +133,10 @@ hr.under-header {
 }
 // PAGINATION \\
 
-.digg_pagination {
-  margin-top: 1rem;
-  font-size: 1rem;
-  text-align: center;
+.page-item.disabled .page-link {
+  color: #abb1b7 !important;
 }
 
-.pagination {
-  min-width: 1.5rem;
-
-  a {
-    color: gray;
-    text-decoration: none;
-  }
-
-  .current {
-    text-align: center;
-    color: white;
-    background-color: #3a4651 !important;
-  }
-
-  span {
-    min-width: inherit;
-    color: #ddd !important;
-    border: 1px solid #ddd;
-  }
-}
-
-.pagination a,
-em {
-  padding: 0 0.1rem;
-  font-style: normal;
-  margin: 1px;
-}
-
-.pagination a,
-em ~ a {
-  border: 1px solid gray;
-}
-
-.next_page,
-.next_page_disabled,
-.previous_page,
-.previous_page_disabled {
-  border: 1px solid gray;
-}
 //TABLES
 
 table.table {

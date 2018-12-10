@@ -170,10 +170,10 @@
 <!-- Faq inserter Sidebar-->
 <% if current_user.try(:faq_inserter?) %>
   <% if current_user.both? || current_user.controversies? %>
-    <li <%= "class=active" if current_link?(faq_path) %> > <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-gavel"></i> FAQ - Solução de Controvérsias <%end%></li>
+    <li <%= "class=active" if current_page?(faq_controversy_path) %> > <%= link_to(faq_controversy_path, class: 'nav-item nav-link') do %> <i class="fa fa-gavel"></i> FAQ - Solução de Controvérsias <%end%></li>
   <% end %>
   <% if current_user.both? || current_user.companies? %>
-    <li <%= "class=active" if current_link?(faq_controversy_path) %> > <%= link_to(faq_controversy_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> FAQ - Apoio a Empresas <%end%></li>
+    <li <%= "class=active" if current_page?(faq_path) %> > <%= link_to(faq_path, class: 'nav-item nav-link') do %> <i class="fa fa-headphones"></i> FAQ - Apoio a Empresas <%end%></li>
   <% end %>
 
 <% end %>

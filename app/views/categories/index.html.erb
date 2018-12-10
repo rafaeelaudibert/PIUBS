@@ -10,7 +10,7 @@
 <div id="filterrific_results">
 
   <% if @categories.length > 0 %>
-  <%= render './pagination', value: @categories %>
+  <%= render './pagination', value: @categories, position: :top %>
   <table class="table table-striped table-hover">
     <thead class="thead-dark">
       <tr>
@@ -34,7 +34,7 @@
     <% end %>
   </tbody>
   </table>
-  <%= render './pagination', value: @unities %>
+  <%= render './pagination', value: @categories, position: :bottom %>
   <% end %>
 </div>
 <hr/>
