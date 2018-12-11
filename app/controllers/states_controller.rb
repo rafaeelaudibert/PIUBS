@@ -3,7 +3,9 @@
 class StatesController < ApplicationController
   before_action :authenticate_user!
   include ApplicationHelper
+
   load_and_authorize_resource
+  skip_authorize_resource only: :cities
 
   # GET /states
   # GET /states.json
@@ -39,6 +41,14 @@ class StatesController < ApplicationController
     else
       render :new
     end
+  end
+
+  # GET /states/1/cities
+  def cities
+    @state = State.find(params[:id])
+    authorize! :make_api_calls, @state
+
+    render json: @state.cities.order('name ASC')
   end
 
   private

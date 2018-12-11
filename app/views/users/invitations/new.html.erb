@@ -92,7 +92,7 @@
 
 
           stateSelect.addEventListener('change', () => jQuery.ajax({
-            url: '/cities/states/' + stateSelect.value,
+            url: `/states/${stateSelect.value}/cities`,
             type: "GET",
             dataType: "json",
             success: insertCityData

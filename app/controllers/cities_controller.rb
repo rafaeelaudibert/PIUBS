@@ -3,7 +3,9 @@
 class CitiesController < ApplicationController
   before_action :authenticate_user!
   include ApplicationHelper
+
   load_and_authorize_resource
+  skip_authorize_resource only: %i[users unities]
 
   # GET /cities
   # GET /cities.json
@@ -43,25 +45,20 @@ class CitiesController < ApplicationController
     end
   end
 
-  # GET /cities/states/:id
-  def states
-    respond_to do |format|
-      format.js { render json: State.find(params[:id]).cities }
-    end
-  end
-
-  # GET /cities/unities/:id
+  # GET /cities/:id/unities
   def unities
-    respond_to do |format|
-      format.js { render json: City.find(params[:id]).unities.order('name ASC') }
-    end
+    @city = City.find(params[:id])
+    authorize! :make_api_calls, @city
+
+    render json: @city.unities.order('name ASC')
   end
 
   # GET /cities/:id/users
   def users
-    respond_to do |format|
-      format.js { render json: User.where(city_id: params[:id], cnes: nil).order('id ASC') }
-    end
+    @city = City.find(params[:id])
+    authorize! :make_api_calls, @city
+
+    render json: User.where(city: @city, cnes: nil).order('id ASC')
   end
 
   private
