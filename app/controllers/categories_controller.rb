@@ -2,9 +2,8 @@
 
 class CategoriesController < ApplicationController
   before_action :authenticate_user!
-  before_action :filter_role
-  before_action :set_category, only: %i[show edit update destroy]
   include ApplicationHelper
+  load_and_authorize_resource
 
   # GET /categories
   # GET /categories.json
@@ -65,7 +64,8 @@ class CategoriesController < ApplicationController
                                      :parent_depth, :severity, :source)
   end
 
-  def filter_role
-    redirect_to denied_path unless admin?
+  def current_ability
+    @current_ability ||= CategoryAbility.new(current_user)
   end
+
 end
