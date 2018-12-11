@@ -60,7 +60,9 @@
   <% if @answers.length > 0 %>
   <div id="accordion" class="accordion-faq">
     <div id="my-answers">
+      <%= render './pagination', value: @answers, position: :top %>
       <%= render @answers %>
+      <%= render './pagination', value: @answers, position: :bottom %>
     </div>
   </div>
 

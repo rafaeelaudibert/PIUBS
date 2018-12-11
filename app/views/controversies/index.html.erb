@@ -32,7 +32,9 @@
 
 <% if @controversies.length > 0 %>
   <div id="accordion" class="accordion-controversies">
+    <%= render './pagination', value: @controversies, position: :top %>
     <%= render @controversies %>
+    <%= render './pagination', value: @controversies, position: :bottom %>
   </div>
 
   <%= will_paginate @controversies %>

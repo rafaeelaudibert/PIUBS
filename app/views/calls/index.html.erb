@@ -85,10 +85,10 @@
 
 <% if @calls.length > 0 %>
   <div id="accordion" class="accordion-calls">
+    <%= render './pagination', value: @calls, position: :top %>
     <%= render @calls %>
+    <%= render './pagination', value: @calls, position: :bottom %>
   </div>
-
-  <%= will_paginate @calls %>
 <% else %>
   <h3>
     Ainda não foram realizados atendimentos

@@ -35,7 +35,7 @@
 <div id="filterrific_results">
 
   <% if @companies.length > 0 %>
-    <%= render './pagination', value: @companies %>
+    <%= render './pagination', value: @companies, position: :top %>
     <table class="table table-striped table-hover">
       <thead class="thead-dark">
         <tr>
@@ -56,7 +56,7 @@
         <% end %>
       </tbody>
     </table>
-    <%= render './pagination', value: @companies %>
+    <%= render './pagination', value: @companies, position: :bottom %>
     <% else %>
       <h3>
         Não existe nenhuma empresa com a pesquisa realizada
