@@ -67,5 +67,4 @@ class CategoriesController < ApplicationController
   def current_ability
     @current_ability ||= CategoryAbility.new(current_user)
   end
-
 end
