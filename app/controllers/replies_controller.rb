@@ -60,11 +60,6 @@ class RepliesController < ApplicationController
 
   private
 
-  def create_params
-    params.require(:reply).permit(:faq_attachments, :repliable_id, :repliable_type,
-      :description, :user_id, :faq, :files)
-  end
-
   def retrieve_files(rep_params)
     rep_params[:files] ? rep_params.delete(:files).split(',') : []
   end
