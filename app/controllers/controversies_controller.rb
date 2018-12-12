@@ -4,8 +4,8 @@ class ControversiesController < ApplicationController
   before_action :authenticate_user!
   before_action :restrict_system!
   before_action :set_controversy, except: %i[index new create]
-  before_action :filter_role
   before_action :set_user, only: %i[company_user city_user support_user unity_user]
+  before_action :authorize_alter_user, only: %i[company_user city_user unity_user support_user]
 
   # GET /controversies
   # GET /controversies.json
@@ -18,7 +18,7 @@ class ControversiesController < ApplicationController
       persistence_id: false
     )) || return
     @controversies = @filterrific.find.page(params[:page])
-    # @controversies = Controversy.all
+    authorize! :index, Controversy
   end
 
   # GET /controversies/1
@@ -31,11 +31,13 @@ class ControversiesController < ApplicationController
                     rescue StandardError
                       'Sem usuário criador (Relate ao suporte)'
                     end
+    authorize! :show, @controversy
   end
 
   # GET /controversies/new
   def new
     @controversy = Controversy.new
+    authorize! :new, @controversy
 
     # rubocop:disable Style/GuardClause
     if (city_user? || ubs_user?) && current_user.city.contract_id.nil?
@@ -53,6 +55,7 @@ class ControversiesController < ApplicationController
     files = retrieve_files controversy_parameters
     user_creator = retrieve_user_creator controversy_parameters
     @controversy = create_controversy controversy_parameters, user_creator
+    authorize! :create, @controversy
 
     if @controversy.save
       create_file_links @controversy, files
@@ -65,6 +68,8 @@ class ControversiesController < ApplicationController
 
   # POST calls/link_controversy
   def link_controversy
+    authorize! :link, @controversy
+
     if @controversy.support_1
       redirect_back(fallback_location: root_path,
                     alert: 'Você não pode pegar uma controvérsia de outro usuário do suporte')
@@ -85,6 +90,8 @@ class ControversiesController < ApplicationController
 
   # POST calls/unlink_controversy
   def unlink_controversy
+    authorize! :link, @controversy
+
     if @controversy.support_1 == User.find(params[:user_id])
       @controversy.support_1 = nil
       if @controversy.save
@@ -239,18 +246,11 @@ class ControversiesController < ApplicationController
     redirect_to denied_path unless current_user.both? || current_user.controversies?
   end
 
-  def filter_role
-    redirect_to denied_path if faq_inserter?
-    redirect_if_not_in_call if params[:action] == 'show'
+  def authorize_alter_user
+    authorize! :alter_user, @controversy
   end
 
-  def redirect_if_not_in_call
-    redirect_to denied_path unless in_controversy? || support_like?
-  end
-
-  def in_controversy?
-    # User in the controversy or admin of the company involved in the controversy
-    @controversy.all_users.include?(current_user) ||
-      @controversy.sei == current_user.sei
+  def current_ability
+    @current_ability ||= ControversyAbility.new(current_user)
   end
 end
