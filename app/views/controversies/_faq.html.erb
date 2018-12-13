@@ -12,37 +12,37 @@
   <div id="table" class="m-2" style="max-height: 600px; overflow-y: scroll; padding: 5px"></div>
 
   <script>
-    function searchQuery() {
-      const arr = $("#search_field").val().match(/\S+/g);
+      function searchQuery() {
+        const arr = $("#search_field").val().match(/\S+/g);
 
-      if (arr && arr.length >= 1) {
-        jQuery.ajax({
-          url: '/answers/query_call/' + textField.value,
-          type: "GET",
-          dataType: "json",
-          success: data => {
-            if (data.length > 0) {
-              let parsedHTML = "";
+        if (arr && arr.length >= 1) {
+          jQuery.ajax({
+            url: '/answers/query_controversy/' + textField.value,
+            type: "GET",
+            dataType: "json",
+            success: data => {
+              if (data.length > 0) {
+                let parsedHTML = "";
 
-              //Add the data rows.
-              for (let entry of data) {
-                const header = '<div class="card card-default"><div class="card-header"><div class="header-block">';
-                const title = '<p class="title"><em class="fa fa-question-circle mr-2"></em> <strong>' + entry.question + '</strong></p></div></div>';
-                const content = '<div class="card-block"><p>' + entry.answer + '</p>';
-                const view = '<a href="/answers/' + entry.id + '"class="btn btn-primary btn-sm right" target="_blank"> <em class="fa fa-eye"></em> Mostrar</a></div></div>';
-                parsedHTML += header + title + content + view;
+                //Add the data rows.
+                for (let entry of data) {
+                  const header = '<div class="card card-default"><div class="card-header"><div class="header-block">';
+                  const title = `<p class="title"><em class="fa fa-question-circle mr-2"></em> <strong>${entry.question}</strong></p></div></div>`;
+                  const content = `<div class="card-block"><p>${entry.answer}</p>`;
+                  const view = `<button onclick="faq_click(this, ${entry.id})" type="button" class="btn btn-primary btn-sm right"> <em class="fa fa-mouse-pointer"></em> Selecionar</button></div></div>`;
+                  parsedHTML += header + title + content + view;
+                }
+
+                tableDiv.innerHTML = parsedHTML;
+              } else {
+                tableDiv.innerHTML = "Não há questões no FAQ sobre essa pergunta"
               }
-
-              tableDiv.innerHTML = parsedHTML;
-            } else {
-              tableDiv.innerHTML = "Não há questões no FAQ sobre essa pergunta"
             }
-          }
-        })
-      } else {
-        tableDiv.innerHTML = "Você precisa fazer uma pesquisa com no mínimo 4 letras";
+          })
+        } else {
+          tableDiv.innerHTML = "Você precisa fazer uma pesquisa com no mínimo 4 letras";
+        }
       }
-    }
 
     function triggerSearch(e) {
       {
@@ -71,9 +71,8 @@
     $("#search_field").keyup(triggerSearch);
     $('#search_button').click(triggerSearch);
 
-    const faq_click = button => {
-        const answer = button.parentNode.parentNode.children[2].innerHTML;
-        const id = button.parentNode.parentNode.children[0].innerHTML;
+    const faq_click = (button, id) => {
+       const answer = button.parentNode.parentNode.children[0].children[0].children[0].innerText;
 
         $.ajax({
             url: '/answers/attachments/' + id,
@@ -81,7 +80,7 @@
             dataType: "json",
             success: data => {
                 const dropzone = $('#reply-dropzone')[0].dropzone
-                tinyMCE.get('tinymce').setContent(`${answer}<br/><br>Essa resposta foi retirada do FAQ. Ela estava disponível <a href="/answers/${id}" target='_blank'>aqui</a></b>`);
+                tinyMCE.get('tinymce-reply').setContent(`${answer}<br/><br>Essa resposta foi retirada do FAQ. Ela estava disponível <a href="/answers/${id}" target='_blank'>aqui</a></b>`);
 
                 // Fake their adittion in the reply-dropzone
                 dropzone.removeAllFiles();
@@ -102,7 +101,7 @@
 
                 // Set the ids
                 replyFileIds = data.map(val => val.id).reduce((acc, val) => acc.concat(val), [])
-                $('#uuid-files-reply').val(replyFileIds);
+                $('#uuid-files-controversy').val(replyFileIds);
 
                 // Updates the divs
                 $("#reply_box").show(200);
