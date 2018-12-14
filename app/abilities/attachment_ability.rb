@@ -5,13 +5,15 @@ class AttachmentAbility
   include ApplicationHelper
 
   def initialize(user, attachment)
-    if user
-      can :create, Attachment # Every logged user can create an attachment
-      can %i[manage download], Attachment if user.admin?
-      can :download, Attachment if support_user?(user)
+    initializer(user, attachment) if user
+  end
 
-      can :download, Attachment if attachment && downloadable?(user, attachment)
-    end
+  def initializer(user, attachment)
+    can :create, Attachment # Every logged user can create an attachment
+    can %i[manage download], Attachment if user.admin?
+    can :download, Attachment if support_user?(user)
+
+    can :download, Attachment if attachment && downloadable?(user, attachment)
   end
 
   protected
