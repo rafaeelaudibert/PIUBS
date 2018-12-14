@@ -10,9 +10,10 @@ class ControversyAbility
     support_abilities
 
     can %i[index create], Controversy unless user.faq_inserter?
-    can :show, Controversy.where(company_user: user).or(Controversy.where(city_user: user))
-      .or(Controversy.where(unity_user: user))
-                          .or(Controversy.where(sei: user.sei))
+    can :show, Controversy.where(company_user: user)
+    can :show, Controversy.where(city_user: user)
+    can :show, Controversy.where(unity_user: user)
+    can :show, Controversy.where(sei: user.sei)
   end
 
   protected
@@ -28,17 +29,3 @@ class ControversyAbility
     can :show, Controversy if support_user?(@user)
   end
 end
-
-# def filter_role
-#   redirect_if_not_in_call if params[:action] == 'show'
-# end
-
-# def redirect_if_not_in_call
-#   redirect_to denied_path unless in_controversy? || support_like?
-# end
-
-# def in_controversy?
-#   # User in the controversy or admin of the company involved in the controversy
-#   @controversy.all_users.include?(current_user) ||
-#     @controversy.sei == current_user.sei
-# end
