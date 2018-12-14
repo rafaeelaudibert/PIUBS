@@ -8,7 +8,7 @@ class AnswersController < ApplicationController
   include ApplicationHelper
 
   load_and_authorize_resource
-  skip_authorize_resource only: %i[faq faq_controversy]
+  skip_authorize_resource only: %i[faq faq_controversy search_call search_controversy]
 
   # GET /answers
   # GET /answers.json
@@ -42,7 +42,7 @@ class AnswersController < ApplicationController
                      .joins(:category)
                      .order('categories.name', :question, :answer)
                      .page(params[:page])
-    authorize! :read, @answers.first # We use the first, to bypass the CanCan problems
+    authorize_faq
   end
 
   # get /faq_controversy
@@ -61,7 +61,7 @@ class AnswersController < ApplicationController
                      .joins(:category)
                      .order('categories.name', :question, :answer)
                      .page(params[:page])
-    authorize! :read, @answers.first # We use the first, to bypass the CanCan problems
+    authorize_faq
   end
 
   # GET /answers/1
@@ -119,6 +119,8 @@ class AnswersController < ApplicationController
 
   # GET /answers/query_call/:search
   def search_call
+    authorize! :query_faq, Answer
+
     respond_to do |format|
       format.js do
         render json: Answer.where(faq: true, source: :from_call)
@@ -129,6 +131,8 @@ class AnswersController < ApplicationController
 
   # GET /answers/query_controversy/:search
   def search_controversy
+    authorize! :query_faq, Answer
+
     respond_to do |format|
       format.js do
         render json: Answer.where(faq: true, source: :from_controversy)
@@ -139,11 +143,13 @@ class AnswersController < ApplicationController
 
   # GET /answers/attachments/:id
   def attachments
+    @answer = Answer.find(params[:id])
+    authorize! :show, @answer
+
     respond_to do |format|
       format.js do
-        render(json: Answer.find(params[:id])
-                                      .attachments
-                                      .map do |attachment|
+        render(json: @answer.attachments
+                            .map do |attachment|
                        { filename: attachment.filename,
                          type: attachment.content_type,
                          id: attachment.id,
@@ -224,6 +230,10 @@ class AnswersController < ApplicationController
                                                   'attachments WHERE attachments.id = ?',
                                                   attachment.id
                                                 ]))[0]['octet_length']
+  end
+
+  def authorize_faq
+    authorize! :read, @answers.first # We use the first, to bypass the CanCan problems
   end
 
   def restrict_system!

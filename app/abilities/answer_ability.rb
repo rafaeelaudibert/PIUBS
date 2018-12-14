@@ -5,7 +5,8 @@ class AnswerAbility
   include ApplicationHelper
 
   def initialize(user)
-    can :read, Answer.where(faq: true) # Everybody can read the FAQs
+    can :read, Answer.where(faq: true) # Everybody can read the FAQs and query it
+    can :query_faq, Answer
 
     can :manage, Answer if user.admin?
     can :create, Answer if faq_creator?(user)
