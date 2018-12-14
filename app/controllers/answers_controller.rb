@@ -4,9 +4,11 @@ class AnswersController < ApplicationController
   before_action :authenticate_user!
   before_action :restrict_system!
   before_action :set_answer, only: %i[show edit update]
-  before_action :filter_role
   before_action :verify_source, only: :new
   include ApplicationHelper
+
+  load_and_authorize_resource
+  skip_authorize_resource only: %i[faq faq_controversy]
 
   # GET /answers
   # GET /answers.json
@@ -40,6 +42,7 @@ class AnswersController < ApplicationController
                      .joins(:category)
                      .order('categories.name', :question, :answer)
                      .page(params[:page])
+    authorize! :read, @answers.first # We use the first, to bypass the CanCan problems
   end
 
   # get /faq_controversy
@@ -58,6 +61,7 @@ class AnswersController < ApplicationController
                      .joins(:category)
                      .order('categories.name', :question, :answer)
                      .page(params[:page])
+    authorize! :read, @answers.first # We use the first, to bypass the CanCan problems
   end
 
   # GET /answers/1
@@ -227,38 +231,11 @@ class AnswersController < ApplicationController
     redirect_to denied_path if params[:action] == 'faq_controversy' && current_user.companies?
   end
 
-  def filter_role
-    action = params[:action]
-    if %w[index edit update].include? action
-      redirect_to denied_path unless admin? || faq_inserter?
-    elsif %w[new create destroy].include? action
-      redirect_to denied_path unless admin_support_faq?
-    else
-      show?(action)
-    end
-  end
-
   def verify_source
     redirect_to not_found_path unless %w[call controversy].include?(params[:source])
   end
 
-  def admin_support_faq?
-    admin? || support_user? || faq_inserter?
-  end
-
-  def show?(action)
-    redirect_to denied_path if action == 'show' && !alloweds_users_to_show?
-  end
-
-  def alloweds_users_to_show?
-    faq_and_not_city_ubs_users? || admin? || faq_inserter? || support_and_answer_creator?
-  end
-
-  def faq_and_not_city_ubs_users?
-    @answer.faq && !city_user? && !ubs_user?
-  end
-
-  def support_and_answer_creator?
-    support_user? && @answer.user_id == current_user.id
+  def current_ability
+    @current_ability ||= AnswerAbility.new(current_user)
   end
 end
