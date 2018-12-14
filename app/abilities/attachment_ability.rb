@@ -36,16 +36,20 @@ class AttachmentAbility
     call.nil? || link.answer.faq? || company_user_allowed(user, call)
   end
 
-  def can_download_reply(user, link)
-    call = link.reply.repliable if link.reply?
-
-    call.nil? || company_user_allowed(user, call)
-  end
-
   def can_download_call(user, link)
     call = link.call if link.call?
 
     call.nil? || company_user_allowed(user, call)
+  end
+
+  def can_download_reply(user, link)
+    repl = link.reply.repliable if link.reply?
+
+    repl.nil? || if repl.class.method_defined? :user_id
+                   company_user_allowed(user, repl)
+                 else
+                   controversy_user_allowed(user, repl)
+                 end
   end
 
   def can_download_controversy(user, link)
