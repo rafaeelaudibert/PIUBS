@@ -4,6 +4,11 @@ class ApplicationController < ActionController::Base
   include ApplicationHelper
   before_action :store_user_location!
 
+  # CanCan Exception handling
+  rescue_from CanCan::AccessDenied do |exception|
+    redirect_to denied_path, message: exception.message
+  end
+
   def page_not_found
     redirect_to '/404.html'
   end
