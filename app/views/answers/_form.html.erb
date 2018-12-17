@@ -73,7 +73,7 @@
 
     <div class="field" style="display: none">
       <%= form.label :user_id, 'Usuário', class: 'required' %>
-      <%= form.text_field :user_id, value: current_user.id, required: true %>
+      <%= form.text_field :user_id, value: @answer.user_id || current_user.id, required: true %>
     </div>
 
     <div class="field">
