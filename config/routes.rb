@@ -22,6 +22,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   # Errors
   get '404', to: 'application#page_not_found', as: 'not_found'
   get '422', to: 'application#acess_denied', as: 'denied'
+  get '500', to: 'application#internal_error', as: 'internal_error'
 
   # /attachments
   resources :attachments, only: %i[index create destroy] do

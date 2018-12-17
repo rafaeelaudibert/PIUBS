@@ -1,58 +1,41 @@
+<link href="https://fonts.googleapis.com/css?family=Staatliches|Oswald" rel="stylesheet">
 <style>
-  div.dialog {
-    color: #2E2F30;
-    text-align: center;
-    font-family: arial, sans-serif;
-    margin: 0;
-    width: 95%;
-    max-width: 33em;
-    margin: 4em auto;
+  .error_title {
+    font-family: 'Staatliches', cursive;
   }
 
-  div.dialog > div {
-    border: 1px solid #CCC;
-    border-right-color: #999;
-    border-left-color: #999;
-    border-bottom-color: #BBB;
-    border-top: #B00100 solid 4px;
-    border-top-left-radius: 9px;
-    border-top-right-radius: 9px;
-    background-color: white;
-    padding: 7px 12% 0;
-    box-shadow: 0 3px 8px rgba(50, 50, 50, 0.17);
+  .error_title > p {
+    font-size: 1rem;
+    font-family: 'Oswald', sans-serif;
+    margin-top: 2rem;
   }
 
-  div.dialog h1 {
-    font-size: 100%;
-    color: #730E15;
-    line-height: 1.5em;
-    margin: 10px 0;
+  small {
+    font-size: 1rem;
   }
 
-  div.dialog p {
-    margin: 16px 0;
-  }
-
-  div.dialog > p {
-    margin: 0 0 1em;
-    padding: 1em;
-    background-color: #F7F7F7;
-    border: 1px solid #CCC;
-    border-right-color: #999;
-    border-left-color: #999;
-    border-bottom-color: #999;
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
-    border-top-color: #DADADA;
-    color: #666;
-    box-shadow: 0 3px 8px rgba(50, 50, 50, 0.17);
+  .image {
+    padding-top: 5rem;
   }
 </style>
 
-<!-- This file lives in app/views/errors/internal_server_error.html.erb -->
-<div class="dialog">
-  <div>
-    <h1>Nos desculpe, algo deu errado.</h1>
+<div class="row">
+  <div class="error_container col-md-8">
+    <div class="error_title">
+      <h1>Oh-hoo!!</h1>
+      <br/>
+      <h3> Nos desculpe, algo deu errado! </h3>
+      <small>Error code: <%= @_status %></small>
+      <br/>
+      <p>
+        Algo de errado aconteceu, mas, não se preocupe, a culpa foi nossa :( <br/>
+        Caso você não tenha recebido uma notificação de que esse erro poderia acontecer, <br/>
+        por favor, nos notifique, assim poderemos tentar corrigir o problema o mais cedo possível. <br/><br/>
+        Tente acessar essa página mais tarde, provavelmente, já teremos consertado o problema.
+      </p>
+    </div>
   </div>
-  <p>Se você for o administrador do sistema, cheque os logs da aplicação.</p>
+  <div class="image col-md-4">
+    <%= image_tag("http://www.onixseven.com.br/view/images/piubs.png", alt: "PIUBS Logo", height: 200) %>
+  </div>
 </div>

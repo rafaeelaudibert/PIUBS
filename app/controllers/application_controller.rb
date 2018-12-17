@@ -5,17 +5,26 @@ class ApplicationController < ActionController::Base
   before_action :store_user_location!
 
   def page_not_found
-    redirect_to '/404.html'
+    raise ActionController::RoutingError, 'Not Found'
   end
 
   def acess_denied
-    redirect_to '/422.html'
+    raise ActionController::RoutingError, 'Acess Denied'
+  end
+
+  def internal_error
+    raise ActionController::RoutingError, 'Internal Server Error'
+  end
+
+  def local_request?
+    false
   end
 
   private
 
-  def non_infinite_loop?
-    request.fullpath != '/' && request.fullpath != '/user/sign_in'
+  def store_user_location!
+    # :user is the scope we are authenticating
+    store_location_for(:user, request.fullpath) if storable_location?
   end
 
   # Its important that the location is NOT stored if:
@@ -30,9 +39,8 @@ class ApplicationController < ActionController::Base
       non_infinite_loop?
   end
 
-  def store_user_location!
-    # :user is the scope we are authenticating
-    store_location_for(:user, request.fullpath) if storable_location?
+  def non_infinite_loop?
+    request.fullpath != '/' && request.fullpath != '/user/sign_in'
   end
 
   protected
