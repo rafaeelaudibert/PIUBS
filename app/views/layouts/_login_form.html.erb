@@ -23,9 +23,9 @@
         </div>
 
         <div class="form-group">
-          <label for="remember">
-            <input class="checkbox" id="remember" type="checkbox">
-            <span>Lembrar-me</span>
+          <label class="customcheck" style="font-size: 0.8rem">Lembrar de mim
+            <input type="checkbox" id="remember">
+            <span class="checkmark"></span>
           </label>
           <%= link_to "Esqueceu sua senha?", new_password_path(resource_name), class: 'forgot-btn pull-right' %>
         </div>

@@ -270,11 +270,10 @@
       <%= link_to 'Cancelar', calls_path, :class => 'btn btn-danger btn-sm' %>
     </div>
 
-    <div class="field ml-4">
-      <%= form.check_box :faq, class: "form-check-input", id: 'create_call' %>
-      <%= form.label :faq, value: 'Declaro que a informação que será solicitada não foi encontrada no FAQ', class: 'form-check-label' %>
-    </div>
-
+    <label class="customcheck">Declaro que a informação que será solicitada não foi encontrada no FAQ
+      <input type="checkbox" id="create_call" name="call[faq]">
+      <span class="checkmark"></span>
+    </label>
   </div>
 <% end %>
 

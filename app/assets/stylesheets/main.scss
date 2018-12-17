@@ -11,6 +11,7 @@
 .btn.btn-oval {
   border-radius: 25px !important;
 }
+
 //form
 
 .form-control.boxed.faq {
@@ -45,7 +46,7 @@ label.hidden {
   border: none !important;
   background-color: transparent !important;
 
-  & + label {
+  &+label {
     position: absolute;
     top: 10px;
     left: 3px;
@@ -63,8 +64,8 @@ label.hidden {
     transition: all 0.2s ease-out;
   }
 
-  &.has-value + label,
-  &:focus + label {
+  &.has-value+label,
+  &:focus+label {
     top: -17px;
     color: lighten(black, 40%);
     font-size: 12px;
@@ -74,14 +75,15 @@ label.hidden {
     background-color: white !important;
   }
 
-  &.has-value:not(:focus) + label {
+  &.has-value:not(:focus)+label {
     color: lighten(black, 60%);
   }
 }
 
-li.active > a {
+li.active>a {
   color: darken(#4f5f6f, 20%) !important;
 }
+
 // FORM FOR USERS
 
 td.user {
@@ -90,6 +92,7 @@ td.user {
 }
 
 tr {
+
   // EVEN
   &:nth-of-type(even) {
     td.user-role {
@@ -107,6 +110,7 @@ tr {
       }
     }
   }
+
   // ODD
   &:nth-of-type(odd) {
     td.user-role {
@@ -131,6 +135,7 @@ hr.under-header {
   margin-top: 8em;
   margin-bottom: 2em;
 }
+
 // PAGINATION \\
 
 .page-item.disabled .page-link {
@@ -142,6 +147,7 @@ hr.under-header {
 table.table {
   margin-top: 1rem;
 }
+
 //DISPLAY
 
 .display-4 {
@@ -167,6 +173,7 @@ table.table {
     }
   }
 }
+
 // FORM ERRORS
 
 #error_explanation {
@@ -251,6 +258,77 @@ label {
   }
 }
 
+// Checkboxes
+
+/* The customcheck */
+.customcheck {
+  display: block;
+  position: relative;
+  padding-left: 25px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 400;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  /* Hide the browser's default checkbox */
+  input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  /* On mouse-over, add a grey background color */
+  &:hover input~.checkmark {
+    background-color: #ddd;
+  }
+
+  /* When the checkbox is checked, add a blue background */
+  input:checked~.checkmark {
+    background-color: #2d363f;
+    border-radius: 5px;
+  }
+
+  /* Show the checkmark when checked */
+  input:checked~.checkmark:after {
+    display: block;
+  }
+
+  /* Style the checkmark/indicator */
+  .checkmark:after {
+    left: 7px;
+    top: 4px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  border: 1px solid #2d363f;
+
+  /* Create the checkmark/indicator (hidden when not checked) */
+  &:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+}
 
 // Controversies autocomplete
 
@@ -285,7 +363,7 @@ label {
   *border-right-width: 2px;
   *border-bottom-width: 2px;
 
-  .ui-menu-item > a.ui-corner-all {
+  .ui-menu-item>a.ui-corner-all {
     display: block;
     padding: 3px 15px;
     clear: both;

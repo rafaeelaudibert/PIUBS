@@ -168,9 +168,18 @@
     <% else %>
       <div class="form-group">
         <%= f.label "Acesso aos sistemas", class: "required" %>
-        <%= f.radio_button :system, :companies, :checked => true %> Apoio à Empresas <br>
-        <%= f.radio_button :system, :controversies %> Solução de Controvérsias <Br>
-        <%= f.radio_button :system, :both %> Ambos
+        <label class="customcheck" style="font-size: 0.85rem"> Apoio à Empresas
+          <input type="radio" checked="checked" id="user_system_companies" name="user[system]">
+          <span class="checkmark"></span>
+        </label>
+        <label class="customcheck" style="font-size: 0.85rem"> Solução de Controvérsias
+          <input type="radio" checked="checked" id="user_system_controversies" name="user[system]">
+          <span class="checkmark"></span>
+        </label>
+        <label class="customcheck" style="font-size: 0.85rem"> Ambos sistemas
+          <input type="radio" checked="checked" id="user_system_both" name="user[system]">
+          <span class="checkmark"></span>
+        </label>
       </div>
     <% end %>
   <% end %>
