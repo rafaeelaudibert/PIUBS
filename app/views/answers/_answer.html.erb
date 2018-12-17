@@ -2,7 +2,7 @@
   <div class="card-header" id="heading<%= answer.id %>">
     <div class="row">
       <div class="col-md-9">
-        <h5><%= answer.question %></h5>
+        <h5><%= link_to answer.question, "/answers/#{answer.id}" %></h5>
       </div>
       <div class="col-md-3 info align-self-center">
         <span class="badge badge-pill badge-<%= answer.category.low? ? 'success' : answer.category.high? ? 'danger' : 'warning'%>"><%= answer.category.name %></span>
