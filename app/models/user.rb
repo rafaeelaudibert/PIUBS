@@ -1,7 +1,16 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
-  belongs_to :company, class_name: 'Company', foreign_key: :sei, optional: true
+
+  def sei=(value)
+    write_attribute(:CO_SEI, value)
+  end
+
+  def sei
+    read_attribute(:CO_SEI)
+  end
+
+  belongs_to :company, class_name: 'Company', foreign_key: :CO_SEI, optional: true
   belongs_to :unity, class_name: 'Unity', foreign_key: :cnes, optional: true
   belongs_to :city, class_name: 'City', foreign_key: :id, optional: true
   has_many :calls

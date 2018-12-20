@@ -16,16 +16,16 @@ class CompaniesController < ApplicationController
       },
       persistence_id: false
     )) || return
-    @companies = @filterrific.find.order(:sei).page(params[:page])
+    @companies = @filterrific.find.order(:CO_SEI).page(params[:page])
   end
 
   # GET /companies/1
   # GET /companies/1.json
   def show
-    @contracts = Contract.where(sei: @company.sei)
+    @contracts = @company.contracts
                          .order('city_id')
                          .paginate(page: params[:page], per_page: 25)
-    @users = User.where(sei: @company.sei)
+    @users = @company.users
   end
 
   # GET /companies/new

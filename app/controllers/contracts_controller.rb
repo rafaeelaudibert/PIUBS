@@ -12,7 +12,7 @@ class ContractsController < ApplicationController
                                            params[:filterrific],
                                            select_options: {}, # em breve
                                            persistence_id: false)) || return
-    @contracts = @filterrific.find.order(:sei).page(params[:page])
+    @contracts = @filterrific.find.order(:CO_SEI).page(params[:page])
   end
 
   # GET /contracts/new

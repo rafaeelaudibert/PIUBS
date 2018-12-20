@@ -1,7 +1,16 @@
 # frozen_string_literal: true
 
 class Controversy < ApplicationRecord
-  belongs_to :company, foreign_key: :sei
+  
+  def sei=(value)
+    write_attribute(:CO_SEI, value)
+  end
+
+  def sei
+    read_attribute(:CO_SEI)
+  end
+
+  belongs_to :TB_EMPRESA, foreign_key: :CO_SEI
   belongs_to :contract, optional: true
   belongs_to :city
   belongs_to :unity, foreign_key: :cnes, optional: true

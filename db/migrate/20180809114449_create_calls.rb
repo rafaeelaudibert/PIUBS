@@ -16,10 +16,10 @@ class CreateCalls < ActiveRecord::Migration[5.2]
       t.references :city, foreign_key: true
       t.references :category, foreign_key: true
       t.references :state, foreign_key: true
-      t.integer :sei
+      t.integer :CO_SEI
 
       t.timestamps
     end
-    add_foreign_key :calls, :companies, column: :sei, primary_key: :sei
+    add_foreign_key :calls, :TB_EMPRESA, column: :CO_SEI, primary_key: :CO_SEI
   end
 end

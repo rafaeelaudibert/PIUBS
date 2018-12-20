@@ -19,6 +19,10 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   enable_extension "unaccent"
   enable_extension "uuid-ossp"
 
+  create_table "TB_EMPRESA", primary_key: "CO_SEI", id: :integer, default: nil, force: :cascade do |t|
+    t.time "DT_CRIADO_EM"
+  end
+
   create_table "answers", force: :cascade do |t|
     t.text "question"
     t.text "answer"
@@ -69,7 +73,7 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.bigint "city_id"
     t.bigint "category_id"
     t.bigint "state_id"
-    t.integer "sei"
+    t.integer "CO_SEI"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
@@ -103,17 +107,10 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.index ["state_id"], name: "index_cities_on_state_id"
   end
 
-  create_table "companies", id: false, force: :cascade do |t|
-    t.integer "sei"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["sei"], name: "index_companies_on_sei", unique: true
-  end
-
   create_table "contracts", force: :cascade do |t|
     t.integer "contract_number"
     t.bigint "city_id"
-    t.integer "sei"
+    t.integer "CO_SEI"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "filename"
@@ -127,7 +124,7 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.string "description"
     t.datetime "closed_at"
     t.integer "status", default: 0
-    t.integer "sei"
+    t.integer "CO_SEI"
     t.integer "contract_id"
     t.integer "city_id"
     t.integer "cnes"
@@ -156,11 +153,11 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "status"
     t.string "category"
     t.boolean "faq", default: false
     t.string "repliable_type"
     t.bigint "repliable_id"
-    t.integer "status"
     t.datetime "last_call_ref_reply_closed_at"
     t.datetime "last_call_ref_reply_reopened_at"
     t.index ["repliable_type", "repliable_id"], name: "index_replies_on_repliable_type_and_repliable_id"
@@ -214,7 +211,7 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.string "invited_by_type"
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
-    t.integer "sei"
+    t.integer "CO_SEI"
     t.string "cpf"
     t.bigint "city_id"
     t.integer "cnes"
@@ -233,19 +230,19 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   add_foreign_key "answers", "users"
   add_foreign_key "attachment_links", "controversies", primary_key: "protocol"
   add_foreign_key "attachment_links", "feedbacks"
+  add_foreign_key "calls", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
   add_foreign_key "calls", "answers"
   add_foreign_key "calls", "categories"
   add_foreign_key "calls", "cities"
-  add_foreign_key "calls", "companies", column: "sei", primary_key: "sei"
   add_foreign_key "calls", "states"
   add_foreign_key "calls", "unities", column: "cnes", primary_key: "cnes"
   add_foreign_key "calls", "users"
   add_foreign_key "calls", "users", column: "support_user"
   add_foreign_key "cities", "states"
+  add_foreign_key "contracts", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
   add_foreign_key "contracts", "cities"
-  add_foreign_key "contracts", "companies", column: "sei", primary_key: "sei"
+  add_foreign_key "controversies", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
   add_foreign_key "controversies", "cities"
-  add_foreign_key "controversies", "companies", column: "sei", primary_key: "sei"
   add_foreign_key "controversies", "contracts"
   add_foreign_key "controversies", "unities", column: "cnes", primary_key: "cnes"
   add_foreign_key "controversies", "users", column: "city_user_id"
@@ -255,7 +252,7 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   add_foreign_key "controversies", "users", column: "unity_user_id"
   add_foreign_key "replies", "users"
   add_foreign_key "unities", "cities"
+  add_foreign_key "users", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
   add_foreign_key "users", "cities"
-  add_foreign_key "users", "companies", column: "sei", primary_key: "sei"
   add_foreign_key "users", "unities", column: "cnes", primary_key: "cnes"
 end

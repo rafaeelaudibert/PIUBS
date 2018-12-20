@@ -6,11 +6,11 @@ class CreateContracts < ActiveRecord::Migration[5.2]
       t.json :files
       t.integer :contract_number
       t.references :city, foreign_key: true
-      t.integer :sei
+      t.integer :CO_SEI
 
       t.timestamps
     end
 
-    add_foreign_key :contracts, :companies, column: :sei, primary_key: :sei
+    add_foreign_key :contracts, :TB_EMPRESA, column: :CO_SEI, primary_key: :CO_SEI
   end
 end
