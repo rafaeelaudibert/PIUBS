@@ -25,8 +25,19 @@ class Controversy < ApplicationRecord
     read_attribute(:CO_CONTRATO)
   end
 
+  # Configures an alias setter for the CO_CATEGORIA database column
+  def category_id=(value)
+    write_attribute(:CO_CATEGORIA, value)
+  end
+
+  # Configures an alias getter for the CO_CATEGORIA database column
+  def category_id
+    read_attribute(:CO_CATEGORIA)
+  end
+
   belongs_to :company, foreign_key: :CO_SEI
   belongs_to :contract, optional: true, foreign_key: :CO_CONTRATO
+  belongs_to :category, foreign_key: :CO_CATEGORIA
   belongs_to :city, foreign_key: :CO_CIDADE
   belongs_to :unity, foreign_key: :CO_CNES, optional: true
   belongs_to :company_user, class_name: 'User', optional: true
@@ -40,7 +51,6 @@ class Controversy < ApplicationRecord
   has_one :feedback
 
   enum creator: %i[company unity city support]
-  enum category: %i[hardware software]
   enum status: %i[open closed on_hold on_ministry]
 
   before_create :generate_protocol

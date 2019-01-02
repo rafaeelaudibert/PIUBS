@@ -19,6 +19,14 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   enable_extension "unaccent"
   enable_extension "uuid-ossp"
 
+  create_table "TB_CATEGORIA", primary_key: "CO_SEQ_ID", id: :integer, default: -> { "nextval('\"SQ_CATEGORIA_ID\"'::regclass)" }, force: :cascade do |t|
+    t.string "NO_NOME", null: false
+    t.integer "CO_CATEGORIA_PAI"
+    t.integer "NU_PROFUNDIDADE", default: 0
+    t.integer "NU_SEVERIDADE", null: false
+    t.integer "CO_SISTEMA_ORIGEM", null: false
+  end
+
   create_table "TB_CIDADE", primary_key: "CO_CODIGO", id: :integer, default: nil, force: :cascade do |t|
     t.string "NO_NOME", null: false
     t.integer "CO_UF", null: false
@@ -53,14 +61,13 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   create_table "answers", force: :cascade do |t|
     t.text "question"
     t.text "answer"
-    t.bigint "category_id"
     t.bigint "user_id"
+    t.integer "CO_CATEGORIA"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "faq", default: false
     t.string "keywords"
     t.integer "source"
-    t.index ["category_id"], name: "index_answers_on_category_id"
     t.index ["user_id"], name: "index_answers_on_user_id"
   end
 
@@ -97,7 +104,7 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.string "feature_detail"
     t.string "answer_summary"
     t.string "protocol"
-    t.bigint "category_id"
+    t.integer "CO_CATEGORIA"
     t.integer "CO_SEI"
     t.integer "CO_UF"
     t.integer "CO_CIDADE"
@@ -110,18 +117,7 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.integer "severity", default: 1
     t.datetime "reopened_at"
     t.index ["answer_id"], name: "index_calls_on_answer_id"
-    t.index ["category_id"], name: "index_calls_on_category_id"
     t.index ["user_id"], name: "index_calls_on_user_id"
-  end
-
-  create_table "categories", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "parent_id"
-    t.integer "parent_depth", default: 0
-    t.integer "severity"
-    t.integer "source"
   end
 
   create_table "controversies", primary_key: "protocol", id: :string, force: :cascade do |t|
@@ -133,11 +129,11 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.integer "CO_CONTRATO"
     t.integer "CO_CIDADE"
     t.integer "CO_CNES"
+    t.integer "CO_CATEGORIA"
     t.integer "company_user_id"
     t.integer "unity_user_id"
     t.integer "city_user_id"
     t.integer "creator"
-    t.integer "category"
     t.integer "complexity", default: 1
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -155,11 +151,11 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
 
   create_table "replies", force: :cascade do |t|
     t.text "description"
+    t.integer "status"
+    t.integer "category"
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "status"
-    t.string "category"
     t.boolean "faq", default: false
     t.string "repliable_type"
     t.bigint "repliable_id"
@@ -210,22 +206,24 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "TB_CATEGORIA", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA_PAI", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_CIDADE", "\"TB_UF\"", column: "CO_UF", primary_key: "CO_CODIGO"
   add_foreign_key "TB_CONTRATO", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "TB_CONTRATO", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
   add_foreign_key "TB_UBS", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
-  add_foreign_key "answers", "categories"
+  add_foreign_key "answers", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
   add_foreign_key "answers", "users"
   add_foreign_key "attachment_links", "controversies", primary_key: "protocol"
   add_foreign_key "attachment_links", "feedbacks"
+  add_foreign_key "calls", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
   add_foreign_key "calls", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "calls", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
   add_foreign_key "calls", "\"TB_UBS\"", column: "CO_CNES", primary_key: "CO_CNES"
   add_foreign_key "calls", "\"TB_UF\"", column: "CO_UF", primary_key: "CO_CODIGO"
   add_foreign_key "calls", "answers"
-  add_foreign_key "calls", "categories"
   add_foreign_key "calls", "users"
   add_foreign_key "calls", "users", column: "support_user"
+  add_foreign_key "controversies", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
   add_foreign_key "controversies", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "controversies", "\"TB_CONTRATO\"", column: "CO_CONTRATO", primary_key: "CO_CODIGO"
   add_foreign_key "controversies", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"

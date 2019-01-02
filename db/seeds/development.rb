@@ -323,14 +323,13 @@ end
 
 def seed_controversies
   cities = City.all
-  companies = Company.all
 
   Rails.logger.info('[START]  -- Controversy insertion')
   (1..20).each do |_|
     city = cities.sample
     unity = city.unities.sample
-    company = companies.sample
     contract = city.contract
+    company = contract.company
     protocol = 0.seconds.from_now.strftime('%Y%m%d%H%M%S%L').to_i
     controversy = Controversy.new(title: Faker::Lorem.sentence(15, true, 2),
                                   description: Faker::Lorem.sentence(80, true, 6),
@@ -341,6 +340,7 @@ def seed_controversies
                                   sei: company.sei,
                                   contract: contract,
                                   creator: 'company',
+                                  category: Category.all.sample,
                                   company_user_id: company.users.sample.try(:id),
                                   city_user_id: User.where(city: city, unity: nil).sample.try(:id),
                                   unity_user_id: Random.rand > 0.6 ? unity.users.sample.try(:id) : nil,

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Answer < ApplicationRecord
-  belongs_to :category
+  belongs_to :category, foreign_key: :CO_CATEGORIA
   belongs_to :user
   has_many :attachment_links
   has_many :attachments, through: :attachment_links
@@ -15,6 +15,16 @@ class Answer < ApplicationRecord
                                           Choose from True or False' }
 
   enum source: %i[from_call from_controversy]
+
+  # Configures an alias setter for the CO_CATEGORIA database column
+  def category_id=(value)
+    write_attribute(:CO_CATEGORIA, value)
+  end
+
+  # Configures an alias getter for the CO_CATEGORIA database column
+  def category_id
+    read_attribute(:CO_CATEGORIA)
+  end
 
   # PgSearch stuff
   include PgSearch

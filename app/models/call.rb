@@ -6,7 +6,7 @@ class Call < ApplicationRecord
   after_save :send_mail
 
   belongs_to :city, foreign_key: :CO_CIDADE
-  belongs_to :category
+  belongs_to :category, foreign_key: :CO_CATEGORIA
   belongs_to :state, foreign_key: :CO_UF
   belongs_to :user
   belongs_to :company, foreign_key: :CO_SEI
@@ -59,6 +59,16 @@ class Call < ApplicationRecord
   # Configures an alias getter for the CO_CNES database column
   def cnes
     read_attribute(:CO_CNES)
+  end
+
+  # Configures an alias setter for the CO_CATEGORIA database column
+  def category_id=(value)
+    write_attribute(:CO_CATEGORIA, value)
+  end
+
+  # Configures an alias getter for the CO_CATEGORIA database column
+  def category_id
+    read_attribute(:CO_CATEGORIA)
   end
 
   filterrific(
