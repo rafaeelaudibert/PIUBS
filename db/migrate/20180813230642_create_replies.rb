@@ -5,6 +5,8 @@ class CreateReplies < ActiveRecord::Migration[5.2]
     create_table :replies do |t|
       t.string :protocol
       t.text :description
+      t.integer :status
+      t.integer :category
       t.references :user, foreign_key: true
 
       t.timestamps
