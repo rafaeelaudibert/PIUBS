@@ -1,34 +1,8 @@
 # frozen_string_literal: true
 
+##
+# This class represents a company which have some acess to the PIUBS portal
 class Company < ApplicationRecord
-
-  self.table_name = :TB_EMPRESA
-
-  def sei=(value)
-    write_attribute(:CO_SEI, value)
-  end
-
-  def sei
-    read_attribute(:CO_SEI)
-  end
-
-  def created_at=(value)
-    write_attribute(:DT_CRIADO_EM, value)
-  end
-
-  def created_at
-    read_attribute(:DT_CRIADO_EM)
-  end
-
-  def updated_at=(value)
-    write_attribute(:DT_ATUALIZADO_EM, value)
-  end
-
-  def updated_at
-    read_attribute(:DT_ATUALIZADO_EM)
-  end
-
-
   has_many :users, class_name: 'User', foreign_key: :CO_SEI
   has_many :contracts, class_name: 'Contract', foreign_key: :CO_SEI
   has_many :call, class_name: 'Call', foreign_key: :CO_SEI
@@ -37,7 +11,41 @@ class Company < ApplicationRecord
   validates :CO_SEI, presence: true, uniqueness: true
 
   self.primary_key = :CO_SEI # Setting a different primary_key
+  self.table_name = :TB_EMPRESA # Setting a different table_name
 
+  #### DATABASE adaptations ####
+
+  # Configures an alias setter for the CO_SEI database column
+  def sei=(value)
+    write_attribute(:CO_SEI, value)
+  end
+
+  # Configures an alias getter for the CO_SEI database column
+  def sei
+    read_attribute(:CO_SEI)
+  end
+
+  # Configures an alias setter for the DT_CRIADO_EM database column
+  def created_at=(value)
+    write_attribute(:DT_CRIADO_EM, value)
+  end
+
+  # Configures an alias getter for the DT_CRIADO_EM database column
+  def created_at
+    read_attribute(:DT_CRIADO_EM)
+  end
+
+  # Configures an alias setter for the DT_ATUALIZADO_EM database column
+  def updated_at=(value)
+    write_attribute(:DT_ATUALIZADO_EM, value)
+  end
+
+  # Configures an alias getter for the DT_ATUALIZADO_EM database column
+  def updated_at
+    read_attribute(:DT_ATUALIZADO_EM)
+  end
+
+  #### FILTERRIFIC queries ####
   filterrific(
     default_filter_params: {}, # em breve
     available_filters: %i[search_query]
@@ -46,7 +54,6 @@ class Company < ApplicationRecord
   scope :search_query, lambda { |query|
     return nil if query.blank? || query.class != Integer
 
-    query_search_i = query.to_i
-    where('CO_SEI = ?', query_search_i)
+    where(CO_SEI: query.to_i)
   }
 end
