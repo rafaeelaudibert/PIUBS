@@ -9,7 +9,7 @@ class Call < ApplicationRecord
   belongs_to :category
   belongs_to :state
   belongs_to :user
-  belongs_to :company, class_name: 'Company', foreign_key: :sei
+  belongs_to :company, class_name: 'Company', foreign_key: :CO_SEI
   belongs_to :answer, optional: true
   belongs_to :unity, class_name: 'Unity', foreign_key: :cnes
   has_many :replies, as: :repliable
@@ -20,6 +20,14 @@ class Call < ApplicationRecord
   ### ADICIONAR TAMBEM NA TRADUCAO (config/locales/en.yml)
   enum status: %i[open closed reopened]
   enum severity: %i[low normal high huge]
+
+  def sei=(value)
+    write_attribute(:CO_SEI, value)
+  end
+
+  def sei
+    read_attribute(:CO_SEI)
+  end
 
   filterrific(
     default_filter_params: { with_status: 'status_any',

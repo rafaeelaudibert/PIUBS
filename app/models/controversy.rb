@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Controversy < ApplicationRecord
-  
   def sei=(value)
     write_attribute(:CO_SEI, value)
   end
@@ -10,7 +9,7 @@ class Controversy < ApplicationRecord
     read_attribute(:CO_SEI)
   end
 
-  belongs_to :TB_EMPRESA, foreign_key: :CO_SEI
+  belongs_to :company, foreign_key: :CO_SEI
   belongs_to :contract, optional: true
   belongs_to :city
   belongs_to :unity, foreign_key: :cnes, optional: true
