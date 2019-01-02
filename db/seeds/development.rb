@@ -292,8 +292,8 @@ def seed_calls
   Rails.logger.info('[START]  -- Calls insertion')
   (1..20).each do |_|
     ubs = unities.sample
-    city = City.find(ubs.city_id)
-    contract = Contract.where(city_id: city.id).first
+    city = ubs.city
+    contract = city.contract
     user = User.where(company: contract.company).sample
     protocol = 0.seconds.from_now.strftime('%Y%m%d%H%M%S%L').to_i
     call = Call.new(title: Faker::Lorem.sentence(15, true, 2),

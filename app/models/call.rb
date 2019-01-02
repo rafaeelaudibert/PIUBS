@@ -5,7 +5,7 @@ class Call < ApplicationRecord
   before_create :generate_protocol
   after_save :send_mail
 
-  belongs_to :city
+  belongs_to :city, foreign_key: :CO_CIDADE
   belongs_to :category
   belongs_to :state, foreign_key: :CO_UF
   belongs_to :user
@@ -39,6 +39,16 @@ class Call < ApplicationRecord
   # Configures an alias getter for the CO_UF database column
   def state_id
     read_attribute(:CO_UF)
+  end
+
+  # Configures an alias setter for the CO_CIDADE database column
+  def city_id=(value)
+    write_attribute(:CO_CIDADE, value)
+  end
+
+  # Configures an alias getter for the CO_CIDADE database column
+  def city_id
+    read_attribute(:CO_CIDADE)
   end
 
   filterrific(

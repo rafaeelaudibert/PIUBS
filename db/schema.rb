@@ -19,6 +19,11 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   enable_extension "unaccent"
   enable_extension "uuid-ossp"
 
+  create_table "TB_CIDADE", primary_key: "CO_CODIGO", id: :integer, default: nil, force: :cascade do |t|
+    t.string "NO_NOME", null: false
+    t.integer "CO_UF", null: false
+  end
+
   create_table "TB_EMPRESA", primary_key: "CO_SEI", id: :integer, default: nil, force: :cascade do |t|
     t.datetime "DT_CRIADO_EM"
   end
@@ -26,7 +31,6 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   create_table "TB_UF", primary_key: "CO_CODIGO", id: :integer, default: nil, force: :cascade do |t|
     t.string "NO_NOME", null: false
     t.string "SG_SIGLA", limit: 2, null: false
-    t.datetime "DT_CRIADO_EM"
   end
 
   create_table "answers", force: :cascade do |t|
@@ -76,10 +80,10 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.string "feature_detail"
     t.string "answer_summary"
     t.string "protocol"
-    t.bigint "city_id"
     t.bigint "category_id"
     t.integer "CO_SEI"
     t.integer "CO_UF"
+    t.integer "CO_CIDADE"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
@@ -90,7 +94,6 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.datetime "reopened_at"
     t.index ["answer_id"], name: "index_calls_on_answer_id"
     t.index ["category_id"], name: "index_calls_on_category_id"
-    t.index ["city_id"], name: "index_calls_on_city_id"
     t.index ["user_id"], name: "index_calls_on_user_id"
   end
 
@@ -104,23 +107,15 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.integer "source"
   end
 
-  create_table "cities", force: :cascade do |t|
-    t.string "name"
-    t.integer "CO_UF"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "contracts", force: :cascade do |t|
     t.integer "contract_number"
-    t.bigint "city_id"
+    t.integer "CO_CIDADE"
     t.integer "CO_SEI"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "filename"
     t.string "content_type"
     t.binary "file_contents"
-    t.index ["city_id"], name: "index_contracts_on_city_id"
   end
 
   create_table "controversies", primary_key: "protocol", id: :string, force: :cascade do |t|
@@ -130,7 +125,7 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.integer "status", default: 0
     t.integer "CO_SEI"
     t.integer "contract_id"
-    t.integer "city_id"
+    t.integer "CO_CIDADE"
     t.integer "cnes"
     t.integer "company_user_id"
     t.integer "unity_user_id"
@@ -171,13 +166,12 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   create_table "unities", id: false, force: :cascade do |t|
     t.integer "cnes", null: false
     t.string "name"
-    t.bigint "city_id"
+    t.integer "CO_CIDADE"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "address"
     t.string "neighborhood"
     t.string "phone"
-    t.index ["city_id"], name: "index_unities_on_city_id"
     t.index ["cnes"], name: "index_unities_on_cnes", unique: true
   end
 
@@ -210,11 +204,10 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.integer "invitations_count", default: 0
     t.integer "CO_SEI"
     t.string "cpf"
-    t.bigint "city_id"
+    t.integer "CO_CIDADE"
     t.integer "cnes"
     t.string "last_name"
     t.integer "system"
-    t.index ["city_id"], name: "index_users_on_city_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
@@ -223,23 +216,23 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "TB_CIDADE", "\"TB_UF\"", column: "CO_UF", primary_key: "CO_CODIGO"
   add_foreign_key "answers", "categories"
   add_foreign_key "answers", "users"
   add_foreign_key "attachment_links", "controversies", primary_key: "protocol"
   add_foreign_key "attachment_links", "feedbacks"
+  add_foreign_key "calls", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "calls", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
   add_foreign_key "calls", "\"TB_UF\"", column: "CO_UF", primary_key: "CO_CODIGO"
   add_foreign_key "calls", "answers"
   add_foreign_key "calls", "categories"
-  add_foreign_key "calls", "cities"
   add_foreign_key "calls", "unities", column: "cnes", primary_key: "cnes"
   add_foreign_key "calls", "users"
   add_foreign_key "calls", "users", column: "support_user"
-  add_foreign_key "cities", "\"TB_UF\"", column: "CO_UF", primary_key: "CO_CODIGO"
+  add_foreign_key "contracts", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "contracts", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
-  add_foreign_key "contracts", "cities"
+  add_foreign_key "controversies", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "controversies", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
-  add_foreign_key "controversies", "cities"
   add_foreign_key "controversies", "contracts"
   add_foreign_key "controversies", "unities", column: "cnes", primary_key: "cnes"
   add_foreign_key "controversies", "users", column: "city_user_id"
@@ -248,8 +241,8 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   add_foreign_key "controversies", "users", column: "support_2_user_id"
   add_foreign_key "controversies", "users", column: "unity_user_id"
   add_foreign_key "replies", "users"
-  add_foreign_key "unities", "cities"
+  add_foreign_key "unities", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
+  add_foreign_key "users", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "users", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
-  add_foreign_key "users", "cities"
   add_foreign_key "users", "unities", column: "cnes", primary_key: "cnes"
 end

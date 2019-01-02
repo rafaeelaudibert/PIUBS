@@ -14,7 +14,7 @@ class CitiesController < ApplicationController
       select_options: options_for_filterrific,
       persistence_id: false
     )) || return
-    @cities = @filterrific.find.joins(:state).order('states.name', 'cities.name')
+    @cities = @filterrific.find.joins(:state).order('"TB_UF"."NO_NOME"', '"TB_CIDADE"."NO_NOME"')
                           .page(params[:page])
   end
 
@@ -53,14 +53,14 @@ class CitiesController < ApplicationController
   # GET /cities/unities/:id
   def unities
     respond_to do |format|
-      format.js { render json: City.find(params[:id]).unities.order('name ASC') }
+      format.js { render json: City.find(params[:id]).unities }
     end
   end
 
   # GET /cities/:id/users
   def users
     respond_to do |format|
-      format.js { render json: User.where(city_id: params[:id], cnes: nil).order('id ASC') }
+      format.js { render json: User.where(city_id: params[:id], cnes: nil) }
     end
   end
 
@@ -69,7 +69,7 @@ class CitiesController < ApplicationController
   def options_for_filterrific
     {
       with_state: State.all.map { |s| [s.name, s.id] },
-      sorted_by_name: City.all.options_for_sorted_by_name
+      sorted_by_name: City.options_for_sorted_by_name
     }
   end
 

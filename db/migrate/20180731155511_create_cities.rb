@@ -1,14 +1,20 @@
 # frozen_string_literal: true
 
 class CreateCities < ActiveRecord::Migration[5.2]
-  def change
-    create_table :cities do |t|
-      t.string :name
-      t.integer :CO_UF
-
-      t.timestamps
+  def self.up
+    create_table :TB_CIDADE, id: false do |t|
+      t.integer :CO_CODIGO, null: false
+      t.string :NO_NOME, null: false
+      t.integer :CO_UF, null: false
     end
 
-    add_foreign_key :cities, :TB_UF, column: :CO_UF, primary_key: :CO_CODIGO
+    add_foreign_key :TB_CIDADE, :TB_UF, column: :CO_UF, primary_key: :CO_CODIGO
+
+    execute 'ALTER TABLE "TB_CIDADE" ADD CONSTRAINT "PK_TB_CIDADE" PRIMARY KEY ("CO_CODIGO");'
+  end
+
+  def self.def(_down)
+    execute 'ALTER TABLE "TB_CIDADE" DROP CONSTRAINT "PK_TB_CIDADE";'
+    drop_table :TB_UF
   end
 end
