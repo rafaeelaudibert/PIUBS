@@ -9,7 +9,7 @@
 # is the responsible for administrating its Unity instances.
 class City < ApplicationRecord
   belongs_to :state, class_name: 'State', foreign_key: :CO_UF
-  has_many :unities, -> { order(name: :ASC) }, foreign_key: :CO_CIDADE
+  has_many :unities, -> { order(NO_NOME: :ASC) }, foreign_key: :CO_CIDADE
   has_many :users, -> { order(id: :ASC) }, foreign_key: :CO_CIDADE
   has_one :contract, foreign_key: :CO_CIDADE
   validates :NO_NOME, presence: true

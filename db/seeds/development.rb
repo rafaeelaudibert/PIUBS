@@ -341,9 +341,9 @@ def seed_controversies
                                   sei: company.sei,
                                   contract: contract,
                                   creator: 'company',
-                                  company_user_id: User.where(company: company).sample.id,
-                                  city_user_id: User.where(city: city, cnes: nil).sample.try(:id),
-                                  unity_user_id: Random.rand > 0.6 ? User.where(cnes: unity.try(:cnes)).sample.try(:id) : nil,
+                                  company_user_id: company.users.sample.try(:id),
+                                  city_user_id: User.where(city: city, unity: nil).sample.try(:id),
+                                  unity_user_id: Random.rand > 0.6 ? unity.users.sample.try(:id) : nil,
                                   id: protocol)
     if controversy.save
       Rails.logger.debug('Inserted a new controversy')

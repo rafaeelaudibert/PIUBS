@@ -13,7 +13,7 @@ class CreateCities < ActiveRecord::Migration[5.2]
     execute 'ALTER TABLE "TB_CIDADE" ADD CONSTRAINT "PK_TB_CIDADE" PRIMARY KEY ("CO_CODIGO");'
   end
 
-  def self.def(_down)
+  def self.down
     execute 'ALTER TABLE "TB_CIDADE" DROP CONSTRAINT "PK_TB_CIDADE";'
     drop_table :TB_UF
   end

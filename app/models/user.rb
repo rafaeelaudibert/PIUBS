@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
-
   def sei=(value)
     write_attribute(:CO_SEI, value)
   end
@@ -10,9 +9,25 @@ class User < ApplicationRecord
     read_attribute(:CO_SEI)
   end
 
-  belongs_to :company, class_name: 'Company', foreign_key: :CO_SEI, optional: true
-  belongs_to :unity, class_name: 'Unity', foreign_key: :cnes, optional: true
-  belongs_to :city, class_name: 'City', foreign_key: :id, optional: true
+  def cnes=(value)
+    write_attribute(:CO_CNES, value)
+  end
+
+  def cnes
+    read_attribute(:CO_CNES)
+  end
+
+  def city_id=(value)
+    write_attribute(:CO_CIDADE, value)
+  end
+
+  def city_id
+    read_attribute(:CO_CIDADE)
+  end
+
+  belongs_to :company, foreign_key: :CO_SEI, optional: true
+  belongs_to :unity, foreign_key: :CO_CNES, optional: true
+  belongs_to :city, foreign_key: :CO_CIDADE, optional: true
   has_many :calls
   has_many :answer
 

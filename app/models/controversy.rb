@@ -20,7 +20,7 @@ class Controversy < ApplicationRecord
   belongs_to :company, foreign_key: :CO_SEI
   belongs_to :contract, optional: true
   belongs_to :city, foreign_key: :CO_CIDADE
-  belongs_to :unity, foreign_key: :cnes, optional: true
+  belongs_to :unity, foreign_key: :CO_CNES, optional: true
   belongs_to :company_user, class_name: 'User', optional: true
   belongs_to :unity_user, class_name: 'User', optional: true
   belongs_to :city_user, class_name: 'User', optional: true

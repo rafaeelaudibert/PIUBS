@@ -11,11 +11,10 @@ class UnitiesController < ApplicationController
     (@filterrific = initialize_filterrific(
       Unity,
       params[:filterrific],
-      select_options: { # em breve
-      },
       persistence_id: false
     )) || return
-    @unities = @filterrific.find.joins(:city).order('cities.name', 'name').page(params[:page])
+    @unities = @filterrific.find.joins(:city).order('"TB_CIDADE"."NO_NOME"', '"NO_NOME"')
+                           .page(params[:page])
   end
 
   # GET /unities/1

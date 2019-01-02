@@ -9,7 +9,7 @@ class CreateControversies < ActiveRecord::Migration[5.2]
       t.integer :CO_SEI
       t.integer :contract_id
       t.integer :CO_CIDADE
-      t.integer :cnes
+      t.integer :CO_CNES
       t.integer :company_user_id
       t.integer :unity_user_id
       t.integer :city_user_id
@@ -25,7 +25,7 @@ class CreateControversies < ActiveRecord::Migration[5.2]
     add_foreign_key :controversies, :TB_EMPRESA, column: :CO_SEI, primary_key: :CO_SEI
     add_foreign_key :controversies, :contracts
     add_foreign_key :controversies, :TB_CIDADE, column: :CO_CIDADE, primary_key: :CO_CODIGO
-    add_foreign_key :controversies, :unities, column: :cnes, primary_key: :cnes
+    add_foreign_key :controversies, :TB_UBS, column: :CO_CNES, primary_key: :CO_CNES
     add_foreign_key :controversies, :users, column: :company_user_id
     add_foreign_key :controversies, :users, column: :unity_user_id
     add_foreign_key :controversies, :users, column: :city_user_id

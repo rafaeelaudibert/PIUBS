@@ -7,6 +7,8 @@
 class State < ApplicationRecord
   default_scope { order(:NO_NOME) }
   has_many :cities, -> { order(NO_NOME: :ASC) }
+  has_many :unities, through: :cities
+  has_many :users, through: :cities
   validates :NO_NOME, presence: true, uniqueness: true
   validates :SG_SIGLA, presence: true, uniqueness: true, length: { is: 2 }
 

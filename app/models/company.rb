@@ -9,11 +9,12 @@
 #
 # A Company can have more than one Contract.
 class Company < ApplicationRecord
-  has_many :users, class_name: 'User', foreign_key: :CO_SEI
-  has_many :contracts, class_name: 'Contract', foreign_key: :CO_SEI
-  has_many :call, class_name: 'Call', foreign_key: :CO_SEI
+  has_many :users, foreign_key: :CO_SEI
+  has_many :contracts, foreign_key: :CO_SEI
+  has_many :call, foreign_key: :CO_SEI
   has_many :city, -> { order('name ASC') }, through: :contracts
-  has_many :state, through: :city
+  has_many :states, through: :city
+  has_many :unities, through: :city
   validates :CO_SEI, presence: true, uniqueness: true
 
   #### DATABASE adaptations ####

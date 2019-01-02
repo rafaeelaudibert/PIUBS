@@ -9,9 +9,9 @@ class Call < ApplicationRecord
   belongs_to :category
   belongs_to :state, foreign_key: :CO_UF
   belongs_to :user
-  belongs_to :company, class_name: 'Company', foreign_key: :CO_SEI
+  belongs_to :company, foreign_key: :CO_SEI
   belongs_to :answer, optional: true
-  belongs_to :unity, class_name: 'Unity', foreign_key: :cnes
+  belongs_to :unity, foreign_key: :CO_CNES
   has_many :replies, as: :repliable
   has_many :attachment_links
   has_many :attachments, through: :attachment_links
@@ -49,6 +49,16 @@ class Call < ApplicationRecord
   # Configures an alias getter for the CO_CIDADE database column
   def city_id
     read_attribute(:CO_CIDADE)
+  end
+
+  # Configures an alias setter for the CO_CNES database column
+  def cnes=(value)
+    write_attribute(:CO_CNES, value)
+  end
+
+  # Configures an alias getter for the CO_CNES database column
+  def cnes
+    read_attribute(:CO_CNES)
   end
 
   filterrific(
