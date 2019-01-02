@@ -2,8 +2,10 @@
 
 class StatesController < ApplicationController
   before_action :authenticate_user!
-  before_action :filter_role
   include ApplicationHelper
+
+  load_and_authorize_resource
+  skip_authorize_resource only: :cities
 
   # GET /states
   # GET /states.json
@@ -33,11 +35,20 @@ class StatesController < ApplicationController
   # POST /states
   def create
     @state = State.new(state_params)
+
     if @state.save
       redirect_to @state, notice: 'Estado criado com sucesso.'
     else
       render :new
     end
+  end
+
+  # GET /states/1/cities
+  def cities
+    @state = State.find(params[:id])
+    authorize! :make_api_calls, @state
+
+    render json: @state.cities.order('name ASC')
   end
 
   private
@@ -47,12 +58,7 @@ class StatesController < ApplicationController
     params.require(:state).permit(:name)
   end
 
-  def filter_role
-    action = params[:action]
-    if %w[new create].include? action
-      redirect_to denied_path unless admin?
-    elsif %w[index show].include? action
-      redirect_to denied_path unless admin? || support_user?
-    end
+  def current_ability
+    @current_ability ||= StateAbility.new(current_user)
   end
 end

@@ -19,10 +19,11 @@
   <li <%= "class=active" if current_page?(unities_path) %> > <%= link_to(unities_path, class: 'nav-item nav-link') do %> <i class="fa fa-medkit"></i> UBS <%end%></li>
   <li <%= "class=active" if current_page?(companies_path) %> > <%= link_to(companies_path, class: 'nav-item nav-link') do %> <i class="fa fa-building-o"></i> Empresas <%end%></li>
   <li <%= "class=active" if current_page?(contracts_path) %> > <%= link_to(contracts_path, class: 'nav-item nav-link') do %> <i class="fa fa-file"></i> Contratos<%end%></li>
-  <li <%= "class=active" if current_page?(replies_path) || current_page?(answers_path) || current_page?(attachments_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-dashboard"></i> Misc <i class="fa arrow"></i><%end%>
+  <li <%= "class=active" if current_page?(replies_path) || current_page?(answers_path) || current_page?(categories_path) || current_page?(attachments_path) %> > <%= link_to('', class: 'nav-item nav-link') do %> <i class="fa fa-dashboard"></i> Misc <i class="fa arrow"></i><%end%>
     <ul class="sidebar-nav collapse">
       <li> <%= link_to(replies_path, class: 'nav-item nav-link') do %> <i class="fa fa-reply-all"></i> Respostas <%end%></li>
       <li> <%= link_to(answers_path, class: 'nav-item nav-link') do %> <i class="fa fa-comment"></i> Respostas Finais <%end%></li>
+      <li> <%= link_to(categories_path, class: 'nav-item nav-link') do %> <i class="fa fa-book"></i> Categorias <%end%></li>
       <li> <%= link_to(attachments_path, class: 'nav-item nav-link') do %> <i class="fa fa-paperclip"></i> Anexos <%end%></li>
     </ul>
   </li>

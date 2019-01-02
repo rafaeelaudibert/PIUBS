@@ -4,16 +4,16 @@ class FeedbacksController < ApplicationController
   before_action :authenticate_user!
   before_action :restrict_system!
 
-  before_action :filter_role
-
   # GET /feedbacks
   def index
     @feedbacks = Feedback.all.page(params[:page])
+    authorize! :index, Feedback
   end
 
   # GET /feedbacks/1
   def show
     @feedback = Feedback.find(params[:id])
+    authorize! :show, @feedback
   end
 
   # POST /feedbacks
@@ -23,6 +23,7 @@ class FeedbacksController < ApplicationController
 
     files = retrieve_files(feedback_parameters) || []
     @feedback = Feedback.new(feedback_parameters)
+    authorize! :create, @feedback
 
     if @feedback.save && @feedback.controversy.save
       create_file_links @feedback, files
@@ -73,9 +74,9 @@ class FeedbacksController < ApplicationController
 
   def restrict_system!
     redirect_to denied_path unless current_user.both? || current_user.controversies?
-  end
+  end 
 
-  def filter_role
-    redirect_to not_found_path unless admin? || support_user?
+  def current_ability
+    @current_ability ||= FeedbackAbility.new(current_user)
   end
 end

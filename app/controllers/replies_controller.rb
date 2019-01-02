@@ -2,8 +2,6 @@
 
 class RepliesController < ApplicationController
   before_action :authenticate_user!
-  before_action :filter_role
-  before_action :set_reply, only: %i[show edit update destroy]
   include ApplicationHelper
 
   # GET /replies
@@ -15,12 +13,15 @@ class RepliesController < ApplicationController
       },
       persistence_id: false
     )) || return
+
     @replies = @filterrific.find.order(created_at: :desc).page(params[:page])
+    authorize! :index, Reply
   end
 
   # GET /replies/1
   def show
     @reply = Reply.find(params[:id])
+    authorize! :show, @reply
   end
 
   # POST /replies
@@ -28,6 +29,7 @@ class RepliesController < ApplicationController
     rep_params = reply_params
     files = retrieve_files rep_params
     @reply = create_reply rep_params
+    authorize! :create, @reply
 
     if @reply.save
       create_file_links @reply, files
@@ -40,11 +42,13 @@ class RepliesController < ApplicationController
 
   # GET /replies/attachments/:id
   def attachments
+    @reply = Reply.find(params[:id])
+    authorize! :verify_attachments, @reply
+
     respond_to do |format|
       format.js do
-        render(json: Reply.find(params[:id])
-                                    .attachments
-                                    .map do |attachment|
+        render(json: @reply.attachments
+                           .map do |attachment|
                        { filename: attachment.filename,
                          type: attachment.content_type,
                          id: attachment.id,
@@ -115,12 +119,7 @@ class RepliesController < ApplicationController
                                   :description, :user_id, :faq, :files)
   end
 
-  def filter_role
-    action = params[:action]
-    if %w[index show].include? action
-      redirect_to denied_path unless admin?
-    elsif action == 'attachments'
-      redirect_to denied_path unless admin? || support_user?
-    end
+  def current_ability
+    @current_ability ||= ReplyAbility.new(current_user)
   end
 end

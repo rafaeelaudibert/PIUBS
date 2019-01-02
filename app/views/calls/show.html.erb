@@ -187,20 +187,6 @@
 
 <% @call.replies.order(id: :desc).each do |reply| %>
 
-  <% if reply.last_call_ref_reply_closed_at %>
-    <% if reply.last_call_ref_reply_reopened_at && reply.last_call_ref_reply_reopened_at > reply.last_call_ref_reply_closed_at %>
-      <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.reopened" %>">
-        <%= t "activerecord.enums.call.status.reopened"%> em <%= reply.last_call_ref_reply_reopened_at.strftime("%d %b %y - %H:%M:%S") %>
-      </span>
-    <% end %>
-  <% end %>
-
-  <% if reply.last_call_ref_reply_closed_at %>
-    <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.closed" %>">
-      <%= t "activerecord.enums.call.status.closed"%> em <%= reply.last_call_ref_reply_closed_at.strftime("%d %b %y - %H:%M:%S") %>
-    </span>
-  <% end %>
-
   <% if reply.category == 'company' %>
     <div class="card card-default mb-3" style="box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
       <div class="card-header">
@@ -293,15 +279,17 @@
     </div>
   <% end  %>
 
-  <% if reply.last_call_ref_reply_closed_at %>
-    <span style="width:100%; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.closed" %>">
-      <%= t "activerecord.enums.call.status.closed"%> em <%= reply.last_call_ref_reply_closed_at %>
+  <% if reply.last_call_ref_reply_reopened_at && reply.last_call_ref_reply_reopened_at > reply.last_call_ref_reply_closed_at %>
+    <!-- REOPENED AT -->
+    <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.reopened" %>">
+      <%= t "activerecord.enums.call.status.reopened"%> em <%= reply.last_call_ref_reply_reopened_at.strftime("%d %b %y - %H:%M:%S") %>
     </span>
   <% end %>
 
-  <% if reply.last_call_ref_reply_reopened_at && reply.last_call_ref_reply_reopened_at > reply.last_call_ref_reply_closed_at %>
-    <span style="width:100%; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.reopened" %>">
-      <%= t "activerecord.enums.call.status.reopened"%> em <%= reply.last_call_ref_reply_reopened_at %>
+  <% if reply.last_call_ref_reply_closed_at %>
+   <!-- CLOSED AT -->
+    <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.closed" %>">
+      <%= t "activerecord.enums.call.status.closed"%> em <%= reply.last_call_ref_reply_closed_at.strftime("%d %b %y - %H:%M:%S") %>
     </span>
   <% end %>
 
@@ -460,7 +448,7 @@
       faqField.style.display = float ? 'none' : 'inline-flex'
 
       $.ajax({
-        url: '/replies/attachments/' + replyId,
+        url: '/replies/attachments/' + replyID,
         type: "GET",
         dataType: "json",
         success: data => {

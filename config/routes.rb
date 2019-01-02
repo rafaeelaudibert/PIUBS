@@ -55,10 +55,10 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
                          as: 'company_states'
       get ':sei/users', to: 'companies#users',
                         as: 'company_users'
-      get ':id/cities/:state_id', to: 'companies#cities',
-                                  as: 'company_cities'
-      get ':id/unities/:city_id', to: 'companies#unities',
-                                  as: 'company_unities'
+      get ':sei/cities/:state_id', to: 'companies#cities',
+                                   as: 'company_cities'
+      get ':sei/unities/:city_id', to: 'companies#unities',
+                                   as: 'company_unities'
     end
   end
 
@@ -80,14 +80,17 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   # /cities
   resources :cities, except: %i[edit update destroy] do
     collection do
-      get 'states/:id', to: 'cities#states', as: 'city_states'
-      get 'unities/:id', to: 'cities#unities', as: 'city_unities'
+      get ':id/unities', to: 'cities#unities', as: 'city_unities'
       get ':id/users', to: 'cities#users', as: 'city_users'
     end
   end
 
   # /states
-  resources :states, except: %i[edit update destroy]
+  resources :states, except: %i[edit update destroy] do
+    collection do
+      get ':id/cities', to: 'states#cities', as: 'state_cities'
+    end
+  end
 
   # /categories
   resources :categories, except: %i[edit update show] do

@@ -2,10 +2,12 @@
 
 class AttachmentsController < ApplicationController
   protect_from_forgery
-  before_action :authenticate_user!
-  before_action :filter_role
   before_action :set_attachment, only: %i[show edit update destroy download]
+  before_action :authenticate_user!, except: %i[create destroy]
   include ApplicationHelper
+
+  load_and_authorize_resource
+  skip_authorize_resource except: :index
 
   # GET /attachments
   # GET /attachments.json
@@ -28,22 +30,25 @@ class AttachmentsController < ApplicationController
   def destroy
     if @attachment.attachment_links.length.zero?
       @attachment.destroy
-      render json: { message: 'success' }, status: 200
+      return render(json: { message: 'success' },
+                    status: 200)
     end
     render json: { message: 'Não será apagado, pois possui links' }, status: 200
   end
 
   # GET /attachment/:id/download
   def download
-    if @attachment.filename != ''
-      send_data(@attachment.file_contents, type: @attachment.content_type,
-                                           filename: @attachment.filename)
-    end
-  rescue StandardError
-    redirect_to not_found_path
+    authorize! :download, @attachment
+
+    send_attachment_data if @attachment.filename != ''
   end
 
   private
+
+  def send_attachment_data
+    send_data(@attachment.file_contents, type: @attachment.content_type,
+                                         filename: @attachment.filename)
+  end
 
   # Use callbacks to share common setup or constraints between actions.
   def set_attachment
@@ -60,42 +65,7 @@ class AttachmentsController < ApplicationController
     parameters
   end
 
-  def filter_role
-    if params[:action] == 'download' && !admin? && !support_user?
-      filter_roles_for_download
-    else
-      redirect_to not_found_path unless admin?
-    end
-  end
-
-  def filter_roles_for_download
-    @attachment.attachment_links.each do |link|
-      downloadable?(link)
-    end
-  end
-
-  def downloadable?(link)
-    redirect_to denied_path if cant_download_answer(link, Call.where(answer_id: link.answer_id)
-                                                              .first)
-    redirect_to denied_path if cant_download_reply link, Call.find(link.reply.protocol)
-    redirect_to denied_path if cant_download_call(link)
-  end
-
-  def cant_download_answer(link, call)
-    !link.answer.try(:faq) &&
-      ((current_user.company_admin? && call.sei != current_user.sei) ||
-       (current_user.company_user? && call.user_id != current_user.id))
-  end
-
-  def cant_download_reply(link, call)
-    link.reply? &&
-      ((current_user.company_admin? && call.sei != current_user.sei) ||
-       (current_user.company_user? && call.user_id != current_user.id))
-  end
-
-  def cant_download_call(link)
-    link.call? &&
-      ((current_user.company_admin? && link.call.sei != current_user.sei) ||
-       (current_user.company_user? && link.call.user_id != current_user.id))
+  def current_ability
+    @current_ability ||= AttachmentAbility.new(current_user, @attachment)
   end
 end

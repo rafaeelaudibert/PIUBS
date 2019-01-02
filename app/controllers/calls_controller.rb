@@ -3,9 +3,11 @@
 class CallsController < ApplicationController
   before_action :authenticate_user!
   before_action :restrict_system!
-  before_action :filter_role
   before_action :set_company, only: %i[create new]
   include ApplicationHelper
+
+  load_and_authorize_resource
+  skip_authorize_resource only: %i[link_call_support_user unlink_call_support_user reopen_call]
 
   # GET /calls
   # GET /calls.json
@@ -50,6 +52,8 @@ class CallsController < ApplicationController
   # POST calls/link_call_support_user
   def link_call_support_user
     @call = Call.find(params[:call_options_id])
+    authorize! :link_call, @call
+
     if @call.support_user
       redirect_back(fallback_location: root_path,
                     alert: 'Você não pode pegar um atendimento de outro usuário do suporte')
@@ -68,6 +72,8 @@ class CallsController < ApplicationController
   # POST calls/unlink_call_support_user
   def unlink_call_support_user
     @call = Call.find(params[:call_options_id])
+    authorize! :link_call, @call
+
     if @call.support_user == current_user.id
       @call.support_user = ''
       if @call.save
@@ -86,6 +92,8 @@ class CallsController < ApplicationController
   # POST /calls/reopen_call
   def reopen_call
     @call = Call.find(params[:call])
+    # authorize! :reopen_call, @call
+
     @answer = @call.answer
     @call = update_call @call, params
 
@@ -214,38 +222,7 @@ class CallsController < ApplicationController
     redirect_to denied_path unless current_user.both? || current_user.companies?
   end
 
-  def filter_role
-    action = params[:action]
-    if %w[edit update].include? action
-      redirect_to denied_path unless admin?
-    elsif %w[new create destroy].include? action
-      redirect_to denied_path unless admin_support_company?
-    else
-      show_or_index?(action)
-    end
-  end
-
-  def show_or_index?(action)
-    if action == 'show'
-      redirect_to denied_path unless alloweds_users
-    elsif action == 'index'
-      redirect_to faq_path unless admin_support_company?
-    end
-  end
-
-  def alloweds_users
-    creator_company_admin? || creator_company_user? || support_user? || admin?
-  end
-
-  def creator_company_admin?
-    current_user.try(:company_admin?) && @call.sei == current_user.sei
-  end
-
-  def creator_company_user?
-    current_user.try(:company_user?) && @call.user_id == current_user.id
-  end
-
-  def admin_support_company?
-    admin? || support_user? || company_user?
+  def current_ability
+    @current_ability ||= CallAbility.new(current_user)
   end
 end

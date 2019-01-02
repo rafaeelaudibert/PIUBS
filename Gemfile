@@ -73,6 +73,7 @@ gem 'uglifier', '>= 1.3.0'
 
 # PIUBS specific gems
 gem 'backup'
+gem 'cancancan', '~> 2.0'       # Authorization library
 gem 'cpf_cnpj'                  # CPF/CNPJ validations/management
 gem 'data-confirm-modal'        # Modals for confimations
 gem 'dropzonejs-rails'          # Attachments drag n'drop functionality

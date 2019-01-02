@@ -2,9 +2,11 @@
 
 class ContractsController < ApplicationController
   before_action :authenticate_user!
-  before_action :filter_role
   before_action :set_contract, only: %i[destroy download]
   include ApplicationHelper
+
+  load_and_authorize_resource
+  skip_authorize_resource only: :download
 
   # GET /contracts
   def index
@@ -47,6 +49,7 @@ class ContractsController < ApplicationController
 
   # GET /contract/:id/download
   def download
+    authorize! :download, @contract
     if @contract.content_type.split('/')[1].to_s == 'pdf'
       send_data(@contract.file_contents, type: @contract.content_type, filename: @contract.filename)
     end
@@ -88,16 +91,7 @@ class ContractsController < ApplicationController
     false
   end
 
-  def filter_role
-    action = params[:action]
-    if %w[index new create destroy].include? action
-      redirect_to denied_path unless admin?
-    elsif action == 'download'
-      redirect_to denied_path unless admin? || sei_company_admin?
-    end
-  end
-
-  def sei_company_admin?
-    current_user.try(:company_admin?) && @contract.sei == current_user.sei
+  def current_ability
+    @current_ability ||= ContractAbility.new(current_user)
   end
 end
