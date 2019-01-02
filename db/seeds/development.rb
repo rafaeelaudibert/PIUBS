@@ -92,15 +92,17 @@ end
 def seed_cities
   Rails.logger.info('[START]  -- Cities insertion')
   CSV.foreach('./public/csv/municipios.csv', headers: true) do |row|
-    city = City.new(name: row['NOME MUNIC'],
-                    state_id: row['COD UF'],
-                    id: row['CodMun'][0...-1])
-    if city.save
-      Rails.logger.debug("INSERTED a CITY in the database: #{city.id}")
-      seed_contract(city)
-    else
-      Rails.logger.error("ERROR inserting CITY #{city[:name]}")
-      Rails.logger.error(city.errors.full_messages)
+    if $. % 15 == 0 # Line number == $.
+      city = City.new(name: row['NOME MUNIC'],
+                      state_id: row['COD UF'],
+                      id: row['CodMun'][0...-1])
+      if city.save
+        Rails.logger.debug("INSERTED a CITY in the database: #{city.id}")
+        seed_contract(city)
+      else
+        Rails.logger.error("ERROR inserting CITY #{city[:name]}")
+        Rails.logger.error(city.errors.full_messages)
+      end
     end
   end
   Rails.logger.info('[FINISH] -- Cities insertion')
@@ -108,29 +110,35 @@ end
 
 def seed_unities
   Rails.logger.info('[START]  -- Unities insertion')
+
+  city_ids = City.all.ids.to_a
+
   CSV.foreach('./public/csv/ubs.csv', headers: true) do |row|
-    name = row['nom_estab'] ? row['nom_estab'].titleize : row['nom_estab']
-    address = row['dsc_endereco'] ? row['dsc_endereco'].titleize : row['dsc_endereco']
-    neighborhood = row['dsc_bairro'] ? row['dsc_bairro'].titleize : row['dsc_bairro']
-    phone = row['dsc_telefone'] == 'Não se aplica' ? '' : row['dsc_telefone']
-    unity = Unity.new(cnes: row['cod_cnes'],
-                      name: name,
-                      city_id: row['cod_munic'],
-                      address: address,
-                      neighborhood: neighborhood,
-                      phone: phone)
-    if unity.save
-      Rails.logger.debug("INSERTED a UNITY in the database: #{unity.cnes}")
-    else
-      Rails.logger.error("ERROR inserting CITY #{unity[:name]}")
-      Rails.logger.error(unity.errors.full_messages)
+
+    if city_ids.include?(row['cod_munic'].to_i)
+      name = row['nom_estab'] ? row['nom_estab'].titleize : row['nom_estab']
+      address = row['dsc_endereco'] ? row['dsc_endereco'].titleize : row['dsc_endereco']
+      neighborhood = row['dsc_bairro'] ? row['dsc_bairro'].titleize : row['dsc_bairro']
+      phone = row['dsc_telefone'] == 'Não se aplica' ? '' : row['dsc_telefone']
+      unity = Unity.new(cnes: row['cod_cnes'],
+                        name: name,
+                        city_id: row['cod_munic'],
+                        address: address,
+                        neighborhood: neighborhood,
+                        phone: phone)
+      if unity.save
+        Rails.logger.debug("INSERTED a UNITY in the database: #{unity.cnes}")
+      else
+        Rails.logger.error("ERROR inserting UNITY #{unity[:name]}")
+        Rails.logger.error(unity.errors.full_messages)
+      end
     end
   end
   Rails.logger.info('[FINISH] -- Unities insertion')
 end
 
 def seed_contract(city)
-  sei = rand(1..20)
+  sei = rand(1..5)
   file_content = IO.read(File.join(Rails.root,
                                    'public',
                                    'assets',
@@ -154,7 +162,7 @@ end
 def seed_companies
   Rails.logger.info('[START]  -- Companies insertion')
   if Company.new(sei: 0).save
-    (1..20).each do |sei|
+    (1..5).each do |sei|
       company = Company.new(sei: sei)
       if company.save
         Rails.logger.debug("INSERTED a COMPANY in the database: #{sei}")
@@ -258,7 +266,7 @@ def seed_answers
   categories = Category.all
   allowed_users = User.where(role: %w[call_center_admin call_center_user])
   Rails.logger.info('[START]  -- Answers (and FAQ) insertion')
-  (1..2_000).each do |_|
+  (1..50).each do |_|
     answer = Answer.new(question: Faker::Lorem.sentence(50, true, 6),
                         answer: Faker::Lorem.sentence(50, true, 6),
                         category_id: categories.sample.id,
@@ -282,11 +290,11 @@ def seed_calls
   acess_profiles = %w[Médico Enfermeiro Administrador Secretário]
 
   Rails.logger.info('[START]  -- Calls insertion')
-  (1..300).each do |_|
+  (1..20).each do |_|
     ubs = unities.sample
     city = City.find(ubs.city_id)
     contract = Contract.where(city_id: city.id).first
-    user = User.where(sei: contract.sei).sample
+    user = User.where(company: contract.company).sample
     protocol = 0.seconds.from_now.strftime('%Y%m%d%H%M%S%L').to_i
     call = Call.new(title: Faker::Lorem.sentence(15, true, 2),
                     description: Faker::Lorem.sentence(80, true, 6),
@@ -318,7 +326,7 @@ def seed_controversies
   companies = Company.all
 
   Rails.logger.info('[START]  -- Controversy insertion')
-  (1..300).each do |_|
+  (1..20).each do |_|
     city = cities.sample
     unity = city.unities.sample
     company = companies.sample
@@ -333,7 +341,7 @@ def seed_controversies
                                   sei: company.sei,
                                   contract: contract,
                                   creator: 'company',
-                                  company_user_id: User.where(sei: company.sei).sample.id,
+                                  company_user_id: User.where(company: company).sample.id,
                                   city_user_id: User.where(city: city, cnes: nil).sample.try(:id),
                                   unity_user_id: Random.rand > 0.6 ? User.where(cnes: unity.try(:cnes)).sample.try(:id) : nil,
                                   id: protocol)
@@ -369,7 +377,7 @@ def seed_replies
   unity_users = User.where(role: %w[ubs_admin ubs_user])
 
   Rails.logger.info('[START]  -- Replies (and FAQ) insertion')
-  (1..4000).each do |_|
+  (1..200).each do |_|
     random1 = Random.rand
     random2 = Random.rand
     if random1 > 0.50 # Reply para call
@@ -437,14 +445,14 @@ def main
   Rails.logger.warn('[START]  SEED')
   seed_companies
   seed_users
-  # seed_states
-  # seed_cities
-  # seed_unities
-  # seed_categories
-  # seed_answers
-  # seed_calls
-  # seed_controversies
-  # seed_replies
+  seed_states
+  seed_cities
+  seed_unities
+  seed_categories
+  seed_answers
+  seed_calls
+  seed_controversies
+  seed_replies
   Rails.logger.warn('[FINISH] SEED')
 end
 
