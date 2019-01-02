@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 ##
-# This class represents a brazilian state which must have a name and an abbreviation of 2 letters
-# Each state can have multiple cities
+# This class represents a brazilian state which must have a name and an abbreviation of 2 letters.
+#
+# Each state can have multiple City child instances.
 class State < ApplicationRecord
   default_scope { order(:NO_NOME) }
   has_many :cities, -> { order(NO_NOME: :ASC) }

@@ -1,7 +1,13 @@
 # frozen_string_literal: true
 
 ##
-# This class represents a company which have some acess to the PIUBS portal
+# This class represents a company which have acess to the PIUBS portal
+#
+# A Company can make part of a Contract settled with a City. This
+# Contract makes so that the Company need to give support to all the Unity instances
+# which are from the city.
+#
+# A Company can have more than one Contract.
 class Company < ApplicationRecord
   has_many :users, class_name: 'User', foreign_key: :CO_SEI
   has_many :contracts, class_name: 'Contract', foreign_key: :CO_SEI
