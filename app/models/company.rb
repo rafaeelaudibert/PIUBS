@@ -35,16 +35,6 @@ class Company < ApplicationRecord
     read_attribute(:DT_CRIADO_EM)
   end
 
-  # Configures an alias setter for the DT_ATUALIZADO_EM database column
-  def updated_at=(value)
-    write_attribute(:DT_ATUALIZADO_EM, value)
-  end
-
-  # Configures an alias getter for the DT_ATUALIZADO_EM database column
-  def updated_at
-    read_attribute(:DT_ATUALIZADO_EM)
-  end
-
   #### FILTERRIFIC queries ####
   filterrific(
     default_filter_params: {}, # em breve
