@@ -1,11 +1,21 @@
 # frozen_string_literal: true
 
 class City < ApplicationRecord
-  belongs_to :state
+  belongs_to :state, class_name: 'State', foreign_key: :CO_UF
   has_many :unities, -> { order('name ASC') }
   has_many :users
   has_one :contract
   validates :name, presence: true
+
+  # Configures an alias setter for the CO_UF database column
+  def state_id=(value)
+    write_attribute(:CO_UF, value)
+  end
+
+  # Configures an alias getter for the CO_UF database column
+  def state_id
+    read_attribute(:CO_UF)
+  end
 
   filterrific(
     default_filter_params: { sorted_by_name: 'name_asc' },

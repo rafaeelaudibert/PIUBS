@@ -20,7 +20,13 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   enable_extension "uuid-ossp"
 
   create_table "TB_EMPRESA", primary_key: "CO_SEI", id: :integer, default: nil, force: :cascade do |t|
-    t.time "DT_CRIADO_EM"
+    t.datetime "DT_CRIADO_EM"
+  end
+
+  create_table "TB_UF", primary_key: "CO_CODIGO", id: :integer, default: nil, force: :cascade do |t|
+    t.string "NO_NOME", null: false
+    t.string "SG_SIGLA", limit: 2, null: false
+    t.datetime "DT_CRIADO_EM"
   end
 
   create_table "answers", force: :cascade do |t|
@@ -72,8 +78,8 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.string "protocol"
     t.bigint "city_id"
     t.bigint "category_id"
-    t.bigint "state_id"
     t.integer "CO_SEI"
+    t.integer "CO_UF"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
@@ -85,7 +91,6 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.index ["answer_id"], name: "index_calls_on_answer_id"
     t.index ["category_id"], name: "index_calls_on_category_id"
     t.index ["city_id"], name: "index_calls_on_city_id"
-    t.index ["state_id"], name: "index_calls_on_state_id"
     t.index ["user_id"], name: "index_calls_on_user_id"
   end
 
@@ -101,10 +106,9 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
 
   create_table "cities", force: :cascade do |t|
     t.string "name"
-    t.bigint "state_id"
+    t.integer "CO_UF"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["state_id"], name: "index_cities_on_state_id"
   end
 
   create_table "contracts", force: :cascade do |t|
@@ -162,13 +166,6 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.datetime "last_call_ref_reply_reopened_at"
     t.index ["repliable_type", "repliable_id"], name: "index_replies_on_repliable_type_and_repliable_id"
     t.index ["user_id"], name: "index_replies_on_user_id"
-  end
-
-  create_table "states", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "abbr"
   end
 
   create_table "unities", id: false, force: :cascade do |t|
@@ -231,14 +228,14 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   add_foreign_key "attachment_links", "controversies", primary_key: "protocol"
   add_foreign_key "attachment_links", "feedbacks"
   add_foreign_key "calls", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
+  add_foreign_key "calls", "\"TB_UF\"", column: "CO_UF", primary_key: "CO_CODIGO"
   add_foreign_key "calls", "answers"
   add_foreign_key "calls", "categories"
   add_foreign_key "calls", "cities"
-  add_foreign_key "calls", "states"
   add_foreign_key "calls", "unities", column: "cnes", primary_key: "cnes"
   add_foreign_key "calls", "users"
   add_foreign_key "calls", "users", column: "support_user"
-  add_foreign_key "cities", "states"
+  add_foreign_key "cities", "\"TB_UF\"", column: "CO_UF", primary_key: "CO_CODIGO"
   add_foreign_key "contracts", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
   add_foreign_key "contracts", "cities"
   add_foreign_key "controversies", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"

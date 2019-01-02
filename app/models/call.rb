@@ -7,7 +7,7 @@ class Call < ApplicationRecord
 
   belongs_to :city
   belongs_to :category
-  belongs_to :state
+  belongs_to :state, foreign_key: :CO_UF
   belongs_to :user
   belongs_to :company, class_name: 'Company', foreign_key: :CO_SEI
   belongs_to :answer, optional: true
@@ -21,12 +21,24 @@ class Call < ApplicationRecord
   enum status: %i[open closed reopened]
   enum severity: %i[low normal high huge]
 
+  # Configures an alias setter for the CO_SEI database column
   def sei=(value)
     write_attribute(:CO_SEI, value)
   end
 
+  # Configures an alias getter for the CO_SEI database column
   def sei
     read_attribute(:CO_SEI)
+  end
+
+  # Configures an alias setter for the CO_UF database column
+  def state_id=(value)
+    write_attribute(:CO_UF, value)
+  end
+
+  # Configures an alias getter for the CO_UF database column
+  def state_id
+    read_attribute(:CO_UF)
   end
 
   filterrific(

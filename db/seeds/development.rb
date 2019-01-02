@@ -306,7 +306,7 @@ def seed_calls
                     protocol: protocol,
                     city_id: city.id,
                     category_id: categories.sample.id,
-                    state_id: city.state_id,
+                    state: city.state,
                     sei: contract.sei,
                     user_id: user.id,
                     id: protocol,
