@@ -36,10 +36,7 @@ class Company < ApplicationRecord
   end
 
   #### FILTERRIFIC queries ####
-  filterrific(
-    default_filter_params: {}, # em breve
-    available_filters: %i[search_query]
-  )
+  filterrific available_filters: %i[search_query]
 
   scope :search_query, lambda { |query|
     return nil if query.blank? || query.class != Integer
