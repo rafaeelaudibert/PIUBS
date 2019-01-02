@@ -18,7 +18,7 @@ class City < ApplicationRecord
   #### DATABASE adaptations ####
 
   self.primary_key = :CO_CODIGO # Setting a different primary_key
-  self.table_name = :TB_CIDADE # Setting a different table_na
+  self.table_name = :TB_CIDADE # Setting a different table_name
 
   # Configures an alias setter for the CO_CODIGO database column
   def id=(value)

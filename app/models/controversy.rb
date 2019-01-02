@@ -17,8 +17,16 @@ class Controversy < ApplicationRecord
     read_attribute(:CO_CIDADE)
   end
 
+  def contract_id=(value)
+    write_attribute(:CO_CONTRATO, value)
+  end
+
+  def contract_id
+    read_attribute(:CO_CONTRATO)
+  end
+
   belongs_to :company, foreign_key: :CO_SEI
-  belongs_to :contract, optional: true
+  belongs_to :contract, optional: true, foreign_key: :CO_CONTRATO
   belongs_to :city, foreign_key: :CO_CIDADE
   belongs_to :unity, foreign_key: :CO_CNES, optional: true
   belongs_to :company_user, class_name: 'User', optional: true

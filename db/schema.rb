@@ -24,6 +24,15 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.integer "CO_UF", null: false
   end
 
+  create_table "TB_CONTRATO", primary_key: "CO_CODIGO", id: :integer, default: nil, force: :cascade do |t|
+    t.integer "CO_CIDADE"
+    t.integer "CO_SEI"
+    t.string "NO_ARQUIVO"
+    t.string "DS_TIPO_ARQUIVO"
+    t.binary "BL_CONTEUDO"
+    t.datetime "DT_CRIADO_EM"
+  end
+
   create_table "TB_EMPRESA", primary_key: "CO_SEI", id: :integer, default: nil, force: :cascade do |t|
     t.datetime "DT_CRIADO_EM"
   end
@@ -115,24 +124,13 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.integer "source"
   end
 
-  create_table "contracts", force: :cascade do |t|
-    t.integer "contract_number"
-    t.integer "CO_CIDADE"
-    t.integer "CO_SEI"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "filename"
-    t.string "content_type"
-    t.binary "file_contents"
-  end
-
   create_table "controversies", primary_key: "protocol", id: :string, force: :cascade do |t|
     t.string "title"
     t.string "description"
     t.datetime "closed_at"
     t.integer "status", default: 0
     t.integer "CO_SEI"
-    t.integer "contract_id"
+    t.integer "CO_CONTRATO"
     t.integer "CO_CIDADE"
     t.integer "CO_CNES"
     t.integer "company_user_id"
@@ -213,6 +211,8 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   end
 
   add_foreign_key "TB_CIDADE", "\"TB_UF\"", column: "CO_UF", primary_key: "CO_CODIGO"
+  add_foreign_key "TB_CONTRATO", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
+  add_foreign_key "TB_CONTRATO", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
   add_foreign_key "TB_UBS", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "answers", "categories"
   add_foreign_key "answers", "users"
@@ -226,12 +226,10 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   add_foreign_key "calls", "categories"
   add_foreign_key "calls", "users"
   add_foreign_key "calls", "users", column: "support_user"
-  add_foreign_key "contracts", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
-  add_foreign_key "contracts", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
   add_foreign_key "controversies", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
+  add_foreign_key "controversies", "\"TB_CONTRATO\"", column: "CO_CONTRATO", primary_key: "CO_CODIGO"
   add_foreign_key "controversies", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
   add_foreign_key "controversies", "\"TB_UBS\"", column: "CO_CNES", primary_key: "CO_CNES"
-  add_foreign_key "controversies", "contracts"
   add_foreign_key "controversies", "users", column: "city_user_id"
   add_foreign_key "controversies", "users", column: "company_user_id"
   add_foreign_key "controversies", "users", column: "support_1_user_id"
