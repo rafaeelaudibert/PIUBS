@@ -10,10 +10,10 @@ class Company < ApplicationRecord
   has_many :state, through: :city
   validates :CO_SEI, presence: true, uniqueness: true
 
+  #### DATABASE adaptations ####
+
   self.primary_key = :CO_SEI # Setting a different primary_key
   self.table_name = :TB_EMPRESA # Setting a different table_name
-
-  #### DATABASE adaptations ####
 
   # Configures an alias setter for the CO_SEI database column
   def sei=(value)

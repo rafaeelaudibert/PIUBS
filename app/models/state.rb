@@ -5,14 +5,14 @@
 # Each state can have multiple cities
 class State < ApplicationRecord
   default_scope { order(:NO_NOME) }
-  has_many :cities, -> { order('name ASC') }
+  has_many :cities, -> { order(NO_NOME: :ASC) }
   validates :NO_NOME, presence: true, uniqueness: true
   validates :SG_SIGLA, presence: true, uniqueness: true, length: { is: 2 }
 
+  #### DATABASE adaptations ####
+
   self.primary_key = :CO_CODIGO # Setting a different primary_key
   self.table_name = :TB_UF # Setting a different table_name
-
-  #### DATABASE adaptations ####
 
   # Configures an alias setter for the CO_CODIGO database column
   def id=(value)
