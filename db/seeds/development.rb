@@ -287,7 +287,7 @@ end
 def seed_calls
   unities = Unity.all
   categories = Category.all
-  acess_profiles = %w[Médico Enfermeiro Administrador Secretário]
+  access_profiles = %w[Médico Enfermeiro Administrador Secretário]
 
   Rails.logger.info('[START]  -- Calls insertion')
   (1..20).each do |_|
@@ -299,17 +299,16 @@ def seed_calls
     call = Call.new(title: Faker::Lorem.sentence(15, true, 2),
                     description: Faker::Lorem.sentence(80, true, 6),
                     version: ['1.0.0', '1.0.1', '2.0.0', '3.0.0-beta'].sample,
-                    access_profile: acess_profiles.sample,
+                    access_profile: access_profiles.sample,
                     feature_detail: %w[Impressão Login Consulta FAQ].sample,
                     severity: Call.severities.keys.sample,
                     status: Call.statuses.keys.sample,
                     protocol: protocol,
-                    city_id: city.id,
-                    category_id: categories.sample.id,
+                    city: city,
+                    category: categories.sample,
                     state: city.state,
                     sei: contract.sei,
-                    user_id: user.id,
-                    id: protocol,
+                    user: user,
                     cnes: ubs.cnes)
     if call.save
       Rails.logger.debug('Inserted a new call')

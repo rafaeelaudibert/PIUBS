@@ -8,7 +8,7 @@
 # Each City can also have a Contract which will link it together with a Company, which
 # is the responsible for administrating its Unity instances.
 class City < ApplicationRecord
-  belongs_to :state, class_name: 'State', foreign_key: :CO_UF
+  belongs_to :state, foreign_key: :CO_UF
   has_many :unities, -> { order(NO_NOME: :ASC) }, foreign_key: :CO_CIDADE
   has_many :users, -> { order(id: :ASC) }, foreign_key: :CO_CIDADE
   has_one :contract, foreign_key: :CO_CIDADE

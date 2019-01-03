@@ -38,6 +38,28 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.datetime "DT_CRIADO_EM", null: false
   end
 
+  create_table "TB_ATENDIMENTO", primary_key: "CO_PROTOCOLO", id: :bigint, default: nil, force: :cascade do |t|
+    t.string "DS_TITULO", null: false
+    t.text "DS_DESCRICAO", null: false
+    t.integer "TP_STATUS", default: 0, null: false
+    t.string "DS_VERSAO_SISTEMA"
+    t.string "DS_PERFIL_ACESSO"
+    t.string "DS_DETALHE_FUNCIONALIDADE"
+    t.string "DS_SUMARIO_RESPOSTA"
+    t.integer "CO_CIDADE", null: false
+    t.integer "CO_CATEGORIA", null: false
+    t.integer "CO_UF", null: false
+    t.integer "CO_SEI"
+    t.datetime "DT_CRIADO_EM"
+    t.integer "CO_USUARIO_EMPRESA", null: false
+    t.integer "CO_RESPOSTA"
+    t.integer "CO_CNES"
+    t.integer "CO_USUARIO_SUPORTE"
+    t.integer "NU_SEVERIDADE", default: 1
+    t.datetime "DT_FINALIZADO_EM"
+    t.datetime "DT_REABERTO_EM"
+  end
+
   create_table "TB_CATEGORIA", primary_key: "CO_SEQ_ID", id: :integer, default: -> { "nextval('\"SQ_CATEGORIA_ID\"'::regclass)" }, force: :cascade do |t|
     t.string "NO_NOME", null: false
     t.integer "CO_CATEGORIA_PAI"
@@ -88,32 +110,6 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.string "keywords"
     t.integer "source"
     t.index ["user_id"], name: "index_answers_on_user_id"
-  end
-
-  create_table "calls", force: :cascade do |t|
-    t.string "title"
-    t.text "description"
-    t.datetime "finished_at"
-    t.integer "status", default: 0
-    t.string "version"
-    t.string "access_profile"
-    t.string "feature_detail"
-    t.string "answer_summary"
-    t.string "protocol"
-    t.integer "CO_CATEGORIA"
-    t.integer "CO_SEI"
-    t.integer "CO_UF"
-    t.integer "CO_CIDADE"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "user_id"
-    t.bigint "answer_id"
-    t.integer "CO_CNES"
-    t.integer "support_user"
-    t.integer "severity", default: 1
-    t.datetime "reopened_at"
-    t.index ["answer_id"], name: "index_calls_on_answer_id"
-    t.index ["user_id"], name: "index_calls_on_user_id"
   end
 
   create_table "controversies", primary_key: "protocol", id: :string, force: :cascade do |t|
@@ -203,11 +199,19 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   end
 
   add_foreign_key "RT_LINK_ANEXO", "\"TB_ANEXO\"", column: "CO_ANEXO", primary_key: "CO_ID"
+  add_foreign_key "RT_LINK_ANEXO", "\"TB_ATENDIMENTO\"", column: "CO_ATENDIMENTO", primary_key: "CO_PROTOCOLO"
   add_foreign_key "RT_LINK_ANEXO", "answers", column: "CO_QUESTAO"
-  add_foreign_key "RT_LINK_ANEXO", "calls", column: "CO_ATENDIMENTO"
   add_foreign_key "RT_LINK_ANEXO", "controversies", column: "CO_CONTROVERSIA", primary_key: "protocol"
   add_foreign_key "RT_LINK_ANEXO", "feedbacks", column: "CO_FEEDBACK"
   add_foreign_key "RT_LINK_ANEXO", "replies", column: "CO_RESPOSTA"
+  add_foreign_key "TB_ATENDIMENTO", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
+  add_foreign_key "TB_ATENDIMENTO", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
+  add_foreign_key "TB_ATENDIMENTO", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
+  add_foreign_key "TB_ATENDIMENTO", "\"TB_UBS\"", column: "CO_CNES", primary_key: "CO_CNES"
+  add_foreign_key "TB_ATENDIMENTO", "\"TB_UF\"", column: "CO_UF", primary_key: "CO_CODIGO"
+  add_foreign_key "TB_ATENDIMENTO", "answers", column: "CO_RESPOSTA"
+  add_foreign_key "TB_ATENDIMENTO", "users", column: "CO_USUARIO_EMPRESA"
+  add_foreign_key "TB_ATENDIMENTO", "users", column: "CO_USUARIO_SUPORTE"
   add_foreign_key "TB_CATEGORIA", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA_PAI", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_CIDADE", "\"TB_UF\"", column: "CO_UF", primary_key: "CO_CODIGO"
   add_foreign_key "TB_CONTRATO", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
@@ -215,14 +219,6 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   add_foreign_key "TB_UBS", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "answers", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
   add_foreign_key "answers", "users"
-  add_foreign_key "calls", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
-  add_foreign_key "calls", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
-  add_foreign_key "calls", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
-  add_foreign_key "calls", "\"TB_UBS\"", column: "CO_CNES", primary_key: "CO_CNES"
-  add_foreign_key "calls", "\"TB_UF\"", column: "CO_UF", primary_key: "CO_CODIGO"
-  add_foreign_key "calls", "answers"
-  add_foreign_key "calls", "users"
-  add_foreign_key "calls", "users", column: "support_user"
   add_foreign_key "controversies", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
   add_foreign_key "controversies", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "controversies", "\"TB_CONTRATO\"", column: "CO_CONTRATO", primary_key: "CO_CODIGO"
