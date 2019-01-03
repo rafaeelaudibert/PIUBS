@@ -19,6 +19,13 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   enable_extension "unaccent"
   enable_extension "uuid-ossp"
 
+  create_table "TB_ANEXO", primary_key: "CO_ID", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
+    t.string "NO_NOME_ANEXO", null: false
+    t.string "DS_TIPO_ANEXO", null: false
+    t.binary "BL_CONTEUDO", null: false
+    t.datetime "DT_CRIADO_EM", null: false
+  end
+
   create_table "TB_CATEGORIA", primary_key: "CO_SEQ_ID", id: :integer, default: -> { "nextval('\"SQ_CATEGORIA_ID\"'::regclass)" }, force: :cascade do |t|
     t.string "NO_NOME", null: false
     t.integer "CO_CATEGORIA_PAI"
@@ -33,11 +40,11 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   end
 
   create_table "TB_CONTRATO", primary_key: "CO_CODIGO", id: :integer, default: nil, force: :cascade do |t|
-    t.integer "CO_CIDADE"
-    t.integer "CO_SEI"
-    t.string "NO_ARQUIVO"
-    t.string "DS_TIPO_ARQUIVO"
-    t.binary "BL_CONTEUDO"
+    t.integer "CO_CIDADE", null: false
+    t.integer "CO_SEI", null: false
+    t.string "NO_NOME_ARQUIVO", null: false
+    t.string "DS_TIPO_ARQUIVO", null: false
+    t.binary "BL_CONTEUDO", null: false
     t.datetime "DT_CRIADO_EM"
   end
 
@@ -76,22 +83,14 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.bigint "reply_id"
     t.bigint "call_id"
     t.integer "source"
+    t.uuid "CO_ANEXO", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "attachment_id"
     t.string "controversy_id"
     t.integer "feedback_id"
     t.index ["answer_id"], name: "index_attachment_links_on_answer_id"
     t.index ["call_id"], name: "index_attachment_links_on_call_id"
     t.index ["reply_id"], name: "index_attachment_links_on_reply_id"
-  end
-
-  create_table "attachments", id: :uuid, default: nil, force: :cascade do |t|
-    t.string "filename"
-    t.string "content_type"
-    t.binary "file_contents"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "calls", force: :cascade do |t|
@@ -213,6 +212,7 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   add_foreign_key "TB_UBS", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "answers", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
   add_foreign_key "answers", "users"
+  add_foreign_key "attachment_links", "\"TB_ANEXO\"", column: "CO_ANEXO", primary_key: "CO_ID"
   add_foreign_key "attachment_links", "controversies", primary_key: "protocol"
   add_foreign_key "attachment_links", "feedbacks"
   add_foreign_key "calls", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"

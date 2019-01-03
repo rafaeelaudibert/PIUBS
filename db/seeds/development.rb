@@ -145,8 +145,6 @@ def seed_contract(city)
                                    'documents',
                                    'contrato.pdf'),
                          mode: 'rb')
-  puts company
-  pp company
   contract = Contract.new(company: company,
                           city: city,
                           contract_number: "#{company.sei}#{city.id}",
