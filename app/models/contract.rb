@@ -57,14 +57,14 @@ class Contract < ActiveRecord::Base
     read_attribute(:CO_SEI)
   end
 
-  # Configures an alias setter for the NO_ARQUIVO database column
+  # Configures an alias setter for the NO_NOME_ARQUIVO database column
   def filename=(value)
-    write_attribute(:NO_ARQUIVO, value)
+    write_attribute(:NO_NOME_ARQUIVO, value)
   end
 
-  # Configures an alias getter for the NO_ARQUIVO database column
+  # Configures an alias getter for the NO_NOME_ARQUIVO database column
   def filename
-    read_attribute(:NO_ARQUIVO)
+    read_attribute(:NO_NOME_ARQUIVO)
   end
 
   # Configures an alias setter for the DS_TIPO_ARQUIVO database column

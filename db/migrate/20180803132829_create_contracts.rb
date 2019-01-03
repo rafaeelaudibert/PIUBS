@@ -3,13 +3,13 @@
 class CreateContracts < ActiveRecord::Migration[5.2]
   def self.up
     create_table :TB_CONTRATO, id: false do |t|
-      t.integer :CO_CODIGO
-      t.integer :CO_CIDADE
-      t.integer :CO_SEI
-      t.string :NO_ARQUIVO
-      t.string :DS_TIPO_ARQUIVO
-      t.binary :BL_CONTEUDO, limit: 25.megabytes
-      t.datetime :DT_CRIADO_EM
+      t.integer :CO_CODIGO, null: false
+      t.integer :CO_CIDADE, null: false
+      t.integer :CO_SEI, null: false
+      t.string :NO_NOME_ARQUIVO, null: false
+      t.string :DS_TIPO_ARQUIVO, null: false
+      t.binary :BL_CONTEUDO, limit: 25.megabytes, null: false
+      t.datetime :DT_CRIADO_EM, null: false
     end
 
     add_foreign_key :TB_CONTRATO, :TB_CIDADE, column: :CO_CIDADE, primary_key: :CO_CODIGO
