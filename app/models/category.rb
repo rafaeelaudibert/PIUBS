@@ -5,7 +5,7 @@
 #
 # The "categorized" models are: Answer, Call and Controversy.
 class Category < ApplicationRecord
-  default_scope -> { order('"CO_SISTEMA_ORIGEM", "NO_NOME"') }
+  default_scope -> { order(Arel.sql('"CO_SISTEMA_ORIGEM", "NO_NOME"')) }
   belongs_to :parent, class_name: 'Category',
                       foreign_key: :CO_CATEGORIA_PAI, optional: true
   has_many :children, ->(category) { where(CO_CATEGORIA_PAI: category.id) },
