@@ -7,6 +7,7 @@
 # This attachment is stored as a BLOB in the database
 #--
 # FIXME: Use NFS to store the contracts instead of a BLOB field
+# FIXME: DT_CRIADO_EM is not being saved (why though?)
 #++
 class Contract < ActiveRecord::Base
   belongs_to :city, foreign_key: 'CO_CIDADE'
@@ -14,7 +15,7 @@ class Contract < ActiveRecord::Base
   validates :CO_CODIGO, presence: true, uniqueness: true
   validates :CO_CIDADE, presence: true
   validates :CO_SEI, presence: true
-  validates :NO_ARQUIVO, presence: true
+  validates :NO_NOME_ARQUIVO, presence: true
   validate :pdf?
 
   # Validation method responsible for verifying in the backend if the sent file is a pdf
@@ -24,8 +25,8 @@ class Contract < ActiveRecord::Base
 
   #### DATABASE adaptations ####
 
-  self.primary_key = 'CO_CODIGO' # Setting a different primary_key
-  self.table_name = 'TB_CONTRATO' # Setting a different table_name
+  self.primary_key = :CO_CODIGO # Setting a different primary_key
+  self.table_name = :TB_CONTRATO # Setting a different table_name
 
   # Configures an alias setter for the CO_CONTRATO database column
   def contract_number=(value)

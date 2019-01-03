@@ -9,7 +9,7 @@ class CreateContracts < ActiveRecord::Migration[5.2]
       t.string :NO_NOME_ARQUIVO, null: false
       t.string :DS_TIPO_ARQUIVO, null: false
       t.binary :BL_CONTEUDO, limit: 25.megabytes, null: false
-      t.datetime :DT_CRIADO_EM, null: false
+      t.datetime :DT_CRIADO_EM
     end
 
     add_foreign_key :TB_CONTRATO, :TB_CIDADE, column: :CO_CIDADE, primary_key: :CO_CODIGO

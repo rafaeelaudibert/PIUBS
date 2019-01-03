@@ -138,21 +138,23 @@ def seed_unities
 end
 
 def seed_contract(city)
-  sei = rand(1..5)
+  company = Company.all.sample
   file_content = IO.read(File.join(Rails.root,
                                    'public',
                                    'assets',
                                    'documents',
                                    'contrato.pdf'),
                          mode: 'rb')
-  contract = Contract.new(sei: sei,
+  puts company
+  pp company
+  contract = Contract.new(company: company,
                           city: city,
-                          contract_number: "#{sei}#{city.id}",
+                          contract_number: "#{company.sei}#{city.id}",
                           filename: 'contrato.pdf',
                           content_type: 'application/pdf',
                           file_contents: file_content)
   if contract.save
-    Rails.logger.debug("INSERTED a CONTRACT in the database: #{sei}#{city.id}")
+    Rails.logger.debug("INSERTED a CONTRACT in the database: #{company.sei}#{city.id}")
   else
     Rails.logger.error("ERROR inserting CONTRACT: #{sei}#{city.id}")
     Rails.logger.error(contract.errors.full_messages)
