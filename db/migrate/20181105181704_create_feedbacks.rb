@@ -1,10 +1,27 @@
 class CreateFeedbacks < ActiveRecord::Migration[5.2]
-  def change
-    create_table :feedbacks do |t|
-      t.string :description
-      t.references :controversy
-
-      t.timestamps
+  def self.up
+    create_table :TB_FEEDBACK, id: false do |t|
+      t.bigint :CO_SEQ_ID, null: false
+      t.text :DS_DESCRICAO, null: false
+      t.string :CO_CONTROVERSIA, null: false
+      t.datetime :DT_CRIADO_EM
     end
+
+    add_foreign_key :TB_FEEDBACK, :controversies, column: :CO_CONTROVERSIA, primary_key: :protocol
+
+    execute ''
+
+    execute <<-SQL
+      CREATE SEQUENCE "SQ_FEEDBACK_ID";
+      ALTER TABLE "TB_FEEDBACK" ADD CONSTRAINT "PK_TB_FEEDBACK" PRIMARY KEY ("CO_SEQ_ID");
+      ALTER TABLE "TB_FEEDBACK" ALTER COLUMN "CO_SEQ_ID" SET DEFAULT nextval('"SQ_FEEDBACK_ID"');
+      -- ALTER SEQUENCE TB_CATEGORIA_CO_SEQ_ID_SEQ OWNED BY NONE;
+      ALTER SEQUENCE "SQ_FEEDBACK_ID" OWNED BY "TB_FEEDBACK"."CO_SEQ_ID";
+    SQL
+  end
+
+  def self.down
+    execute 'ALTER TABLE "TB_FEEDBACK" DROP CONSTRAINT "PK_TB_FEEDBACK";'
+    drop_table :TB_ATENDIMENTO
   end
 end

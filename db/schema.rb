@@ -86,6 +86,12 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.datetime "DT_CRIADO_EM"
   end
 
+  create_table "TB_FEEDBACK", primary_key: "CO_SEQ_ID", id: :bigint, default: -> { "nextval('\"SQ_FEEDBACK_ID\"'::regclass)" }, force: :cascade do |t|
+    t.text "DS_DESCRICAO", null: false
+    t.string "CO_CONTROVERSIA", null: false
+    t.datetime "DT_CRIADO_EM"
+  end
+
   create_table "TB_UBS", primary_key: "CO_CNES", id: :integer, default: nil, force: :cascade do |t|
     t.string "NO_NOME", null: false
     t.integer "CO_CIDADE", null: false
@@ -131,14 +137,6 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.datetime "updated_at", null: false
     t.integer "support_1_user_id"
     t.integer "support_2_user_id"
-  end
-
-  create_table "feedbacks", force: :cascade do |t|
-    t.string "description"
-    t.bigint "controversy_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["controversy_id"], name: "index_feedbacks_on_controversy_id"
   end
 
   create_table "replies", force: :cascade do |t|
@@ -200,9 +198,9 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
 
   add_foreign_key "RT_LINK_ANEXO", "\"TB_ANEXO\"", column: "CO_ANEXO", primary_key: "CO_ID"
   add_foreign_key "RT_LINK_ANEXO", "\"TB_ATENDIMENTO\"", column: "CO_ATENDIMENTO", primary_key: "CO_PROTOCOLO"
+  add_foreign_key "RT_LINK_ANEXO", "\"TB_FEEDBACK\"", column: "CO_FEEDBACK", primary_key: "CO_SEQ_ID"
   add_foreign_key "RT_LINK_ANEXO", "answers", column: "CO_QUESTAO"
   add_foreign_key "RT_LINK_ANEXO", "controversies", column: "CO_CONTROVERSIA", primary_key: "protocol"
-  add_foreign_key "RT_LINK_ANEXO", "feedbacks", column: "CO_FEEDBACK"
   add_foreign_key "RT_LINK_ANEXO", "replies", column: "CO_RESPOSTA"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
@@ -216,6 +214,7 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   add_foreign_key "TB_CIDADE", "\"TB_UF\"", column: "CO_UF", primary_key: "CO_CODIGO"
   add_foreign_key "TB_CONTRATO", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "TB_CONTRATO", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
+  add_foreign_key "TB_FEEDBACK", "controversies", column: "CO_CONTROVERSIA", primary_key: "protocol"
   add_foreign_key "TB_UBS", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "answers", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
   add_foreign_key "answers", "users"

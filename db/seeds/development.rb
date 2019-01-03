@@ -326,7 +326,7 @@ def seed_controversies
     protocol = 0.seconds.from_now.strftime('%Y%m%d%H%M%S%L').to_i
     controversy = Controversy.new(title: Faker::Lorem.sentence(15, true, 2),
                                   description: Faker::Lorem.sentence(80, true, 6),
-                                  status: Controversy.statuses.to_a.sample[1],
+                                  status: Controversy.statuses.keys.sample,
                                   protocol: protocol,
                                   city: city,
                                   unity: unity,
