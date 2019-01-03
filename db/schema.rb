@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.integer "CO_QUESTAO"
     t.integer "TP_ENTIDADE_ORIGEM", null: false
     t.datetime "DT_CRIADO_EM"
-    t.string "CO_CONTROVERSIA"
+    t.bigint "CO_CONTROVERSIA"
     t.integer "CO_FEEDBACK"
   end
 
@@ -82,13 +82,32 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.datetime "DT_CRIADO_EM"
   end
 
+  create_table "TB_CONTROVERSIA", primary_key: "CO_PROTOCOLO", id: :bigint, default: nil, force: :cascade do |t|
+    t.string "DS_TITULO", null: false
+    t.string "DS_DESCRICAO", null: false
+    t.integer "TP_STATUS", default: 0, null: false
+    t.integer "CO_SEI"
+    t.integer "CO_CIDADE"
+    t.integer "CO_CNES"
+    t.integer "CO_USUARIO_EMPRESA"
+    t.integer "CO_USUARIO_UNIDADE"
+    t.integer "CO_USUARIO_CIDADE"
+    t.integer "CO_CRIADO_POR"
+    t.integer "CO_CATEGORIA", null: false
+    t.integer "NU_COMPLEXIDADE", default: 1, null: false
+    t.integer "CO_SUPORTE"
+    t.integer "CO_SUPORTE_ADICIONAL"
+    t.datetime "DT_CRIADO_EM"
+    t.datetime "DT_FINALIZADO_EM"
+  end
+
   create_table "TB_EMPRESA", primary_key: "CO_SEI", id: :integer, default: nil, force: :cascade do |t|
     t.datetime "DT_CRIADO_EM"
   end
 
   create_table "TB_FEEDBACK", primary_key: "CO_SEQ_ID", id: :bigint, default: -> { "nextval('\"SQ_FEEDBACK_ID\"'::regclass)" }, force: :cascade do |t|
     t.text "DS_DESCRICAO", null: false
-    t.string "CO_CONTROVERSIA", null: false
+    t.bigint "CO_CONTROVERSIA", null: false
     t.datetime "DT_CRIADO_EM"
   end
 
@@ -116,27 +135,6 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.string "keywords"
     t.integer "source"
     t.index ["user_id"], name: "index_answers_on_user_id"
-  end
-
-  create_table "controversies", primary_key: "protocol", id: :string, force: :cascade do |t|
-    t.string "title"
-    t.string "description"
-    t.datetime "closed_at"
-    t.integer "status", default: 0
-    t.integer "CO_SEI"
-    t.integer "CO_CONTRATO"
-    t.integer "CO_CIDADE"
-    t.integer "CO_CNES"
-    t.integer "CO_CATEGORIA"
-    t.integer "company_user_id"
-    t.integer "unity_user_id"
-    t.integer "city_user_id"
-    t.integer "creator"
-    t.integer "complexity", default: 1
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "support_1_user_id"
-    t.integer "support_2_user_id"
   end
 
   create_table "replies", force: :cascade do |t|
@@ -198,9 +196,9 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
 
   add_foreign_key "RT_LINK_ANEXO", "\"TB_ANEXO\"", column: "CO_ANEXO", primary_key: "CO_ID"
   add_foreign_key "RT_LINK_ANEXO", "\"TB_ATENDIMENTO\"", column: "CO_ATENDIMENTO", primary_key: "CO_PROTOCOLO"
+  add_foreign_key "RT_LINK_ANEXO", "\"TB_CONTROVERSIA\"", column: "CO_CONTROVERSIA", primary_key: "CO_PROTOCOLO"
   add_foreign_key "RT_LINK_ANEXO", "\"TB_FEEDBACK\"", column: "CO_FEEDBACK", primary_key: "CO_SEQ_ID"
   add_foreign_key "RT_LINK_ANEXO", "answers", column: "CO_QUESTAO"
-  add_foreign_key "RT_LINK_ANEXO", "controversies", column: "CO_CONTROVERSIA", primary_key: "protocol"
   add_foreign_key "RT_LINK_ANEXO", "replies", column: "CO_RESPOSTA"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
@@ -214,20 +212,19 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   add_foreign_key "TB_CIDADE", "\"TB_UF\"", column: "CO_UF", primary_key: "CO_CODIGO"
   add_foreign_key "TB_CONTRATO", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "TB_CONTRATO", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
-  add_foreign_key "TB_FEEDBACK", "controversies", column: "CO_CONTROVERSIA", primary_key: "protocol"
+  add_foreign_key "TB_CONTROVERSIA", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
+  add_foreign_key "TB_CONTROVERSIA", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
+  add_foreign_key "TB_CONTROVERSIA", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
+  add_foreign_key "TB_CONTROVERSIA", "\"TB_UBS\"", column: "CO_CNES", primary_key: "CO_CNES"
+  add_foreign_key "TB_CONTROVERSIA", "users", column: "CO_SUPORTE"
+  add_foreign_key "TB_CONTROVERSIA", "users", column: "CO_SUPORTE_ADICIONAL"
+  add_foreign_key "TB_CONTROVERSIA", "users", column: "CO_USUARIO_CIDADE"
+  add_foreign_key "TB_CONTROVERSIA", "users", column: "CO_USUARIO_EMPRESA"
+  add_foreign_key "TB_CONTROVERSIA", "users", column: "CO_USUARIO_UNIDADE"
+  add_foreign_key "TB_FEEDBACK", "\"TB_CONTROVERSIA\"", column: "CO_CONTROVERSIA", primary_key: "CO_PROTOCOLO"
   add_foreign_key "TB_UBS", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "answers", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
   add_foreign_key "answers", "users"
-  add_foreign_key "controversies", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
-  add_foreign_key "controversies", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
-  add_foreign_key "controversies", "\"TB_CONTRATO\"", column: "CO_CONTRATO", primary_key: "CO_CODIGO"
-  add_foreign_key "controversies", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
-  add_foreign_key "controversies", "\"TB_UBS\"", column: "CO_CNES", primary_key: "CO_CNES"
-  add_foreign_key "controversies", "users", column: "city_user_id"
-  add_foreign_key "controversies", "users", column: "company_user_id"
-  add_foreign_key "controversies", "users", column: "support_1_user_id"
-  add_foreign_key "controversies", "users", column: "support_2_user_id"
-  add_foreign_key "controversies", "users", column: "unity_user_id"
   add_foreign_key "replies", "users"
   add_foreign_key "users", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "users", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"

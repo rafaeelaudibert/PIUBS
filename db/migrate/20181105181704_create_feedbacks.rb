@@ -3,13 +3,11 @@ class CreateFeedbacks < ActiveRecord::Migration[5.2]
     create_table :TB_FEEDBACK, id: false do |t|
       t.bigint :CO_SEQ_ID, null: false
       t.text :DS_DESCRICAO, null: false
-      t.string :CO_CONTROVERSIA, null: false
+      t.bigint :CO_CONTROVERSIA, null: false
       t.datetime :DT_CRIADO_EM
     end
 
-    add_foreign_key :TB_FEEDBACK, :controversies, column: :CO_CONTROVERSIA, primary_key: :protocol
-
-    execute ''
+    add_foreign_key :TB_FEEDBACK, :TB_CONTROVERSIA, column: :CO_CONTROVERSIA, primary_key: :CO_PROTOCOLO
 
     execute <<-SQL
       CREATE SEQUENCE "SQ_FEEDBACK_ID";
@@ -22,6 +20,6 @@ class CreateFeedbacks < ActiveRecord::Migration[5.2]
 
   def self.down
     execute 'ALTER TABLE "TB_FEEDBACK" DROP CONSTRAINT "PK_TB_FEEDBACK";'
-    drop_table :TB_ATENDIMENTO
+    drop_table :TB_FEEDBACK
   end
 end
