@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+##
+# This class is the responsible to link an Attachment with
+# any attachable model, which are: Call, Reply, Answer,
+# Controversy or Feedback
+#
+# We shall have a relation table because the same attachment,
+# can have relations with tons of differents other entities.
 class AttachmentLink < ApplicationRecord
   belongs_to :attachment, foreign_key: :CO_ANEXO
   belongs_to :answer, optional: true, foreign_key: :CO_QUESTAO
