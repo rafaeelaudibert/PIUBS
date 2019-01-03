@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 ##
-# This class is a generic database model to represent a Category which is hold by some "categorizable" models.
+# This class is a generic database model to represent a Category which is hold
+# by some "categorizable" models.
 #
 # The "categorized" models are: Answer, Call and Controversy.
 class Category < ApplicationRecord
