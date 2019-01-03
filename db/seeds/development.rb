@@ -63,16 +63,6 @@ def seed_company_user(company, role_name)
   end
 end
 
-def seed_unity(cnes, name, city)
-  ubs = Unity.new(cnes: cnes, name: name, city: city)
-  if ubs.save
-    Rails.logger.debug("INSERTED a UNITY in #{city.name}: #{name}")
-  else
-    Rails.logger.error("ERROR inserting UNITY in #{city.name}: #{name}")
-    Rails.logger.error(ubs.errors.full_messages)
-  end
-end
-
 def seed_states
   Rails.logger.info('[START]  -- States insertion')
   CSV.foreach('./public/csv/estados.csv', headers: true) do |row|
@@ -91,8 +81,10 @@ end
 
 def seed_cities
   Rails.logger.info('[START]  -- Cities insertion')
+
+  counter = 0
   CSV.foreach('./public/csv/municipios.csv', headers: true) do |row|
-    if $. % 15 == 0 # Line number == $.
+    if counter % 15 == 0 # Line number == $.
       city = City.new(name: row['NOME MUNIC'],
                       state_id: row['COD UF'],
                       id: row['CodMun'][0...-1])
@@ -104,6 +96,8 @@ def seed_cities
         Rails.logger.error(city.errors.full_messages)
       end
     end
+
+    counter+=1
   end
   Rails.logger.info('[FINISH] -- Cities insertion')
 end
