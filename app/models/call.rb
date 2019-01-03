@@ -13,7 +13,7 @@ class Call < ApplicationRecord
   belongs_to :answer, optional: true
   belongs_to :unity, foreign_key: :CO_CNES
   has_many :replies, as: :repliable
-  has_many :attachment_links
+  has_many :attachment_links, foreign_key: :CO_ATENDIMENTO
   has_many :attachments, through: :attachment_links
 
   ### SE ADICIONAR NOVO OU ALTERAR STATUS OU SEVERIDADE, LEMBRAR DE

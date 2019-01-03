@@ -2,7 +2,7 @@
 
 class Reply < ApplicationRecord
   belongs_to :user
-  has_many :attachment_links
+  has_many :attachment_links, foreign_key: :CO_RESPOSTA
   has_many :attachments, through: :attachment_links
   belongs_to :repliable, polymorphic: true
   enum status: %i[open closed reopened]

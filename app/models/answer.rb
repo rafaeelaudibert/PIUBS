@@ -3,7 +3,7 @@
 class Answer < ApplicationRecord
   belongs_to :category, foreign_key: :CO_CATEGORIA
   belongs_to :user
-  has_many :attachment_links
+  has_many :attachment_links, foreign_key: :CO_QUESTAO
   has_many :attachments, through: :attachment_links
   has_many :call
   validates :question, presence: true
@@ -12,7 +12,7 @@ class Answer < ApplicationRecord
   validates :user_id, presence: true
   validates :faq, inclusion: { in: [true, false],
                                message: 'this one is not allowed.
-                                          Choose from True or False' }
+                                         Choose from True or False' }
 
   enum source: %i[from_call from_controversy]
 

@@ -19,6 +19,18 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   enable_extension "unaccent"
   enable_extension "uuid-ossp"
 
+  create_table "RT_LINK_ANEXO", id: false, force: :cascade do |t|
+    t.uuid "CO_ID", default: -> { "uuid_generate_v4()" }, null: false
+    t.uuid "CO_ANEXO", null: false
+    t.integer "CO_RESPOSTA"
+    t.integer "CO_ATENDIMENTO"
+    t.integer "CO_QUESTAO"
+    t.integer "TP_ENTIDADE_ORIGEM", null: false
+    t.datetime "DT_CRIADO_EM"
+    t.string "CO_CONTROVERSIA"
+    t.integer "CO_FEEDBACK"
+  end
+
   create_table "TB_ANEXO", primary_key: "CO_ID", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.string "NO_NOME_ANEXO", null: false
     t.string "DS_TIPO_ANEXO", null: false
@@ -76,21 +88,6 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.string "keywords"
     t.integer "source"
     t.index ["user_id"], name: "index_answers_on_user_id"
-  end
-
-  create_table "attachment_links", force: :cascade do |t|
-    t.bigint "answer_id"
-    t.bigint "reply_id"
-    t.bigint "call_id"
-    t.integer "source"
-    t.uuid "CO_ANEXO", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "controversy_id"
-    t.integer "feedback_id"
-    t.index ["answer_id"], name: "index_attachment_links_on_answer_id"
-    t.index ["call_id"], name: "index_attachment_links_on_call_id"
-    t.index ["reply_id"], name: "index_attachment_links_on_reply_id"
   end
 
   create_table "calls", force: :cascade do |t|
@@ -205,6 +202,12 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "RT_LINK_ANEXO", "\"TB_ANEXO\"", column: "CO_ANEXO", primary_key: "CO_ID"
+  add_foreign_key "RT_LINK_ANEXO", "answers", column: "CO_QUESTAO"
+  add_foreign_key "RT_LINK_ANEXO", "calls", column: "CO_ATENDIMENTO"
+  add_foreign_key "RT_LINK_ANEXO", "controversies", column: "CO_CONTROVERSIA", primary_key: "protocol"
+  add_foreign_key "RT_LINK_ANEXO", "feedbacks", column: "CO_FEEDBACK"
+  add_foreign_key "RT_LINK_ANEXO", "replies", column: "CO_RESPOSTA"
   add_foreign_key "TB_CATEGORIA", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA_PAI", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_CIDADE", "\"TB_UF\"", column: "CO_UF", primary_key: "CO_CODIGO"
   add_foreign_key "TB_CONTRATO", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
@@ -212,9 +215,6 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   add_foreign_key "TB_UBS", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "answers", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
   add_foreign_key "answers", "users"
-  add_foreign_key "attachment_links", "\"TB_ANEXO\"", column: "CO_ANEXO", primary_key: "CO_ID"
-  add_foreign_key "attachment_links", "controversies", primary_key: "protocol"
-  add_foreign_key "attachment_links", "feedbacks"
   add_foreign_key "calls", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
   add_foreign_key "calls", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "calls", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"

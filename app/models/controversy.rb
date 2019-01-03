@@ -45,7 +45,7 @@ class Controversy < ApplicationRecord
   belongs_to :city_user, class_name: 'User', optional: true
   belongs_to :support_1, foreign_key: :support_1_user_id, class_name: 'User', optional: true
   belongs_to :support_2, foreign_key: :support_2_user_id, class_name: 'User', optional: true
-  has_many :attachment_links
+  has_many :attachment_links, foreign_key: :CO_CONTROVERSIA
   has_many :attachments, through: :attachment_links
   has_many :replies, as: :repliable
   has_one :feedback
