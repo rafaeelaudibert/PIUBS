@@ -19,7 +19,7 @@ class User < ApplicationRecord
                 call_center_admin call_center_user]
 
   # If update here, update to en.yml
-  alias_attribute :system, :TP_SISTEMA
+  alias_attribute :system, :ST_SISTEMA
   enum system: %i[companies controversies both]
 
   # Include default devise modules. Others available are:

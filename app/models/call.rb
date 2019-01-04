@@ -22,7 +22,7 @@ class Call < ApplicationRecord
   has_many :attachments, through: :attachment_links
 
   ### Se for adicionado ou alterado algum estado ou severidade,
-  ### adicionar também na tabela de tradução (config/locales/en.yml)
+  ### adicionar tambem na tabela de traducao (config/locales/en.yml)
   alias_attribute :status, :TP_STATUS
   enum status: %i[open closed reopened]
 
