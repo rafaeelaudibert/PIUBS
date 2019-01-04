@@ -14,6 +14,10 @@ class CreateUnities < ActiveRecord::Migration[5.2]
     add_foreign_key :TB_UBS, :TB_CIDADE, column: :CO_CIDADE, primary_key: :CO_CODIGO
 
     execute 'ALTER TABLE "TB_UBS" ADD CONSTRAINT "PK_TB_UBS" PRIMARY KEY ("CO_CNES");'
+
+    # User updates
+    add_column :users, :CO_CNES, :bigint
+    add_foreign_key :users, :TB_UBS, column: :CO_CNES, primary_key: :CO_CNES
   end
 
   def self.down

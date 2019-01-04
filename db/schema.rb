@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_05_181800) do
+ActiveRecord::Schema.define(version: 2018_09_02_130000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "fuzzystrmatch"
@@ -25,10 +25,10 @@ ActiveRecord::Schema.define(version: 2018_11_05_181800) do
     t.bigint "CO_RESPOSTA"
     t.bigint "CO_ATENDIMENTO"
     t.bigint "CO_QUESTAO"
-    t.bigint "TP_ENTIDADE_ORIGEM", null: false
-    t.datetime "DT_CRIADO_EM"
     t.bigint "CO_CONTROVERSIA"
     t.bigint "CO_FEEDBACK"
+    t.bigint "TP_ENTIDADE_ORIGEM", null: false
+    t.datetime "DT_CRIADO_EM"
   end
 
   create_table "TB_ANEXO", primary_key: "CO_ID", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
@@ -49,7 +49,7 @@ ActiveRecord::Schema.define(version: 2018_11_05_181800) do
     t.bigint "CO_CIDADE", null: false
     t.integer "CO_CATEGORIA", null: false
     t.bigint "CO_UF", null: false
-    t.bigint "CO_SEI"
+    t.bigint "CO_SEI", null: false
     t.datetime "DT_CRIADO_EM"
     t.bigint "CO_USUARIO_EMPRESA", null: false
     t.bigint "CO_RESPOSTA"
@@ -86,13 +86,13 @@ ActiveRecord::Schema.define(version: 2018_11_05_181800) do
     t.string "DS_TITULO", null: false
     t.string "DS_DESCRICAO", null: false
     t.integer "TP_STATUS", default: 0, null: false
-    t.bigint "CO_SEI"
-    t.bigint "CO_CIDADE"
+    t.bigint "CO_SEI", null: false
+    t.bigint "CO_CIDADE", null: false
     t.bigint "CO_CNES"
     t.bigint "CO_USUARIO_EMPRESA"
     t.bigint "CO_USUARIO_UNIDADE"
     t.bigint "CO_USUARIO_CIDADE"
-    t.bigint "CO_CRIADO_POR"
+    t.bigint "CO_CRIADO_POR", null: false
     t.bigint "CO_CATEGORIA", null: false
     t.integer "NU_COMPLEXIDADE", default: 1, null: false
     t.bigint "CO_SUPORTE"
@@ -123,13 +123,13 @@ ActiveRecord::Schema.define(version: 2018_11_05_181800) do
   end
 
   create_table "TB_RESPOSTA", primary_key: "CO_SEQ_ID", id: :bigint, default: -> { "nextval('\"SQ_RESPOSTA_ID\"'::regclass)" }, force: :cascade do |t|
-    t.string "DS_DESCRICAO"
-    t.bigint "CO_CATEGORIA"
-    t.string "ST_FAQ", limit: 1
-    t.string "repliable_type"
-    t.bigint "CO_PROTOCOLO"
-    t.bigint "CO_USUARIO"
-    t.integer "TP_STATUS"
+    t.string "DS_DESCRICAO", null: false
+    t.bigint "CO_CATEGORIA", null: false
+    t.string "ST_FAQ", limit: 1, default: "N", null: false
+    t.string "repliable_type", null: false
+    t.bigint "CO_PROTOCOLO", null: false
+    t.bigint "CO_USUARIO", null: false
+    t.integer "TP_STATUS", null: false
     t.datetime "DT_CRIADO_EM"
     t.datetime "DT_REF_ATENDIMENTO_FECHADO"
     t.datetime "DT_REF_ATENDIMENTO_REABERTO"
@@ -138,9 +138,9 @@ ActiveRecord::Schema.define(version: 2018_11_05_181800) do
   create_table "TB_UBS", primary_key: "CO_CNES", id: :bigint, default: nil, force: :cascade do |t|
     t.string "NO_NOME", null: false
     t.bigint "CO_CIDADE", null: false
-    t.string "DS_ENDERECO"
-    t.string "DS_BAIRRO"
-    t.string "DS_TELEFONE"
+    t.string "DS_ENDERECO", default: ""
+    t.string "DS_BAIRRO", default: ""
+    t.string "DS_TELEFONE", default: ""
   end
 
   create_table "TB_UF", primary_key: "CO_CODIGO", id: :bigint, default: nil, force: :cascade do |t|
@@ -159,14 +159,10 @@ ActiveRecord::Schema.define(version: 2018_11_05_181800) do
     t.datetime "last_sign_in_at"
     t.inet "current_sign_in_ip"
     t.inet "last_sign_in_ip"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "name"
     t.string "confirmation_token"
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
-    t.integer "role"
     t.string "invitation_token"
     t.datetime "invitation_created_at"
     t.datetime "invitation_sent_at"
@@ -175,12 +171,17 @@ ActiveRecord::Schema.define(version: 2018_11_05_181800) do
     t.string "invited_by_type"
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
-    t.bigint "CO_SEI"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name"
+    t.integer "role"
     t.string "cpf"
-    t.bigint "CO_CIDADE"
-    t.bigint "CO_CNES"
     t.string "last_name"
     t.bigint "system"
+    t.bigint "CO_CIDADE"
+    t.bigint "CO_CNES"
+    t.bigint "CO_SEI"
+    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
