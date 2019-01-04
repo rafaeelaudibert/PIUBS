@@ -22,13 +22,13 @@ ActiveRecord::Schema.define(version: 2018_11_05_181800) do
   create_table "RT_LINK_ANEXO", id: false, force: :cascade do |t|
     t.uuid "CO_ID", default: -> { "uuid_generate_v4()" }, null: false
     t.uuid "CO_ANEXO", null: false
-    t.integer "CO_RESPOSTA"
-    t.integer "CO_ATENDIMENTO"
-    t.integer "CO_QUESTAO"
-    t.integer "TP_ENTIDADE_ORIGEM", null: false
+    t.bigint "CO_RESPOSTA"
+    t.bigint "CO_ATENDIMENTO"
+    t.bigint "CO_QUESTAO"
+    t.bigint "TP_ENTIDADE_ORIGEM", null: false
     t.datetime "DT_CRIADO_EM"
     t.bigint "CO_CONTROVERSIA"
-    t.integer "CO_FEEDBACK"
+    t.bigint "CO_FEEDBACK"
   end
 
   create_table "TB_ANEXO", primary_key: "CO_ID", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
@@ -46,36 +46,36 @@ ActiveRecord::Schema.define(version: 2018_11_05_181800) do
     t.string "DS_PERFIL_ACESSO"
     t.string "DS_DETALHE_FUNCIONALIDADE"
     t.string "DS_SUMARIO_RESPOSTA"
-    t.integer "CO_CIDADE", null: false
+    t.bigint "CO_CIDADE", null: false
     t.integer "CO_CATEGORIA", null: false
-    t.integer "CO_UF", null: false
-    t.integer "CO_SEI"
+    t.bigint "CO_UF", null: false
+    t.bigint "CO_SEI"
     t.datetime "DT_CRIADO_EM"
-    t.integer "CO_USUARIO_EMPRESA", null: false
-    t.integer "CO_RESPOSTA"
-    t.integer "CO_CNES"
-    t.integer "CO_USUARIO_SUPORTE"
+    t.bigint "CO_USUARIO_EMPRESA", null: false
+    t.bigint "CO_RESPOSTA"
+    t.bigint "CO_CNES"
+    t.bigint "CO_USUARIO_SUPORTE"
     t.integer "NU_SEVERIDADE", default: 1
     t.datetime "DT_FINALIZADO_EM"
     t.datetime "DT_REABERTO_EM"
   end
 
-  create_table "TB_CATEGORIA", primary_key: "CO_SEQ_ID", id: :integer, default: -> { "nextval('\"SQ_CATEGORIA_ID\"'::regclass)" }, force: :cascade do |t|
+  create_table "TB_CATEGORIA", primary_key: "CO_SEQ_ID", id: :bigint, default: -> { "nextval('\"SQ_CATEGORIA_ID\"'::regclass)" }, force: :cascade do |t|
     t.string "NO_NOME", null: false
-    t.integer "CO_CATEGORIA_PAI"
+    t.bigint "CO_CATEGORIA_PAI"
     t.integer "NU_PROFUNDIDADE", default: 0
     t.integer "NU_SEVERIDADE", null: false
-    t.integer "CO_SISTEMA_ORIGEM", null: false
+    t.bigint "CO_SISTEMA_ORIGEM", null: false
   end
 
-  create_table "TB_CIDADE", primary_key: "CO_CODIGO", id: :integer, default: nil, force: :cascade do |t|
+  create_table "TB_CIDADE", primary_key: "CO_CODIGO", id: :bigint, default: nil, force: :cascade do |t|
     t.string "NO_NOME", null: false
-    t.integer "CO_UF", null: false
+    t.bigint "CO_UF", null: false
   end
 
-  create_table "TB_CONTRATO", primary_key: "CO_CODIGO", id: :integer, default: nil, force: :cascade do |t|
-    t.integer "CO_CIDADE", null: false
-    t.integer "CO_SEI", null: false
+  create_table "TB_CONTRATO", primary_key: "CO_CODIGO", id: :bigint, default: nil, force: :cascade do |t|
+    t.bigint "CO_CIDADE", null: false
+    t.bigint "CO_SEI", null: false
     t.string "NO_NOME_ARQUIVO", null: false
     t.string "DS_TIPO_ARQUIVO", null: false
     t.binary "BL_CONTEUDO", null: false
@@ -86,22 +86,22 @@ ActiveRecord::Schema.define(version: 2018_11_05_181800) do
     t.string "DS_TITULO", null: false
     t.string "DS_DESCRICAO", null: false
     t.integer "TP_STATUS", default: 0, null: false
-    t.integer "CO_SEI"
-    t.integer "CO_CIDADE"
-    t.integer "CO_CNES"
-    t.integer "CO_USUARIO_EMPRESA"
-    t.integer "CO_USUARIO_UNIDADE"
-    t.integer "CO_USUARIO_CIDADE"
-    t.integer "CO_CRIADO_POR"
-    t.integer "CO_CATEGORIA", null: false
+    t.bigint "CO_SEI"
+    t.bigint "CO_CIDADE"
+    t.bigint "CO_CNES"
+    t.bigint "CO_USUARIO_EMPRESA"
+    t.bigint "CO_USUARIO_UNIDADE"
+    t.bigint "CO_USUARIO_CIDADE"
+    t.bigint "CO_CRIADO_POR"
+    t.bigint "CO_CATEGORIA", null: false
     t.integer "NU_COMPLEXIDADE", default: 1, null: false
-    t.integer "CO_SUPORTE"
-    t.integer "CO_SUPORTE_ADICIONAL"
+    t.bigint "CO_SUPORTE"
+    t.bigint "CO_SUPORTE_ADICIONAL"
     t.datetime "DT_CRIADO_EM"
     t.datetime "DT_FINALIZADO_EM"
   end
 
-  create_table "TB_EMPRESA", primary_key: "CO_SEI", id: :integer, default: nil, force: :cascade do |t|
+  create_table "TB_EMPRESA", primary_key: "CO_SEI", id: :bigint, default: nil, force: :cascade do |t|
     t.datetime "DT_CRIADO_EM"
   end
 
@@ -111,44 +111,41 @@ ActiveRecord::Schema.define(version: 2018_11_05_181800) do
     t.datetime "DT_CRIADO_EM"
   end
 
-  create_table "TB_QUESTAO", primary_key: "CO_SEQ_ID", id: :integer, default: -> { "nextval('\"SQ_QUESTAO_ID\"'::regclass)" }, force: :cascade do |t|
+  create_table "TB_QUESTAO", primary_key: "CO_SEQ_ID", id: :bigint, default: -> { "nextval('\"SQ_QUESTAO_ID\"'::regclass)" }, force: :cascade do |t|
     t.text "DS_QUESTAO", null: false
     t.text "DS_RESPOSTA", null: false
-    t.integer "CO_CATEGORIA", null: false
-    t.integer "CO_USUARIO", null: false
+    t.bigint "CO_CATEGORIA", null: false
+    t.bigint "CO_USUARIO", null: false
     t.string "ST_FAQ", limit: 1, default: "N", null: false
     t.string "DS_PALAVRA_CHAVE", null: false
-    t.integer "CO_SISTEMA_ORIGEM", null: false
+    t.bigint "CO_SISTEMA_ORIGEM", null: false
     t.datetime "DT_CRIADO_EM"
   end
 
-  create_table "TB_UBS", primary_key: "CO_CNES", id: :integer, default: nil, force: :cascade do |t|
+  create_table "TB_RESPOSTA", primary_key: "CO_SEQ_ID", id: :bigint, default: -> { "nextval('\"SQ_RESPOSTA_ID\"'::regclass)" }, force: :cascade do |t|
+    t.string "DS_DESCRICAO"
+    t.bigint "CO_CATEGORIA"
+    t.string "ST_FAQ", limit: 1
+    t.string "repliable_type"
+    t.bigint "CO_PROTOCOLO"
+    t.bigint "CO_USUARIO"
+    t.integer "TP_STATUS"
+    t.datetime "DT_CRIADO_EM"
+    t.datetime "DT_REF_ATENDIMENTO_FECHADO"
+    t.datetime "DT_REF_ATENDIMENTO_REABERTO"
+  end
+
+  create_table "TB_UBS", primary_key: "CO_CNES", id: :bigint, default: nil, force: :cascade do |t|
     t.string "NO_NOME", null: false
-    t.integer "CO_CIDADE", null: false
+    t.bigint "CO_CIDADE", null: false
     t.string "DS_ENDERECO"
     t.string "DS_BAIRRO"
     t.string "DS_TELEFONE"
   end
 
-  create_table "TB_UF", primary_key: "CO_CODIGO", id: :integer, default: nil, force: :cascade do |t|
+  create_table "TB_UF", primary_key: "CO_CODIGO", id: :bigint, default: nil, force: :cascade do |t|
     t.string "NO_NOME", null: false
     t.string "SG_SIGLA", limit: 2, null: false
-  end
-
-  create_table "replies", force: :cascade do |t|
-    t.text "description"
-    t.integer "status"
-    t.integer "category"
-    t.bigint "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "faq", default: false
-    t.string "repliable_type"
-    t.bigint "repliable_id"
-    t.datetime "last_call_ref_reply_closed_at"
-    t.datetime "last_call_ref_reply_reopened_at"
-    t.index ["repliable_type", "repliable_id"], name: "index_replies_on_repliable_type_and_repliable_id"
-    t.index ["user_id"], name: "index_replies_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -178,12 +175,12 @@ ActiveRecord::Schema.define(version: 2018_11_05_181800) do
     t.string "invited_by_type"
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
-    t.integer "CO_SEI"
+    t.bigint "CO_SEI"
     t.string "cpf"
-    t.integer "CO_CIDADE"
-    t.integer "CO_CNES"
+    t.bigint "CO_CIDADE"
+    t.bigint "CO_CNES"
     t.string "last_name"
-    t.integer "system"
+    t.bigint "system"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
@@ -197,7 +194,7 @@ ActiveRecord::Schema.define(version: 2018_11_05_181800) do
   add_foreign_key "RT_LINK_ANEXO", "\"TB_CONTROVERSIA\"", column: "CO_CONTROVERSIA", primary_key: "CO_PROTOCOLO"
   add_foreign_key "RT_LINK_ANEXO", "\"TB_FEEDBACK\"", column: "CO_FEEDBACK", primary_key: "CO_SEQ_ID"
   add_foreign_key "RT_LINK_ANEXO", "\"TB_QUESTAO\"", column: "CO_QUESTAO", primary_key: "CO_SEQ_ID"
-  add_foreign_key "RT_LINK_ANEXO", "replies", column: "CO_RESPOSTA"
+  add_foreign_key "RT_LINK_ANEXO", "\"TB_RESPOSTA\"", column: "CO_RESPOSTA", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
@@ -222,8 +219,8 @@ ActiveRecord::Schema.define(version: 2018_11_05_181800) do
   add_foreign_key "TB_FEEDBACK", "\"TB_CONTROVERSIA\"", column: "CO_CONTROVERSIA", primary_key: "CO_PROTOCOLO"
   add_foreign_key "TB_QUESTAO", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_QUESTAO", "users", column: "CO_USUARIO"
+  add_foreign_key "TB_RESPOSTA", "users", column: "CO_USUARIO"
   add_foreign_key "TB_UBS", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
-  add_foreign_key "replies", "users"
   add_foreign_key "users", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "users", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
   add_foreign_key "users", "\"TB_UBS\"", column: "CO_CNES", primary_key: "CO_CNES"

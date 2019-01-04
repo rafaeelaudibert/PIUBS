@@ -333,9 +333,9 @@ def seed_controversies
                                   company: company,
                                   creator: 'company',
                                   category: Category.all.sample,
-                                  company_user_id: company.users.sample.try(:id),
-                                  city_user_id: User.where(city: city, unity: nil).sample.try(:id),
-                                  unity_user_id: Random.rand > 0.6 ? unity.users.sample.try(:id) : nil,
+                                  company_user: company.users.sample,
+                                  city_user: User.where(city: city, unity: nil).sample,
+                                  unity_user: Random.rand > 0.6 ? unity.try(:users).try(:sample) : nil,
                                   id: protocol)
     if controversy.save
       Rails.logger.debug('Inserted a new controversy')
@@ -378,7 +378,7 @@ def seed_replies
       reply = Reply.new(repliable_id: call.protocol,
                         repliable_type: 'Call',
                         description: Faker::Lorem.sentence(25, true, 0),
-                        user_id: user.id,
+                        user: user,
                         status: [0, 1, 2].sample,
                         category: random2 > 0.60 ? 'support' : 'company',
                         faq: random2 > 0.90)
