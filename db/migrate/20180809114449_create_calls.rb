@@ -14,7 +14,7 @@ class CreateCalls < ActiveRecord::Migration[5.2]
       t.bigint :CO_CIDADE, null: false
       t.integer :CO_CATEGORIA, null: false
       t.bigint :CO_UF, null: false
-      t.bigint :CO_SEI
+      t.bigint :CO_SEI, null: false
       t.datetime :DT_CRIADO_EM
       t.bigint :CO_USUARIO_EMPRESA, null: false
       t.bigint :CO_RESPOSTA

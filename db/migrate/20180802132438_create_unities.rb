@@ -6,9 +6,9 @@ class CreateUnities < ActiveRecord::Migration[5.2]
       t.bigint :CO_CNES, null: false
       t.string :NO_NOME, null: false
       t.bigint :CO_CIDADE, null: false
-      t.string :DS_ENDERECO
-      t.string :DS_BAIRRO
-      t.string :DS_TELEFONE
+      t.string :DS_ENDERECO, default: ''
+      t.string :DS_BAIRRO, default: ''
+      t.string :DS_TELEFONE, default: ''
     end
 
     add_foreign_key :TB_UBS, :TB_CIDADE, column: :CO_CIDADE, primary_key: :CO_CODIGO
