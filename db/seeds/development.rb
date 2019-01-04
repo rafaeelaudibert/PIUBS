@@ -263,7 +263,7 @@ def seed_answers
   (1..50).each do |_|
     answer = Answer.new(question: Faker::Lorem.sentence(50, true, 6),
                         answer: Faker::Lorem.sentence(50, true, 6),
-                        category_id: categories.sample.id,
+                        category: categories.sample,
                         user: allowed_users.sample,
                         faq: Random.rand > 0.90,
                         keywords: Faker::Lorem.sentence(1, true, 3),
@@ -419,11 +419,13 @@ def seed_replies
 end
 
 def seed_faq_from_replies(call, reply)
+  source_system = reply.repliable_type == 'Call' ? :from_call : :from_controversy
   answer = Answer.new(question: call.title,
                       answer: reply.description,
                       category_id: call.category_id,
                       user: reply.user,
                       faq: true,
+                      source: source_system,
                       keywords: Faker::Lorem.sentence(1, true, 3))
   if answer.save
     Rails.logger.debug('Inserted a new FAQ answer')

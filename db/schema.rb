@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_14_171444) do
+ActiveRecord::Schema.define(version: 2018_11_05_181800) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "fuzzystrmatch"
@@ -111,6 +111,17 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
     t.datetime "DT_CRIADO_EM"
   end
 
+  create_table "TB_QUESTAO", primary_key: "CO_SEQ_ID", id: :integer, default: -> { "nextval('\"SQ_QUESTAO_ID\"'::regclass)" }, force: :cascade do |t|
+    t.text "DS_QUESTAO", null: false
+    t.text "DS_RESPOSTA", null: false
+    t.integer "CO_CATEGORIA", null: false
+    t.integer "CO_USUARIO", null: false
+    t.string "ST_FAQ", limit: 1, default: "N", null: false
+    t.string "DS_PALAVRA_CHAVE", null: false
+    t.integer "CO_SISTEMA_ORIGEM", null: false
+    t.datetime "DT_CRIADO_EM"
+  end
+
   create_table "TB_UBS", primary_key: "CO_CNES", id: :integer, default: nil, force: :cascade do |t|
     t.string "NO_NOME", null: false
     t.integer "CO_CIDADE", null: false
@@ -122,19 +133,6 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   create_table "TB_UF", primary_key: "CO_CODIGO", id: :integer, default: nil, force: :cascade do |t|
     t.string "NO_NOME", null: false
     t.string "SG_SIGLA", limit: 2, null: false
-  end
-
-  create_table "answers", force: :cascade do |t|
-    t.text "question"
-    t.text "answer"
-    t.bigint "user_id"
-    t.integer "CO_CATEGORIA"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "faq", default: false
-    t.string "keywords"
-    t.integer "source"
-    t.index ["user_id"], name: "index_answers_on_user_id"
   end
 
   create_table "replies", force: :cascade do |t|
@@ -198,14 +196,14 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   add_foreign_key "RT_LINK_ANEXO", "\"TB_ATENDIMENTO\"", column: "CO_ATENDIMENTO", primary_key: "CO_PROTOCOLO"
   add_foreign_key "RT_LINK_ANEXO", "\"TB_CONTROVERSIA\"", column: "CO_CONTROVERSIA", primary_key: "CO_PROTOCOLO"
   add_foreign_key "RT_LINK_ANEXO", "\"TB_FEEDBACK\"", column: "CO_FEEDBACK", primary_key: "CO_SEQ_ID"
-  add_foreign_key "RT_LINK_ANEXO", "answers", column: "CO_QUESTAO"
+  add_foreign_key "RT_LINK_ANEXO", "\"TB_QUESTAO\"", column: "CO_QUESTAO", primary_key: "CO_SEQ_ID"
   add_foreign_key "RT_LINK_ANEXO", "replies", column: "CO_RESPOSTA"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
+  add_foreign_key "TB_ATENDIMENTO", "\"TB_QUESTAO\"", column: "CO_RESPOSTA", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_UBS\"", column: "CO_CNES", primary_key: "CO_CNES"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_UF\"", column: "CO_UF", primary_key: "CO_CODIGO"
-  add_foreign_key "TB_ATENDIMENTO", "answers", column: "CO_RESPOSTA"
   add_foreign_key "TB_ATENDIMENTO", "users", column: "CO_USUARIO_EMPRESA"
   add_foreign_key "TB_ATENDIMENTO", "users", column: "CO_USUARIO_SUPORTE"
   add_foreign_key "TB_CATEGORIA", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA_PAI", primary_key: "CO_SEQ_ID"
@@ -222,9 +220,9 @@ ActiveRecord::Schema.define(version: 2018_11_14_171444) do
   add_foreign_key "TB_CONTROVERSIA", "users", column: "CO_USUARIO_EMPRESA"
   add_foreign_key "TB_CONTROVERSIA", "users", column: "CO_USUARIO_UNIDADE"
   add_foreign_key "TB_FEEDBACK", "\"TB_CONTROVERSIA\"", column: "CO_CONTROVERSIA", primary_key: "CO_PROTOCOLO"
+  add_foreign_key "TB_QUESTAO", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
+  add_foreign_key "TB_QUESTAO", "users", column: "CO_USUARIO"
   add_foreign_key "TB_UBS", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
-  add_foreign_key "answers", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
-  add_foreign_key "answers", "users"
   add_foreign_key "replies", "users"
   add_foreign_key "users", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "users", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"

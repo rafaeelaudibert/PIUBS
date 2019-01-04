@@ -15,6 +15,6 @@ class CreateAttachmentsLinks < ActiveRecord::Migration[5.2]
     add_foreign_key :RT_LINK_ANEXO, :TB_ANEXO, column: :CO_ANEXO, primary_key: :CO_ID
     add_foreign_key :RT_LINK_ANEXO, :replies, column: :CO_RESPOSTA
     add_foreign_key :RT_LINK_ANEXO, :TB_ATENDIMENTO, column: :CO_ATENDIMENTO, primary_key: :CO_PROTOCOLO
-    add_foreign_key :RT_LINK_ANEXO, :answers, column: :CO_QUESTAO
+    add_foreign_key :RT_LINK_ANEXO, :TB_QUESTAO, column: :CO_QUESTAO, primary_key: :CO_SEQ_ID
   end
 end

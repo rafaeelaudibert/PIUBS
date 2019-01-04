@@ -28,7 +28,7 @@ class CreateCalls < ActiveRecord::Migration[5.2]
     add_foreign_key :TB_ATENDIMENTO, :users, column: :CO_USUARIO_SUPORTE
     add_foreign_key :TB_ATENDIMENTO, :users, column: :CO_USUARIO_EMPRESA
     add_foreign_key :TB_ATENDIMENTO, :TB_UBS, column: :CO_CNES, primary_key: :CO_CNES
-    add_foreign_key :TB_ATENDIMENTO, :answers, column: :CO_RESPOSTA
+    add_foreign_key :TB_ATENDIMENTO, :TB_QUESTAO, column: :CO_RESPOSTA, primary_key: :CO_SEQ_ID
     add_foreign_key :TB_ATENDIMENTO, :TB_EMPRESA, column: :CO_SEI, primary_key: :CO_SEI
     add_foreign_key :TB_ATENDIMENTO, :TB_UF, column: :CO_UF, primary_key: :CO_CODIGO
     add_foreign_key :TB_ATENDIMENTO, :TB_CIDADE, column: :CO_CIDADE, primary_key: :CO_CODIGO
