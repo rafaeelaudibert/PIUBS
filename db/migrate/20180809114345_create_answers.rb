@@ -15,7 +15,7 @@ class CreateAnswers < ActiveRecord::Migration[5.2]
     end
 
     add_foreign_key :TB_QUESTAO, :TB_CATEGORIA, column: :CO_CATEGORIA, primary_key: :CO_SEQ_ID
-    add_foreign_key :TB_QUESTAO, :users, column: :CO_USUARIO
+    add_foreign_key :TB_QUESTAO, :TB_USUARIO, column: :CO_USUARIO
 
     execute <<-SQL
       CREATE SEQUENCE "SQ_QUESTAO_ID";

@@ -24,11 +24,11 @@ class CreateControversies < ActiveRecord::Migration[5.2]
     add_foreign_key :TB_CONTROVERSIA, :TB_CIDADE, column: :CO_CIDADE, primary_key: :CO_CODIGO
     add_foreign_key :TB_CONTROVERSIA, :TB_UBS, column: :CO_CNES, primary_key: :CO_CNES
     add_foreign_key :TB_CONTROVERSIA, :TB_CATEGORIA, column: :CO_CATEGORIA, primary_key: :CO_SEQ_ID
-    add_foreign_key :TB_CONTROVERSIA, :users, column: :CO_USUARIO_EMPRESA
-    add_foreign_key :TB_CONTROVERSIA, :users, column: :CO_USUARIO_UNIDADE
-    add_foreign_key :TB_CONTROVERSIA, :users, column: :CO_USUARIO_CIDADE
-    add_foreign_key :TB_CONTROVERSIA, :users, column: :CO_SUPORTE
-    add_foreign_key :TB_CONTROVERSIA, :users, column: :CO_SUPORTE_ADICIONAL
+    add_foreign_key :TB_CONTROVERSIA, :TB_USUARIO, column: :CO_USUARIO_EMPRESA
+    add_foreign_key :TB_CONTROVERSIA, :TB_USUARIO, column: :CO_USUARIO_UNIDADE
+    add_foreign_key :TB_CONTROVERSIA, :TB_USUARIO, column: :CO_USUARIO_CIDADE
+    add_foreign_key :TB_CONTROVERSIA, :TB_USUARIO, column: :CO_SUPORTE
+    add_foreign_key :TB_CONTROVERSIA, :TB_USUARIO, column: :CO_SUPORTE_ADICIONAL
     execute 'ALTER TABLE "TB_CONTROVERSIA" ADD CONSTRAINT "PK_TB_CONTROVERSIA" PRIMARY KEY ("CO_PROTOCOLO");'
   end
 

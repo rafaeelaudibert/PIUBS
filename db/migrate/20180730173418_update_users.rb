@@ -2,10 +2,12 @@
 
 class UpdateUsers < ActiveRecord::Migration[5.2]
   def change
-    add_column :users, :name, :string
-    add_column :users, :role, :integer
-    add_column :users, :cpf, :string
-    add_column :users, :last_name, :string
-    add_column :users, :system, :bigint
+    change_table :TB_USUARIO do |t|
+      t.string :NO_NOME
+      t.string :NO_SOBRENOME
+      t.string :NU_CPF
+      t.integer :TP_ROLE
+      t.bigint :ST_SISTEMA
+    end
   end
 end

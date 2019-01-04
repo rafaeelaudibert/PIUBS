@@ -13,8 +13,8 @@ class CreateCities < ActiveRecord::Migration[5.2]
     execute 'ALTER TABLE "TB_CIDADE" ADD CONSTRAINT "PK_TB_CIDADE" PRIMARY KEY ("CO_CODIGO");'
 
     # User updates
-    add_column :users, :CO_CIDADE, :bigint
-    add_foreign_key :users, :TB_CIDADE, column: :CO_CIDADE, primary_key: :CO_CODIGO
+    add_column :TB_USUARIO, :CO_CIDADE, :bigint
+    add_foreign_key :TB_USUARIO, :TB_CIDADE, column: :CO_CIDADE, primary_key: :CO_CODIGO
   end
 
   def self.down

@@ -16,7 +16,7 @@ class CreateReplies < ActiveRecord::Migration[5.2]
       t.datetime :DT_REF_ATENDIMENTO_REABERTO
     end
 
-    add_foreign_key :TB_RESPOSTA, :users, column: :CO_USUARIO
+    add_foreign_key :TB_RESPOSTA, :TB_USUARIO, column: :CO_USUARIO
 
     execute <<-SQL
       CREATE SEQUENCE "SQ_RESPOSTA_ID";

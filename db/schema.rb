@@ -148,7 +148,7 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
     t.string "SG_SIGLA", limit: 2, null: false
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "TB_USUARIO", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -173,21 +173,21 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
     t.integer "invitations_count", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "name"
-    t.integer "role"
-    t.string "cpf"
-    t.string "last_name"
-    t.bigint "system"
+    t.string "NO_NOME"
+    t.string "NO_SOBRENOME"
+    t.string "NU_CPF"
+    t.integer "TP_ROLE"
+    t.bigint "ST_SISTEMA"
     t.bigint "CO_CIDADE"
     t.bigint "CO_CNES"
     t.bigint "CO_SEI"
-    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
-    t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
-    t.index ["invitations_count"], name: "index_users_on_invitations_count"
-    t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
-    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
-    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["confirmation_token"], name: "index_TB_USUARIO_on_confirmation_token", unique: true
+    t.index ["email"], name: "index_TB_USUARIO_on_email", unique: true
+    t.index ["invitation_token"], name: "index_TB_USUARIO_on_invitation_token", unique: true
+    t.index ["invitations_count"], name: "index_TB_USUARIO_on_invitations_count"
+    t.index ["invited_by_id"], name: "index_TB_USUARIO_on_invited_by_id"
+    t.index ["invited_by_type", "invited_by_id"], name: "index_TB_USUARIO_on_invited_by_type_and_invited_by_id"
+    t.index ["reset_password_token"], name: "index_TB_USUARIO_on_reset_password_token", unique: true
   end
 
   add_foreign_key "RT_LINK_ANEXO", "\"TB_ANEXO\"", column: "CO_ANEXO", primary_key: "CO_ID"
@@ -202,8 +202,8 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
   add_foreign_key "TB_ATENDIMENTO", "\"TB_QUESTAO\"", column: "CO_RESPOSTA", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_UBS\"", column: "CO_CNES", primary_key: "CO_CNES"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_UF\"", column: "CO_UF", primary_key: "CO_CODIGO"
-  add_foreign_key "TB_ATENDIMENTO", "users", column: "CO_USUARIO_EMPRESA"
-  add_foreign_key "TB_ATENDIMENTO", "users", column: "CO_USUARIO_SUPORTE"
+  add_foreign_key "TB_ATENDIMENTO", "\"TB_USUARIO\"", column: "CO_USUARIO_EMPRESA"
+  add_foreign_key "TB_ATENDIMENTO", "\"TB_USUARIO\"", column: "CO_USUARIO_SUPORTE"
   add_foreign_key "TB_CATEGORIA", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA_PAI", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_CIDADE", "\"TB_UF\"", column: "CO_UF", primary_key: "CO_CODIGO"
   add_foreign_key "TB_CONTRATO", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
@@ -212,17 +212,17 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
   add_foreign_key "TB_CONTROVERSIA", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "TB_CONTROVERSIA", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
   add_foreign_key "TB_CONTROVERSIA", "\"TB_UBS\"", column: "CO_CNES", primary_key: "CO_CNES"
-  add_foreign_key "TB_CONTROVERSIA", "users", column: "CO_SUPORTE"
-  add_foreign_key "TB_CONTROVERSIA", "users", column: "CO_SUPORTE_ADICIONAL"
-  add_foreign_key "TB_CONTROVERSIA", "users", column: "CO_USUARIO_CIDADE"
-  add_foreign_key "TB_CONTROVERSIA", "users", column: "CO_USUARIO_EMPRESA"
-  add_foreign_key "TB_CONTROVERSIA", "users", column: "CO_USUARIO_UNIDADE"
+  add_foreign_key "TB_CONTROVERSIA", "\"TB_USUARIO\"", column: "CO_SUPORTE"
+  add_foreign_key "TB_CONTROVERSIA", "\"TB_USUARIO\"", column: "CO_SUPORTE_ADICIONAL"
+  add_foreign_key "TB_CONTROVERSIA", "\"TB_USUARIO\"", column: "CO_USUARIO_CIDADE"
+  add_foreign_key "TB_CONTROVERSIA", "\"TB_USUARIO\"", column: "CO_USUARIO_EMPRESA"
+  add_foreign_key "TB_CONTROVERSIA", "\"TB_USUARIO\"", column: "CO_USUARIO_UNIDADE"
   add_foreign_key "TB_FEEDBACK", "\"TB_CONTROVERSIA\"", column: "CO_CONTROVERSIA", primary_key: "CO_PROTOCOLO"
   add_foreign_key "TB_QUESTAO", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
-  add_foreign_key "TB_QUESTAO", "users", column: "CO_USUARIO"
-  add_foreign_key "TB_RESPOSTA", "users", column: "CO_USUARIO"
+  add_foreign_key "TB_QUESTAO", "\"TB_USUARIO\"", column: "CO_USUARIO"
+  add_foreign_key "TB_RESPOSTA", "\"TB_USUARIO\"", column: "CO_USUARIO"
   add_foreign_key "TB_UBS", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
-  add_foreign_key "users", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
-  add_foreign_key "users", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
-  add_foreign_key "users", "\"TB_UBS\"", column: "CO_CNES", primary_key: "CO_CNES"
+  add_foreign_key "TB_USUARIO", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
+  add_foreign_key "TB_USUARIO", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
+  add_foreign_key "TB_USUARIO", "\"TB_UBS\"", column: "CO_CNES", primary_key: "CO_CNES"
 end
