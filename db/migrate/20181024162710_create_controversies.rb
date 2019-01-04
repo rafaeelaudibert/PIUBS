@@ -5,17 +5,17 @@ class CreateControversies < ActiveRecord::Migration[5.2]
       t.string :DS_TITULO, null: false
       t.string :DS_DESCRICAO, null: false
       t.integer :TP_STATUS, null: false, default: 0
-      t.integer :CO_SEI
-      t.integer :CO_CIDADE
-      t.integer :CO_CNES
-      t.integer :CO_USUARIO_EMPRESA
-      t.integer :CO_USUARIO_UNIDADE
-      t.integer :CO_USUARIO_CIDADE
-      t.integer :CO_CRIADO_POR
-      t.integer :CO_CATEGORIA, null: false
+      t.bigint :CO_SEI
+      t.bigint :CO_CIDADE
+      t.bigint :CO_CNES
+      t.bigint :CO_USUARIO_EMPRESA
+      t.bigint :CO_USUARIO_UNIDADE
+      t.bigint :CO_USUARIO_CIDADE
+      t.bigint :CO_CRIADO_POR
+      t.bigint :CO_CATEGORIA, null: false
       t.integer :NU_COMPLEXIDADE, null: false, default: 1
-      t.integer :CO_SUPORTE
-      t.integer :CO_SUPORTE_ADICIONAL
+      t.bigint :CO_SUPORTE
+      t.bigint :CO_SUPORTE_ADICIONAL
       t.datetime :DT_CRIADO_EM
       t.datetime :DT_FINALIZADO_EM
     end

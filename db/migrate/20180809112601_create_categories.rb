@@ -3,12 +3,12 @@
 class CreateCategories < ActiveRecord::Migration[5.2]
   def self.up
     create_table :TB_CATEGORIA, id: false do |t|
-      t.integer :CO_SEQ_ID
+      t.bigint :CO_SEQ_ID
       t.string :NO_NOME, null: false
-      t.integer :CO_CATEGORIA_PAI
+      t.bigint :CO_CATEGORIA_PAI
       t.integer :NU_PROFUNDIDADE, default: 0
       t.integer :NU_SEVERIDADE, null: false
-      t.integer :CO_SISTEMA_ORIGEM, null: false
+      t.bigint :CO_SISTEMA_ORIGEM, null: false
     end
 
     execute <<-SQL

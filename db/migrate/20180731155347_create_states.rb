@@ -3,7 +3,7 @@
 class CreateStates < ActiveRecord::Migration[5.2]
   def self.up
     create_table :TB_UF, id: false do |t|
-      t.integer :CO_CODIGO, null: false
+      t.bigint :CO_CODIGO, null: false
       t.string :NO_NOME, null: false
       t.string :SG_SIGLA, null: false, limit: 2
     end

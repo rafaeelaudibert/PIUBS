@@ -3,9 +3,9 @@
 class CreateUnities < ActiveRecord::Migration[5.2]
   def self.up
     create_table :TB_UBS, id: false do |t|
-      t.integer :CO_CNES, null: false
+      t.bigint :CO_CNES, null: false
       t.string :NO_NOME, null: false
-      t.integer :CO_CIDADE, null: false
+      t.bigint :CO_CIDADE, null: false
       t.string :DS_ENDERECO
       t.string :DS_BAIRRO
       t.string :DS_TELEFONE

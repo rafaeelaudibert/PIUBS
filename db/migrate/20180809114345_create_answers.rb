@@ -3,14 +3,14 @@
 class CreateAnswers < ActiveRecord::Migration[5.2]
   def self.up
     create_table :TB_QUESTAO, id: false do |t|
-      t.integer :CO_SEQ_ID, null: false
+      t.bigint :CO_SEQ_ID, null: false
       t.text :DS_QUESTAO, null: false
       t.text :DS_RESPOSTA, null: false
-      t.integer :CO_CATEGORIA, null: false
-      t.integer :CO_USUARIO, null: false
+      t.bigint :CO_CATEGORIA, null: false
+      t.bigint :CO_USUARIO, null: false
       t.string :ST_FAQ, limit: 1, null: false, default: 'N'
       t.string :DS_PALAVRA_CHAVE, null: false
-      t.integer :CO_SISTEMA_ORIGEM, null: false
+      t.bigint :CO_SISTEMA_ORIGEM, null: false
       t.datetime :DT_CRIADO_EM
     end
 

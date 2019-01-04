@@ -3,9 +3,9 @@
 class CreateContracts < ActiveRecord::Migration[5.2]
   def self.up
     create_table :TB_CONTRATO, id: false do |t|
-      t.integer :CO_CODIGO, null: false
-      t.integer :CO_CIDADE, null: false
-      t.integer :CO_SEI, null: false
+      t.bigint :CO_CODIGO, null: false
+      t.bigint :CO_CIDADE, null: false
+      t.bigint :CO_SEI, null: false
       t.string :NO_NOME_ARQUIVO, null: false
       t.string :DS_TIPO_ARQUIVO, null: false
       t.binary :BL_CONTEUDO, limit: 25.megabytes, null: false

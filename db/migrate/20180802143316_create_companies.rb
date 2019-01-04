@@ -3,7 +3,7 @@
 class CreateCompanies < ActiveRecord::Migration[5.2]
   def self.up
     create_table :TB_EMPRESA, id: false do |t|
-      t.integer :CO_SEI, null: false
+      t.bigint :CO_SEI, null: false
       t.datetime :DT_CRIADO_EM
     end
 

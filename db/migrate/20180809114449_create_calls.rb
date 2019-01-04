@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CreateCalls < ActiveRecord::Migration[5.2]
-  def change
+  def self.up
     create_table :TB_ATENDIMENTO, id: false do |t|
       t.bigint :CO_PROTOCOLO, null: false
       t.string :DS_TITULO, null: false
@@ -11,15 +11,15 @@ class CreateCalls < ActiveRecord::Migration[5.2]
       t.string :DS_PERFIL_ACESSO
       t.string :DS_DETALHE_FUNCIONALIDADE
       t.string :DS_SUMARIO_RESPOSTA
-      t.integer :CO_CIDADE, null: false
+      t.bigint :CO_CIDADE, null: false
       t.integer :CO_CATEGORIA, null: false
-      t.integer :CO_UF, null: false
-      t.integer :CO_SEI
+      t.bigint :CO_UF, null: false
+      t.bigint :CO_SEI
       t.datetime :DT_CRIADO_EM
-      t.integer :CO_USUARIO_EMPRESA, null: false
-      t.integer :CO_RESPOSTA
-      t.integer :CO_CNES
-      t.integer :CO_USUARIO_SUPORTE
+      t.bigint :CO_USUARIO_EMPRESA, null: false
+      t.bigint :CO_RESPOSTA
+      t.bigint :CO_CNES
+      t.bigint :CO_USUARIO_SUPORTE
       t.integer :NU_SEVERIDADE, default: 1 # Severidade normal
       t.datetime :DT_FINALIZADO_EM
       t.datetime :DT_REABERTO_EM

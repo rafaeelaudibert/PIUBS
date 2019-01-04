@@ -5,10 +5,10 @@ class CreateAttachmentsLinks < ActiveRecord::Migration[5.2]
     create_table :RT_LINK_ANEXO, id: false do |t|
       t.uuid :CO_ID, null: false, default: 'uuid_generate_v4()'
       t.uuid :CO_ANEXO, null: false
-      t.integer :CO_RESPOSTA
-      t.integer :CO_ATENDIMENTO
-      t.integer :CO_QUESTAO
-      t.integer :TP_ENTIDADE_ORIGEM, null: false
+      t.bigint :CO_RESPOSTA
+      t.bigint :CO_ATENDIMENTO
+      t.bigint :CO_QUESTAO
+      t.bigint :TP_ENTIDADE_ORIGEM, null: false
       t.datetime :DT_CRIADO_EM
     end
 
