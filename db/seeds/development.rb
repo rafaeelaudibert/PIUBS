@@ -380,7 +380,6 @@ def seed_replies
                         description: Faker::Lorem.sentence(25, true, 0),
                         user: user,
                         status: [0, 1, 2].sample,
-                        category: random2 > 0.60 ? 'support' : 'company',
                         faq: random2 > 0.90)
       if reply.save
         Rails.logger.debug("Inserted a new reply to the call #{call.protocol}")
@@ -390,22 +389,21 @@ def seed_replies
         Rails.logger.error(reply.errors.full_messages)
       end
     else # Reply para Controvérsia
-      user, role = if random2 < 0.25
-                     [call_center_users.sample, 'support']
-                   elsif random2 < 0.5
-                     [company_users.sample, 'company']
-                   elsif random2 < 0.75
-                     [city_users.sample, 'city']
-                   else
-                     [unity_users.sample, 'unity']
-                   end
+      user = if random2 < 0.25
+               call_center_users.sample
+             elsif random2 < 0.5
+               company_users.sample
+             elsif random2 < 0.75
+               city_users.sample
+             else
+               unity_users.sample
+             end
       controversy = controversies.sample
              reply = Reply.new(repliable_id: controversy.protocol,
                                repliable_type: 'Controversy',
                                description: Faker::Lorem.sentence(25, true, 0),
                                user_id: user.id,
                                status: %w[open closed].sample,
-                               category: role,
                                faq: false)
              if reply.save
                Rails.logger.debug("Inserted a new reply to the controversy #{controversy.protocol}")

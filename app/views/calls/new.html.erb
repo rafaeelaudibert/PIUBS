@@ -129,6 +129,10 @@
               innerHTML += '<option value=' + state.id + '>' + state.name + '</option>'
             }
             stateSelect.innerHTML = innerHTML;
+
+            // Reset city and unity selects
+            citySelect.innerHTML = '<option value="0"> Selecione um Estado primeiro </option>';
+            ubsSelect.innerHTML = '<option value="0"> Selecione uma Cidade primeiro </option>';
           }
 
           function insertCitiesData(cities) {

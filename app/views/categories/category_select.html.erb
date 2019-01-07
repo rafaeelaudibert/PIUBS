@@ -1,4 +1,4 @@
 <option value>Sem categoria-pai</option>
-<%= inside_layout "categories/category_select", {categ: Category.where(source: @source)} do %>
+<%= inside_layout "categories/category_select", {categ: Category.where(CO_SISTEMA_ORIGEM: @source)} do %>
   <%= yield %>
 <% end %>

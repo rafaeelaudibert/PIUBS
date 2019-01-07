@@ -5,7 +5,7 @@
     </option>
 
     <%# Recursivamente renderiza os filhos %>
-    <%= inside_layout "categories/category_select", {selected: params[:selected], categ: Category.where(parent_id: _cat.id), isChildren: true} do %>
+    <%= inside_layout "categories/category_select", {selected: params[:selected], categ: _cat.children, isChildren: true} do %>
       <%= yield %>
     <% end %>
     <%# %>

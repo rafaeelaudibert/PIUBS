@@ -23,7 +23,7 @@ class Controversy < ApplicationRecord
   belongs_to :support_2, foreign_key: :CO_SUPORTE_ADICIONAL, class_name: 'User', optional: true
   has_many :attachment_links, foreign_key: :CO_CONTROVERSIA
   has_many :attachments, through: :attachment_links
-  has_many :replies, as: :repliable
+  has_many :replies, as: :repliable, foreign_key: :CO_PROTOCOLO
   has_one :feedback, foreign_key: :CO_PROTOCOLO
 
   alias_attribute :creator, :CO_CRIADO_POR

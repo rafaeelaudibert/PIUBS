@@ -24,8 +24,8 @@ class CallsController < ApplicationController
     @answer = Answer.new
     @reply = Reply.new
     @categories = Category.all
-    @my_call = @call.support_user == current_user.id
-    @user = User.find(@call.support_user) if @call.support_user
+    @my_call = @call.support_user == current_user
+    @user = User.find(@call.support_user_id) if @call.support_user_id
   end
 
   # GET /calls/new
@@ -49,12 +49,12 @@ class CallsController < ApplicationController
 
   # POST calls/link_call_support_user
   def link_call_support_user
-    @call = Call.find(params[:call_options_id])
+    @call = Call.find(params[:id])
     if @call.support_user
       redirect_back(fallback_location: root_path,
                     alert: 'Você não pode pegar um atendimento de outro usuário do suporte')
     else
-      @call.support_user = current_user.id
+      @call.support_user = current_user
       if @call.save
         redirect_back(fallback_location: root_path,
                       notice: 'Agora esse atendimento é seu')
@@ -67,9 +67,9 @@ class CallsController < ApplicationController
 
   # POST calls/unlink_call_support_user
   def unlink_call_support_user
-    @call = Call.find(params[:call_options_id])
-    if @call.support_user == current_user.id
-      @call.support_user = ''
+    @call = Call.find(params[:id])
+    if @call.support_user == current_user
+      @call.support_user = nil
       if @call.save
         redirect_back(fallback_location: root_path,
                       notice: 'Atendimento liberado')
@@ -85,7 +85,7 @@ class CallsController < ApplicationController
 
   # POST /calls/reopen_call
   def reopen_call
-    @call = Call.find(params[:call])
+    @call = Call.find(params[:id])
     @answer = @call.answer
     @call = update_call @call, params
 
@@ -149,22 +149,22 @@ class CallsController < ApplicationController
   end
 
   def calls_from_support
-    @filterrific.find.page(params[:page]).where(support_user: [current_user.id, nil])
+    @filterrific.find.page(params[:page]).from_support_user [current_user.id, nil]
   end
 
   def calls_for_support
     @filterrific.find.page(params[:page])
-                .where(support_user: [User.where(invited_by_id: current_user.id).map(&:id),
-                                      current_user.id,
-                                      nil].flatten)
+                .from_support_user [User.where(invited_by_id: current_user.id).map(&:id),
+                                    current_user.id,
+                                    nil].flatten
   end
 
   def calls_for_company_admin
-    @filterrific.find.page(params[:page]).where(sei: current_user.sei)
+    @filterrific.find.page(params[:page]).from_company current_user.sei
   end
 
   def calls_for_company_user
-    @filterrific.find.page(params[:page]).where(user_id: current_user.id)
+    @filterrific.find.page(params[:page]).from_company_user current_user.id
   end
 
   def calls_for_admin
@@ -227,6 +227,7 @@ class CallsController < ApplicationController
 
   def show_or_index?(action)
     if action == 'show'
+      @call ||= Call.try(:find, params[:id]) || Call.try(:find, params[:call])
       redirect_to denied_path unless alloweds_users
     elsif action == 'index'
       redirect_to faq_path unless admin_support_company?

@@ -5,7 +5,6 @@ class CreateReplies < ActiveRecord::Migration[5.2]
     create_table :TB_RESPOSTA, id: false do |t|
       t.bigint :CO_SEQ_ID
       t.string :DS_DESCRICAO, null: false
-      t.bigint :CO_CATEGORIA, null: false
       t.string :ST_FAQ, limit: 1, null: false, default: 'N'
       t.string :repliable_type, null: false
       t.bigint :CO_PROTOCOLO, null: false

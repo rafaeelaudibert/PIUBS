@@ -54,44 +54,29 @@ class CompaniesController < ApplicationController
                          ' atendimentos/usuários cadastrados'
   end
 
-  # GET /companies/1/states
+  # GET /companies/1/states.json
   def states
     @company = Company.find(params[:sei])
-    respond_to do |format|
-      format.js do
-        render json: State.where(id: @company
-                                       .contracts
-                                       .map { |c| c.city.state_id }
-                                       .sort.uniq!)
-      end
-    end
+    @states = @company.states
   end
 
-  # GET /companies/1/users
+  # GET /companies/1/users.json
   def users
-    respond_to do |format|
-      format.js { render json: User.where(sei: params[:sei]).order('name ASC') }
-    end
+    @company = Company.find(params[:sei])
+    @users = @company.users
   end
 
-  # GET /companies/1/cities/1
+  # GET /companies/1/cities/1.json
   def cities
-    cities = retrieve_cities_for_company
-
-    respond_to do |format|
-      format.js do
-        render json: cities
-      end
-    end
+    @company = Company.find(params[:id])
+    @state = State.find(params[:state_id])
+    @cities = retrieve_cities_for_company.order('"NO_NOME"')
   end
 
   # GET /companies/1/unities/1
   def unities
-    respond_to do |format|
-      format.js do
-        render json: City.find(params[:city_id]).unities
-      end
-    end
+    @city = City.find(params[:city_id])
+    @unities = @city.unities
   end
 
   private
@@ -108,11 +93,10 @@ class CompaniesController < ApplicationController
 
   def retrieve_cities_for_company
     if params[:id] == '0'
-      City.where(state_id: params[:state_id])
+      @state.cities
     else
-      City.where(id: Company.find(params[:id]).contracts.map(&:city_id),
-                 state_id: params[:state_id])
-    end.order('name')
+      @state.cities.where(CO_CODIGO: @company.contracts.map(&:city_id))
+    end
   end
 
   def filter_role

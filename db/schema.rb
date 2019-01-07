@@ -124,7 +124,6 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
 
   create_table "TB_RESPOSTA", primary_key: "CO_SEQ_ID", id: :bigint, default: -> { "nextval('\"SQ_RESPOSTA_ID\"'::regclass)" }, force: :cascade do |t|
     t.string "DS_DESCRICAO", null: false
-    t.bigint "CO_CATEGORIA", null: false
     t.string "ST_FAQ", limit: 1, default: "N", null: false
     t.string "repliable_type", null: false
     t.bigint "CO_PROTOCOLO", null: false

@@ -12,13 +12,14 @@ class Company < ApplicationRecord
   has_many :users, foreign_key: :CO_SEI
   has_many :contracts, foreign_key: :CO_SEI
   has_many :call, foreign_key: :CO_SEI
-  has_many :city, -> { order('name ASC') }, through: :contracts
-  has_many :states, through: :city
-  has_many :unities, through: :city
+  has_many :cities, -> { order('name ASC') }, through: :contracts
   validates :CO_SEI, presence: true, uniqueness: true
 
-  #### DATABASE adaptations ####
+  def states
+    State.where(CO_CODIGO: contracts.map { |c| c.city.state_id }.sort.uniq!).order(:NO_NOME)
+  end
 
+  #### DATABASE adaptations ####
   self.primary_key = :CO_SEI # Setting a different primary_key
   self.table_name = :TB_EMPRESA # Setting a different table_name
 

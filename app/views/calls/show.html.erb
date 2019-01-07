@@ -97,7 +97,7 @@
       <% if @my_call %>
         <button type="button" id="reply" class="btn btn-primary">Nova Resposta</button>
         <button type="button" id="faq-reply" class="btn btn-primary">Resposta do FAQ</button>
-        <a data-confirm="Tens certeza?" class="btn btn-danger right" rel="nofollow" data-method="post" href="/apoioaempresas/calls/unlink_call_support_user?call_options_id=<%= @call.id %>">
+        <a data-confirm="Tens certeza?" class="btn btn-danger right" rel="nofollow" data-method="post" href="/apoioaempresas/calls/unlink_call_support_user?id=<%= @call.id %>">
           Soltar Atendimento
         </a>
       <% else %>
@@ -111,7 +111,7 @@
       <% end %>
     <% else %>
       <% unless admin? %>
-        <%= button_to 'Pegar atendimento', link_call_support_user_calls_path(:call_options_id => @call.id, :user_option_id => current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este atendimento' }, method: :post, class: "btn
+        <%= button_to 'Pegar atendimento', link_call_support_user_calls_path(id: @call.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este atendimento' }, method: :post, class: "btn
       right", :style => "color:#FFF; background-color: #084B8A; margin-bottom: 1em;" %>
       <% end %>
     <% end %>
@@ -137,8 +137,8 @@
           Somente reabra caso a solução oferecida pelo atendente não tenha resolvido o seu problema.</br>
         </p>
       <% end %>
-      <% if @call.replies.order(:id).last %>
-        <a data-confirm="Tens certeza?" class="btn btn-danger btn-lg" rel="nofollow" data-method="post" href="/apoioaempresas/calls/reopen_call?call=<%= @call.id %>&reply_id=<%= @call.replies.order(:id).last.id %>">
+      <% if @call.replies.first %>
+        <a data-confirm="Tens certeza?" class="btn btn-danger btn-lg" rel="nofollow" data-method="post" href="/apoioaempresas/calls/reopen_call?id=<%= @call.id %>&reply_id=<%= @call.replies.first.id %>">
           Reabrir chamado
         </a>
       <% end %>
@@ -185,7 +185,7 @@
 </div>
 <div class="card-block">
 
-<% @call.replies.order(id: :desc).each do |reply| %>
+<% @call.replies.each do |reply| %>
 
   <% if reply.last_call_ref_reply_closed_at %>
     <% if reply.last_call_ref_reply_reopened_at && reply.last_call_ref_reply_reopened_at > reply.last_call_ref_reply_closed_at %>
@@ -201,14 +201,14 @@
     </span>
   <% end %>
 
-  <% if reply.category == 'company' %>
+  <% if company_user? reply.user %>
     <div class="card card-default mb-3" style="box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
       <div class="card-header">
         <em class="fa fa-comment-o m-2"></em>
         <span class="badge badge-pill badge-dark m-1" style="display: none"><%= '#' << reply.id.to_s %></span>
         -
         <strong class="m-2">
-          <%= User.find(reply.user_id).name %>
+          <%= reply.user.name %>
         </strong>
         <% if reply.created_at %>
           Adicionou uma resposta em <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
@@ -242,7 +242,7 @@
 
   <% end  %>
 
-  <% if reply.category == 'support' %>
+  <% if support_user? reply.user %>
     <div class="card card-default mb-3" style="border-left: 5px solid #85CE36; box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
       <div class="card-header">
         <em class="fa fa-comment-o m-2"></em>
@@ -293,27 +293,7 @@
     </div>
   <% end  %>
 
-  <% if reply.last_call_ref_reply_closed_at %>
-    <span style="width:100%; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.closed" %>">
-      <%= t "activerecord.enums.call.status.closed"%> em <%= reply.last_call_ref_reply_closed_at %>
-    </span>
-  <% end %>
-
-  <% if reply.last_call_ref_reply_reopened_at && reply.last_call_ref_reply_reopened_at > reply.last_call_ref_reply_closed_at %>
-    <span style="width:100%; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.reopened" %>">
-      <%= t "activerecord.enums.call.status.reopened"%> em <%= reply.last_call_ref_reply_reopened_at %>
-    </span>
-  <% end %>
-
 <% end  %>
-
-<% if @call.replies.order(id: :desc).last %>
-  <span style="width:100%; opacity: 0.8; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.#{@call.replies.order(id: :desc).last.status}" %>">
-    <%= t "activerecord.enums.call.status.#{@call.replies.order(id: :desc).last.status}" if @call.replies.order(id: :desc).last.status%>
-    em
-    <%= @call.created_at.strftime("%d %b %y - %H:%M:%S") if @call.created_at %>
-  </span>
-<% end %>
 
   <% if @call.open? || @call.reopened? %>
     <% if @my_call %>
@@ -457,10 +437,10 @@
       const faqField = $('#faq-form')[0];
 
       // Show/hide the faq field
-      faqField.style.display = float ? 'none' : 'inline-flex'
+      faqField.style.display = float.length > 0 ? 'none' : 'inline-flex'
 
       $.ajax({
-        url: '/replies/attachments/' + replyId,
+        url: '/replies/attachments/' + replyID,
         type: "GET",
         dataType: "json",
         success: data => {

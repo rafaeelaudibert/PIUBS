@@ -16,7 +16,7 @@ class Answer < ApplicationRecord
   belongs_to :user, foreign_key: :CO_USUARIO
   has_many :attachment_links, foreign_key: :CO_QUESTAO
   has_many :attachments, through: :attachment_links
-  has_many :call, foreign_key: :CO_QUESTAO
+  has_many :call, foreign_key: :CO_RESPOSTA
   validates :DS_QUESTAO, presence: true
   validates :DS_RESPOSTA, presence: true
   validates :CO_CATEGORIA, presence: true
@@ -29,7 +29,7 @@ class Answer < ApplicationRecord
 
   #### DATABASE adaptations ####
   self.primary_key = :CO_SEQ_ID # Setting a different primary_key
-  self.table_name = :TB_QUESTAO # Setting a different table_name
+  self.table_name = '"TB_QUESTAO"' # Setting a different table_name
 
   # Configures an alias setter for the CO_SEQ_ID database column
   def id=(value)
@@ -117,12 +117,20 @@ class Answer < ApplicationRecord
 
   # Configures an alias setter for the CO_SISTEMA_ORIGEM database column
   def source=(value)
-    write_attribute(:CO_SISTEMA_ORIGEM, value)
+    write_attribute(:CO_SISTEMA_ORIGEM, value.to_i)
   end
 
   # Configures an alias getter for the CO_SISTEMA_ORIGEM database column
   def source
     read_attribute(:CO_SISTEMA_ORIGEM)
+  end
+
+  def self.faq_from_controversy
+    where(ST_FAQ: 'S', CO_SISTEMA_ORIGEM: :from_controversy)
+  end
+
+  def self.faq_from_call
+    where(ST_FAQ: 'S', CO_SISTEMA_ORIGEM: :from_call)
   end
 
   #### PGSEARCH stuff ####

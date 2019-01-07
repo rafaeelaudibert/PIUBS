@@ -17,7 +17,7 @@ class Call < ApplicationRecord
   belongs_to :unity, foreign_key: :CO_CNES
   belongs_to :user, foreign_key: :CO_USUARIO_EMPRESA
   belongs_to :support_user, optional: true, class_name: 'User', foreign_key: :CO_USUARIO_SUPORTE
-  has_many :replies, as: :repliable
+  has_many :replies, -> { order(CO_SEQ_ID: :DESC) }, as: :repliable, foreign_key: :CO_PROTOCOLO
   has_many :attachment_links, foreign_key: :CO_ATENDIMENTO
   has_many :attachments, through: :attachment_links
 
@@ -231,6 +231,18 @@ class Call < ApplicationRecord
   # Configures an alias getter for the DT_REABERTO_EM database column
   def reopened_at
     read_attribute(:DT_REABERTO_EM)
+  end
+
+  def self.from_company(sei)
+    where(CO_SEI: sei)
+  end
+
+  def self.from_company_user(id)
+    where(CO_USUARIO_EMPRESA: id)
+  end
+
+  def self.from_support_user(id)
+    where(CO_USUARIO_SUPORTE: id)
   end
 
   #### FILTERRIFIC queries ####

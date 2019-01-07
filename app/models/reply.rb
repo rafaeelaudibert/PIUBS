@@ -94,14 +94,14 @@ class Reply < ApplicationRecord
     read_attribute(:TP_STATUS)
   end
 
-  # Configures an alias setter for the TP_STATUS database column
+  # Configures an alias setter for the DT_CRIADO_EM database column
   def created_at=(value)
-    write_attribute(:TP_STATUS, value)
+    write_attribute(:DT_CRIADO_EM, value)
   end
 
-  # Configures an alias getter for the TP_STATUS database column
+  # Configures an alias getter for the DT_CRIADO_EM database column
   def created_at
-    read_attribute(:TP_STATUS)
+    read_attribute(:DT_CRIADO_EM)
   end
 
   # Configures an alias setter for the DT_REF_ATENDIMENTO_FECHADO database column

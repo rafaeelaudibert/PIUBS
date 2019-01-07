@@ -78,18 +78,20 @@ class AnswersController < ApplicationController
 
   # POST /answers
   def create
-    ans_params = answer_params
+    files = retrieve_files(params) || []
 
-    files = retrieve_files ans_params
-    @answer = Answer.new(ans_params)
-
+    @answer = Answer.new(answer_params)
+    @call = Call.find(params[:call_id])
     if @answer.save
-      mark_as_final_answer @answer if params[:question_id]
+      mark_as_final_answer @answer if params[:call_id]
       create_file_links @answer, files
 
       # Answer created from a call or from the FAQ
-      redirect_to @call, notice: 'Resposta final marcada com sucesso' if @call
-      redirect_to @answer || root_path, notice: 'Questão criada com sucesso.'
+      if @call
+        redirect_to @call, notice: 'Resposta final marcada com sucesso' if @call
+      else
+        redirect_to @answer || root_path, notice: 'Questão criada com sucesso.'
+      end
     else
       render :new
     end
@@ -115,22 +117,18 @@ class AnswersController < ApplicationController
 
   # GET /answers/query_call/:search
   def search_call
-    respond_to do |format|
-      format.js do
-        render json: Answer.where(faq: true, source: :from_call)
-                           .search_for(params[:search]).with_pg_search_rank.limit(15)
-      end
-    end
+    @answers = Answer.faq_from_call
+                     .search_for(params[:search])
+                     .with_pg_search_rank
+                     .limit(15)
   end
 
   # GET /answers/query_controversy/:search
   def search_controversy
-    respond_to do |format|
-      format.js do
-        render json: Answer.where(faq: true, source: :from_controversy)
-                           .search_for(params[:search]).with_pg_search_rank.limit(15)
-      end
-    end
+    @answers = Answer.faq_from_controversy
+                     .search_for(params[:search])
+                     .with_pg_search_rank
+                     .limit(15)
   end
 
   # GET /answers/attachments/:id
@@ -158,10 +156,15 @@ class AnswersController < ApplicationController
 
   # Never trust parameters from internet, only allow the white list through.
   def answer_params
-    params[:answer][:keywords] = params[:answer][:keywords].split(',').join(' ; ')
+    normalize_params
     params.require(:answer).permit(:keywords, :question, :answer, :category_id,
-                                   :user_id, :faq, :question_id, :source,
-                                   :reply_attachments, :files)
+                                   :user_id, :faq, :call_id, :source,
+                                   :reply_attachments)
+  end
+
+  def normalize_params
+    params[:answer][:keywords] = params[:answer][:keywords].split(',').join(' ; ')
+    params[:answer][:faq] = params[:answer][:faq].to_i == 1 ? 'S' : 'N'
   end
 
   def retrieve_files(ans_params)
@@ -169,7 +172,6 @@ class AnswersController < ApplicationController
   end
 
   def mark_as_final_answer(answer)
-    @call = Call.find(params[:question_id])
     update_call_reply @call
 
     # Retira a answer caso ela nao esteja no FAQ + attach_links
@@ -185,8 +187,8 @@ class AnswersController < ApplicationController
   end
 
   def update_call_reply(call)
-    call.update(status: 'closed', finished_at: 0.seconds.from_now)
-    Reply.find(params[:reply_id]).update(last_call_ref_reply_closed_at: 0.seconds.from_now)
+    call.update(TP_STATUS: 'closed', DT_FINALIZADO_EM: 0.seconds.from_now)
+    call.replies.first.update(DT_REF_ATENDIMENTO_FECHADO: 0.seconds.from_now)
   end
 
   def update_answer_id(call, answer)

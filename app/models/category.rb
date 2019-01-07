@@ -10,7 +10,7 @@ class Category < ApplicationRecord
   belongs_to :parent, class_name: 'Category',
                       foreign_key: :CO_CATEGORIA_PAI, optional: true
   has_many :children, ->(category) { where(CO_CATEGORIA_PAI: category.id) },
-           class_name: :Category
+           foreign_key: :CO_CATEGORIA_PAI, class_name: 'Category'
   has_many :answer
   validates :NO_NOME, presence: true, uniqueness: true
 

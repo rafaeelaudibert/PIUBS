@@ -6,7 +6,7 @@
 # Each state can have multiple City child instances.
 class State < ApplicationRecord
   default_scope { order(:NO_NOME) }
-  has_many :cities, -> { order(NO_NOME: :ASC) }
+  has_many :cities, -> { order(NO_NOME: :ASC) }, foreign_key: :CO_UF
   has_many :unities, through: :cities
   has_many :users, through: :cities
   validates :NO_NOME, presence: true, uniqueness: true
