@@ -267,7 +267,7 @@ def seed_answers
                         user: allowed_users.sample,
                         faq: Random.rand > 0.90,
                         keywords: Faker::Lorem.sentence(1, true, 3),
-                        source: %i[from_call from_controversy].sample)
+                        source: Answer.sources[%i[from_call from_controversy].sample])
     if answer.save
       Rails.logger.debug('Inserted a new answer')
     else
@@ -417,7 +417,7 @@ def seed_replies
 end
 
 def seed_faq_from_replies(call, reply)
-  source_system = reply.repliable_type == 'Call' ? :from_call : :from_controversy
+  source_system = reply.repliable_type == 'Call' ? Answer.sources[:from_call] : Answer.sources[:from_controversy]
   answer = Answer.new(question: call.title,
                       answer: reply.description,
                       category_id: call.category_id,
