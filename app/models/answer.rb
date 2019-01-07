@@ -112,7 +112,8 @@ class Answer < ApplicationRecord
 
   # Configures an alias getter for the ST_FAQ database column
   def faq
-    read_attribute(:ST_FAQ)
+    faq = read_attribute(:ST_FAQ)
+    faq == 'S' # If the value stored in FAQ is 'S' returns true else false
   end
 
   # Configures an alias setter for the CO_SISTEMA_ORIGEM database column

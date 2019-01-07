@@ -53,4 +53,12 @@ module ApplicationHelper
   def faq_inserter?(user = current_user)
     user.try(:faq_inserter?)
   end
+
+  # Filterrific method
+  #
+  # Default filterrific query, which searches the database
+  # according to its initial configuration
+  def filterrific_query
+    @filterrific.find.page(params[:page])
+  end
 end

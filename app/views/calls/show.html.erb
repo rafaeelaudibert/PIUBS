@@ -97,7 +97,7 @@
       <% if @my_call %>
         <button type="button" id="reply" class="btn btn-primary">Nova Resposta</button>
         <button type="button" id="faq-reply" class="btn btn-primary">Resposta do FAQ</button>
-        <a data-confirm="Tens certeza?" class="btn btn-danger right" rel="nofollow" data-method="post" href="/apoioaempresas/calls/unlink_call_support_user?id=<%= @call.id %>">
+        <a data-confirm="Tens certeza?" class="btn btn-danger right" rel="nofollow" data-method="post" href="/apoioaempresas/calls/<%= @call.id %>/unlink_call_support_user">
           Soltar Atendimento
         </a>
       <% else %>
@@ -138,7 +138,7 @@
         </p>
       <% end %>
       <% if @call.replies.first %>
-        <a data-confirm="Tens certeza?" class="btn btn-danger btn-lg" rel="nofollow" data-method="post" href="/apoioaempresas/calls/reopen_call?id=<%= @call.id %>&reply_id=<%= @call.replies.first.id %>">
+        <a data-confirm="Tens certeza?" class="btn btn-danger btn-lg" rel="nofollow" data-method="post" href="/apoioaempresas/calls/<%= @call.id %>/reopen_call?reply_id=<%= @call.replies.first.id %>">
           Reabrir chamado
         </a>
       <% end %>

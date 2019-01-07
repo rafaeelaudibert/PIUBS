@@ -87,11 +87,7 @@ class AnswersController < ApplicationController
       create_file_links @answer, files
 
       # Answer created from a call or from the FAQ
-      if @call
-        redirect_to @call, notice: 'Resposta final marcada com sucesso' if @call
-      else
-        redirect_to @answer || root_path, notice: 'Questão criada com sucesso.'
-      end
+      check_create_redirect
     else
       render :new
     end
@@ -262,5 +258,13 @@ class AnswersController < ApplicationController
 
   def support_and_answer_creator?
     support_user? && @answer.user_id == current_user.id
+  end
+
+  def check_create_redirect
+    if @call
+      redirect_to @call, notice: 'Resposta final marcada com sucesso' if @call
+    else
+      redirect_to @answer || root_path, notice: 'Questão criada com sucesso.'
+    end
   end
 end

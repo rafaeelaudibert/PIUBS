@@ -107,9 +107,9 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     # /apoioaempresas/calls
     resources :calls, except: %i[edit update destroy] do
       collection do
-        post 'link_call_support_user'
-        post 'unlink_call_support_user'
-        post 'reopen_call'
+        post ':id/link_call_support_user', to: 'calls#link_call_support_user', as: 'link_call_support_user'
+        post ':id/unlink_call_support_user', to: 'calls#unlink_call_support_user'
+        post ':id/reopen_call', to: 'calls#reopen_call', as: 'reopen_call'
       end
     end
   end
