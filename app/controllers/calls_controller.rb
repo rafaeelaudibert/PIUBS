@@ -249,7 +249,7 @@ class CallsController < ApplicationController
   ##########################
   # :section: Custom private methods
 
-  # Method called by reopen_call function,
+  # Method called by #reopen_call function,
   # used to reopen a call and re-configure the timeline
   def update_call(call, params)
     call.reopened!
@@ -361,7 +361,7 @@ class CallsController < ApplicationController
   # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
   #
   # Handles the access filter for the <tt>show</tt> action
-  # in this controller, when called by show_or_index?
+  # in this controller, when called by #show_or_index?
   def alloweds_users
     creator_company_admin? || creator_company_user? || support_user? || admin?
   end
@@ -387,7 +387,7 @@ class CallsController < ApplicationController
   # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
   #
   # Handles the access filter for the <tt>index</tt> action
-  # in this controller, when called by show_or_index?
+  # in this controller, when called by #show_or_index?
   def admin_support_company?
     admin? || support_user? || company_user?
   end
