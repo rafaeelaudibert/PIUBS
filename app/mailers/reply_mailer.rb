@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
+##
+# This is the mailer for the Reply model
 class ReplyMailer < ApplicationMailer
+  # Sends an e-mail to the <tt>company_user</tt>
+  # involved in the Call instance related to the Reply
+  # passed as a parameter, informing that there is a new
+  # Reply in his Call
   def call_reply(reply, current_user)
     @reply = reply
     @call = Call.find(@reply.repliable_id)
@@ -12,6 +18,10 @@ class ReplyMailer < ApplicationMailer
          subject: "[PIUBS] - Nova resposta ao atendimento #{@reply.repliable_id}"
   end
 
+  # Sends an e-mail to the User passed as a parameter,
+  # which involved in the Controversy instance related to the Reply
+  # passed as a parameter, informing that there is a new
+  # Reply in the Controversy
   def controversy_reply(reply, current_user, user)
     @reply = reply
     @controversy = Controversy.find(@reply.repliable_id)

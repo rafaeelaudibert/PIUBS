@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
+##
+# This is the mailer for the Controversy model
 class ControversyMailer < ApplicationMailer
+  # Sends an e-mail to the User instance
+  # which is passed as a parameter notifying about
+  # the creation of the Controversy
   def new_controversy(controversy_id, user_id)
     @controversy = Controversy.find(controversy_id)
     @current_user = User.find(user_id)
@@ -10,6 +15,9 @@ class ControversyMailer < ApplicationMailer
          subject: "[PIUBS] - Criação de controvérsia #{@controversy.protocol}"
   end
 
+  # Sends an e-mail to the User instance
+  # which is passed as a parameter notifying that
+  # he was added in a Controversy by the <tt>support_user</tt>
   def user_added(controversy_id, user_id)
     @controversy = Controversy.find(controversy_id)
     @current_user = User.find(user_id)
