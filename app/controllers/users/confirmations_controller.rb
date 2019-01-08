@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# Controller inherited from Devise::ConfirmationsController,
+# to handle locally the views for the Confirmation feature
+# of Devise.
+#
+# <b>OBS.:</b> This feature is not used in our application
 class Users::ConfirmationsController < Devise::ConfirmationsController
   # GET /resource/confirmation/new
   # def new

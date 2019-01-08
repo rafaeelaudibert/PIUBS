@@ -8,14 +8,14 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
                                     registrations: 'users/registrations' }
   resources :users do
     collection do
-      get :autocomplete_user_company, to: 'users#autocomplete_company_users',
-                                      as: 'autocomplete_company'
-      get :autocomplete_user_city, to: 'users#autocomplete_city_users',
-                                   as: 'autocomplete_city'
-      get :autocomplete_user_unity, to: 'users#autocomplete_unity_users',
-                                    as: 'autocomplete_unity'
-      get :autocomplete_user_support, to: 'users#autocomplete_support_users',
-                                      as: 'autocomplete_support'
+      get :autocomplete_company_users, to: 'users#autocomplete_company_users',
+                                       as: 'autocomplete_company'
+      get :autocomplete_city_users, to: 'users#autocomplete_city_users',
+                                    as: 'autocomplete_city'
+      get :autocomplete_unity_users, to: 'users#autocomplete_unity_users',
+                                     as: 'autocomplete_unity'
+      get :autocomplete_support_users, to: 'users#autocomplete_support_users',
+                                       as: 'autocomplete_support'
     end
   end
 

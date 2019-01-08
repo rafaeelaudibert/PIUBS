@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# Controller inherited from Devise::UnlocksController,
+# to handle locally the views for the Unlock feature
+# of Devise.
+#
+# <b>OBS.:</b> This feature is not used in our application
 class Users::UnlocksController < Devise::UnlocksController
   # GET /resource/unlock/new
   # def new

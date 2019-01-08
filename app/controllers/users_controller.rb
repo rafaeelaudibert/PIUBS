@@ -1,14 +1,36 @@
 # frozen_string_literal: true
 
+##
+# This is the controller for the User model
+#
+# It is responsible for handling the views for any USer
 class UsersController < ApplicationController
+  include ApplicationHelper
+
+  ##########################
+  ## Hooks Configuration ###
+
   before_action :authenticate_user!
   before_action :admin_like?, only: %i[index]
+
+  # # # # # # # # # # # # # # # # # # #
+  ## Autocomplete Gem Configuration ###
+
   autocomplete :user, :company
   autocomplete :user, :city
   autocomplete :user, :unity
   autocomplete :user, :support
-  include ApplicationHelper
 
+  ##########################
+  # :section: View methods
+  # Method related to generating views
+
+  # Configures the <tt>index</tt> page for the USer model
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/users</tt>
+  # [GET] <tt>/users.json</tt>
   def index
     @filterrific = initialize_filterrific(User,
                                           params[:filterrific],
@@ -18,6 +40,12 @@ class UsersController < ApplicationController
     @users = allowed_users.page(params[:page])
   end
 
+  # Configures the <tt>show</tt> page for the USer model
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/users/1</tt>
+  # [GET] <tt>/users/1.json</tt>
   def show
     @user = User.find(params[:id])
     unless current_user.id == @user.invited_by_id ||
@@ -29,71 +57,86 @@ class UsersController < ApplicationController
     generate_user_info
   end
 
-  def update
-    @user = User.find(params[:id])
-    if @user.update_attributes(secure_params)
-      redirect_to users_path, notice: 'User updated.'
-    else
-      redirect_to users_path, alert: 'Unable to update user.'
-    end
-  end
-
+  # Configures the <tt>DELETE</tt> request to delete a User
+  #
+  # <b>ROUTES</b>
+  #
+  # [DELETE] <tt>/users/1</tt>
   def destroy
     User.find(params[:id]).destroy
     redirect_to users_path, notice: 'Usuário apagado.'
   end
 
+  # Configures the <tt>autocomplete</tt> request asking for
+  # the company users.
+  # It returns all User instances which are children of the
+  # queried Company, parsed in the right format
+  #
+  # <b>OBS.:</b> This view only exist in a JSON format
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/users/autocomplete_company_users.json</tt>
   def autocomplete_company_users
     terms = params[:term]
-    company_users = User.where(role: %i[company_admin company_user], sei: params[:sei])
-    render json: company_users.where('name ILIKE ? OR cpf ILIKE ?', "%#{terms}%", "%#{terms}%")
-                              .map { |user|
-                                { id: user.id,
-                                  company_user_id: user.id,
-                                  label: "#{user.name} - #{user.cpf}",
-                                  value: user.name }
-                              }
+    sei = params[:sei]
+    @users = User.from_company(sei).find_by_name_or_cpf(terms)
   end
 
+  # Configures the <tt>autocomplete</tt> request asking for
+  # the city users.
+  # It returns all User instances which are children of the
+  # queried City, parsed in the right format
+  #
+  # <b>OBS.:</b> This view only exist in a JSON format
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/users/autocomplete_city_users.json</tt>
   def autocomplete_city_users
     terms = params[:term]
-    city_users = User.where(role: :city_admin, city_id: params[:city_id], cnes: '')
-    render json: city_users.where('name ILIKE ? OR cpf ILIKE ?', "%#{terms}%", "%#{terms}%")
-                           .map { |user|
-                             { id: user.id,
-                               city_user_id: user.id,
-                               label: "#{user.name} - #{user.cpf}",
-                               value: user.name }
-                           }
+    id = params[:city_id]
+    @users = User.from_city(id).find_by_name_or_cpf(terms)
   end
 
+  # Configures the <tt>autocomplete</tt> request asking for
+  # the unity users.
+  # It returns all User instances which are children of the
+  # queried Unity, parsed in the right format
+  #
+  # <b>OBS.:</b> This view only exist in a JSON format
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/users/autocomplete_unity_users.json</tt>
   def autocomplete_unity_users
     terms = params[:term]
-    unity_user = User.where(role: %i[ubs_admin ubs_user], cnes: JSON.parse(params[:cnes]))
-    render json: unity_user.where('name ILIKE ? OR cpf ILIKE ?', "%#{terms}%", "%#{terms}%")
-                           .map { |user|
-                             { id: user.id,
-                               unity_user_id: user.id,
-                               label: "#{user.name} - #{user.cpf}",
-                               value: user.name }
-                           }
+    cnes = params[:cnes]
+    @users = User.from_ubs(cnes).find_by_name_or_cpf(terms)
   end
 
+  # Configures the <tt>autocomplete</tt> request asking for
+  # the unity users.
+  # It returns all User instances which are children of the
+  # queried Unity, parsed in the right format
+  #
+  # <b>OBS.:</b> This view only exist in a JSON format
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/users/autocomplete_support_users.json</tt>
   def autocomplete_support_users
     terms = params[:term]
-    support_users = User.where(role: %i[call_center_admin call_center_user])
-                        .where.not(id: params[:user_id])
-    render json: support_users.where('name ILIKE ? OR cpf ILIKE ?', "%#{terms}%", "%#{terms}%")
-                              .map { |user|
-                                { id: user.id,
-                                  support_user_id: user.id,
-                                  label: "#{user.name} - #{user.cpf}",
-                                  value: user.name }
-                              }
+    self_id = params[:user_id]
+    @users = User.support_accounts
+                 .except(self_id)
+                 .find_by_name_or_cpf(terms)
   end
 
   private
 
+  # Method called by the #index view handler,
+  # to generate all the current user info
   def generate_user_info
     @company = Company.find(@user.sei) if @user.sei
     @unity = Unity.find(@user.cnes) if @user.cnes
@@ -101,6 +144,14 @@ class UsersController < ApplicationController
     @state = State.find(@city.state_id) if @city
   end
 
+  ##########################
+  # :section: Filterrific methods
+  # Method related to the Filterrific Gem
+
+  # Filterrific method
+  #
+  # Configures the basic options for the
+  # <tt>Filterrific</tt> queries
   def create_options_for_filterrific
     {
       sorted_by_name: User.all.options_for_sorted_by_name,
@@ -113,14 +164,19 @@ class UsersController < ApplicationController
     }
   end
 
+  ##########################
+  # :section: Custom private methods
+
+  # Method called by #index to verify the users which this user can see in the <tt>/users</tt> page
   def allowed_users
     if admin?
       @filterrific.find.page(params[:page]).limit(999_999)
     elsif admin_like?
-      @filterrific.find.where(invited_by_id: current_user.id).page(params[:page]).limit(999_999)
+      @filterrific.find.invited_by(current_user.id).page(params[:page]).limit(999_999)
     end
   end
 
+  # Makes the famous "Never trust parameters from internet, only allow the white list through."
   def secure_params
     params.require(:user).permit(:role, :name, :cpf, :sei, :cnes, :city_id, :last_name)
   end

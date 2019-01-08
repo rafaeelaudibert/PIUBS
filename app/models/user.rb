@@ -232,36 +232,36 @@ class User < ApplicationRecord
 
   # Returns all the users which have the role :admin
   def self.admins
-    User.where(role: :admin).order(:id)
+    User.where(role: :admin)
   end
 
   # Returns all the users which belong to a company,
   # this is, have a role which is :company_admin or :company_user
   def self.company_accounts
-    User.where(role: %i[company_admin company_user]).order(:id)
+    User.where(role: %i[company_admin company_user])
   end
 
   # Returns all the users which belong to the support,
   # this is, have a role which is :call_center_admin or :call_center_user
   def self.support_accounts
-    User.where(role: %i[call_center_admin call_center_user]).order(:id)
+    User.where(role: %i[call_center_admin call_center_user])
   end
 
   # Returns all the users which have the role :faq_inserter
   def self.faq_inserters
-    User.where(role: :faq_inserter).order(:id)
+    User.where(role: :faq_inserter)
   end
 
   # Returns all the users which belong to a city,
   # this is, have a role :city_admin
   def self.city_accounts
-    User.where(role: :city_admin).order(:id)
+    User.where(role: :city_admin)
   end
 
   # Returns all the users which belong to the unities,
   # this is, have a role which is :ubs_admin or :ubs_user
   def self.unity_accounts
-    User.where(role: %i[ubs_admin ubs_user]).order(:id)
+    User.where(role: %i[ubs_admin ubs_user])
   end
 
   # Returns all the users from the database,
@@ -287,6 +287,29 @@ class User < ApplicationRecord
   # to the Unity passed in the parameter
   def self.from_ubs(cnes)
     User.where(CO_CNES: cnes)
+  end
+
+  # Returns all the users which belongs
+  # to the Company passed in the parameter
+  def self.from_company(sei)
+    User.where(CO_SEI: sei)
+  end
+
+  # Returns all the users which match
+  # their name or their CPF to the passed parameter
+  def self.find_by_name_or_cpf(terms)
+    where('"NO_NOME" ILIKE ? OR "NU_CPF" ILIKE ?', "%#{terms}%", "%#{terms}%")
+  end
+
+  # Returns all the users except the one passed as parameter
+  def self.except(id)
+    where.not(id: id)
+  end
+
+  # Returns all the users which were invited by the User
+  # with the id passed as parameter
+  def self.invited_by(id)
+    where(invited_by_id: id)
   end
 
   # Overrides Devise function
