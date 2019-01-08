@@ -80,8 +80,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   # /cities
   resources :cities, except: %i[edit update destroy] do
     collection do
-      get 'states/:id', to: 'cities#states', as: 'city_states'
-      get 'unities/:id', to: 'cities#unities', as: 'city_unities'
+      get '/:id/unities', to: 'cities#unities', as: 'city_unities'
       get ':id/users', to: 'cities#users', as: 'city_users'
     end
   end

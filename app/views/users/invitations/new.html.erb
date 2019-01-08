@@ -84,7 +84,7 @@
           const citySelect = document.getElementById('user_city_id');
           const unitySelect = document.getElementById('user_cnes');
           const unityRequest = () => jQuery.ajax({
-            url: '/cities/unities/' + citySelect.value,
+            url: `/cities/${citySelect.value}/unities`,
             type: "GET",
             dataType: "json",
             success: insertUnityData

@@ -1,12 +1,28 @@
 # frozen_string_literal: true
 
+##
+# This is the controller for the City model
+#
+# It is responsible for handling the views for any City
 class CitiesController < ApplicationController
-  before_action :authenticate_user!
-  before_action :filter_role
   include ApplicationHelper
 
-  # GET /cities
-  # GET /cities.json
+  ##########################
+  ## Hooks Configuration ###
+
+  before_action :authenticate_user!
+  before_action :filter_role
+
+  ##########################
+  # :section: View methods
+  # Method related to generating views
+
+  # Configures the <tt>index</tt> page for the City model
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] /cities
+  # [GET] /cities.json
   def index
     (@filterrific = initialize_filterrific(
       City,
@@ -14,24 +30,36 @@ class CitiesController < ApplicationController
       select_options: options_for_filterrific,
       persistence_id: false
     )) || return
-    @cities = @filterrific.find.joins(:state).order('"TB_UF"."NO_NOME"', '"TB_CIDADE"."NO_NOME"')
-                          .page(params[:page])
+    @cities = @filterrific.find.page(params[:page])
   end
 
-  # GET /cities/1
+  # Configures the <tt>show</tt> page for the City model
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/cities/1</tt>
+  # [GET] <tt>/cities/1.json</tt>
   def show
     @city = City.find(params[:id])
     @ubs = @city.unity_ids.sort
     @contract = @city.contract
   end
 
-  # GET /cities/new
+  # Configures the <tt>new</tt> page for the City model
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/cities/new</tt>
   def new
     @city = City.new
     @state = State.find(params[:state]) if params[:state]
   end
 
-  # POST /cities
+  # Configures the <tt>POST</tt> request to create a new City
+  #
+  # <b>ROUTES</b>
+  #
+  # [POST] <tt>/cities</tt>
   def create
     @city = City.new(city_params)
     if @city.save
@@ -43,29 +71,43 @@ class CitiesController < ApplicationController
     end
   end
 
-  # GET /cities/states/:id
-  def states
-    respond_to do |format|
-      format.js { render json: State.find(params[:id]).cities }
-    end
-  end
-
-  # GET /cities/unities/:id
+  # Configures the <tt>unities</tt> request for the City model
+  # It returns all Unity instances which are children of the
+  # queried City
+  #
+  # <b>OBS.:</b> This view only exist in a JSON format
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/cities/:id/unities.json</tt>
   def unities
-    respond_to do |format|
-      format.js { render json: City.find(params[:id]).unities }
-    end
+    @city = City.find(params[:id])
+    @unities = @city.unities
   end
 
-  # GET /cities/:id/users
+  # Configures the <tt>users</tt> request for the City model
+  # It returns all User instances which are children of the
+  # queried City
+  #
+  # <b>OBS.:</b> This view only exist in a JSON format
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/cities/:id/users.json</tt>
   def users
-    respond_to do |format|
-      format.js { render json: User.where(city_id: params[:id], cnes: nil) }
-    end
+    @users = User.from_city params[:id]
   end
 
   private
 
+  ##########################
+  # :section: Filterrific methods
+  # Method related to the Filterrific Gem
+
+  # Filterrific method
+  #
+  # Configures the basic options for the
+  # <tt>Filterrific</tt> queries
   def options_for_filterrific
     {
       with_state: State.all.map { |s| [s.name, s.id] },
@@ -73,11 +115,17 @@ class CitiesController < ApplicationController
     }
   end
 
-  # Never trust parameters from internet, only allow the white list through.
+  ##########################
+  # :section: Custom private methods
+
+  # Makes the famous "Never trust parameters from internet, only allow the white list through."
   def city_params
     params.require(:city).permit(:name, :state_id)
   end
 
+  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
+  #
+  # Filters the access to each of the actions of the controller
   def filter_role
     action = params[:action]
     if %w[new create].include? action

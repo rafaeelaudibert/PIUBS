@@ -51,23 +51,24 @@ class City < ApplicationRecord
   end
 
   #### FILTERRIFIC queries ####
-  filterrific default_filter_params: { sorted_by_name: 'name_asc' },
+  filterrific default_filter_params: { sorted_by_name: 'name_state' },
               available_filters: %i[search_query with_state sorted_by_name]
 
   # Configures the possible filterrific sorting methods to be acessed on CitiesController
   def self.options_for_sorted_by_name
     [
+      ['Estado & Cidade [A-Z]', 'name_state'],
       ['Cidade [A-Z]', 'name_asc'],
       ['Cidade [Z-A]', 'name_desc']
     ]
   end
 
   scope :sorted_by_name, lambda { |sort_key|
-    sort = sort_key.match?(/asc$/) ? 'asc' : 'desc'
-
     case sort_key.to_s
+    when 'name_state'
+      joins(:state).order('"TB_UF"."NO_NOME"', '"TB_CIDADE"."NO_NOME"')
     when /^name_/
-      order(NO_NOME: sort)
+      order(NO_NOME: sort_key.match?(/asc$/) ? 'asc' : 'desc')
     else
       raise(ArgumentError, 'Invalid filter option')
     end
