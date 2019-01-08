@@ -69,9 +69,9 @@ class Category < ApplicationRecord
     write_attribute(:NU_SEVERIDADE, value)
   end
 
-  # Configures an alias getter for the CO_SISTEMA_ORIGEM database column
+  # Configures an alias getter for the NU_SEVERIDADE database column
   def severity
-    read_attribute(:CO_SISTEMA_ORIGEM)
+    read_attribute(:NU_SEVERIDADE)
   end
 
   # Configures an alias setter for the CO_SISTEMA_ORIGEM database column
@@ -79,9 +79,14 @@ class Category < ApplicationRecord
     write_attribute(:CO_SISTEMA_ORIGEM, value)
   end
 
-  # Configures an alias getter for the NU_SEVERIDADE database column
+  # Configures an alias getter for the CO_SISTEMA_ORIGEM database column
   def source
-    read_attribute(:NU_SEVERIDADE)
+    read_attribute(:CO_SISTEMA_ORIGEM)
+  end
+
+  # Configures a parsed alias getter for the CO_SISTEMA_ORIGEM database column
+  def parsed_source
+    read_attribute(:CO_SISTEMA_ORIGEM) == 'from_call' ? 'Call' : 'Controversy'
   end
 
   #### FILTERRIFIC queries ####

@@ -10,6 +10,7 @@ class AttachmentsController < ApplicationController
 
   ##########################
   ## Hooks Configuration ###
+
   before_action :authenticate_user!
   before_action :filter_role
   before_action :set_attachment, only: %i[show edit update destroy download]
