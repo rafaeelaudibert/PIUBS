@@ -278,9 +278,15 @@ class User < ApplicationRecord
   end
 
   # Returns all the users which belongs
-  # to the city passed in the parameter
+  # to the City passed in the parameter
   def self.from_city(city_id)
     User.where(CO_CIDADE: city_id, CO_CNES: nil)
+  end
+
+  # Returns all the users which belongs
+  # to the Unity passed in the parameter
+  def self.from_ubs(cnes)
+    User.where(CO_CNES: cnes)
   end
 
   # Overrides Devise function
