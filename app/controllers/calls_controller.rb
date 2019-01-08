@@ -2,6 +2,7 @@
 
 ##
 # This is the controller for the Call model
+#
 # It is responsible for handling the views for any Call
 class CallsController < ApplicationController
   include ApplicationHelper
@@ -15,14 +16,15 @@ class CallsController < ApplicationController
   before_action :set_call, except: %i[index new create]
 
   ##########################
-  ##### Views methods ######
+  # :section: View methods
+  # Method related to generating views
 
   # Configures the <tt>index</tt> page for the Call model
   #
-  # Routes
+  # <b>ROUTES</b>
   #
-  # <tt>GET /calls</tt>
-  # <tt>GET /calls.json</tt>
+  # [GET] <tt>/calls</tt>
+  # [GET] <tt>/calls.json</tt>
   def index
     (@filterrific = initialize_filterrific(Call, params[:filterrific],
                                            select_options: options_for_filterrific,
@@ -32,10 +34,10 @@ class CallsController < ApplicationController
 
   # Configures the <tt>show</tt> page for the Call model
   #
-  # Routes
+  # <b>ROUTES</b>
   #
-  # <tt>GET /calls/1</tt>
-  # <tt>GET /calls/1.json</tt>
+  # [GET] <tt>/calls/1</tt>
+  # [GET] <tt>/calls/1.json</tt>
   def show
     @answer = Answer.new
     @reply = Reply.new
@@ -46,18 +48,18 @@ class CallsController < ApplicationController
 
   # Configures the <tt>new</tt> page for the Call model
   #
-  # Routes
+  # <b>ROUTES</b>
   #
-  # <tt>GET /calls/new</tt>
+  # [GET] <tt>/calls/new</tt>
   def new
     @call = Call.new
   end
 
   # Configures the <tt>POST</tt> request to create a new Call
   #
-  # Routes
+  # <b>ROUTES</b>
   #
-  # <tt>POST /calls</tt>
+  # [POST] <tt>/calls</tt>
   def create
     call_parameters = call_params
     files = retrieve_files call_parameters
@@ -74,9 +76,9 @@ class CallsController < ApplicationController
   # Configures the <tt>POST</tt> request to link
   # a <tt>support user</tt> to the Call
   #
-  # Routes
+  # <b>ROUTES</b>
   #
-  # <tt>POST calls/:id/link_call_support_user</tt>
+  # [POST] <tt>calls/:id/link_call_support_user</tt>
   def link_call_support_user
     if @call.support_user
       redirect_back(fallback_location: root_path,
@@ -96,9 +98,9 @@ class CallsController < ApplicationController
   # Configures the <tt>POST</tt> request to unlink the
   # <tt>support user</tt> from the Call
   #
-  # Routes
+  # <b>ROUTES</b>
   #
-  # <tt>POST calls/:id/unlink_call_support_user</tt>
+  # [POST] <tt>calls/:id/unlink_call_support_user</tt>
   def unlink_call_support_user
     if @call.support_user == current_user
       @call.support_user = nil
@@ -117,9 +119,9 @@ class CallsController < ApplicationController
 
   # Configures the <tt>POST</tt> request to reopen a once closed Call
   #
-  # Routes
+  # <b>ROUTES</b>
   #
-  # <tt>POST /calls/:id/reopen_call</tt>
+  # [POST] <tt>/calls/:id/reopen_call</tt>
   def reopen_call
     @answer = @call.answer
     @call = update_call @call, params
@@ -141,7 +143,10 @@ class CallsController < ApplicationController
 
   private
 
-  ##### Hooks methods ######
+  ##########################
+  # :section: Hooks methods
+  # Methods which are called by the hooks on
+  # the top of the file
 
   # Configures the Company instance when called by
   # the <tt>:before_action</tt> hook
@@ -155,7 +160,9 @@ class CallsController < ApplicationController
     @call = Call.find(params[:id])
   end
 
-  ## Filterrific methods ###
+  ##########################
+  # :section: Filterrific methods
+  # Method related to the Filterrific Gem
 
   # Filterrific method
   #
@@ -233,10 +240,14 @@ class CallsController < ApplicationController
   # the <tt>admin</tt> role,
   # which is handled by the calling function
   #
-  # OBS: This return all Call instances in the database, but paginated
+  # OBS: This return all Call instances in the database,
+  # but paginated
   def calls_for_admin
     filterrific_query
   end
+
+  ##########################
+  # :section: Custom private methods
 
   # Method called by reopen_call function,
   # used to reopen a call and re-configure the timeline
