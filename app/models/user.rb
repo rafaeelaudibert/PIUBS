@@ -277,6 +277,12 @@ class User < ApplicationRecord
     }
   end
 
+  # Returns all the users which belongs
+  # to the city passed in the parameter
+  def self.from_city(city_id)
+    User.where(CO_CIDADE: city_id, CO_CNES: nil)
+  end
+
   # Overrides Devise function
   #
   # This way we can manipulate the devise e-mails layout properly, as well as
