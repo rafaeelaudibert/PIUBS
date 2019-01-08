@@ -21,8 +21,8 @@ class CitiesController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [GET] /cities
-  # [GET] /cities.json
+  # [GET] <tt>/cities</tt>
+  # [GET] <tt>/cities.json</tt>
   def index
     (@filterrific = initialize_filterrific(
       City,
