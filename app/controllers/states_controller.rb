@@ -40,6 +40,13 @@ class StatesController < ApplicationController
     end
   end
 
+  # GET /states/:id/cities
+  def cities
+    respond_to do |format|
+      format.js { render json: State.find(params[:id]).cities }
+    end
+  end
+
   private
 
   # Never trust parameters from the internet, only allow the white list through.
