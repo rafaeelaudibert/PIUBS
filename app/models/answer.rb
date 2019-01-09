@@ -12,6 +12,7 @@
 # marked with an 'S' ('Y' in portuguese)
 
 class Answer < ApplicationRecord
+  default_scope -> { joins(:category).order('"TB_CATEGORIA"."NO_NOME"', :DS_QUESTAO, :DS_RESPOSTA) }
   belongs_to :category, foreign_key: :CO_CATEGORIA
   belongs_to :user, foreign_key: :CO_USUARIO
   has_many :attachment_links, foreign_key: :CO_QUESTAO
@@ -160,13 +161,13 @@ class Answer < ApplicationRecord
   scope :search_query_faq_call, lambda { |query|
     return nil if query.blank?
 
-    where(ST_FAQ: 'S', CO_SISTEMA_ORIGEM: :from_call).search_for query
+    unscoped.faq_from_call.search_for query
   }
 
   scope :search_query_faq_controversy, lambda { |query|
     return nil if query.blank?
 
-    where(ST_FAQ: 'S', CO_SISTEMA_ORIGEM: :from_controversy).search_for query
+    unscoped.faq_from_controversy.search_for(query)
   }
 
   scope :with_category, lambda { |category_id|
