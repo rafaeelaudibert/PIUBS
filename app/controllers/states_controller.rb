@@ -36,8 +36,8 @@ class StatesController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [GET] <tt>/cities/1</tt>
-  # [GET] <tt>/cities/1.json</tt>
+  # [GET] <tt>/states/:id</tt>
+  # [GET] <tt>/states/:id.json</tt>
   def show
     @state = State.find(params[:id])
     @cities = @state.cities.paginate(page: params[:page], per_page: 25)

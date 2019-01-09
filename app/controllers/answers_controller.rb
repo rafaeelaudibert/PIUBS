@@ -85,8 +85,8 @@ class AnswersController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [GET] <tt>/answers/1</tt>
-  # [GET] <tt>/answers/1.json</tt>
+  # [GET] <tt>/answers/:id</tt>
+  # [GET] <tt>/answers/:id.json</tt>
   def show; end
 
   # Configures the <tt>new</tt> page for the Answer model
@@ -105,7 +105,7 @@ class AnswersController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [GET] <tt>/answers/1/edit</tt>
+  # [GET] <tt>/answers/:id/edit</tt>
   def edit
     @categories = @answer.from_call? ? Category.from_call : Category.from_controversy
   end
@@ -136,7 +136,7 @@ class AnswersController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [PATCH/PUT] <tt>/answers/1</tt>
+  # [PATCH/PUT] <tt>/answers/:id</tt>
   def update
     files = retrieve_files(params) || []
 

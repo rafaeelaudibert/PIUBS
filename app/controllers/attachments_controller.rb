@@ -51,7 +51,7 @@ class AttachmentsController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [DELETE] <tt>/attachments/1</tt>
+  # [DELETE] <tt>/attachments/:id</tt>
   def destroy
     if @attachment.attachment_links.length.zero?
       @attachment.destroy

@@ -23,8 +23,8 @@ class CallsController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [GET] <tt>/calls</tt>
-  # [GET] <tt>/calls.json</tt>
+  # [GET] <tt>/apoioaempresas/calls</tt>
+  # [GET] <tt>/apoioaempresas/calls.json</tt>
   def index
     (@filterrific = initialize_filterrific(Call, params[:filterrific],
                                            select_options: options_for_filterrific,
@@ -36,8 +36,8 @@ class CallsController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [GET] <tt>/calls/1</tt>
-  # [GET] <tt>/calls/1.json</tt>
+  # [GET] <tt>/apoioaempresas/calls/:id</tt>
+  # [GET] <tt>/apoioaempresas/calls/:id.json</tt>
   def show
     @answer = Answer.new
     @reply = Reply.new
@@ -50,7 +50,7 @@ class CallsController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [GET] <tt>/calls/new</tt>
+  # [GET] <tt>/apoioaempresas/calls/new</tt>
   def new
     @call = Call.new
   end
@@ -59,7 +59,7 @@ class CallsController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [POST] <tt>/calls</tt>
+  # [POST] <tt>/apoioaempresas/calls</tt>
   def create
     call_parameters = call_params
     files = retrieve_files call_parameters
@@ -78,7 +78,7 @@ class CallsController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [POST] <tt>calls/:id/link_call_support_user</tt>
+  # [POST] <tt>/apoioaempresas/calls/:id/link_call_support_user</tt>
   def link_call_support_user
     if @call.support_user
       redirect_back(fallback_location: root_path,
@@ -100,7 +100,7 @@ class CallsController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [POST] <tt>calls/:id/unlink_call_support_user</tt>
+  # [POST] <tt>/apoioaempresas/calls/:id/unlink_call_support_user</tt>
   def unlink_call_support_user
     if @call.support_user == current_user
       @call.support_user = nil
@@ -121,7 +121,7 @@ class CallsController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [POST] <tt>/calls/:id/reopen_call</tt>
+  # [POST] <tt>/apoioaempresas/calls/:id/reopen_call</tt>
   def reopen_call
     @answer = @call.answer
     @call = update_call @call, params

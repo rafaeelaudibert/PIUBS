@@ -44,8 +44,8 @@ class UsersController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [GET] <tt>/users/1</tt>
-  # [GET] <tt>/users/1.json</tt>
+  # [GET] <tt>/users/:id</tt>
+  # [GET] <tt>/users/:id.json</tt>
   def show
     @user = User.find(params[:id])
     unless current_user.id == @user.invited_by_id ||
@@ -61,7 +61,7 @@ class UsersController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [DELETE] <tt>/users/1</tt>
+  # [DELETE] <tt>/users/:id</tt>
   def destroy
     User.find(params[:id]).destroy
     redirect_to users_path, notice: 'Usuário apagado.'

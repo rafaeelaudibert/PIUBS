@@ -64,7 +64,7 @@ class CategoriesController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [DELETE] <tt>/categories/1</tt>
+  # [DELETE] <tt>/categories/:id</tt>
   def destroy
     Category.find(params[:id]).destroy
     redirect_to categories_url, notice: 'Categoria apagada com sucesso'

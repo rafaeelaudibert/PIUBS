@@ -37,8 +37,8 @@ class UnitiesController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [GET] <tt>/unities/1</tt>
-  # [GET] <tt>/unities/1.json</tt>
+  # [GET] <tt>/unities/:id</tt>
+  # [GET] <tt>/unities/:id.json</tt>
   def show
     @contract = @unity.city.contract
   end
@@ -74,7 +74,7 @@ class UnitiesController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [DELETE] <tt>/unities/1</tt>
+  # [DELETE] <tt>/unities/:id</tt>
   def destroy
     @unity.destroy
     redirect_to unities_url, notice: 'UBS apagada com sucesso.'

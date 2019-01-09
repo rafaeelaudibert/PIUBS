@@ -37,8 +37,8 @@ class CitiesController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [GET] <tt>/cities/1</tt>
-  # [GET] <tt>/cities/1.json</tt>
+  # [GET] <tt>/cities/:id</tt>
+  # [GET] <tt>/cities/:id.json</tt>
   def show
     @city = City.find(params[:id])
     @ubs = @city.unity_ids.sort
