@@ -197,17 +197,17 @@
     <% end %>
 
     <% @controversy.replies_sorted.each do |reply| %>
-      <div class="card card-default mb-3 <%= reply.category %>-border">
+      <div class="card card-default mb-3 <%= reply.get_border_class %>">
         <div class="card-header">
           <em class="fa fa-comment-o m-2"></em>
           <span style="display: none"><%= '#' << reply.id.to_s %></span>
-          <% if reply.category == 'support' %>
+          <% if support_user? reply.user %>
             <span class="badge badge-pill badge-dark m-1">suporte</span>
           <% end %>
           <span class="badge badge-pill badge-dark m-1">
-            <%= User.find(reply.user_id).name %>
+            <%= reply.user.name %>
           </span>
-          Adicionou uma resposta em <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
+          Adicionou uma resposta em <%= reply.formated_created_at %>
         </div>
 
         <div class="card-block">
