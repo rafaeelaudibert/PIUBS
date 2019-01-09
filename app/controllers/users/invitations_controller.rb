@@ -51,10 +51,10 @@ class Users::InvitationsController < Devise::InvitationsController
     params[:user][:city_id] = sanitize_city_id
     params[:user][:state_id] = sanitize_state_id
     params[:user][:sei] = sanitize_sei
-    params[:user][:system] = sanitize_system
+    params[:user][:system] = sanitize_system.to_i
   end
 
-  def sanitize_system
+  def sanitize_system 
     %w[company_admin company_user].include?(params[:user][:role]) ? params[:user][:system] : 1
   end
 
