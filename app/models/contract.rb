@@ -10,6 +10,7 @@
 # FIXME: DT_CRIADO_EM is not being saved (why though?)
 #++
 class Contract < ActiveRecord::Base
+  default_scope -> { order('"CO_CODIGO"') }
   belongs_to :city, foreign_key: 'CO_CIDADE'
   belongs_to :company, foreign_key: :CO_SEI
   validates :CO_CODIGO, presence: true, uniqueness: true
@@ -96,6 +97,12 @@ class Contract < ActiveRecord::Base
   # Configures an alias getter for the DT_CRIADO_EM database column
   def created_at
     read_attribute(:DT_CRIADO_EM)
+  end
+
+  # Returns the relative address of the link where you
+  # can download the Contract
+  def download_link
+    "/contract/#{id}/download"
   end
 
   #### FILTERRIFIC queries ####
