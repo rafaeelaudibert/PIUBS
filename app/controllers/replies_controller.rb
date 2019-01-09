@@ -64,13 +64,6 @@ class RepliesController < ApplicationController
     reply = Reply.new(rep_params)
     reply.user_id = current_user.id
     reply.status = reply.repliable.status || 'Sem Status'
-    reply.category = if support_user? || current_user.try(:admin?)
-                       'support'
-                     elsif company_user?
-                       'company'
-                     else
-                       city_user? ? 'city' : 'unity'
-                     end
     reply
   end
 
