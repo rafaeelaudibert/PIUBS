@@ -39,16 +39,6 @@ class Reply < ApplicationRecord
     read_attribute(:DS_DESCRICAO)
   end
 
-  # Configures an alias setter for the CO_CATEGORIA database column
-  def category=(value)
-    write_attribute(:CO_CATEGORIA, value)
-  end
-
-  # Configures an alias getter for the CO_CATEGORIA database column
-  def category
-    read_attribute(:CO_CATEGORIA)
-  end
-
   # Configures an alias setter for the ST_FAQ database column,
   # which includes a boolean to string transformation
   def faq=(value)
@@ -104,6 +94,11 @@ class Reply < ApplicationRecord
     read_attribute(:DT_CRIADO_EM)
   end
 
+  # Formats created_at attribute
+  def formated_created_at
+    created_at.strftime("%d %b %y - %H:%M:%S")
+  end
+
   # Configures an alias setter for the DT_REF_ATENDIMENTO_FECHADO database column
   def last_call_ref_reply_closed_at=(value)
     write_attribute(:DT_REF_ATENDIMENTO_FECHADO, value)
@@ -122,6 +117,11 @@ class Reply < ApplicationRecord
   # Configures an alias getter for the DT_REF_ATENDIMENTO_REABERTO database column
   def last_call_ref_reply_reopened_at
     read_attribute(:DT_REF_ATENDIMENTO_REABERTO)
+  end
+
+  # Get name of border class to each user role
+  def get_border_class
+    user.role.split('_')[0].concat('-border')
   end
 
   #### FILTERRIFIC queries ####
