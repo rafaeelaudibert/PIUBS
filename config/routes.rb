@@ -44,7 +44,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   # /replies
   resources :replies, only: %i[create index show] do
     collection do
-      get 'attachments/:id', to: 'replies#attachments'
+      get ':id/attachments', to: 'replies#attachments'
     end
   end
 

@@ -440,7 +440,7 @@
       faqField.style.display = float.length > 0 ? 'none' : 'inline-flex'
 
       $.ajax({
-        url: '/replies/attachments/' + replyID,
+        url: `replies/${replyID}/attachments`,
         type: "GET",
         dataType: "json",
         success: data => {

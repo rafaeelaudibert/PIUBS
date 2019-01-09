@@ -6,6 +6,7 @@
 # can only contain 'support' or 'company' in the Call model, while can contain the formers
 # plus 'city' or 'unity'.
 class Reply < ApplicationRecord
+  default_scope -> { order(DT_CRIADO_EM: :DESC) }
   belongs_to :user, foreign_key: :CO_USUARIO
   has_many :attachment_links, foreign_key: :CO_RESPOSTA
   has_many :attachments, through: :attachment_links
@@ -95,8 +96,8 @@ class Reply < ApplicationRecord
   end
 
   # Formats created_at attribute
-  def formated_created_at
-    created_at.strftime("%d %b %y - %H:%M:%S")
+  def formatted_created_at
+    created_at.strftime('%d %b %y - %H:%M:%S')
   end
 
   # Configures an alias setter for the DT_REF_ATENDIMENTO_FECHADO database column
