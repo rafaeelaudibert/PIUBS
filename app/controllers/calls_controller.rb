@@ -274,7 +274,7 @@ class CallsController < ApplicationController
     end
   end
 
-  # Returns a call with the <tt>parameters</tt>
+  # Returns a Call with the <tt>parameters</tt>
   # received in the request filled, as well as the
   # <tt>user_id</tt> and <tt>sei</tt> fields filled
   def create_call(call_parameters)

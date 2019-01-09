@@ -197,7 +197,7 @@
     <% end %>
 
     <% @controversy.replies_sorted.each do |reply| %>
-      <div class="card card-default mb-3 <%= reply.get_border_class %>">
+      <div class="card card-default mb-3 <%= reply.border_class %>">
         <div class="card-header">
           <em class="fa fa-comment-o m-2"></em>
           <span style="display: none"><%= '#' << reply.id.to_s %></span>
@@ -304,7 +304,7 @@
           const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
 
           $.ajax({
-            url: `/controversias/controversies/${protocol}/support_user/${user_id}`,
+            url: `/controversias/controversies/${protocol}/link_support_user/${user_id}`,
             method: 'post'
           }).then(() => window.location.reload());
         }
@@ -315,7 +315,7 @@
           const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
 
           $.ajax({
-            url: `/controversias/controversies/${protocol}/company_user/${user_id}`,
+            url: `/controversias/controversies/${protocol}/link_company_user/${user_id}`,
             method: 'post'
           }).then(() => window.location.reload());
         }
@@ -326,7 +326,7 @@
           const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
 
           $.ajax({
-            url: `/controversias/controversies/${protocol}/unity_user/${user_id}`,
+            url: `/controversias/controversies/${protocol}/link_unity_user/${user_id}`,
             method: 'post'
           }).then(() => window.location.reload());
         }
@@ -337,7 +337,7 @@
           const user_id =(select && select.value) || 1; // Esse 1 é um placeholder, usado na remoção
 
           $.ajax({
-            url: `/controversias/controversies/${protocol}/city_user/${user_id}`,
+            url: `/controversias/controversies/${protocol}/link_city_user/${user_id}`,
             method: 'post'
           }).then(() => window.location.reload());
         }
