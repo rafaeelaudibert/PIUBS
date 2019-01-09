@@ -126,7 +126,12 @@ class Users::InvitationsController < Devise::InvitationsController
   # City and Unity instance users to have access to the
   # Apoio as Empresas system
   def sanitize_system
-    %w[admin call_center_user call_center_admin company_admin company_user].include?(params[:user][:role]) ? params[:user][:system] : 1
+    if %w[admin call_center_user call_center_admin
+          company_admin company_user].include?(params[:user][:role])
+      params[:user][:system]
+    else
+      1
+    end
   end
 
   # Method called by #sanitize_optional_params

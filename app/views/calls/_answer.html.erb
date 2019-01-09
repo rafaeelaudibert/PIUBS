@@ -78,7 +78,7 @@
     const id = button.parentNode.parentNode.children[0].innerHTML;
 
     $.ajax({
-      url: '/answers/attachments/' + id,
+      url: `/answers/${id}/attachments`,
       type: "GET",
       dataType: "json",
       success: data => {
