@@ -43,6 +43,10 @@ class Company < ApplicationRecord
     read_attribute(:DT_CRIADO_EM)
   end
 
+  def cities_from_state(id)
+    State.find(id).cities.where(CO_CODIGO: contracts.map(&:city_id)).order('"NO_NOME"')
+  end
+
   #### FILTERRIFIC queries ####
   filterrific available_filters: %i[search_query]
 
