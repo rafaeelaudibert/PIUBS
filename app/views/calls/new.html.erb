@@ -108,8 +108,8 @@
             jQuery.ajax({url: `/companies/${companySelect.value}/states`, type: "GET", dataType: "json", success: insertStatesData, error: console.log});
             jQuery.ajax({url: `/companies/${companySelect.value}/users`, type: "GET", dataType: "json", success: insertUsersData, error: console.log});
           }
-          const triggeredByState = () => jQuery.ajax({url: `/companies/${companySelect.value}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
-          const triggeredByCity = () => jQuery.ajax({url: `/companies/${companySelect.value}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
+          const triggeredByState = () => jQuery.ajax({url: `/companies/${companySelect.value}/states/${stateSelect.value}/cities`, type: "GET", dataType: "json", success: insertCitiesData})
+          const triggeredByCity = () => jQuery.ajax({url: `/cities/${citySelect.value}/unities`, type: "GET", dataType: "json", success: insertUBSData})
 
           companySelect.addEventListener('change', triggeredByCompany);
           stateSelect.addEventListener('change', triggeredByState);
@@ -227,8 +227,8 @@
           const stateSelect = document.getElementById('call_state_id');
           const citySelect = document.getElementById('call_city_id');
           const ubsSelect = document.getElementById('call_cnes')
-          const triggeredByState = () => jQuery.ajax({url: `/companies/${query.sei}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
-          const trigerredByCity = () => jQuery.ajax({url: `/companies/${query.sei}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
+          const triggeredByState = () => jQuery.ajax({url: `/companies/${query.sei}/states/${stateSelect.value}/cities`, type: "GET", dataType: "json", success: insertCitiesData})
+          const trigerredByCity = () => jQuery.ajax({url: `/cities/${citySelect.value}/unities`, type: "GET", dataType: "json", success: insertUBSData})
           stateSelect.addEventListener('change', triggeredByState);
           citySelect.addEventListener('change', trigerredByCity);
 

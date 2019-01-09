@@ -55,10 +55,8 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
                          as: 'company_states'
       get ':sei/users', to: 'companies#users',
                         as: 'company_users'
-      get ':id/cities/:state_id', to: 'companies#cities',
-                                  as: 'company_cities'
-      get ':id/unities/:city_id', to: 'companies#unities',
-                                  as: 'company_unities'
+      get ':id/states/:state_id/cities', to: 'companies#cities',
+                                         as: 'company_cities'
     end
   end
 
