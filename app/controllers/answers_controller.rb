@@ -240,8 +240,7 @@ class AnswersController < ApplicationController
   def answer_params
     normalize_params
     params.require(:answer).permit(:keywords, :question, :answer, :category_id,
-                                   :user_id, :faq, :call_id, :source,
-                                   :reply_attachments)
+                                   :user_id, :faq, :call_id, :source, :reply_attachments)
   end
 
   # Called by #answer_params to normalize the <tt>keywords</tt>
@@ -296,7 +295,7 @@ class AnswersController < ApplicationController
 
   # For each Attachment instance id received in the
   # <tt>files</tt> parameter, creates the AttachmentLink
-  # between the Answerr instance and the Attachment instance.
+  # between the Answer instance and the Attachment instance.
   def create_file_links(answer, files)
     files.each do |file_uuid|
       @link = AttachmentLink.new(attachment_id: file_uuid,

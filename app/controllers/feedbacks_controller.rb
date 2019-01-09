@@ -1,29 +1,50 @@
 # frozen_string_literal: true
 
+##
+# This is the controller for the Feedback model
+#
+# It is responsible for handling the views for any Feedback
 class FeedbacksController < ApplicationController
+  include ApplicationHelper
+
   before_action :authenticate_user!
   before_action :restrict_system!
-
   before_action :filter_role
 
-  # GET /feedbacks
+  ##########################
+  # :section: View methods
+  # Method related to generating views
+
+  # Configures the <tt>index</tt> page for the Company model
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/controversias/feedbacks</tt>
+  # [GET] <tt>/controversias/feedbacks.json</tt>
   def index
     @feedbacks = Feedback.all.page(params[:page])
   end
 
-  # GET /feedbacks/1
+  # Configures the <tt>show</tt> page for the Company model
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/controversias/feedbacks/:id</tt>
+  # [GET] <tt>/controversias/feedbacks/:id.json</tt>
   def show
     @feedback = Feedback.find(params[:id])
   end
 
-  # POST /feedbacks
-  # POST /feedbacks.json
+  # Configures the <tt>POST</tt> request to create a new
+  # Feedback
+  #
+  # <b>ROUTES</b>
+  #
+  # [POST] <tt>/controversias/feedback</tt>
   def create
-    feedback_parameters = feedback_params
+    files = retrieve_files(params) || []
 
-    files = retrieve_files(feedback_parameters) || []
-    @feedback = Feedback.new(feedback_parameters)
-
+    @feedback = Feedback.new(feedback_params)
     if @feedback.save && @feedback.controversy.save
       create_file_links @feedback, files
       update_controversy @feedback
@@ -39,10 +60,35 @@ class FeedbacksController < ApplicationController
 
   private
 
+  ##########################
+  # :section: Hooks methods
+  # Methods which are called by the hooks on
+  # the top of the file
+
+  # Restrict the access to the views according to the
+  # <tt>current_user system</tt>, as it must have access
+  # to the Solucao de Controversias system
+  def restrict_system!
+    redirect_to denied_path unless current_user.both? || current_user.controversies?
+  end
+
+  ##########################
+  # :section: Custom private methods
+
+  # Makes the famous "Never trust parameters from internet, only allow the white list through."
+  def feedback_params
+    params.require(:feedback).permit(:description, :controversy_id)
+  end
+
+  # Returns the Attachment instances's ids received in the
+  # request, removing it from the parameters
   def retrieve_files(parameters)
     parameters.delete(:files).split(',') if parameters[:files]
   end
 
+  # For each Attachment instance id received in the
+  # <tt>files</tt> parameter, creates the AttachmentLink
+  # between the Feedback instance and the Attachment instance.
   def create_file_links(feedback, files)
     files.each do |file_uuid|
       @link = AttachmentLink.new(attachment_id: file_uuid, feedback_id: feedback.id,
@@ -54,27 +100,26 @@ class FeedbacksController < ApplicationController
     end
   end
 
+  # Called by #create, configures the Feedback's Controversy
+  # parent instance, closing it
   def update_controversy(feedback)
     feedback.controversy.closed!
     feedback.controversy.closed_at = 0.seconds.from_now
     feedback.controversy.save!
   end
 
+  # Called by #create, it is the responsible for sending
+  # emails to all the users involved in the Feedback's
+  # Controversy parent instance
   def send_mails(feedback)
     feedback.controversy.involved_users.each do |user|
       FeedbackMailer.notify(feedback.id, user.id).deliver_later
     end
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
-  def feedback_params
-    params.require(:feedback).permit(:description, :controversy_id, :files)
-  end
-
-  def restrict_system!
-    redirect_to denied_path unless current_user.both? || current_user.controversies?
-  end
-
+  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
+  #
+  # Filters the access to each of the actions of the controller
   def filter_role
     redirect_to not_found_path unless admin? || support_user?
   end
