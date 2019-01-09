@@ -127,10 +127,14 @@ class Answer < ApplicationRecord
     read_attribute(:CO_SISTEMA_ORIGEM)
   end
 
+  # Returns all Answer instances which are in the FAQ and are
+  # related to a Controversy
   def self.faq_from_controversy
     where(ST_FAQ: 'S', CO_SISTEMA_ORIGEM: :from_controversy)
   end
 
+  # Returns all Answer instances which are in the FAQ and are
+  # related to a Call
   def self.faq_from_call
     where(ST_FAQ: 'S', CO_SISTEMA_ORIGEM: :from_call)
   end

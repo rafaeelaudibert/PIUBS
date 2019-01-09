@@ -15,10 +15,6 @@ class Company < ApplicationRecord
   has_many :cities, -> { order('name ASC') }, through: :contracts
   validates :CO_SEI, presence: true, uniqueness: true
 
-  def states
-    State.where(CO_CODIGO: contracts.map { |c| c.city.state_id }.sort.uniq!).order(:NO_NOME)
-  end
-
   #### DATABASE adaptations ####
   self.primary_key = :CO_SEI # Setting a different primary_key
   self.table_name = :TB_EMPRESA # Setting a different table_name
@@ -43,6 +39,15 @@ class Company < ApplicationRecord
     read_attribute(:DT_CRIADO_EM)
   end
 
+  # Return all the State instances which are related to a City
+  # which has a relation with this Company through a Contract
+  def states
+    State.where(CO_CODIGO: contracts.map { |c| c.city.state_id }.sort.uniq!).order(:NO_NOME)
+  end
+
+  # Return all the City instances from a State (which is retrieved
+  # based in the <tt>id</tt> parameter) which are related to this
+  # Company through a Contract
   def cities_from_state(id)
     State.find(id).cities.where(CO_CODIGO: contracts.map(&:city_id)).order('"NO_NOME"')
   end

@@ -233,14 +233,25 @@ class Call < ApplicationRecord
     read_attribute(:DT_REABERTO_EM)
   end
 
+  # Returns all Call instances which are related to
+  # the Company instance with <tt>sei</tt> equal as
+  # the one passed as a paremter
   def self.from_company(sei)
     where(CO_SEI: sei)
   end
 
+  # Returns all Call instances which are related to
+  # the User instance with <tt>id</tt> equal as
+  # the one passed as a paremter, through the
+  # <tt>company_user</tt> relation
   def self.from_company_user(id)
     where(CO_USUARIO_EMPRESA: id)
   end
 
+  # Returns all Call instances which are related to
+  # the User instance with <tt>id</tt> equal as
+  # the one passed as a paremter, through the
+  # <tt>support_user</tt> relation
   def self.from_support_user(id)
     where(CO_USUARIO_SUPORTE: id)
   end
