@@ -37,8 +37,8 @@ class CompaniesController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [GET] <tt>/companies/1</tt>
-  # [GET] <tt>/companies/1.json</tt>
+  # [GET] <tt>/companies/:id</tt>
+  # [GET] <tt>/companies/:id.json</tt>
   def show
     @contracts = @company.contracts
                          .paginate(page: params[:page], per_page: 25)
@@ -73,7 +73,7 @@ class CompaniesController < ApplicationController
   #
   # <b>ROUTES</b>
   #
-  # [POST] <tt>/companies/1</tt>
+  # [POST] <tt>/companies/:id</tt>
   def destroy
     @company.destroy
     redirect_to companies_url, notice: 'Empresa apagada com sucesso.'
