@@ -121,7 +121,7 @@ class Reply < ApplicationRecord
   end
 
   # Get name of border class to each user role
-  def get_border_class
+  def border_class
     user.role.split('_')[0].concat('-border')
   end
 
