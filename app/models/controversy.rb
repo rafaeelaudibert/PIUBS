@@ -24,7 +24,7 @@ class Controversy < ApplicationRecord
   has_many :attachment_links, foreign_key: :CO_CONTROVERSIA
   has_many :attachments, through: :attachment_links
   has_many :replies, as: :repliable, foreign_key: :CO_PROTOCOLO
-  has_one :feedback, foreign_key: :CO_PROTOCOLO
+  has_one :feedback, foreign_key: :CO_CONTROVERSIA
 
   alias_attribute :creator, :CO_CRIADO_POR
   enum creator: %i[company unity city support]
@@ -204,6 +204,11 @@ class Controversy < ApplicationRecord
   # Configures an alias getter for the CO_SUPORTE_ADICIONAL database column
   def support_2_user_id
     read_attribute(:CO_SUPORTE_ADICIONAL)
+  end
+
+  # Retrive all replies linked to Controversy, sorted by creation date
+  def replies_sorted
+    replies.order(DT_CRIADO_EM: :DESC)
   end
 
   #### FILTERRIFIC queries ####

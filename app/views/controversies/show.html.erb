@@ -196,7 +196,7 @@
       </div>
     <% end %>
 
-    <% @controversy.replies.order(created_at: :desc).each do |reply| %>
+    <% @controversy.replies_sorted.each do |reply| %>
       <div class="card card-default mb-3 <%= reply.category %>-border">
         <div class="card-header">
           <em class="fa fa-comment-o m-2"></em>
