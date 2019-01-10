@@ -166,19 +166,17 @@ class User < ApplicationRecord
   }
 
   scope :with_state, lambda { |state|
-    cities = City.where(state_id: state)
-    unities = Unity.where(city: cities).map(&:cnes)
-    contracts_sei = Contract.where(city: cities).map(&:sei)
-    companies = Company.where(sei: contracts_sei).map(&:sei)
+    cities = City.where(CO_UF: state).map(&:CO_CODIGO)
+    unities = Unity.where(CO_CIDADE: cities).map(&:CO_CNES)
+    companies = Contract.where(CO_CIDADE: cities).map(&:CO_SEI).uniq!
     return [] if state == ['']
 
-    state == [''] ? [] : where('"CO_CNES" IN (?) OR "CO_SEI" IN (?)', unities, companies)
+    where('"CO_CNES" IN (?) OR "CO_SEI" IN (?)', unities, companies)
   }
 
   scope :with_city, lambda { |city|
-    contracts = Contract.where(city_id: city).map(&:sei)
-    companies = Company.where(sei: contracts).map(&:sei)
-    where('"CO_CIDADE" = ? OR "CO_SEI" IN (?)', city, companies) unless city.zero?
+    sei = Contract.where(CO_CIDADE: city).map(&:CO_SEI).uniq!
+    where('"CO_CIDADE" = ? OR "CO_SEI" IN (?)', city, sei) unless city.zero?
   }
 
   scope :with_company, ->(sei) { sei == '' ? nil : where(CO_SEI: sei) }

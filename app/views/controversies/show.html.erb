@@ -254,7 +254,8 @@
   </div>
 </div>
 
-<% if @controversy.open? %>
+<% if @controversy.open? %> 
+
   <% if current_user.admin? || current_user.call_center_user? || current_user.call_center_admin? %>
     <script>
 
@@ -263,12 +264,7 @@
           // Configure cross-reference ajax request
           $.ajaxSetup({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
-          })
-
-          $('#show-detailed, #hide-detailed').click( e => {
-            $('#resumed-controversy').slideToggle(150);
-            $('#detailed-controversy').slideToggle(150);
-          })
+          })          
 
           $('#company_search, #city_search, #unity_search, #support_search').click(() => {
               $('.ui-menu').click(e => {
@@ -346,6 +342,11 @@
   <% end %>
 
   <script>
+    $('#show-detailed, #hide-detailed').click( e => {
+      $('#resumed-controversy').slideToggle(150);
+      $('#detailed-controversy').slideToggle(150);
+    })
+
     const cleanMCE = () => {
       tinymce.EditorManager.execCommand('mceRemoveEditor', true, 'tinymce-reply');
       tinymce.EditorManager.execCommand('mceAddEditor', true, 'tinymce-reply');

@@ -7,16 +7,17 @@
 class UnitiesController < ApplicationController
   include ApplicationHelper
 
-  ##########################
-  ## Hooks Configuration ###
-
+  # Hooks Configuration
   before_action :authenticate_user!
-  before_action :filter_role
   before_action :set_unity, only: %i[show destroy]
 
-  ##########################
+  # CanCanCan Configuration
+  load_and_authorize_resource
+
+  ####
   # :section: View methods
   # Method related to generating views
+  ##
 
   # Configures the <tt>index</tt> page for the Unity model
   #
@@ -30,7 +31,8 @@ class UnitiesController < ApplicationController
       params[:filterrific],
       persistence_id: false
     )) || return
-    @unities = @filterrific.find.page(params[:page])
+
+    @unities = filterrific_query
   end
 
   # Configures the <tt>show</tt> page for the Unity model
@@ -95,10 +97,11 @@ class UnitiesController < ApplicationController
 
   private
 
-  ##########################
+  ####
   # :section: Hooks methods
   # Methods which are called by the hooks on
   # the top of the file
+  ##
 
   # Configures the Unity instance when called by
   # the <tt>:before_action</tt> hook
@@ -106,23 +109,24 @@ class UnitiesController < ApplicationController
     @unity = Unity.find(params[:cnes])
   end
 
-  ##########################
+  ####
   # :section: Custom private methods
+  ##
 
   # Makes the famous "Never trust parameters from internet, only allow the white list through."
   def unity_params
     params.require(:unity).permit(:cnes, :name, :city_id)
   end
 
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
+  ####
+  # :section: CanCanCan methods
+  # Methods which are related to the CanCanCan gem
+  ##
+
+  # CanCanCan Method
   #
-  # Filters the access to each of the actions of the controller
-  def filter_role
-    action = params[:action]
-    if %w[new create destroy show].include? action
-      redirect_to denied_path unless admin?
-    elsif %w[index show].include? action
-      redirect_to denied_path unless admin? || support_user?
-    end
+  # Default CanCanCan Method, declaring the UnityAbility
+  def current_ability
+    @current_ability ||= UnityAbility.new(current_user)
   end
 end

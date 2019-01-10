@@ -29,9 +29,9 @@
             //Add the data rows.
             for (let entry of data) {
               const header = '<div class="card card-default"><div class="card-header"><div class="header-block">';
-              const title = '<p class="title"><em class="fa fa-question-circle mr-2"></em> <strong>' + entry.question + '</strong></p></div></div>';
-              const content = '<div class="card-block"><p>' + entry.answer + '</p>';
-              const view = '<a href="/answers/' + entry.id + '"class="btn btn-primary btn-sm right" target="_blank"> <em class="fa fa-eye"></em> Mostrar</a></div></div>';
+              const title = `<p class="title"><em class="fa fa-question-circle mr-2"></em> <strong>${entry.question}</strong></p></div></div>`;
+              const content = `<div class="card-block"><p>${entry.answer}</p>`;
+              const view = `<button onclick="faq_click(this, ${entry.id})" type="button" class="btn btn-primary btn-sm right"> <em class="fa fa-mouse-pointer"></em> Selecionar</button></div></div>`;
               parsedHTML += header + title + content + view;
             }
 
@@ -73,9 +73,8 @@
   $("#search_field").keyup(triggerSearch);
   $('#search_button').click(triggerSearch);
 
-  const faq_click = button => {
-    const answer = button.parentNode.parentNode.children[2].innerHTML;
-    const id = button.parentNode.parentNode.children[0].innerHTML;
+  const faq_click = (button, id) => {
+    const answer = button.parentNode.parentNode.children[0].children[0].children[0].innerText;
 
     $.ajax({
       url: `/answers/${id}/attachments`,

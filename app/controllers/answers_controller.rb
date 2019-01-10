@@ -7,18 +7,20 @@
 class AnswersController < ApplicationController
   include ApplicationHelper
 
-  ##########################
-  ## Hooks Configuration ###
-
+  # Hooks Configuration
   before_action :authenticate_user!
   before_action :restrict_system!
   before_action :set_answer, only: %i[show edit update]
-  before_action :filter_role
-  before_action :check_new_params, only: :new
+  before_action :verify_source, only: :new
 
-  ##########################
+  # CanCanCan Configuration
+  load_and_authorize_resource
+  skip_authorize_resource only: %i[faq faq_controversy search_call search_controversy]
+
+  ####
   # :section: View methods
   # Method related to generating views
+  ##
 
   # Configures the <tt>index</tt> page for the Answer model
   #
@@ -32,7 +34,7 @@ class AnswersController < ApplicationController
       params[:filterrific],
       persistence_id: false
     )) || return
-    @answers = @filterrific.find.page(params[:page])
+    @answers = filterrific_query
   end
 
   # Configures the <tt>faq</tt> page for the Answer model
@@ -47,15 +49,15 @@ class AnswersController < ApplicationController
     (@filterrific = initialize_filterrific(
       Answer,
       params[:filterrific],
-      select_options: {
-        with_category: Category.from_call.map { |a| [a.name, a.id] }
-      },
+      select_options: { with_category: Category.from_call.map { |a| [a.name, a.id] } },
       persistence_id: false
     )) || return
 
     @answers = @filterrific.find
                            .faq_from_call
                            .page(params[:page])
+
+    authorize_faq
   end
 
   # Configures the <tt>faq</tt> page for the Answer model
@@ -70,15 +72,15 @@ class AnswersController < ApplicationController
     (@filterrific = initialize_filterrific(
       Answer,
       params[:filterrific],
-      select_options: {
-        with_category: Category.from_controversy.map { |a| [a.name, a.id] }
-      },
+      select_options: { with_category: Category.from_controversy.map { |a| [a.name, a.id] } },
       persistence_id: false
     )) || return
 
     @answers = @filterrific.find
                            .faq_from_controversy
                            .page(params[:page])
+
+    authorize_faq
   end
 
   # Configures the <tt>show</tt> page for the Answer model
@@ -119,7 +121,7 @@ class AnswersController < ApplicationController
     files = retrieve_files(params) || []
 
     @answer = Answer.new(answer_params)
-    @call = Call.find(params[:call_id])
+    @call = Call.find(params[:call_id]) if params[:call_id]
     if @answer.save
       mark_as_final_answer @answer if params[:call_id]
       create_file_links @answer, files
@@ -166,6 +168,7 @@ class AnswersController < ApplicationController
     @answers = Answer.search_query_faq_call(params[:search])
                      .with_pg_search_rank
                      .limit(15)
+    authorize! :query_faq, Answer
   end
 
   # Configures the <tt>query_controversy</tt> page for
@@ -182,6 +185,7 @@ class AnswersController < ApplicationController
     @answers = Answer.search_query_faq_controversy(params[:search])
                      .with_pg_search_rank
                      .limit(15)
+    authorize! :query_faq, Answer
   end
 
   # Configures the <tt>attachments</tt> request for the
@@ -194,9 +198,11 @@ class AnswersController < ApplicationController
   #
   # [GET] <tt>/answers/:id/attachments.json</tt>
   def attachments
-    @attachments = Answer.find(params[:id])
-                         .attachments
-                         .map do |attachment|
+    @answer = Answer.find(params[:id])
+    authorize! :show, @answer
+
+    @attachments = @answer.attachments
+                          .map do |attachment|
       { filename: attachment.filename,
         type: attachment.content_type,
         id: attachment.id,
@@ -206,10 +212,11 @@ class AnswersController < ApplicationController
 
   private
 
-  ##########################
+  ####
   # :section: Hooks methods
   # Methods which are called by the hooks on
   # the top of the file
+  ##
 
   # Configures the Company instance when called by
   # the <tt>:before_action</tt> hook
@@ -229,7 +236,7 @@ class AnswersController < ApplicationController
   # Verifies if the required params <tt>:source</tt> was
   # passed when calling the #new method.
   # This method is called by a <tt>:before_action</tt> hook
-  def check_new_params
+  def verify_source
     redirect_to not_found_path unless %w[call controversy].include?(params[:source])
   end
 
@@ -330,61 +337,22 @@ class AnswersController < ApplicationController
     end
   end
 
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
+  ####
+  # :section: CanCanCan methods
+  # Methods which are related to the CanCanCan gem
+  ##
+
+  # CanCanCan Method
   #
-  # Filters the access to each of the actions of the controller
-  def filter_role
-    action = params[:action]
-    if %w[index edit update].include? action
-      redirect_to denied_path unless admin? || faq_inserter?
-    elsif %w[new create destroy].include? action
-      redirect_to denied_path unless admin_support_faq?
-    else
-      show?(action)
-    end
+  # Default CanCanCan Method, declaring the AnswerAbility
+  def current_ability
+    @current_ability ||= AnswerAbility.new(current_user)
   end
 
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
+  # CanCanCan Method
   #
-  # Called by #filter_role, verifies if the user has one
-  # of the following roles:
-  # <tt>admin</tt>, <tt>call_center_user</tt>,
-  # <tt>call_center_admin</tt> or <tt>faq_inserter</tt>
-  def admin_support_faq?
-    admin? || support_user? || faq_inserter?
-  end
-
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
-  #
-  # Called by #filter_role, verifies that, knowing that the current action
-  # is <tt>show</t>, only allowed users are trying to see it
-  def show?(action)
-    redirect_to denied_path if action == 'show' && !alloweds_users_to_show?
-  end
-
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
-  #
-  # Called by #show? returns a boolean saying if the <tt>current_user</tt>
-  # is allowed to see this Answer instance
-  def alloweds_users_to_show?
-    faq_and_not_city_ubs_users? || admin? || faq_inserter? || support_and_answer_creator?
-  end
-
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
-  #
-  # Called by #allowed_users_to_show? returns true if the
-  # Answer instance is on FAQ, but the <tt>current_user</tt> shouldn't
-  # belong to a City or a Unity instance
-  def faq_and_not_city_ubs_users?
-    @answer.faq && !city_user? && !ubs_user?
-  end
-
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
-  #
-  # Called by #allowed_users_to_show? returns true if the
-  # <tt>current_user</tt> is from the support and he was
-  # the creator of the Answer
-  def support_and_answer_creator?
-    support_user? && @answer.user_id == current_user.id
+  # Method called by the FAQ-like views, to authorize which Answers can be seen
+  def authorize_faq
+    authorize! :read, @answers.first # We use the first, to bypass the CanCan problems
   end
 end

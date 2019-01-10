@@ -7,18 +7,17 @@
 class ControversiesController < ApplicationController
   include ApplicationHelper
 
-  #########################
-  ## Hooks Configuration ###
-
+  # Hooks Configuration
   before_action :authenticate_user!
   before_action :restrict_system!
   before_action :set_controversy, except: %i[index new create]
-  before_action :filter_role
   before_action :set_user, only: %i[company_user city_user support_user unity_user]
+  before_action :authorize_alter_user, only: %i[company_user city_user unity_user support_user]
 
-  ##########################
+  ####
   # :section: View methods
   # Method related to generating views
+  ##
 
   # Configures the <tt>index</tt> page for the Answer model
   #
@@ -33,7 +32,8 @@ class ControversiesController < ApplicationController
       persistence_id: false
     )) || return
 
-    @controversies = @filterrific.find.page(params[:page])
+    @controversies = filterrific_query
+    authorize! :index, Controversy
   end
 
   # Configures the <tt>show</tt> page for the Controversy model
@@ -50,6 +50,7 @@ class ControversiesController < ApplicationController
                     rescue StandardError
                       'Sem usuário criador (Relate ao suporte)'
                     end
+    authorize! :show, @controversy
   end
 
   # Configures the <tt>new</tt> page for the Controversy model
@@ -58,8 +59,8 @@ class ControversiesController < ApplicationController
   #
   # [GET] <tt>/controversias/controversies/new</tt>
   def new
-    # rubocop:disable Style/GuardClause
     @controversy = Controversy.new
+    authorize! :new, @controversy
     if (city_user? || ubs_user?) && current_user.city.contract_id.nil?
       redirect_back(fallback_location: controversies_path,
                     notice: 'A sua cidade não possui contratos')
@@ -78,6 +79,7 @@ class ControversiesController < ApplicationController
     files = retrieve_files controversy_parameters
     user_creator = retrieve_user_creator controversy_parameters
     @controversy = create_controversy controversy_parameters, user_creator
+    authorize! :create, @controversy
 
     if @controversy.save
       create_file_links @controversy, files
@@ -95,6 +97,8 @@ class ControversiesController < ApplicationController
   #
   # [POST] <tt>/controversias/controversies/:id/link_controversy/:user_id</tt>
   def link_controversy
+    authorize! :link, @controversy
+
     if @controversy.support_1
       redirect_back(fallback_location: root_path,
                     alert: 'Você não pode pegar uma controvérsia de outro usuário do suporte')
@@ -120,6 +124,8 @@ class ControversiesController < ApplicationController
   #
   # [POST] <tt>/controversias/controversies/:id/unlink_controversy/:user_id</tt>
   def unlink_controversy
+    authorize! :link, @controversy
+
     if @controversy.support_1 == User.find(params[:user_id])
       @controversy.support_1 = nil
       if @controversy.save
@@ -219,15 +225,13 @@ class ControversiesController < ApplicationController
     end
   end
 
-  ##########################
-  #### PRIVATE methods #####
-
   private
 
-  ##########################
+  ####
   # :section: Hooks methods
   # Methods which are called by the hooks on
   # the top of the file
+  ##
 
   # Configures the Controversy instance when called by
   # the <tt>:before_action</tt> hook
@@ -249,8 +253,26 @@ class ControversiesController < ApplicationController
     redirect_to denied_path unless current_user.both? || current_user.controversies?
   end
 
-  ##########################
+  # Restrict the User instances which can make <tt>alter_user</tt>
+  # actions in the system.
+  # It is called by a <tt>:before_action</tt> hook, but it is also
+  # a CanCanCan method
+  def authorize_alter_user
+    authorize! :alter_user, @controversy
+  end
+
+  ####
   # :section: Custom private methods
+  ##
+
+  # Makes the famous "Never trust parameters from internet, only allow the white list through."
+  def controversy_params
+    params.require(:controversy).permit(:title, :description, :protocol, :closed_at, :sei,
+                                        :contract_id, :city_id, :cnes, :company_user_id,
+                                        :unity_user_id, :creator, :category, :complexity,
+                                        :support_1_id, :support_2_id, :user_creator, :feedback,
+                                        :files)
+  end
 
   # Returns the Attachment instances's ids received in the
   # request, removing it from the parameters
@@ -325,41 +347,15 @@ class ControversiesController < ApplicationController
     end
   end
 
-  # Makes the famous "Never trust parameters from internet, only allow the white list through."
-  def controversy_params
-    params.require(:controversy).permit(:title, :description, :protocol, :closed_at, :sei,
-                                        :contract_id, :city_id, :cnes, :company_user_id,
-                                        :unity_user_id, :creator, :category, :complexity,
-                                        :support_1_id, :support_2_id, :user_creator, :feedback,
-                                        :files)
-  end
+  ####
+  # :section: CanCanCan methods
+  # Methods which are related to the CanCanCan gem
+  ##
 
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
+  # CanCanCan Method
   #
-  # Filters the access to each of the actions of the controller
-  def filter_role
-    redirect_to denied_path if faq_inserter?
-    redirect_if_not_in_call if params[:action] == 'show'
-  end
-
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
-  #
-  # Called by #filter_role, prohibits the <tt>current_user</tt>
-  # to see the view (which we know it's a <tt>show</tt> one)
-  # unless they are related to the Controversy or they
-  # have a <tt>support_like</tt> role.
-  def redirect_if_not_in_call
-    redirect_to denied_path unless in_controversy? || support_like?
-  end
-
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
-  #
-  # Called by #redirect_if_not_in_call, return true if the
-  # <tt>current_user</tt> is in the controversy, OR,
-  # if he is the <tt>company_admin</tt> of the Company involved
-  # in the Controversy
-  def in_controversy?
-    @controversy.all_users.include?(current_user) ||
-      @controversy.sei == current_user.sei
+  # Default CanCanCan Method, declaring the ControversyAbility
+  def current_ability
+    @current_ability ||= ControversyAbility.new(current_user)
   end
 end

@@ -105,6 +105,11 @@ class Contract < ActiveRecord::Base
     "/contract/#{id}/download"
   end
 
+  # Return all the contracts which belongs to a Company instance
+  def from_company(sei)
+    where(CO_SEI: sei)
+  end
+
   #### FILTERRIFIC queries ####
   filterrific available_filters: %i[search_query]
 

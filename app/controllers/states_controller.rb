@@ -7,15 +7,17 @@
 class StatesController < ApplicationController
   include ApplicationHelper
 
-  ##########################
-  ## Hooks Configuration ###
-
+  # Hooks Configuration
   before_action :authenticate_user!
-  before_action :filter_role
 
-  ##########################
+  # CanCanCan Configuration
+  load_and_authorize_resource
+  skip_authorize_resource only: :cities
+
+  ####
   # :section: View methods
   # Method related to generating views
+  ##
 
   # Configures the <tt>index</tt> page for the State model
   #
@@ -29,7 +31,7 @@ class StatesController < ApplicationController
       params[:filterrific],
       persistence_id: false
     )) || return
-    @states = @filterrific.find.page(params[:page])
+    @states = filterrific_query
   end
 
   # Configures the <tt>show</tt> page for the State model
@@ -59,6 +61,7 @@ class StatesController < ApplicationController
   # [POST] <tt>/states</tt>
   def create
     @state = State.new(state_params)
+
     if @state.save
       redirect_to @state, notice: 'Estado criado com sucesso.'
     else
@@ -77,28 +80,31 @@ class StatesController < ApplicationController
   # [GET] <tt>/states/:id/cities.json</tt>
   def cities
     @state = State.find(params[:id])
+    authorize! :make_api_calls, @state
+
     @cities = @state.cities
   end
 
   private
 
-  ##########################
+  ####
   # :section: Custom private methods
+  ##
 
   # Makes the famous "Never trust parameters from internet, only allow the white list through."
   def state_params
     params.require(:state).permit(:name)
   end
 
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
+  ####
+  # :section: CanCanCan methods
+  # Methods which are related to the CanCanCan gem
+  ##
+
+  # CanCanCan Method
   #
-  # Filters the access to each of the actions of the controller
-  def filter_role
-    action = params[:action]
-    if %w[new create].include? action
-      redirect_to denied_path unless admin?
-    elsif %w[index show].include? action
-      redirect_to denied_path unless admin? || support_user?
-    end
+  # Default CanCanCan Method, declaring the StateAbility
+  def current_ability
+    @current_ability ||= StateAbility.new(current_user)
   end
 end

@@ -7,16 +7,16 @@
 class CategoriesController < ApplicationController
   include ApplicationHelper
 
-  ##########################
-  ## Hooks Configuration ###
-
+  # Hooks Configuration
   before_action :authenticate_user!
-  before_action :filter_role
-  before_action :set_category, only: %i[show edit update destroy]
 
-  ##########################
+  # CanCanCan Configuration
+  load_and_authorize_resource
+
+  ####
   # :section: View methods
   # Method related to generating views
+  ##
 
   # Configures the <tt>index</tt> page for the Category model
   #
@@ -28,11 +28,9 @@ class CategoriesController < ApplicationController
     (@filterrific = initialize_filterrific(
       Category,
       params[:filterrific],
-      select_options: { # em breve
-      },
       persistence_id: false
     )) || return
-    @categories = @filterrific.find.page(params[:page])
+    @categories = filterrific_query
   end
 
   # Configures the <tt>new</tt> page for the Category model
@@ -66,8 +64,14 @@ class CategoriesController < ApplicationController
   #
   # [DELETE] <tt>/categories/:id</tt>
   def destroy
-    Category.find(params[:id]).destroy
-    redirect_to categories_url, notice: 'Categoria apagada com sucesso'
+    @category = Category.find(params[:id])
+    if @category.answers.empty?
+      @category.destroy
+      redirect_to categories_url, notice: 'Categoria apagada com sucesso'
+    else
+      redirect_back fallback_location: categories_path,
+                    alert: 'Não podemos apagar essa categoria, pois ela possui Respostas Finais'
+    end
   end
 
   # Configures the layout to create a
@@ -82,8 +86,9 @@ class CategoriesController < ApplicationController
 
   private
 
-  ##########################
-  # :section: Custom private method
+  ####
+  # :section: Custom private methods
+  ##
 
   # Makes the famous "Never trust parameters from internet, only allow the white list through.".
   def category_params
@@ -93,10 +98,15 @@ class CategoriesController < ApplicationController
                                      :parent_depth, :severity, :source)
   end
 
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
+  ####
+  # :section: CanCanCan methods
+  # Methods which are related to the CanCanCan gem
+  ##
+
+  # CanCanCan Method
   #
-  # Filters the access to each of the actions of the controller
-  def filter_role
-    redirect_to denied_path unless admin? || params[:action] == 'category_select'
+  # Default CanCanCan Method, declaring the CategoryAbility
+  def current_ability
+    @current_ability ||= CategoryAbility.new(current_user)
   end
 end

@@ -7,23 +7,20 @@
 class UsersController < ApplicationController
   include ApplicationHelper
 
-  ##########################
-  ## Hooks Configuration ###
-
+  # Hooks Configuration
   before_action :authenticate_user!
   before_action :admin_like?, only: %i[index]
 
-  # # # # # # # # # # # # # # # # # # #
-  ## Autocomplete Gem Configuration ###
-
+  # Autocomplete Configuration
   autocomplete :user, :company
   autocomplete :user, :city
   autocomplete :user, :unity
   autocomplete :user, :support
 
-  ##########################
+  ####
   # :section: View methods
   # Method related to generating views
+  ##
 
   # Configures the <tt>index</tt> page for the USer model
   #
@@ -135,15 +132,6 @@ class UsersController < ApplicationController
 
   private
 
-  # Method called by the #index view handler,
-  # to generate all the current user info
-  def generate_user_info
-    @company = Company.find(@user.sei) if @user.sei
-    @unity = Unity.find(@user.cnes) if @user.cnes
-    @city = City.find(@user.city_id) if @user.city_id
-    @state = State.find(@city.state_id) if @city
-  end
-
   ##########################
   # :section: Filterrific methods
   # Method related to the Filterrific Gem
@@ -164,8 +152,14 @@ class UsersController < ApplicationController
     }
   end
 
-  ##########################
+  ####
   # :section: Custom private methods
+  ##
+
+  # Makes the famous "Never trust parameters from internet, only allow the white list through."
+  def secure_params
+    params.require(:user).permit(:role, :name, :cpf, :sei, :cnes, :city_id, :last_name)
+  end
 
   # Method called by #index to verify the users which this user can see in the <tt>/users</tt> page
   def allowed_users
@@ -176,8 +170,12 @@ class UsersController < ApplicationController
     end
   end
 
-  # Makes the famous "Never trust parameters from internet, only allow the white list through."
-  def secure_params
-    params.require(:user).permit(:role, :name, :cpf, :sei, :cnes, :city_id, :last_name)
+  # Method called by the #index view handler,
+  # to generate all the current user info
+  def generate_user_info
+    @company = Company.find(@user.sei) if @user.sei
+    @unity = Unity.find(@user.cnes) if @user.cnes
+    @city = City.find(@user.city_id) if @user.city_id
+    @state = State.find(@city.state_id) if @city
   end
 end

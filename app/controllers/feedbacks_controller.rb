@@ -7,13 +7,14 @@
 class FeedbacksController < ApplicationController
   include ApplicationHelper
 
+  # Hooks Configuration
   before_action :authenticate_user!
   before_action :restrict_system!
-  before_action :filter_role
 
-  ##########################
+  ####
   # :section: View methods
   # Method related to generating views
+  ##
 
   # Configures the <tt>index</tt> page for the Company model
   #
@@ -23,6 +24,7 @@ class FeedbacksController < ApplicationController
   # [GET] <tt>/controversias/feedbacks.json</tt>
   def index
     @feedbacks = Feedback.all.page(params[:page])
+    authorize! :index, Feedback
   end
 
   # Configures the <tt>show</tt> page for the Company model
@@ -33,6 +35,7 @@ class FeedbacksController < ApplicationController
   # [GET] <tt>/controversias/feedbacks/:id.json</tt>
   def show
     @feedback = Feedback.find(params[:id])
+    authorize! :show, @feedback
   end
 
   # Configures the <tt>POST</tt> request to create a new
@@ -45,6 +48,8 @@ class FeedbacksController < ApplicationController
     files = retrieve_files(params) || []
 
     @feedback = Feedback.new(feedback_params)
+    authorize! :create, @feedback
+
     if @feedback.save && @feedback.controversy.save
       create_file_links @feedback, files
       update_controversy @feedback
@@ -60,20 +65,23 @@ class FeedbacksController < ApplicationController
 
   private
 
-  ##########################
+  ####
   # :section: Hooks methods
   # Methods which are called by the hooks on
   # the top of the file
+  ##
 
   # Restrict the access to the views according to the
   # <tt>current_user system</tt>, as it must have access
-  # to the Solucao de Controversias system
+  # to the Solucao de Controversias system.
+  # It is called by a <tt>:before_action</tt> hook
   def restrict_system!
     redirect_to denied_path unless current_user.both? || current_user.controversies?
   end
 
-  ##########################
+  ####
   # :section: Custom private methods
+  ##
 
   # Makes the famous "Never trust parameters from internet, only allow the white list through."
   def feedback_params
@@ -117,10 +125,15 @@ class FeedbacksController < ApplicationController
     end
   end
 
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
+  ####
+  # :section: CanCanCan methods
+  # Methods which are related to the CanCanCan gem
+  ##
+
+  # CanCanCan Method
   #
-  # Filters the access to each of the actions of the controller
-  def filter_role
-    redirect_to not_found_path unless admin? || support_user?
+  # Default CanCanCan Method, declaring the FeedbackAbility
+  def current_ability
+    @current_ability ||= FeedbackAbility.new(current_user)
   end
 end

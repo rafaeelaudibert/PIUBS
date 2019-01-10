@@ -6,17 +6,20 @@
 # It is responsible for handling the views for any Company
 class ContractsController < ApplicationController
   include ApplicationHelper
+  protect_from_forgery
 
-  ##########################
-  ## Hooks Configuration ###
-
+  # Hooks Configuration
   before_action :authenticate_user!
-  before_action :filter_role
   before_action :set_contract, only: %i[destroy download]
 
-  ##########################
+  # CanCanCan Configuration
+  load_and_authorize_resource
+  skip_authorize_resource only: :download
+
+  ####
   # :section: View methods
   # Method related to generating views
+  ##
 
   # Configures the <tt>index</tt> page for the Contract model
   #
@@ -28,7 +31,7 @@ class ContractsController < ApplicationController
     (@filterrific = initialize_filterrific(Contract,
                                            params[:filterrific],
                                            persistence_id: false)) || return
-    @contracts = @filterrific.find.page(params[:page])
+    @contracts = filterrific_query
   end
 
   # Configures the <tt>new</tt> page for the Contract model
@@ -84,6 +87,7 @@ class ContractsController < ApplicationController
   #
   # [GET] <tt>/contracts/:id/download</tt>
   def download
+    authorize! :download, @contract
     if @contract.content_type.split('/')[1].to_s == 'pdf'
       send_data(@contract.file_contents, type: @contract.content_type, filename: @contract.filename)
     end
@@ -93,10 +97,11 @@ class ContractsController < ApplicationController
 
   private
 
-  ##########################
+  ####
   # :section: Hooks methods
   # Methods which are called by the hooks on
   # the top of the file
+  ##
 
   # Configures the Contract instance when called by
   # the <tt>:before_action</tt> hook
@@ -104,8 +109,9 @@ class ContractsController < ApplicationController
     @contract = Contract.find(params[:id])
   end
 
-  ##########################
-  # :section: Custom private method
+  ####
+  # :section: Custom private methods
+  ##
 
   # Makes the famous "Never trust parameters from internet, only allow the white list through."
   # Also optimizes the file data, separating it in filename, content_type & file_contents
@@ -134,24 +140,15 @@ class ContractsController < ApplicationController
     false
   end
 
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
-  #
-  # Filters the access to each of the actions of the controller
-  def filter_role
-    action = params[:action]
-    if %w[index new create destroy].include? action
-      redirect_to denied_path unless admin?
-    elsif action == 'download'
-      redirect_to denied_path unless admin? || sei_company_admin?
-    end
-  end
+  ####
+  # :section: CanCanCan methods
+  # Methods which are related to the CanCanCan gem
+  ##
 
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
+  # CanCanCan Method
   #
-  # Called by #filter_role, verifies if the
-  # <tt>current_user</tt> is the <tt>company_admin</tt>
-  # of the Company related to the Contract
-  def sei_company_admin?
-    current_user.try(:company_admin?) && @contract.sei == current_user.sei
+  # Default CanCanCan Method, declaring the ContractAbility
+  def current_ability
+    @current_ability ||= ContractAbility.new(current_user)
   end
 end

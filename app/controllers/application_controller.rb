@@ -9,6 +9,12 @@ class ApplicationController < ActionController::Base
   ## Hooks Configuration ###
   before_action :store_user_location!
 
+  ###############################
+  ## CanCan Exception Handling ##
+  rescue_from CanCan::AccessDenied do |exception|
+    redirect_to denied_path, message: exception.message
+  end
+
   ##########################
   # :section: Authentication methods
   # Method related to handle authentication errors
@@ -29,9 +35,6 @@ class ApplicationController < ActionController::Base
   end
 
   private
-
-  ##########################
-  # :section: Private methods
 
   # Stores the location which the <tt>current_user</tt> wants to access,
   # in case we need to make a redirect after a login

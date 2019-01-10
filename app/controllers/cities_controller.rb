@@ -7,15 +7,17 @@
 class CitiesController < ApplicationController
   include ApplicationHelper
 
-  ##########################
-  ## Hooks Configuration ###
-
+  # Hooks Configuration
   before_action :authenticate_user!
-  before_action :filter_role
 
-  ##########################
+  # CanCanCan Configuration
+  load_and_authorize_resource
+  skip_authorize_resource only: %i[users unities]
+
+  ####
   # :section: View methods
   # Method related to generating views
+  ##
 
   # Configures the <tt>index</tt> page for the City model
   #
@@ -30,7 +32,7 @@ class CitiesController < ApplicationController
       select_options: options_for_filterrific,
       persistence_id: false
     )) || return
-    @cities = @filterrific.find.page(params[:page])
+    @cities = filterrific_query
   end
 
   # Configures the <tt>show</tt> page for the City model
@@ -82,6 +84,8 @@ class CitiesController < ApplicationController
   # [GET] <tt>/cities/:id/unities.json</tt>
   def unities
     @city = City.find(params[:id])
+    authorize! :make_api_calls, @city
+
     @unities = @city.unities
   end
 
@@ -95,14 +99,18 @@ class CitiesController < ApplicationController
   #
   # [GET] <tt>/cities/:id/users.json</tt>
   def users
+    @city = City.find(params[:id])
+    authorize! :make_api_calls, @city
+
     @users = User.from_city params[:id]
   end
 
   private
 
-  ##########################
+  ####
   # :section: Filterrific methods
   # Method related to the Filterrific Gem
+  ##
 
   # Filterrific method
   #
@@ -115,23 +123,24 @@ class CitiesController < ApplicationController
     }
   end
 
-  ##########################
+  ####
   # :section: Custom private methods
+  ##
 
   # Makes the famous "Never trust parameters from internet, only allow the white list through."
   def city_params
     params.require(:city).permit(:name, :state_id)
   end
 
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
+  ####
+  # :section: CanCanCan methods
+  # Methods which are related to the CanCanCan gem
+  ##
+
+  # CanCanCan Method
   #
-  # Filters the access to each of the actions of the controller
-  def filter_role
-    action = params[:action]
-    if %w[new create].include? action
-      redirect_to denied_path unless admin?
-    elsif %w[index show].include? action
-      redirect_to denied_path unless admin? || support_user?
-    end
+  # Default CanCanCan Method, declaring the CallAbility
+  def current_ability
+    @current_ability ||= CityAbility.new(current_user)
   end
 end

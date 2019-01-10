@@ -54,3 +54,4 @@ build-iPhoneSimulator/
 
 # database information
 database.yml
+.byebug_history

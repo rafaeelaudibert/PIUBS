@@ -7,16 +7,18 @@
 class CompaniesController < ApplicationController
   include ApplicationHelper
 
-  ##########################
-  ## Hooks Configuration ###
-
+  # Hooks Configuration
   before_action :authenticate_user!
-  before_action :filter_role
   before_action :set_company, only: %i[show destroy]
 
-  ##########################
+  # CanCanCan Configuration
+  load_and_authorize_resource
+  skip_authorize_resource only: %i[show states users cities unities]
+
+  ####
   # :section: View methods
   # Method related to generating views
+  ##
 
   # Configures the <tt>index</tt> page for the Company model
   #
@@ -30,7 +32,7 @@ class CompaniesController < ApplicationController
       params[:filterrific],
       persistence_id: false
     )) || return
-    @companies = @filterrific.find.page(params[:page])
+    @companies = filterrific_query
   end
 
   # Configures the <tt>show</tt> page for the Company model
@@ -40,6 +42,8 @@ class CompaniesController < ApplicationController
   # [GET] <tt>/companies/:id</tt>
   # [GET] <tt>/companies/:id.json</tt>
   def show
+    authorize! :show, @company
+
     @contracts = @company.contracts
                          .paginate(page: params[:page], per_page: 25)
     @users = @company.users
@@ -94,6 +98,8 @@ class CompaniesController < ApplicationController
   # [GET] <tt>/companies/:id/states.json</tt>
   def states
     @company = Company.find(params[:sei])
+    authorize! :make_api_calls, @company
+
     @states = @company.states
   end
 
@@ -108,6 +114,8 @@ class CompaniesController < ApplicationController
   # [GET] <tt>/companies/:id/users.json</tt>
   def users
     @company = Company.find(params[:sei])
+    authorize! :make_api_calls, @company
+
     @users = @company.users
   end
 
@@ -122,19 +130,19 @@ class CompaniesController < ApplicationController
   # [GET] <tt>/companies/:id/states/:state_id/cities.json</tt>
   def cities
     @company = Company.find(params[:id])
+    authorize! :make_api_calls, @company
+
     @state = State.find(params[:state_id])
     @cities = retrieve_cities_for_company
   end
 
-  ##########################
-  #### PRIVATE methods #####
-
   private
 
-  ##########################
+  ####
   # :section: Hooks methods
   # Methods which are called by the hooks on
   # the top of the file
+  ##
 
   # Configures the Company instance when called by
   # the <tt>:before_action</tt> hook
@@ -142,8 +150,9 @@ class CompaniesController < ApplicationController
     @company = Company.find(params[:sei])
   end
 
-  ##########################
+  ####
   # :section: Custom private methods
+  ##
 
   # Makes the famous "Never trust parameters from internet, only allow the white list through."
   def company_params
@@ -164,48 +173,15 @@ class CompaniesController < ApplicationController
     end
   end
 
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
-  #
-  # Filters the access to each of the actions of the controller
-  def filter_role
-    action = params[:action]
-    if %w[index new create destroy].include? action
-      redirect_to denied_path unless admin?
-    elsif %w[states users cities unities].include? action
-      redirect_to denied_path unless can_see_company_api?
-    elsif action == 'show'
-      redirect_if_cant_show
-    end
-  end
+  ####
+  # :section: CanCanCan methods
+  # Methods which are related to the CanCanCan gem
+  ##
 
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
+  # CanCanCan Method
   #
-  # Called by #filter_role, knowing that our action is
-  # <tt>show</tt> it checks if the <tt>current_user</tt> can
-  # see this Company <tt>show</tt> view
-  def redirect_if_cant_show
-    redirect_to denied_path unless sei_company_admin_or_admin?
-  end
-
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
-  #
-  # Called by #filter_role, verifies if the
-  # <tt>current_user</tt> can see the information
-  # returned through JSON.
-  # It can only see if the User is an <tt>admin</tt> or
-  # a <tt>support_usert</tt> or belongs to the Company directly
-  def can_see_company_api?
-    admin? || support_user? || params[:id].to_i == current_user.sei
-  end
-
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
-  #
-  # Called by #redirect_if_cant_show returns a boolean
-  # meaning if the <tt>current_user</tt> can see the
-  # current Company instance.
-  # He can see only if he is the <tt>company_admin</tt>
-  # responsible for this company or a system </tt>admin</tt>
-  def sei_company_admin_or_admin?
-    (current_user.company_admin? && @company.sei == current_user.sei) || admin?
+  # Default CanCanCan Method, declaring the CompanyAbility
+  def current_ability
+    @current_ability ||= CompanyAbility.new(current_user)
   end
 end

@@ -7,15 +7,13 @@
 class RepliesController < ApplicationController
   include ApplicationHelper
 
-  ##########################
-  ## Hooks Configuration ###
-
+  # Hooks Configuration
   before_action :authenticate_user!
-  before_action :filter_role
 
-  ##########################
+  ####
   # :section: View methods
   # Method related to generating views
+  ##
 
   # Configures the <tt>index</tt> page for the Reply model
   #
@@ -29,7 +27,9 @@ class RepliesController < ApplicationController
       params[:filterrific],
       persistence_id: false
     )) || return
-    @replies = @filterrific.find.page(params[:page])
+
+    @replies = filterrific_query
+    authorize! :index, Reply
   end
 
   # Configures the <tt>show</tt> page for the Reply model
@@ -40,6 +40,7 @@ class RepliesController < ApplicationController
   # [GET] <tt>/replies/:id.json</tt>
   def show
     @reply = Reply.find(params[:id])
+    authorize! :show, @reply
   end
 
   # Configures the <tt>POST</tt> request to create a new Reply
@@ -51,6 +52,7 @@ class RepliesController < ApplicationController
     rep_params = reply_params
     files = retrieve_files rep_params
     @reply = create_reply rep_params
+    authorize! :create, @reply
 
     if @reply.save
       create_file_links @reply, files
@@ -71,9 +73,11 @@ class RepliesController < ApplicationController
   #
   # [GET] <tt>/replies/:id/attachments.json</tt>
   def attachments
-    @attachments = Reply.find(params[:id])
-                        .attachments
-                        .map do |attachment|
+    @reply = Reply.find(params[:id])
+    authorize! :verify_attachments, @reply
+
+    @attachments = @reply.attachments
+                         .map do |attachment|
       { filename: attachment.filename,
         type: attachment.content_type,
         id: attachment.id,
@@ -83,8 +87,9 @@ class RepliesController < ApplicationController
 
   private
 
-  ##########################
+  ####
   # :section: Custom private methods
+  ##
 
   # Makes the famous "Never trust parameters from internet, only allow the white list through."
   def reply_params
@@ -154,15 +159,15 @@ class RepliesController < ApplicationController
     reply.repliable_type == 'Call' ? call_path(id) : controversy_path(id)
   end
 
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
+  ####
+  # :section: CanCanCan methods
+  # Methods which are related to the CanCanCan gem
+  ##
+
+  # CanCanCan Method
   #
-  # Filters the access to each of the actions of the controller
-  def filter_role
-    action = params[:action]
-    if %w[index show].include? action
-      redirect_to denied_path unless admin?
-    elsif action == 'attachments'
-      redirect_to denied_path unless admin? || support_user?
-    end
+  # Default CanCanCan Method, declaring the ReplyAbility
+  def current_ability
+    @current_ability ||= ReplyAbility.new(current_user)
   end
 end

@@ -2,7 +2,7 @@
 
 ## This class represents a brazilian Unity which must belongs to a City object.
 class Unity < ApplicationRecord
-  default_scope -> { joins(:city).order('"TB_CIDADE"."NO_NOME"', '"NO_NOME"') }
+  default_scope -> { joins(:city).order('"TB_CIDADE"."NO_NOME"', '"TB_UBS"."NO_NOME"') }
   belongs_to :city, foreign_key: :CO_CIDADE
   has_many :users, foreign_key: :CO_CNES
   has_many :calls, foreign_key: :CO_CNES

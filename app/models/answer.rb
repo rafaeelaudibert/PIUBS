@@ -127,6 +127,12 @@ class Answer < ApplicationRecord
     read_attribute(:CO_SISTEMA_ORIGEM)
   end
 
+  # Returns all Answer instances which are in the FAQ, no matter
+  # if it is related to a Controversy or a Call
+  def self.on_faq
+    where(ST_FAQ: 'S')
+  end
+
   # Returns all Answer instances which are in the FAQ and are
   # related to a Controversy
   def self.faq_from_controversy
@@ -137,6 +143,12 @@ class Answer < ApplicationRecord
   # related to a Call
   def self.faq_from_call
     where(ST_FAQ: 'S', CO_SISTEMA_ORIGEM: :from_call)
+  end
+
+  # Return all Answer instances which were created by the User
+  # with <tt>id</tt> same as the passed as a parameter
+  def self.from_user(id)
+    where(CO_USUARIO: id)
   end
 
   #### PGSEARCH stuff ####

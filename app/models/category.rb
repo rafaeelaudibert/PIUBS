@@ -11,7 +11,7 @@ class Category < ApplicationRecord
                       foreign_key: :CO_CATEGORIA_PAI, optional: true
   has_many :children, ->(category) { where(CO_CATEGORIA_PAI: category.id) },
            foreign_key: :CO_CATEGORIA_PAI, class_name: 'Category'
-  has_many :answer
+  has_many :answers, foreign_key: :CO_CATEGORIA
   validates :NO_NOME, presence: true, uniqueness: true
 
   alias_attribute :severity, :NU_SEVERIDADE

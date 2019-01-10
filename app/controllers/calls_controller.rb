@@ -7,17 +7,20 @@
 class CallsController < ApplicationController
   include ApplicationHelper
 
-  ##########################
-  ## Hooks Configuration ###
+  # Hooks Configuration
   before_action :authenticate_user!
   before_action :restrict_system!
-  before_action :filter_role
   before_action :set_company, only: %i[create new]
   before_action :set_call, except: %i[index new create]
 
-  ##########################
+  # CanCanCan Configuration
+  load_and_authorize_resource
+  skip_authorize_resource only: %i[link_call_support_user unlink_call_support_user reopen_call]
+
+  ####
   # :section: View methods
   # Method related to generating views
+  ##
 
   # Configures the <tt>index</tt> page for the Call model
   #
@@ -80,6 +83,8 @@ class CallsController < ApplicationController
   #
   # [POST] <tt>/apoioaempresas/calls/:id/link_call_support_user</tt>
   def link_call_support_user
+    authorize! :link_call, @call
+
     if @call.support_user
       redirect_back(fallback_location: root_path,
                     alert: 'Você não pode pegar um atendimento de outro usuário do suporte')
@@ -102,6 +107,8 @@ class CallsController < ApplicationController
   #
   # [POST] <tt>/apoioaempresas/calls/:id/unlink_call_support_user</tt>
   def unlink_call_support_user
+    authorize! :link_call, @call
+
     if @call.support_user == current_user
       @call.support_user = nil
       if @call.save
@@ -123,6 +130,8 @@ class CallsController < ApplicationController
   #
   # [POST] <tt>/apoioaempresas/calls/:id/reopen_call</tt>
   def reopen_call
+    authorize! :reopen_call, @call
+
     @answer = @call.answer
     @call = update_call @call, params
 
@@ -134,25 +143,17 @@ class CallsController < ApplicationController
       redirect_back(fallback_location: root_path, notice: 'Atendimento reaberto')
     else
       redirect_back(fallback_location: root_path,
-                    notice: 'Ocorreu um erro ao tentar reabrir o atendimento')
+                    alert: 'Ocorreu um erro ao tentar reabrir o atendimento')
     end
   end
 
-  ##########################
-  #### PRIVATE methods #####
-
   private
 
-  ##########################
+  ####
   # :section: Hooks methods
   # Methods which are called by the hooks on
   # the top of the file
-
-  # Configures the Company instance when called by
-  # the <tt>:before_action</tt> hook
-  def set_company
-    @company = Company.find(current_user.sei) if current_user.sei
-  end
+  ##
 
   # Configures the Call instance when called by
   # the <tt>:before_action</tt> hook
@@ -160,9 +161,24 @@ class CallsController < ApplicationController
     @call = Call.find(params[:id])
   end
 
-  ##########################
+  # Configures the Company instance when called by
+  # the <tt>:before_action</tt> hook
+  def set_company
+    @company = Company.find(current_user.sei) if current_user.sei
+  end
+
+  # Restrict the access to the views according to the
+  # <tt>current_user system</tt>, as it must have access
+  # to the Apoio as Empresas system
+  # It is called by a <tt>:before_action</tt> hook
+  def restrict_system!
+    redirect_to denied_path unless current_user.both? || current_user.companies?
+  end
+
+  ####
   # :section: Filterrific methods
   # Method related to the Filterrific Gem
+  ##
 
   # Filterrific method
   #
@@ -185,7 +201,9 @@ class CallsController < ApplicationController
   # used to sort the Call instances
   def retrieve_states_for_filterrific
     if current_user.cnes
-      State.find(@contracts.map { |c| c.city.state_id }).map { |s| [s.name, s.id] }
+      State.find(current_user.company
+                             .contracts
+                             .map { |c| c.city.state_id }).map { |s| [s.name, s.id] }
     else
       State.all.map { |s| [s.name, s.id] }
     end
@@ -246,8 +264,19 @@ class CallsController < ApplicationController
     filterrific_query
   end
 
-  ##########################
+  ####
   # :section: Custom private methods
+  ##
+
+  # Makes the famous "Never trust parameters from internet, only allow the white list through."
+  def call_params
+    params.require(:call).permit(:sei, :user_id, :title,
+                                 :description, :finished_at, :version,
+                                 :access_profile, :feature_detail,
+                                 :answer_summary, :severity, :protocol,
+                                 :city_id, :category_id, :state_id,
+                                 :company_id, :cnes, :files)
+  end
 
   # Method called by #reopen_call function,
   # used to reopen a call and re-configure the timeline
@@ -314,81 +343,15 @@ class CallsController < ApplicationController
     answer.destroy # Destroi a resposta final anterior
   end
 
-  # Makes the famous "Never trust parameters from internet, only allow the white list through."
-  def call_params
-    params.require(:call).permit(:sei, :user_id, :title,
-                                 :description, :finished_at, :version,
-                                 :access_profile, :feature_detail,
-                                 :answer_summary, :severity, :protocol,
-                                 :city_id, :category_id, :state_id,
-                                 :company_id, :cnes, :files)
-  end
+  ####
+  # :section: CanCanCan methods
+  # Methods which are related to the CanCanCan gem
+  ##
 
-  # Restrict the access to the views according to the
-  # <tt>current_user system</tt>, as it must have access
-  # to the Apoio as Empresas system
-  def restrict_system!
-    redirect_to denied_path unless current_user.both? || current_user.companies?
-  end
-
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
+  # CanCanCan Method
   #
-  # Filters the access to each of the actions of the controller
-  def filter_role
-    action = params[:action]
-    if %w[edit update].include? action
-      redirect_to denied_path unless admin?
-    elsif %w[new create destroy].include? action
-      redirect_to denied_path unless admin_support_company?
-    else
-      show_or_index?(action)
-    end
-  end
-
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
-  #
-  # Handles the access filter in <tt>show</tt> or <tt>index</tt>
-  # actions
-  def show_or_index?(action)
-    if action == 'show'
-      @call ||= Call.try(:find, params[:id]) || Call.try(:find, params[:call])
-      redirect_to denied_path unless alloweds_users
-    elsif action == 'index'
-      redirect_to faq_path unless admin_support_company?
-    end
-  end
-
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
-  #
-  # Handles the access filter for the <tt>show</tt> action
-  # in this controller, when called by #show_or_index?
-  def alloweds_users
-    creator_company_admin? || creator_company_user? || support_user? || admin?
-  end
-
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
-  #
-  # Verifies if the <tt>current_user</tt> which has
-  # a <tt>company_admin</tt> role, has acess to this
-  # Call instance
-  def creator_company_admin?
-    current_user.try(:company_admin?) && @call.sei == current_user.sei
-  end
-
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
-  #
-  # Verifies if the <tt>current_user</tt> which has
-  # a <tt>company_user</tt> role, has acess to this
-  # Call instance
-  def creator_company_user?
-    current_user.try(:company_user?) && @call.user_id == current_user.id
-  end
-
-  # <b>DEPRECATED:</b>  Will be replaced by CanCanCan gem
-  #
-  # Handles the access filter for the <tt>index</tt> action
-  # in this controller, when called by #show_or_index?
-  def admin_support_company?
-    admin? || support_user? || company_user?
+  # Default CanCanCan Method, declaring the CallAbility
+  def current_ability
+    @current_ability ||= CallAbility.new(current_user)
   end
 end

@@ -206,19 +206,10 @@ class Controversy < ApplicationRecord
     read_attribute(:CO_SUPORTE_ADICIONAL)
   end
 
-  # Retrive all replies linked to Controversy, sorted by creation date
+  # Retrieve all replies linked to Controversy, sorted by creation date
   def replies_sorted
     replies.order(DT_CRIADO_EM: :DESC)
   end
-
-  #### FILTERRIFIC queries ####
-  filterrific available_filters: %i[search_query]
-
-  scope :search_query, lambda { |query|
-    return nil if query.blank?
-
-    where('"DS_TITULO" ILIKE :search OR "DS_DESCRICAO" ILIKE :search', search: "%#{query}%")
-  }
 
   # Method which returns all the User instances who which participating in the Controversy
   def all_users
@@ -234,6 +225,49 @@ class Controversy < ApplicationRecord
   def involved_users
     [company_user, unity_user, city_user].reject(&:nil?)
   end
+
+  # Returns all the Controversy instances where the User instance with <tt>id</tt>
+  # equal to the passed as parameters is related with the Controversy through the
+  # <tt>company_id</tt> field
+  def self.for_company_user(id)
+    where(CO_USUARIO_EMPRESA: id)
+  end
+
+  # Returns all the Controversy instances where the User instance with <tt>id</tt>
+  # equal to the passed as parameters is related with the Controversy through the
+  # <tt>city_id</tt> field
+  def self.for_city_user(id)
+    where(CO_USUARIO_CIDADE: id)
+  end
+
+  # Returns all the Controversy instances where the User instance with <tt>id</tt>
+  # equal to the passed as parameters is related with the Controversy through the
+  # <tt>unity_id</tt> field
+  def self.for_unity_user(id)
+    where(CO_USUARIO_UNIDADE: id)
+  end
+
+  # Returns all the Controversy instances where the User instance with <tt>id</tt>
+  # equal to the passed as parameters is related with the Controversy through the
+  # <tt>support_1_user_id</tt> field
+  def self.for_support_user(id)
+    where(CO_SUPORTE: id)
+  end
+
+  # Returns all the Controversy instances where the Controversy instance with <tt>sei</tt>
+  # equal to the passed as parameters is related with this Controversy
+  def self.for_company(sei)
+    where(CO_SEI: sei)
+  end
+
+  #### FILTERRIFIC queries ####
+  filterrific available_filters: %i[search_query]
+
+  scope :search_query, lambda { |query|
+    return nil if query.blank?
+
+    where('"DS_TITULO" ILIKE :search OR "DS_DESCRICAO" ILIKE :search', search: "%#{query}%")
+  }
 
   protected
 
