@@ -10,16 +10,106 @@ class ControversiesController < ApplicationController
   # GET /controversies
   # GET /controversies.json
   def index
-    (@filterrific = initialize_filterrific(
-      Controversy,
-      params[:filterrific],
-      select_options: { # em breve
-      },
-      persistence_id: false
-    )) || return
-    @controversies = @filterrific.find.page(params[:page])
+    (@filterrific = initialize_filterrific(Controversy, params[:filterrific],
+      select_options: options_for_filterrific,
+      persistence_id: false)) || return
+    @controversies = filtered_controversies
+
     authorize! :index, Controversy
   end
+
+  # Filterrific method
+  #
+  # Configures the basic options for the
+  # <tt>Filterrific</tt> queries
+  def options_for_filterrific
+    {
+      sorted_by_creation: Controversy.options_for_sorted_by_creation,
+      with_status: Controversy.options_for_with_status,
+      with_state: retrieve_states_for_filterrific,
+      with_city: [],
+      with_ubs: [],
+      with_company: Controversy.all.map(&:sei)
+    }
+  end
+
+  # Filterrific method
+  #
+  # Configures the State instances which can be
+  # used to sort the Controversy instances
+  def retrieve_states_for_filterrific
+    if current_user.cnes
+      State.find(current_user.company
+        .contracts
+        .map { |c| c.city.state_id }).map { |s| [s.name, s.id] }
+    else
+      State.all.map { |s| [s.name, s.id] }
+    end
+  end
+
+  # Filterrific method
+  #
+  # Returns all the Call instances which the
+  # <tt>current_user</tt> can see, knowing he has
+  # the <tt>support_user</tt> role,
+  # which is handled by the calling function
+  def controversies_from_support_user
+    filterrific_query.from_support_user [current_user.id, nil]
+  end
+
+  # Filterrific method
+  #
+  # Returns all the Controversies instances which the
+  # <tt>current_user</tt> can see, knowing he has
+  # the <tt>support_admin</tt> role,
+  # which is handled by the calling function
+  def controversies_from_support_admin
+    filterrific_query.from_support_user [User.where(invited_by_id: current_user.id).map(&:id),
+                                         current_user.id,
+                                         nil].flatten
+  end
+
+  def controversies_for_company_admin
+    filterrific_query.from_company current_user.sei
+  end
+
+  def controversies_for_company_user
+    filterrific_query.from_company_user current_user.id
+  end
+
+  def controversies_for_ubs_admin
+    filterrific_query.from_ubs_admin current_user.cnes
+  end
+
+  def controversies_for_ubs_user
+    filterrific_query.from_ubs_user current_user.id
+  end
+
+  def controversies_for_city_user
+    filterrific_query.from_city_user current_user.id
+  end
+
+  def controversies_for_admin
+    filterrific_query
+  end
+
+  def filtered_controversies
+    if support_user?
+      current_user.call_center_user? ? controversies_from_support_user : controversies_from_support_admin
+    elsif company_user?
+      current_user.company_admin? ? controversies_for_company_admin : controversies_for_company_user
+    elsif ubs_user?
+      current_user.ubs_admin? ? controversies_for_ubs_admin : controversies_for_ubs_user
+    elsif city_user?
+      controversies_for_city_user
+    elsif admin?
+      controversies_for_admin
+    else
+      []
+    end
+  end
+
+
 
   # GET /controversies/1
   # GET /controversies/1.json
