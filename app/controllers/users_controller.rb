@@ -45,6 +45,7 @@ class UsersController < ApplicationController
   # [GET] <tt>/users/:id.json</tt>
   def show
     @user = User.find(params[:id])
+    
     unless current_user.id == @user.invited_by_id ||
            current_user.admin? ||
            @user == current_user
@@ -130,6 +131,46 @@ class UsersController < ApplicationController
                  .find_by_term(terms)
   end
 
+  def update_system
+    @user = User.find(params[:user_id])
+    authorize! :update_user_system, @user
+
+    if params[:user][:system] != ""
+      @user.system = params[:user][:system].to_i
+
+      if @user.save
+        redirect_back(fallback_location: root_path,
+                      notice: 'Dados do usuário atualizados com sucesso')
+      else
+        redirect_back(fallback_location: root_path,
+          alert: 'Ocorreu um erro ao tentar atualizar os dados do usuário')
+      end
+    else
+      redirect_back(fallback_location: root_path,
+        alert: 'Selecione ao menos um sistema')
+    end
+  end
+
+  def update_role
+    @user = User.find(params[:user_id])
+    authorize! :update_user_role, @user
+
+    if params[:user][:role] != ""
+      @user.role = params[:user][:role].to_i if params[:user][:role]
+
+      if @user.save
+        redirect_back(fallback_location: root_path,
+                      notice: 'Dados do usuário atualizados com sucesso')
+      else
+        redirect_back(fallback_location: root_path,
+          alert: 'Ocorreu um erro ao tentar atualizar os dados do usuário')
+      end
+    else
+      redirect_back(fallback_location: root_path,
+        alert: 'Selecione ao menos um perfil de acesso')
+    end
+  end
+
   private
 
   ##########################
@@ -158,7 +199,7 @@ class UsersController < ApplicationController
 
   # Makes the famous "Never trust parameters from internet, only allow the white list through."
   def secure_params
-    params.require(:user).permit(:role, :name, :cpf, :sei, :cnes, :city_id, :last_name)
+    params.require(:user).permit(:role, :name, :cpf, :sei, :cnes, :city_id, :last_name, :password, :current_password, :password_confirmation)
   end
 
   # Method called by #index to verify the users which this user can see in the <tt>/users</tt> page
@@ -170,6 +211,7 @@ class UsersController < ApplicationController
     end
   end
 
+
   # Method called by the #index view handler,
   # to generate all the current user info
   def generate_user_info
@@ -177,5 +219,17 @@ class UsersController < ApplicationController
     @unity = Unity.find(@user.cnes) if @user.cnes
     @city = City.find(@user.city_id) if @user.city_id
     @state = State.find(@city.state_id) if @city
+  end
+  
+  ####
+  # :section: CanCanCan methods
+  # Methods which are related to the CanCanCan gem
+  ##
+
+  # CanCanCan Method
+  #
+  # Default CanCanCan Method, declaring the UserAbility
+  def current_ability
+    @current_ability ||= UserAbility.new(current_user)
   end
 end

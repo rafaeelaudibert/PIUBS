@@ -65,7 +65,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def configure_account_update_params
     devise_parameter_sanitizer.permit(:account_update,
                                       keys: %i[name last_name cpf email
-                                               current_password password password_confirmation])
+                                               current_password password password_confirmation system])
     begin
       params.require(:user)
             .require(%i[name last_name cpf email current_password])

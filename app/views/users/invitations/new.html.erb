@@ -19,7 +19,7 @@
         <%= f.hidden_field :role, value: @role %>
       <% else %>
         <%= f.label "Escolha o tipo de usuário", class: 'required' %>
-        <%= f.select(:role, @roles_allowed, {:include_blank => "Selecione", :selected => nil, required: true}, {:class => "form-control"})%>
+        <%= f.select(:role, @roles_allowed, {:include_blank => "Selecione", :selected => nil}, {:class => "form-control", :required => true})%>
       <% end %>
     <% end %>
   </div>
@@ -169,15 +169,15 @@
       <div class="form-group">
         <%= f.label "Acesso aos sistemas", class: "required" %>
         <label class="customcheck" style="font-size: 0.85rem"> Apoio à Empresas
-          <input type="radio" checked="checked" id="user_system_companies" name="user[system]">
+          <input type="radio" value=0 checked="checked" id="user_system_companies" name="user[system]">
           <span class="checkmark"></span>
         </label>
         <label class="customcheck" style="font-size: 0.85rem"> Solução de Controvérsias
-          <input type="radio" checked="checked" id="user_system_controversies" name="user[system]">
+          <input type="radio" value=1 checked="checked" id="user_system_controversies" name="user[system]">
           <span class="checkmark"></span>
         </label>
         <label class="customcheck" style="font-size: 0.85rem"> Ambos sistemas
-          <input type="radio" checked="checked" id="user_system_both" name="user[system]">
+          <input type="radio" value=2 checked="checked" id="user_system_both" name="user[system]">
           <span class="checkmark"></span>
         </label>
       </div>

@@ -118,20 +118,15 @@ class Users::InvitationsController < Devise::InvitationsController
     params[:user][:city_id] = sanitize_city_id
     params[:user][:state_id] = sanitize_state_id
     params[:user][:sei] = sanitize_sei
-    params[:user][:system] = sanitize_system
+    params[:user][:system] = sanitize_system.to_i
   end
 
   # Method called by #sanitize_optional_params
   # that sanitizes the <tt>system</tt> parameter to prevent
   # City and Unity instance users to have access to the
   # Apoio as Empresas system
-  def sanitize_system
-    if %w[admin call_center_user call_center_admin
-          company_admin company_user].include?(params[:user][:role])
-      params[:user][:system]
-    else
-      1
-    end
+  def sanitize_system 
+    %w[company_admin company_user].include?(params[:user][:role]) ? params[:user][:system] : 1
   end
 
   # Method called by #sanitize_optional_params
