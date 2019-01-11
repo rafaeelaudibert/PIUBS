@@ -295,8 +295,11 @@ class User < ApplicationRecord
 
   # Returns all the users which match
   # their name or their CPF to the passed parameter
-  def self.find_by_name_or_cpf(terms)
-    where('"NO_NOME" ILIKE ? OR "NU_CPF" ILIKE ?', "%#{terms}%", "%#{terms}%")
+  def self.find_by_term(terms)
+    where('"NO_NOME" ILIKE ? OR "NU_CPF" ILIKE ? or email ILIKE ?',
+          "%#{terms}%",
+          "%#{terms}%",
+          "%#{terms}%")
   end
 
   # Returns all the users except the one passed as parameter

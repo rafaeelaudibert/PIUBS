@@ -11,8 +11,10 @@ class ControversiesController < ApplicationController
   before_action :authenticate_user!
   before_action :restrict_system!
   before_action :set_controversy, except: %i[index new create]
-  before_action :set_user, only: %i[company_user city_user support_user unity_user]
-  before_action :authorize_alter_user, only: %i[company_user city_user unity_user support_user]
+  before_action :set_user, only: %i[link_company_user link_city_user
+                                    link_unity_user link_support_user]
+  before_action :authorize_alter_user, only: %i[link_company_user link_city_user
+                                                link_unity_user link_support_user]
 
   ####
   # :section: View methods
@@ -46,7 +48,7 @@ class ControversiesController < ApplicationController
     @reply = Reply.new
     @feedback = Feedback.new
     @user_creator = begin
-                      User.find(@controversy[@controversy.creator + '_user_id']).name
+                      User.find(@controversy.send("#{@controversy.creator}_user_id")).name
                     rescue StandardError
                       'Sem usuário criador (Relate ao suporte)'
                     end

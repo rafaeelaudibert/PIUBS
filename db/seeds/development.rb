@@ -261,13 +261,15 @@ def seed_answers
   allowed_users = User.where(role: %w[call_center_admin call_center_user])
   Rails.logger.info('[START]  -- Answers (and FAQ) insertion')
   (1..50).each do |_|
+    src = Answer.sources[%i[from_call from_controversy].sample]
+    category = src == 0 ? categories.from_call.sample : categories.from_controversy.sample
     answer = Answer.new(question: Faker::Lorem.sentence(50, true, 6),
                         answer: Faker::Lorem.sentence(50, true, 6),
-                        category: categories.sample,
+                        category: category,
                         user: allowed_users.sample,
                         faq: Random.rand > 0.90,
                         keywords: Faker::Lorem.sentence(1, true, 3),
-                        source: Answer.sources[%i[from_call from_controversy].sample])
+                        source: src)
     if answer.save
       Rails.logger.debug('Inserted a new answer')
     else

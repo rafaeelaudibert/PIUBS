@@ -11,7 +11,7 @@
 #++
 class Contract < ActiveRecord::Base
   default_scope -> { order('"CO_CODIGO"') }
-  belongs_to :city, foreign_key: 'CO_CIDADE'
+  belongs_to :city, foreign_key: :CO_CIDADE
   belongs_to :company, foreign_key: :CO_SEI
   validates :CO_CODIGO, presence: true, uniqueness: true
   validates :CO_CIDADE, presence: true

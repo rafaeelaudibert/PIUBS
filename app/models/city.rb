@@ -83,7 +83,6 @@ class City < ApplicationRecord
   scope :search_query, lambda { |query|
     return nil if query.blank?
 
-    query_search = "%#{query}%"
-    where('cities.name ILIKE :search', search: query_search)
+    where('"TB_CIDADE"."NO_NOME" ILIKE :search', search: "%#{query}%")
   }
 end

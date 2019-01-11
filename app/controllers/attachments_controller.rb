@@ -101,7 +101,7 @@ class AttachmentsController < ApplicationController
     parameters[:id] = SecureRandom.uuid
     parameters[:filename] = params[:file].original_filename
     parameters[:content_type] = params[:file].content_type
-    parameters[:file_contents] = params[:file].read
+    parameters[:file_contents] = IO.binread(params[:file].to_io)
     parameters
   end
 

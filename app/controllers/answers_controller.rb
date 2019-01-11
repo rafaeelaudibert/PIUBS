@@ -15,7 +15,7 @@ class AnswersController < ApplicationController
 
   # CanCanCan Configuration
   load_and_authorize_resource
-  skip_authorize_resource only: %i[faq faq_controversy search_call search_controversy]
+  skip_authorize_resource only: %i[faq faq_controversy search_call search_controversy attachments]
 
   ####
   # :section: View methods
@@ -353,6 +353,6 @@ class AnswersController < ApplicationController
   #
   # Method called by the FAQ-like views, to authorize which Answers can be seen
   def authorize_faq
-    authorize! :read, @answers.first # We use the first, to bypass the CanCan problems
+    authorize! :read, @answers.first unless @answers.empty? # We use the first, to bypass CanCanCan problems
   end
 end

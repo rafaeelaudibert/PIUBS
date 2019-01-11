@@ -77,7 +77,7 @@ class UsersController < ApplicationController
   def autocomplete_company_users
     terms = params[:term]
     sei = params[:sei]
-    @users = User.from_company(sei).find_by_name_or_cpf(terms)
+    @users = User.from_company(sei).find_by_term(terms)
   end
 
   # Configures the <tt>autocomplete</tt> request asking for
@@ -93,7 +93,7 @@ class UsersController < ApplicationController
   def autocomplete_city_users
     terms = params[:term]
     id = params[:city_id]
-    @users = User.from_city(id).find_by_name_or_cpf(terms)
+    @users = User.from_city(id).find_by_term(terms)
   end
 
   # Configures the <tt>autocomplete</tt> request asking for
@@ -109,7 +109,7 @@ class UsersController < ApplicationController
   def autocomplete_unity_users
     terms = params[:term]
     cnes = params[:cnes]
-    @users = User.from_ubs(cnes).find_by_name_or_cpf(terms)
+    @users = User.from_ubs(cnes).find_by_term(terms)
   end
 
   # Configures the <tt>autocomplete</tt> request asking for
@@ -125,9 +125,9 @@ class UsersController < ApplicationController
   def autocomplete_support_users
     terms = params[:term]
     self_id = params[:user_id]
-    @users = User.support_accounts
-                 .except(self_id)
-                 .find_by_name_or_cpf(terms)
+    @users = User.except(self_id)
+                 .support_accounts
+                 .find_by_term(terms)
   end
 
   private

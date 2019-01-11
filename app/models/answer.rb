@@ -12,7 +12,9 @@
 # marked with an 'S' ('Y' in portuguese)
 
 class Answer < ApplicationRecord
-  default_scope -> { joins(:category).order('"TB_CATEGORIA"."NO_NOME"', :DS_QUESTAO, :DS_RESPOSTA) }
+  default_scope lambda {
+    joins(:category).order(Arel.sql('"TB_CATEGORIA"."NO_NOME"'), :DS_QUESTAO, :DS_RESPOSTA)
+  }
   belongs_to :category, foreign_key: :CO_CATEGORIA
   belongs_to :user, foreign_key: :CO_USUARIO
   has_many :attachment_links, foreign_key: :CO_QUESTAO
@@ -136,13 +138,13 @@ class Answer < ApplicationRecord
   # Returns all Answer instances which are in the FAQ and are
   # related to a Controversy
   def self.faq_from_controversy
-    where(ST_FAQ: 'S', CO_SISTEMA_ORIGEM: :from_controversy)
+    on_faq.where(CO_SISTEMA_ORIGEM: :from_controversy)
   end
 
   # Returns all Answer instances which are in the FAQ and are
   # related to a Call
   def self.faq_from_call
-    where(ST_FAQ: 'S', CO_SISTEMA_ORIGEM: :from_call)
+    on_faq.where(CO_SISTEMA_ORIGEM: :from_call)
   end
 
   # Return all Answer instances which were created by the User

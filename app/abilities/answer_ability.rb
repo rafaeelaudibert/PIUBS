@@ -20,8 +20,8 @@ class AnswerAbility
   # Initialization telling which User instance can do what, following the rules
   # defined above
   def initialize(user)
-    can :read, Answer.on_faq # Everybody can read the FAQs and query it
-    can :query_faq, Answer
+    can :read, Answer.on_faq # Everybody can read the FAQs...
+    can :query_faq, Answer # ...and query it
 
     can :manage, Answer if user.admin?
     can :create, Answer if faq_creator?(user)

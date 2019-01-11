@@ -9,8 +9,8 @@
 <div class="card card-primary">
   <!-- Default panel contents -->
   <div class="card-header " style="color: white; font-weight: bold;">
-    <div class="row">
-      <div class="col">
+    <div style="width: 100%" class="row align-items-center">
+      <div class="col-md-9">
         <em class="fa fa-bullhorn m-2"></em>
         Parte Requerente :
         <span class="badge badge-pill badge-dark m-2">
@@ -33,18 +33,16 @@
           </span>
         <%end%>
       </div>
+      <div class="col-md-3 text-right">
+        <% if support_user? && @controversy.open? && @controversy.support_1 == current_user %>
+          <%= button_to 'Soltar Controvérsia', unlink_controversies_path(id: @controversy.id, user_id: current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Soltar este atendimento' }, method: :post,
+                        form_class: 'ml-2', class: "btn btn-danger btn-sm" %>
+        <% elsif support_user? && @controversy.open? %>
+          <%= button_to 'Pegar Controvérsia', link_controversies_path(id: @controversy.id, user_id: current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Soltar este atendimento' }, method: :post,
+                        form_clas: 'ml-2', class: "btn btn-dark btn-sm" %>
+        <% end %>
+      </div>
     </div>
-    <div class="col-md-3 col-offset-md-9 text-center">
-      <% if support_user? && @controversy.open? && @controversy.support_1 == current_user %>
-        <%= button_to 'Soltar Controvérsia', unlink_controversies_path(id: @controversy.id, user_id: current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Soltar este atendimento' }, method: :post,
-                      form_class: 'ml-2', class: "btn btn-danger btn-sm" %>
-      <% elsif support_user? && @controversy.open? %>
-        <%= button_to 'Pegar Controvérsia', link_controversies_path(id: @controversy.id, user_id: current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Soltar este atendimento' }, method: :post,
-                      form_clas: 'ml-2', class: "btn btn-dark btn-sm" %>
-      <% end %>
-    </div>
-
-
   </div>
 
   <div class="card-block">
@@ -96,6 +94,7 @@
     <% end %>
   </div> <!-- Card block END -->
 </div>
+<br/>
 
 <% if @controversy.feedback %>
   <!-- Card do Parecer final -->
@@ -124,6 +123,7 @@
       <% end %>
     </div>
   </div>
+  <br/>
 <% end %>
 
 <!-- Card das replies -->
@@ -254,7 +254,7 @@
   </div>
 </div>
 
-<% if @controversy.open? %> 
+<% if @controversy.open? %>
 
   <% if current_user.admin? || current_user.call_center_user? || current_user.call_center_admin? %>
     <script>
@@ -264,7 +264,7 @@
           // Configure cross-reference ajax request
           $.ajaxSetup({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
-          })          
+          })
 
           $('#company_search, #city_search, #unity_search, #support_search').click(() => {
               $('.ui-menu').click(e => {
