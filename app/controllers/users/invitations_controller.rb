@@ -125,7 +125,7 @@ class Users::InvitationsController < Devise::InvitationsController
   # that sanitizes the <tt>system</tt> parameter to prevent
   # City and Unity instance users to have access to the
   # Apoio as Empresas system
-  def sanitize_system 
+  def sanitize_system
     %w[company_admin company_user].include?(params[:user][:role]) ? params[:user][:system] : 1
   end
 

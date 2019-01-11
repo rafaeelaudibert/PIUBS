@@ -15,13 +15,13 @@
 
   <% if current_user.admin? && @user.role != 'admin' %>
 
-    <%= form_for resource, :as => resource_name, :url => update_role_users_path(resource_name, user_id: @user.id), :html => {:method => :post} do |f| %>
+    <%= form_for resource, as: resource_name, url: update_role_users_path(resource_name, id: @user.id), html: {method: :post} do |f| %>
 
     <p>
     Perfil de acesso: <b><%= t "activerecord.enums.user.role.#{@user.role}" %></b>
-    <%= f.select(:role, User.roles.map { |r| [t("activerecord.enums.user.role.#{r[0]}"), r[1]] }, {include_blank: "Selecione..."}, {required: true}) %> 
-    <%= f.submit "Alterar", :class => 'btn btn-primary' %>
-    </p>  
+    <%= f.select(:role, User.roles.map { |r| [t("activerecord.enums.user.role.#{r[0]}"), r[1]] }, {include_blank: "Selecione..."}, {required: true}) %>
+    <%= f.submit "Alterar", class: 'btn btn-primary' %>
+    </p>
 
     <% end %>
 
@@ -50,12 +50,12 @@
 
   <% if current_user.admin? || current_user.company_admin? %>
 
-    <%= form_for resource, :as => resource_name, :url => update_system_users_path(resource_name, user_id: @user.id), :html => {:method => :post} do |f| %>
+    <%= form_for resource, as: resource_name, url: update_system_users_path(resource_name, id: @user.id), html: {method: :post} do |f| %>
 
       <p>Sistemas:
         <b><%= t "activerecord.enums.user.system.#{@user.system}" if @user.system %></b>
         <%= f.select(:system, User.systems.map { |sys| [t("activerecord.enums.user.system.#{sys[0]}"), sys[1]] }, {include_blank: "Selecione..."}, {required: true})%>
-        <%= f.submit "Alterar", :class => 'btn btn-primary' %>
+        <%= f.submit "Alterar", class: 'btn btn-primary' %>
       </p>
     <% end %>
 

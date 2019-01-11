@@ -10,6 +10,7 @@ class UsersController < ApplicationController
   # Hooks Configuration
   before_action :authenticate_user!
   before_action :admin_like?, only: %i[index]
+  before_action :set_user, only: %i[show destroy update_system update_role]
 
   # Autocomplete Configuration
   autocomplete :user, :company
@@ -44,8 +45,6 @@ class UsersController < ApplicationController
   # [GET] <tt>/users/:id</tt>
   # [GET] <tt>/users/:id.json</tt>
   def show
-    @user = User.find(params[:id])
-    
     unless current_user.id == @user.invited_by_id ||
            current_user.admin? ||
            @user == current_user
@@ -61,7 +60,7 @@ class UsersController < ApplicationController
   #
   # [DELETE] <tt>/users/:id</tt>
   def destroy
-    User.find(params[:id]).destroy
+    @user.destroy
     redirect_to users_path, notice: 'Usuário apagado.'
   end
 
@@ -131,11 +130,16 @@ class UsersController < ApplicationController
                  .find_by_term(terms)
   end
 
+  # Configures the <tt>update_system</tt> request asking to
+  # change a User instance <tt>system</tt> field
+  #
+  # <b>ROUTES</b>
+  #
+  # [POST] <tt>/users/update_role</tt>
   def update_system
-    @user = User.find(params[:user_id])
     authorize! :update_user_system, @user
 
-    if params[:user][:system] != ""
+    if params[:user][:system] != ''
       @user.system = params[:user][:system].to_i
 
       if @user.save
@@ -143,19 +147,24 @@ class UsersController < ApplicationController
                       notice: 'Dados do usuário atualizados com sucesso')
       else
         redirect_back(fallback_location: root_path,
-          alert: 'Ocorreu um erro ao tentar atualizar os dados do usuário')
+                      alert: 'Ocorreu um erro ao tentar atualizar os dados do usuário')
       end
     else
       redirect_back(fallback_location: root_path,
-        alert: 'Selecione ao menos um sistema')
+                    alert: 'Selecione ao menos um sistema')
     end
   end
 
+  # Configures the <tt>update_system</tt> request asking to
+  # change a User instance <tt>system</tt> field
+  #
+  # <b>ROUTES</b>
+  #
+  # [POST] <tt>/users/update_role</tt>
   def update_role
-    @user = User.find(params[:user_id])
     authorize! :update_user_role, @user
 
-    if params[:user][:role] != ""
+    if params[:user][:role] != ''
       @user.role = params[:user][:role].to_i if params[:user][:role]
 
       if @user.save
@@ -163,19 +172,32 @@ class UsersController < ApplicationController
                       notice: 'Dados do usuário atualizados com sucesso')
       else
         redirect_back(fallback_location: root_path,
-          alert: 'Ocorreu um erro ao tentar atualizar os dados do usuário')
+                      alert: 'Ocorreu um erro ao tentar atualizar os dados do usuário')
       end
     else
       redirect_back(fallback_location: root_path,
-        alert: 'Selecione ao menos um perfil de acesso')
+                    alert: 'Selecione ao menos um perfil de acesso')
     end
   end
 
   private
 
-  ##########################
+  ####
+  # :section: Hooks methods
+  # Methods which are called by the hooks on
+  # the top of the file
+  ##
+
+  # Configures the User instance when called by
+  # the <tt>:before_action</tt> hook
+  def set_user
+    @user = User.find(params[:id])
+  end
+
+  ####
   # :section: Filterrific methods
   # Method related to the Filterrific Gem
+  ##
 
   # Filterrific method
   #
@@ -199,7 +221,8 @@ class UsersController < ApplicationController
 
   # Makes the famous "Never trust parameters from internet, only allow the white list through."
   def secure_params
-    params.require(:user).permit(:role, :name, :cpf, :sei, :cnes, :city_id, :last_name, :password, :current_password, :password_confirmation)
+    params.require(:user).permit(:role, :name, :cpf, :sei, :cnes, :city_id, :last_name,
+                                 :password, :current_password, :password_confirmation)
   end
 
   # Method called by #index to verify the users which this user can see in the <tt>/users</tt> page
@@ -211,7 +234,6 @@ class UsersController < ApplicationController
     end
   end
 
-
   # Method called by the #index view handler,
   # to generate all the current user info
   def generate_user_info
@@ -220,7 +242,7 @@ class UsersController < ApplicationController
     @city = City.find(@user.city_id) if @user.city_id
     @state = State.find(@city.state_id) if @city
   end
-  
+
   ####
   # :section: CanCanCan methods
   # Methods which are related to the CanCanCan gem

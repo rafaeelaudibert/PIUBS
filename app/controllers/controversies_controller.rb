@@ -63,6 +63,8 @@ class ControversiesController < ApplicationController
   def new
     @controversy = Controversy.new
     authorize! :new, @controversy
+
+    # rubocop:disable Style/GuardClause
     if (city_user? || ubs_user?) && current_user.city.contract_id.nil?
       redirect_back(fallback_location: controversies_path,
                     notice: 'A sua cidade não possui contratos')

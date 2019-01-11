@@ -353,6 +353,7 @@ class AnswersController < ApplicationController
   #
   # Method called by the FAQ-like views, to authorize which Answers can be seen
   def authorize_faq
-    authorize! :read, @answers.first unless @answers.empty? # We use the first, to bypass CanCanCan problems
+    # We use the first, to bypass CanCanCan problems
+    authorize! :read, @answers.first unless @answers.empty?
   end
 end
