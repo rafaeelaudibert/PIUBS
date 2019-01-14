@@ -267,7 +267,13 @@ class ControversiesController < ApplicationController
   def linked_users?
     if company_user?
       current_user.company_admin? ? controversies_for_company_admin : controversies_for_company_user
-    elsif ubs_user?
+    else
+      others_linked_users?
+    end
+  end
+
+  def others_linked_users?
+    if ubs_user?
       current_user.ubs_admin? ? controversies_for_ubs_admin : controversies_for_ubs_user
     elsif city_user?
       controversies_for_city_user
