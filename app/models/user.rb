@@ -266,12 +266,12 @@ class User < ApplicationRecord
   # but ordered in a hash according to its role
   def self.by_role
     {
-      'Admin'     => User.admins,
-      'Company'   => User.company_accounts,
-      'Support'   => User.support_accounts,
-      'FAQ'       => User.faq_inserters,
-      'City'      => User.city_accounts,
-      'UBS'       => User.unity_accounts
+      'Admin' => User.admins,
+      'Company' => User.company_accounts,
+      'Support' => User.support_accounts,
+      'FAQ' => User.faq_inserters,
+      'City' => User.city_accounts,
+      'UBS' => User.unity_accounts
     }
   end
 
