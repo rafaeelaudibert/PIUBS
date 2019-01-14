@@ -35,7 +35,9 @@ class Users::InvitationsController < Devise::InvitationsController
   #
   # [POST] <tt>/users/invitation</tt>
   def create
-    sanitize_optional_params if params[:user]
+    sanitize_optional_user_params if params[:user]
+    params[:user][:system] = sanitize_system.to_i if params[:user]
+
     super
   end
 
@@ -113,15 +115,14 @@ class Users::InvitationsController < Devise::InvitationsController
   # prevent errors when inserting a new User in the DB
   #
   # It is called by the #create method
-  def sanitize_optional_params
+  def sanitize_optional_user_params
     params[:user][:cnes] = sanitize_cnes
     params[:user][:city_id] = sanitize_city_id
     params[:user][:state_id] = sanitize_state_id
     params[:user][:sei] = sanitize_sei
-    params[:user][:system] = sanitize_system.to_i
   end
 
-  # Method called by #sanitize_optional_params
+  # Method called by #sanitize_optional_user_params
   # that sanitizes the <tt>system</tt> parameter to prevent
   # City and Unity instance users to have access to the
   # Apoio as Empresas system
@@ -129,7 +130,7 @@ class Users::InvitationsController < Devise::InvitationsController
     %w[company_admin company_user].include?(params[:user][:role]) ? params[:user][:system] : 1
   end
 
-  # Method called by #sanitize_optional_params
+  # Method called by #sanitize_optional_user_params
   # that sanitizes the <tt>cnes</tt> parameter to prevent
   # User instances who doesn't belong to a Unity to have their
   # <tt>cnes</tt> field filled.
@@ -137,7 +138,7 @@ class Users::InvitationsController < Devise::InvitationsController
     %w[ubs_admin ubs_user].include?(params[:user][:role]) ? params[:user][:cnes] : ''
   end
 
-  # Method called by #sanitize_optional_params
+  # Method called by #sanitize_optional_user_params
   # that sanitizes the <tt>city_id</tt> parameter to prevent
   # User instances who doesn't belong to a City to have their
   # <tt>city_id</tt> field filled.
@@ -148,7 +149,7 @@ class Users::InvitationsController < Devise::InvitationsController
     params[:user][:city_id]
   end
 
-  # Method called by #sanitize_optional_params
+  # Method called by #sanitize_optional_user_params
   # that sanitizes the <tt>state_id</tt> parameter to prevent
   # User instances who doesn't belong to a City,
   # consequently a State, to have their
@@ -160,7 +161,7 @@ class Users::InvitationsController < Devise::InvitationsController
     params[:user][:state_id]
   end
 
-  # Method called by #sanitize_optional_params
+  # Method called by #sanitize_optional_user_params
   # that sanitizes the <tt>sei</tt> parameter to prevent
   # User instances who doesn't belong to a Company to have their
   # <tt>sei</tt> field filled.

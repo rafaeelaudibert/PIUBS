@@ -203,7 +203,7 @@ class CallsController < ApplicationController
     if current_user.cnes
       State.find(current_user.company
                              .contracts
-                             .map { |c| c.city.state_id }).map { |s| [s.name, s.id] }
+                             .map(&:state)).map { |s| [s.name, s.id] }
     else
       State.all.map { |s| [s.name, s.id] }
     end

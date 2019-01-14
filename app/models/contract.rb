@@ -110,6 +110,11 @@ class Contract < ActiveRecord::Base
     where(CO_SEI: sei)
   end
 
+  # Return the state of the City instance related with this Contract
+  def state
+    city.state
+  end
+
   #### FILTERRIFIC queries ####
   filterrific available_filters: %i[search_query]
 

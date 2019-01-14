@@ -11,6 +11,7 @@ class AnswersController < ApplicationController
   before_action :authenticate_user!
   before_action :restrict_system!
   before_action :set_answer, only: %i[show edit update]
+  before_action :set_call, only: :create
   before_action :verify_source, only: :new
 
   # CanCanCan Configuration
@@ -121,7 +122,6 @@ class AnswersController < ApplicationController
     files = retrieve_files(params) || []
 
     @answer = Answer.new(answer_params)
-    @call = Call.find(params[:call_id]) if params[:call_id]
     if @answer.save
       mark_as_final_answer @answer if params[:call_id]
       create_file_links @answer, files
@@ -218,10 +218,16 @@ class AnswersController < ApplicationController
   # the top of the file
   ##
 
-  # Configures the Company instance when called by
+  # Configures the Answer instance when called by
   # the <tt>:before_action</tt> hook
   def set_answer
     @answer = Answer.find(params[:id])
+  end
+
+  # Configures the Call instance when called by
+  # the <tt>:before_action</tt> hook for #create method
+  def set_call
+    @call = Call.find(params[:call_id]) if params[:call_id]
   end
 
   # Restrict the access to the views according to the

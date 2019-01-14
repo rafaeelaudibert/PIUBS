@@ -139,44 +139,35 @@ class UsersController < ApplicationController
   def update_system
     authorize! :update_user_system, @user
 
-    if params[:user][:system] != ''
-      @user.system = params[:user][:system].to_i
+    @user.system = params[:user][:system].to_i
 
-      if @user.save
-        redirect_back(fallback_location: root_path,
-                      notice: 'Dados do usuário atualizados com sucesso')
-      else
-        redirect_back(fallback_location: root_path,
-                      alert: 'Ocorreu um erro ao tentar atualizar os dados do usuário')
-      end
+    if params[:user][:system] != '' && @user.save
+      redirect_back(fallback_location: root_path,
+                    notice: 'Dados do usuário atualizados com sucesso')
     else
       redirect_back(fallback_location: root_path,
-                    alert: 'Selecione ao menos um sistema')
+                    alert: 'Ocorreu um erro ao tentar atualizar os dados do usuário.
+                            Selecione um sistema válido.')
     end
   end
 
-  # Configures the <tt>update_system</tt> request asking to
-  # change a User instance <tt>system</tt> field
+  # Configures the <tt>update_role</tt> request asking to
+  # change a User instance <tt>role</tt> field
   #
   # <b>ROUTES</b>
   #
   # [POST] <tt>/users/update_role</tt>
   def update_role
     authorize! :update_user_role, @user
+    @user.role = params[:user][:role].to_i
 
-    if params[:user][:role] != ''
-      @user.role = params[:user][:role].to_i if params[:user][:role]
-
-      if @user.save
-        redirect_back(fallback_location: root_path,
-                      notice: 'Dados do usuário atualizados com sucesso')
-      else
-        redirect_back(fallback_location: root_path,
-                      alert: 'Ocorreu um erro ao tentar atualizar os dados do usuário')
-      end
+    if params[:user][:role] != '' && @user.save
+      redirect_back(fallback_location: root_path,
+                    notice: 'Dados do usuário atualizados com sucesso')
     else
       redirect_back(fallback_location: root_path,
-                    alert: 'Selecione ao menos um perfil de acesso')
+                    alert: 'Ocorreu um erro ao tentar atualizar os dados do usuário.
+                              Selecione ao menos um perfil de acesso')
     end
   end
 
