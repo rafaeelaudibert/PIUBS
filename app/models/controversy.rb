@@ -16,6 +16,7 @@ class Controversy < ApplicationRecord
   belongs_to :category, foreign_key: :CO_CATEGORIA
   belongs_to :city, foreign_key: :CO_CIDADE
   belongs_to :unity, foreign_key: :CO_CNES, optional: true
+  belongs_to :creator, class_name: 'User', optional: true, foreign_key: :CO_CRIADO_POR
   belongs_to :company_user, class_name: 'User', optional: true, foreign_key: :CO_USUARIO_EMPRESA
   belongs_to :unity_user, class_name: 'User', optional: true, foreign_key: :CO_USUARIO_UNIDADE
   belongs_to :city_user, class_name: 'User', optional: true, foreign_key: :CO_USUARIO_CIDADE
@@ -25,9 +26,6 @@ class Controversy < ApplicationRecord
   has_many :attachments, through: :attachment_links
   has_many :replies, as: :repliable, foreign_key: :CO_PROTOCOLO
   has_one :feedback, foreign_key: :CO_PROTOCOLO
-
-  alias_attribute :creator, :CO_CRIADO_POR
-  enum creator: %i[company unity city support]
 
   alias_attribute :status, :TP_STATUS
   enum status: %i[open closed on_hold on_ministry]
@@ -147,12 +145,12 @@ class Controversy < ApplicationRecord
   end
 
   # Configures an alias setter for the CO_CRIADO_POR database column
-  def creator=(value)
+  def creator_id=(value)
     write_attribute(:CO_CRIADO_POR, value)
   end
 
   # Configures an alias getter for the CO_CRIADO_POR database column
-  def creator
+  def creator_id
     read_attribute(:CO_CRIADO_POR)
   end
 
@@ -258,6 +256,24 @@ class Controversy < ApplicationRecord
   # equal to the passed as parameters is related with this Controversy
   def self.for_company(sei)
     where(CO_SEI: sei)
+  end
+
+  # This is a little mapping
+  # to handle which field should be filled when creating
+  # a Controversy
+  def self.map_role_to_creator(user_id)
+    role = User.find(user_id).role.to_sym
+
+    {
+      company_user: 'company',
+      company_admin: 'company',
+      ubs_admin: 'unity',
+      ubs_user: 'unity',
+      city_admin: 'city',
+      call_center_admin: 'support_1',
+      call_center_user: 'support_1',
+      admin: 'support_1'
+    }[role]
   end
 
   #### FILTERRIFIC queries ####

@@ -325,20 +325,21 @@ def seed_controversies
     unity = city.unities.sample
     contract = city.contract
     company = contract.company
+    user = company.users.sample
     protocol = 0.seconds.from_now.strftime('%Y%m%d%H%M%S%L').to_i
-    controversy = Controversy.new(title: Faker::Lorem.sentence(15, true, 2),
+    controversy = Controversy.new(id: protocol,
+                                  title: Faker::Lorem.sentence(15, true, 2),
                                   description: Faker::Lorem.sentence(80, true, 6),
                                   status: Controversy.statuses.keys.sample,
                                   protocol: protocol,
                                   city: city,
                                   unity: unity,
                                   company: company,
-                                  creator: 'company',
+                                  creator: user,
+                                  company_user: user,
                                   category: Category.all.sample,
-                                  company_user: company.users.sample,
-                                  city_user: User.where(city: city, unity: nil).sample,
-                                  unity_user: Random.rand > 0.6 ? unity.try(:users).try(:sample) : nil,
-                                  id: protocol)
+                                  city_user: User.from_city(city.id).sample,
+                                  unity_user: Random.rand > 0.6 ? unity.try(:users).try(:sample) : nil,)
     if controversy.save
       Rails.logger.debug('Inserted a new controversy')
       seed_feedback(controversy) if controversy.closed?

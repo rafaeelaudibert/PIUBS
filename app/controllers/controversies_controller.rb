@@ -48,7 +48,7 @@ class ControversiesController < ApplicationController
     @reply = Reply.new
     @feedback = Feedback.new
     @user_creator = begin
-                      User.find(@controversy.send("#{@controversy.creator}_user_id")).name
+                      @controversy.creator.name
                     rescue StandardError
                       'Sem usuário criador (Relate ao suporte)'
                     end
@@ -273,7 +273,7 @@ class ControversiesController < ApplicationController
   def controversy_params
     params.require(:controversy).permit(:title, :description, :protocol, :closed_at, :sei,
                                         :contract_id, :city_id, :cnes, :company_user_id,
-                                        :unity_user_id, :creator, :category, :complexity,
+                                        :unity_user_id, :category, :complexity, :category_id,
                                         :support_1_id, :support_2_id, :user_creator, :feedback,
                                         :files)
   end
@@ -294,11 +294,15 @@ class ControversiesController < ApplicationController
   # received in the request filled, as well as the
   # <tt>creator</tt>, <tt>creator_user_id</tt> and
   # <tt>support_1_user_id</tt> fields filled
-  def create_controversy(parameters, user_creator_id)
+  def create_controversy(parameters, creator_id)
+    user_id = creator_id || current_user.id
+    role = Controversy.map_role_to_creator(user_id)
+
     controversy = Controversy.new(parameters)
-    controversy.creator ||= map_role_to_creator
-    controversy[controversy.creator + '_user_id'] = user_creator_id || current_user.id
+    controversy.creator_id ||= user_id
+    controversy.send(role + '_user_id=', user_id)
     controversy.support_1_user_id = current_user.id if support_user?
+
     controversy
   end
 
@@ -319,22 +323,6 @@ class ControversiesController < ApplicationController
   def unity_user_elegible?
     (@controversy.cnes.nil? && @user.city_id == @controversy.city_id) ||
       @user.cnes == @controversy.cnes
-  end
-
-  # Called by #create_controversy, this is a little mapping
-  # to handle which field should be filled when relating
-  # to the <tt>current_user</tt>
-  def map_role_to_creator
-    {
-      company_user: 'company',
-      company_admin: 'company',
-      ubs_admin: 'unity',
-      ubs_user: 'unity',
-      city_admin: 'city',
-      call_center_admin: 'support_1',
-      call_center_user: 'support_1',
-      admin: 'support_1'
-    }[current_user.role.to_sym]
   end
 
   # For each Attachment instance id received in the
