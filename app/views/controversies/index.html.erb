@@ -7,26 +7,79 @@
   </div>
 <%end%>
 
-<div class="right" style="display: inline-block !important">
-
-  <form role="search">
-    <div class="right input-group" style="margin: 15px auto !important">
-      <input name="filterrific[search_query]" id="filterrific_search_query" class="form-control mr-sm-2" type="search" aria-label="Search">
-      <label>
-        <i class="fa fa-search"></i>
-        &nbsp;Pesquisar controvérsia
-      </label>
-      <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
+<%= form_for_filterrific @filterrific do |f| %>
+  <div class="row">
+    <div class="col-md-8">
+      <div class="row">
+        <div class="form-group col-md-<%= support_like? ? 4 : 6 %>">
+          <%= f.label :filterrific_with_status, 'Filtro por Status'%>
+          <%= f.select(:with_status, @filterrific.select_options[:with_status],
+                       {multiple: true},
+                       class: 'form-control filterrific') %>
+        </div>
+        <div class="form-group col-md-<%= support_like? ? 4 : 6 %>">
+          <%= f.label :filterrific_sorted_by_creation, 'Filtro por data de criação'%>
+          <%= f.select(:sorted_by_creation, @filterrific.select_options[:sorted_by_creation],
+                       {multiple: true},
+                       class: 'form-control filterrific') %>
+        </div>
+        <% if support_like? %>
+          <div class="form-group col-md-4">
+            <%= f.label :filterrific_with_company, 'Filtro por Empresas'%>
+            <%= f.select(:with_company, @filterrific.select_options[:with_company],
+                         {multiple: true, include_blank: "Todas Empresas"},
+                         class: 'form-control filterrific') %>
+          </div>
+        <% end %>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-4">
+          <%= f.label :filterrific_with_state, 'Filtro por Estados'%>
+          <%= f.select(:with_state, @filterrific.select_options[:with_state],
+                       {multiple: true, include_blank: "Todos Estados"},
+                       class: 'form-control filterrific') %>
+        </div>
+        <div class="form-group col-md-4">
+          <%= f.label :filterrific_with_city, 'Filtro por Cidades'%>
+          <%= f.select(:with_city, @filterrific.select_options[:with_city],
+                       {multiple: true, include_blank: "Todas Cidades"},
+                       class: 'form-control filterrific') %>
+        </div>
+        <div class="form-group col-md-4">
+          <%= f.label :filterrific_with_ubs, 'Filtro por UBS'%>
+          <%= f.select(:with_ubs, @filterrific.select_options[:with_ubs],
+                       {multiple: true, include_blank: "Todas UBS"},
+                       class: 'form-control filterrific') %>
+        </div>
+      </div>
+      <div class="row">
+        <%= link_to 'Desfazer filtros',
+                    reset_filterrific_url,
+                    class: 'btn btn-danger offset-md-8 col-md-4' if params[:filterrific] %>
+      </div>
     </div>
-    <br>
-    <p style="width: 100%; text-align: right;">
-      <%= (link_to 'Desfazer pesquisa',
-                   reset_filterrific_url,
-                   class: 'btn btn-danger',
-                   style: 'margin-top: 0.375em; border: 1px solid red;') if params[:filterrific] %>
-    </p>
-  </form>
-</div>
+    <div class="col-md-4">
+      <div class="row mt-3">
+        <div class="col-md-8">
+          <input name="filterrific[search_query]" id="filterrific_search_query"
+                 class="form-control" type="search" aria-label="Search">
+          <label>
+            <i class="fa fa-search"></i>
+            &nbsp;Controvérsia
+          </label>
+        </div>
+        <div class="col-md-4">
+           <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
+         </div>
+       </div>
+       <div class="row">
+         <%= f.submit "Mostrar",
+                      id: 'mostrar-filter',
+                      class: 'btn btn-link invisible right' %>
+       </div>
+    </div>
+  </div>
+<% end %>
 
 <hr class="under-header" style="margin-top: <%= params[:filterrific] ? '9em' : '6em'%>"/>
 
@@ -47,18 +100,80 @@
 
 
 <script>
-$('document').ready(function () {
 
-  $('#filterrific_search_query').on('focusout', function () {
-    changeState($(this));
-  });
+  $('document').ready(function () {
 
-  function changeState(form) {
-    if (form.val().length > 0) {
-      form.addClass('has-value');
-    } else {
-      form.removeClass('has-value');
+    const parseQuery = () => {
+      const queryString = decodeURIComponent((window.location.href+'').replace(/\+/g, '%20'));
+      const query = {};
+      const pairs = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&');
+      for (let piece of pairs) {
+          const pair = piece.split('=');
+          query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
+      }
+
+      return query;
     }
-  }
-});
+
+    const stateSelect = document.getElementById('filterrific_with_state');
+    const citySelect = document.getElementById('filterrific_with_city');
+    const unitySelect = document.getElementById('filterrific_with_ubs');
+    const sei = <%= current_user.sei || 0 %>;
+    const triggeredByState = () => jQuery.ajax({url: `/companies/${sei}/cities/${stateSelect.value}`,
+                                                type: "GET",
+                                                dataType: "json",
+                                                success: insertCitiesData,
+                                                error: console.error})
+    const triggeredByCity = () => jQuery.ajax({url: `/companies/${sei}/unities/${citySelect.value}`,
+                                               type: "GET",
+                                               dataType: "json",
+                                               success: insertUnitiesData,
+                                               error: console.error})
+
+    triggeredByState();
+
+    function insertCitiesData(cities) {
+      let queried_city = parseQuery()['filterrific[with_city]']
+      let innerHTML = '<option value>Todas Cidades</option>';
+      for (let city of cities) {
+        innerHTML += `<option ${queried_city == city.id ? 'selected="selected"' : ''} value=${city.id}>
+                        ${city.name}
+                      </option>`
+      }
+      citySelect.innerHTML = innerHTML;
+
+      triggeredByCity();
+    }
+
+    function insertUnitiesData(unities) {
+      let queried_unity = parseQuery()['filterrific[with_ubs]']
+      let innerHTML = '<option value>Todas UBS</option>';
+      for (let unity of unities) {
+        innerHTML += `<option ${queried_unity == unity.cnes ? 'selected="selected"' : ''} value=${unity.cnes}>
+                        ${unity.name}
+                      </option>`
+      }
+      unitySelect.innerHTML = innerHTML;
+
+      triggeredByCity();
+    }
+
+
+    $('#filterrific_search_query').on('focusout', function () {
+      changeState($(this));
+    });
+
+    function changeState(form) {
+      if (form.val().length > 0) {
+        form.addClass('has-value');
+      } else {
+        form.removeClass('has-value');
+      }
+    }
+
+    $('.filterrific').on('change', () => {
+      $('#mostrar-filter').click();
+    })
+
+  });
 </script>

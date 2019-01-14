@@ -10,7 +10,11 @@ class Unity < ApplicationRecord
 
   filterrific(
     default_filter_params: {}, # em breve
-    available_filters: %i[search_query]
+    available_filters: %i[
+      search_query
+      with_state
+      with_city
+    ]
   )
 
   scope :search_query, lambda { |query|
@@ -19,4 +23,9 @@ class Unity < ApplicationRecord
 
     where('unities.name ILIKE :search', search: "%#{query}%")
   }
+
+  scope :with_state, ->(state) { state == [''] ? nil : where(city: State.find(state).cities) }
+
+  scope :with_city, ->(city) { city.zero? ? nil : where(city: city) }
+
 end
