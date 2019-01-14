@@ -91,7 +91,7 @@ class FeedbacksController < ApplicationController
   # Returns the Attachment instances's ids received in the
   # request, removing it from the parameters
   def retrieve_files(parameters)
-    parameters.delete(:files).split(',') if parameters[:files]
+    parameters[:feedback].delete(:files).split(',') if parameters[:feedback][:files]
   end
 
   # For each Attachment instance id received in the

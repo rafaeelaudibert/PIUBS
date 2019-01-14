@@ -105,9 +105,8 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
     t.datetime "DT_CRIADO_EM"
   end
 
-  create_table "TB_FEEDBACK", primary_key: "CO_SEQ_ID", id: :bigint, default: -> { "nextval('\"SQ_FEEDBACK_ID\"'::regclass)" }, force: :cascade do |t|
+  create_table "TB_FEEDBACK", primary_key: "CO_PROTOCOLO", id: :bigint, default: nil, force: :cascade do |t|
     t.text "DS_DESCRICAO", null: false
-    t.bigint "CO_CONTROVERSIA", null: false
     t.datetime "DT_CRIADO_EM"
   end
 
@@ -192,7 +191,7 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
   add_foreign_key "RT_LINK_ANEXO", "\"TB_ANEXO\"", column: "CO_ANEXO", primary_key: "CO_ID"
   add_foreign_key "RT_LINK_ANEXO", "\"TB_ATENDIMENTO\"", column: "CO_ATENDIMENTO", primary_key: "CO_PROTOCOLO"
   add_foreign_key "RT_LINK_ANEXO", "\"TB_CONTROVERSIA\"", column: "CO_CONTROVERSIA", primary_key: "CO_PROTOCOLO"
-  add_foreign_key "RT_LINK_ANEXO", "\"TB_FEEDBACK\"", column: "CO_FEEDBACK", primary_key: "CO_SEQ_ID"
+  add_foreign_key "RT_LINK_ANEXO", "\"TB_FEEDBACK\"", column: "CO_FEEDBACK", primary_key: "CO_PROTOCOLO"
   add_foreign_key "RT_LINK_ANEXO", "\"TB_QUESTAO\"", column: "CO_QUESTAO", primary_key: "CO_SEQ_ID"
   add_foreign_key "RT_LINK_ANEXO", "\"TB_RESPOSTA\"", column: "CO_RESPOSTA", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
@@ -216,7 +215,7 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
   add_foreign_key "TB_CONTROVERSIA", "\"TB_USUARIO\"", column: "CO_USUARIO_CIDADE"
   add_foreign_key "TB_CONTROVERSIA", "\"TB_USUARIO\"", column: "CO_USUARIO_EMPRESA"
   add_foreign_key "TB_CONTROVERSIA", "\"TB_USUARIO\"", column: "CO_USUARIO_UNIDADE"
-  add_foreign_key "TB_FEEDBACK", "\"TB_CONTROVERSIA\"", column: "CO_CONTROVERSIA", primary_key: "CO_PROTOCOLO"
+  add_foreign_key "TB_FEEDBACK", "\"TB_CONTROVERSIA\"", column: "CO_PROTOCOLO", primary_key: "CO_PROTOCOLO"
   add_foreign_key "TB_QUESTAO", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_QUESTAO", "\"TB_USUARIO\"", column: "CO_USUARIO"
   add_foreign_key "TB_RESPOSTA", "\"TB_USUARIO\"", column: "CO_USUARIO"

@@ -1,1 +1,1 @@
-json.extract! @feedback, :id, :description, :controversy_id, :created_at
+json.extract! @feedback, :id, :description, :created_at

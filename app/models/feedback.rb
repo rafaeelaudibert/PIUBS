@@ -9,20 +9,30 @@
 class Feedback < ApplicationRecord
   has_many :attachment_links, foreign_key: :CO_FEEDBACK
   has_many :attachments, through: :attachment_links
-  belongs_to :controversy, foreign_key: :CO_CONTROVERSIA
+  belongs_to :controversy, foreign_key: :CO_PROTOCOLO
 
   #### DATABASE adaptations ####
-  self.primary_key = :CO_SEQ_ID # Setting a different primary_key
+  self.primary_key = :CO_PROTOCOLO # Setting a different primary_key
   self.table_name = :TB_FEEDBACK # Setting a different table_name
 
-  # Configures an alias setter for the CO_SEQ_ID database column
+  # Configures an alias setter for the CO_PROTOCOLO database column
   def id=(value)
-    write_attribute(:CO_SEQ_ID, value)
+    write_attribute(:CO_PROTOCOLO, value)
   end
 
-  # Configures an alias getter for the CO_SEQ_ID database column
+  # Configures an alias getter for the CO_PROTOCOLO database column
   def id
-    read_attribute(:CO_SEQ_ID)
+    read_attribute(:CO_PROTOCOLO)
+  end
+
+  # Configures another alias setter for the CO_PROTOCOLO database column
+  def controversy_id=(value)
+    write_attribute(:CO_PROTOCOLO, value)
+  end
+
+  # Configures another alias getter for the CO_PROTOCOLO database column
+  def controversy_id
+    read_attribute(:CO_PROTOCOLO)
   end
 
   # Configures an alias setter for the DS_DESCRICAO database column
@@ -33,16 +43,6 @@ class Feedback < ApplicationRecord
   # Configures an alias getter for the DS_DESCRICAO database column
   def description
     read_attribute(:DS_DESCRICAO)
-  end
-
-  # Configures an alias setter for the CO_CONTROVERSIA database column
-  def controversy_id=(value)
-    write_attribute(:CO_CONTROVERSIA, value)
-  end
-
-  # Configures an alias getter for the CO_CONTROVERSIA database column
-  def controversy_id
-    read_attribute(:CO_CONTROVERSIA)
   end
 
   # Configures an alias setter for the DT_CRIADO_EM database column

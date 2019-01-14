@@ -24,7 +24,7 @@ class Controversy < ApplicationRecord
   has_many :attachment_links, foreign_key: :CO_CONTROVERSIA
   has_many :attachments, through: :attachment_links
   has_many :replies, as: :repliable, foreign_key: :CO_PROTOCOLO
-  has_one :feedback, foreign_key: :CO_CONTROVERSIA
+  has_one :feedback, foreign_key: :CO_PROTOCOLO
 
   alias_attribute :creator, :CO_CRIADO_POR
   enum creator: %i[company unity city support]

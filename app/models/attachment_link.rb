@@ -13,7 +13,7 @@ class AttachmentLink < ApplicationRecord
   belongs_to :call, optional: true, foreign_key: :CO_ATENDIMENTO, primary_key: :CO_PROTOCOLO
   belongs_to :reply, optional: true, foreign_key: :CO_RESPOSTA
   belongs_to :controversy, optional: true, foreign_key: :CO_CONTROVERSIA
-  belongs_to :feedback, optional: true, foreign_key: :CO_FEEDBACK, primary_key: :CO_SEQ_ID
+  belongs_to :feedback, optional: true, foreign_key: :CO_FEEDBACK, primary_key: :CO_PROTOCOLO
   validates :TP_ENTIDADE_ORIGEM, presence: true
 
   alias_attribute :source, :TP_ENTIDADE_ORIGEM
