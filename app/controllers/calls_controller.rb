@@ -274,7 +274,7 @@ class CallsController < ApplicationController
                                  :description, :finished_at, :version,
                                  :access_profile, :feature_detail,
                                  :answer_summary, :severity, :protocol,
-                                 :city_id, :category_id, :state_id,
+                                 :city_id, :category_id,
                                  :company_id, :cnes, :files)
   end
 

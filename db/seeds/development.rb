@@ -302,7 +302,6 @@ def seed_calls
                     protocol: protocol,
                     city: city,
                     category: categories.sample,
-                    state: city.state,
                     sei: contract.sei,
                     user: user,
                     cnes: ubs.cnes)

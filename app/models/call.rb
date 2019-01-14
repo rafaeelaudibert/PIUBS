@@ -11,7 +11,6 @@ class Call < ApplicationRecord
 
   belongs_to :city, foreign_key: :CO_CIDADE
   belongs_to :category, foreign_key: :CO_CATEGORIA
-  belongs_to :state, foreign_key: :CO_UF
   belongs_to :company, foreign_key: :CO_SEI
   belongs_to :answer, optional: true, foreign_key: :CO_RESPOSTA
   belongs_to :unity, foreign_key: :CO_CNES
@@ -143,16 +142,6 @@ class Call < ApplicationRecord
     read_attribute(:CO_CATEGORIA)
   end
 
-  # Configures an alias setter for the CO_UF database column
-  def state_id=(value)
-    write_attribute(:CO_UF, value)
-  end
-
-  # Configures an alias getter for the CO_UF database column
-  def state_id
-    read_attribute(:CO_UF)
-  end
-
   # Configures an alias setter for the CO_SEI database column
   def sei=(value)
     write_attribute(:CO_SEI, value)
@@ -233,6 +222,12 @@ class Call < ApplicationRecord
     read_attribute(:DT_REABERTO_EM)
   end
 
+  # Configures an alias to get the State instance which is related to this Call
+  # through the City
+  def state
+    city.state
+  end
+
   # Returns all Call instances which are related to
   # the Company instance with <tt>sei</tt> equal as
   # the one passed as a paremter
@@ -308,10 +303,12 @@ class Call < ApplicationRecord
 
   scope :with_company, ->(sei) { sei == [''] ? nil : where(CO_SEI: sei) }
 
-  scope :with_state, ->(state) { state == [''] ? nil : where(CO_UF: state) }
+  scope :with_state, ->(state) { state == [''] ? nil : city.where(CO_UF: state) }
 
   scope :with_city, ->(city) { city.zero? ? nil : where(CO_CIDADE: city) }
 
+  # Filterrific method
+  #
   # Configures the possible filterrific sorting methods
   # to be acessed on CallsController
   def self.options_for_sorted_by_creation
@@ -321,6 +318,8 @@ class Call < ApplicationRecord
     ]
   end
 
+  # Filterrifict method
+  #
   # Configures the possible filterrific status options
   # to be acessed on CallsController
   def self.options_for_with_status

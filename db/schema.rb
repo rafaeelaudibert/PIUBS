@@ -45,10 +45,8 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
     t.string "DS_VERSAO_SISTEMA"
     t.string "DS_PERFIL_ACESSO"
     t.string "DS_DETALHE_FUNCIONALIDADE"
-    t.string "DS_SUMARIO_RESPOSTA"
     t.bigint "CO_CIDADE", null: false
     t.integer "CO_CATEGORIA", null: false
-    t.bigint "CO_UF", null: false
     t.bigint "CO_SEI", null: false
     t.datetime "DT_CRIADO_EM"
     t.bigint "CO_USUARIO_EMPRESA", null: false
@@ -199,7 +197,6 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
   add_foreign_key "TB_ATENDIMENTO", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_QUESTAO\"", column: "CO_RESPOSTA", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_UBS\"", column: "CO_CNES", primary_key: "CO_CNES"
-  add_foreign_key "TB_ATENDIMENTO", "\"TB_UF\"", column: "CO_UF", primary_key: "CO_CODIGO"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_USUARIO\"", column: "CO_USUARIO_EMPRESA"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_USUARIO\"", column: "CO_USUARIO_SUPORTE"
   add_foreign_key "TB_CATEGORIA", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA_PAI", primary_key: "CO_SEQ_ID"
