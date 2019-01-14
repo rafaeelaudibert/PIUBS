@@ -257,14 +257,20 @@ class ControversiesController < ApplicationController
   def filtered_controversies
     if support_user?
       current_user.call_center_user? ? controversies_from_support_user : controversies_from_support_admin
-    elsif company_user?
+    elsif admin?
+      controversies_for_admin
+    else
+      linked_users?
+    end
+  end
+
+  def linked_users?
+    if company_user?
       current_user.company_admin? ? controversies_for_company_admin : controversies_for_company_user
     elsif ubs_user?
       current_user.ubs_admin? ? controversies_for_ubs_admin : controversies_for_ubs_user
     elsif city_user?
       controversies_for_city_user
-    elsif admin?
-      controversies_for_admin
     else
       []
     end
