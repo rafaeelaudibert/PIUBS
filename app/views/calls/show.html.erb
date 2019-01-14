@@ -345,6 +345,10 @@
 </div>
 <% end %>
 
+<div id="final-answer" style="display: none">
+  <%= render 'finalAnswer', answer: @answer %>
+</div>
+
 <script>
 
   const cleanMCE = id => {

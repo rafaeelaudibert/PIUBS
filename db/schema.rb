@@ -131,6 +131,10 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
     t.datetime "DT_REF_ATENDIMENTO_REABERTO"
   end
 
+  create_table "TB_SISTEMA", primary_key: "CO_SEQ_ID", id: :bigint, default: -> { "nextval('\"SQ_SISTEMA_ID\"'::regclass)" }, force: :cascade do |t|
+    t.string "NO_NOME", null: false
+  end
+
   create_table "TB_UBS", primary_key: "CO_CNES", id: :bigint, default: nil, force: :cascade do |t|
     t.string "NO_NOME", null: false
     t.bigint "CO_CIDADE", null: false
@@ -200,6 +204,7 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
   add_foreign_key "TB_ATENDIMENTO", "\"TB_USUARIO\"", column: "CO_USUARIO_EMPRESA"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_USUARIO\"", column: "CO_USUARIO_SUPORTE"
   add_foreign_key "TB_CATEGORIA", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA_PAI", primary_key: "CO_SEQ_ID"
+  add_foreign_key "TB_CATEGORIA", "\"TB_SISTEMA\"", column: "CO_SISTEMA_ORIGEM", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_CIDADE", "\"TB_UF\"", column: "CO_UF", primary_key: "CO_CODIGO"
   add_foreign_key "TB_CONTRATO", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "TB_CONTRATO", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
@@ -214,6 +219,7 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
   add_foreign_key "TB_CONTROVERSIA", "\"TB_USUARIO\"", column: "CO_USUARIO_UNIDADE"
   add_foreign_key "TB_FEEDBACK", "\"TB_CONTROVERSIA\"", column: "CO_PROTOCOLO", primary_key: "CO_PROTOCOLO"
   add_foreign_key "TB_QUESTAO", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
+  add_foreign_key "TB_QUESTAO", "\"TB_SISTEMA\"", column: "CO_SISTEMA_ORIGEM", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_QUESTAO", "\"TB_USUARIO\"", column: "CO_USUARIO"
   add_foreign_key "TB_RESPOSTA", "\"TB_USUARIO\"", column: "CO_USUARIO"
   add_foreign_key "TB_UBS", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"

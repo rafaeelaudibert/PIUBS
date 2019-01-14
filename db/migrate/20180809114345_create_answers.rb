@@ -14,6 +14,7 @@ class CreateAnswers < ActiveRecord::Migration[5.2]
       t.datetime :DT_CRIADO_EM
     end
 
+    add_foreign_key :TB_QUESTAO, :TB_SISTEMA, column: :CO_SISTEMA_ORIGEM, primary_key: :CO_SEQ_ID
     add_foreign_key :TB_QUESTAO, :TB_CATEGORIA, column: :CO_CATEGORIA, primary_key: :CO_SEQ_ID
     add_foreign_key :TB_QUESTAO, :TB_USUARIO, column: :CO_USUARIO
 

@@ -9,6 +9,12 @@ require 'csv'
 Rails.logger = Logger.new(STDOUT)
 Rails.logger.level = Logger::INFO
 
+# Create the 2 basyc sistems in the database
+def seed_systems
+  System.new(name: 'Apoio à Empresas').save!
+  System.new(name: 'Solução de Controvérsias').save!
+end
+
 # Creates the users, except company_admin and company_user ones
 def seed_users
   Rails.logger.info('[START]  -- Users insertion')
@@ -183,72 +189,72 @@ def seed_categories
     ## APOIO A EMPRESAS CATEGORIES
     ############
     category = Category.new(name: 'Orientações básicas sobre a estratégia e-SUS AB',
-                            severity: :low, source: 0).save!
+                            severity: :low, system: :from_call).save!
     category = Category.new(name: 'Orientações básicas sobre a utilização do sistema',
-                            severity: :low, source: 0).save!
+                            severity: :low, system: :from_call).save!
     category = Category.new(name: 'Instalação do Sistema',
-                            severity: :low, source: 0).save!
+                            severity: :low, system: :from_call).save!
     category = Category.new(name: 'Gerenciamento do cadastro do cidadão',
-                            severity: :medium, source: 0).save!
+                            severity: :medium, system: :from_call).save!
 
     #########
     c_fichas = Category.new(name: 'Fichas do e-SUS AB',
-                            severity: :medium, source: 0)
+                            severity: :medium, system: :from_call)
     c_fichas.save!
     category = Category.new(name: 'Ficha Domiciliar',
                             severity: :medium,
                             parent: c_fichas,
                             parent_depth: 1 + c_fichas.parent_depth,
-                            source: 0).save!
+                            system: :from_call).save!
     category = Category.new(name: 'Ficha de Cadastro Individual',
                             severity: :medium,
                             parent: c_fichas,
                             parent_depth: 1 + c_fichas.parent_depth,
-                            source: 0).save!
+                            system: :from_call).save!
     category = Category.new(name: 'Ficha de Atendimento Odontológico Individual',
                             severity: :medium,
                             parent: c_fichas,
                             parent_depth: 1 + c_fichas.parent_depth,
-                            source: 0).save!
+                            system: :from_call).save!
     category = Category.new(name: 'Ficha de Atividade Coletiva',
                             severity: :medium,
                             parent: c_fichas,
                             parent_depth: 1 + c_fichas.parent_depth,
-                            source: 0).save!
+                            system: :from_call).save!
     category = Category.new(name: 'Ficha de Procedimentos',
                             severity: :medium,
                             parent: c_fichas,
                             parent_depth: 1 + c_fichas.parent_depth,
-                            source: 0).save!
+                            system: :from_call).save!
 
     category = Category.new(name: 'Coleta de Dados Simplificada (CDS)',
-                            severity: :high, source: 0).save!
+                            severity: :high, system: :from_call).save!
     category = Category.new(name: 'Relatório',
-                            severity: :high, source: 0).save!
+                            severity: :high, system: :from_call).save!
     category = Category.new(name: 'Transmissão dos Dados',
-                            severity: :high, source: 0).save!
+                            severity: :high, system: :from_call).save!
 
     ###############
     catg_pec = Category.new(name: 'PEC',
-                            severity: :low, source: 0)
+                            severity: :low, system: :from_call)
     catg_pec.save!
     category = Category.new(name: 'Agenda dos Profissionais',
                             severity: :low,
                             parent: catg_pec,
                             parent_depth: 1 + catg_pec.parent_depth,
-                            source: 0).save!
+                            system: :from_call).save!
     category = Category.new(name: 'Atendimentos',
                             severity: :low,
                             parent: catg_pec,
                             parent_depth: 1 + catg_pec.parent_depth,
-                            source: 0).save!
+                            system: :from_call).save!
 
     ## SOLUCAO DE CONTROVERSIAS CATEGORIES
     ##################
     category = Category.new(name: 'Hardware',
-                            severity: :low, source: 1).save!
+                            severity: :low, system: :from_controversy).save!
     category = Category.new(name: 'Software',
-                            severity: :low, source: 1).save!
+                            severity: :low, system: :from_controversy).save!
   rescue StandardError
     Rails.logger.error('ERROR creating a CATEGORY')
     Rails.logger.error(category.errors.full_messages)
@@ -261,15 +267,15 @@ def seed_answers
   allowed_users = User.where(role: %w[call_center_admin call_center_user])
   Rails.logger.info('[START]  -- Answers (and FAQ) insertion')
   (1..50).each do |_|
-    src = Answer.sources[%i[from_call from_controversy].sample]
-    category = src == 0 ? categories.from_call.sample : categories.from_controversy.sample
+    system_id = System.all.sample.id
+    category = system_id == 0 ? categories.from_call.sample : categories.from_controversy.sample
     answer = Answer.new(question: Faker::Lorem.sentence(50, true, 6),
                         answer: Faker::Lorem.sentence(50, true, 6),
                         category: category,
                         user: allowed_users.sample,
                         faq: Random.rand > 0.90,
                         keywords: Faker::Lorem.sentence(1, true, 3),
-                        source: src)
+                        system: system_id)
     if answer.save
       Rails.logger.debug('Inserted a new answer')
     else
@@ -419,13 +425,13 @@ def seed_replies
 end
 
 def seed_faq_from_replies(call, reply)
-  source_system = reply.repliable_type == 'Call' ? Answer.sources[:from_call] : Answer.sources[:from_controversy]
+  system_id = reply.repliable_type == 'Call' ? 1 : 2
   answer = Answer.new(question: call.title,
                       answer: reply.description,
                       category_id: call.category_id,
                       user: reply.user,
                       faq: true,
-                      source: source_system,
+                      system_id: system_id,
                       keywords: Faker::Lorem.sentence(1, true, 3))
   if answer.save
     Rails.logger.debug('Inserted a new FAQ answer')
@@ -437,6 +443,7 @@ end
 
 def main
   Rails.logger.warn('[START]  SEED')
+  seed_systems
   seed_companies
   seed_users
   seed_states

@@ -27,8 +27,8 @@ class Answer < ApplicationRecord
   validates :ST_FAQ, inclusion: { in: %w[S N],
                                   message: 'this choice is not allowed.' }
 
-  alias_attribute :source, :CO_SISTEMA_ORIGEM
-  enum source: %i[from_call from_controversy]
+  alias_attribute :system, :CO_SISTEMA_ORIGEM
+  enum system: { from_call: 1, from_controversy: 2 }
 
   #### DATABASE adaptations ####
   self.primary_key = :CO_SEQ_ID # Setting a different primary_key
@@ -120,12 +120,12 @@ class Answer < ApplicationRecord
   end
 
   # Configures an alias setter for the CO_SISTEMA_ORIGEM database column
-  def source=(value)
+  def system_id=(value)
     write_attribute(:CO_SISTEMA_ORIGEM, value.to_i)
   end
 
   # Configures an alias getter for the CO_SISTEMA_ORIGEM database column
-  def source
+  def system_id
     read_attribute(:CO_SISTEMA_ORIGEM)
   end
 

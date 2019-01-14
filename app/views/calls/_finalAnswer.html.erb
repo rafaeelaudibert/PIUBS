@@ -1,7 +1,7 @@
 <hr/>
 <%= tinymce language: 'pt_BR' %>
 <div class="required_info"></div><br/>
-<%= form_with(model: answer, local: true, :html => { :id => "finalAnswerForm" }) do |form| %>
+<%= form_with(model: answer, local: true, :html => { id: "finalAnswerForm" }) do |form| %>
 <% if answer.errors.any? %>
   <div id="error_explanation">
     <h2><%= pluralize(answer.errors.count, "error") %>
@@ -52,11 +52,8 @@
     </div>
 
     <div class="field" style="display: none">
-      <%= form.label :source, 'Sistema Origem', class: 'required' %>
-
-    <%# We need to change this when add the new sistema table %>
-      <%= form.label :source, 'Sistema Origem', class: 'required' %>
-      <%= form.text_field :source, value: Answer.sources[:from_call], required: true %>
+      <%= form.label :system_id, 'Sistema Origem', class: 'required' %>
+      <%= form.text_field :system_id, value: Answer.systems[:from_call], required: true %>
     </div>
 
     <div id='faq-form' class="form-check form-check-inline">

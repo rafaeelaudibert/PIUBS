@@ -20,6 +20,7 @@ class CreateCategories < ActiveRecord::Migration[5.2]
     SQL
 
     add_foreign_key :TB_CATEGORIA, :TB_CATEGORIA, column: :CO_CATEGORIA_PAI, primary_key: :CO_SEQ_ID
+    add_foreign_key :TB_CATEGORIA, :TB_SISTEMA, column: :CO_SISTEMA_ORIGEM, primary_key: :CO_SEQ_ID
   end
 
   def self.down

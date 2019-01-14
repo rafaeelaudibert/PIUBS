@@ -101,7 +101,7 @@ class AnswersController < ApplicationController
     @answer = Answer.new
     @reply = Reply.find(params[:reply]) if params[:reply]
     @question = Call.find(params[:question]) if params[:question]
-    @categories = Category.where(source: params[:source] == 'call' ? :from_call : :from_controversy)
+    @categories = params[:source] == 'call' ? Category.from_call : Category.from_controversy
   end
 
   # Configures the <tt>edit</tt> page for the Answer model
@@ -119,9 +119,12 @@ class AnswersController < ApplicationController
   #
   # [POST] <tt>/answers</tt>
   def create
+    puts '------------------------'
+    pp params
     files = retrieve_files(params) || []
 
     @answer = Answer.new(answer_params)
+    pp @answer
     if @answer.save
       mark_as_final_answer @answer if params[:call_id]
       create_file_links @answer, files
@@ -253,7 +256,7 @@ class AnswersController < ApplicationController
   def answer_params
     normalize_params
     params.require(:answer).permit(:keywords, :question, :answer, :category_id,
-                                   :user_id, :faq, :call_id, :source, :reply_attachments)
+                                   :user_id, :faq, :call_id, :system_id, :reply_attachments)
   end
 
   # Called by #answer_params to normalize the <tt>keywords</tt>

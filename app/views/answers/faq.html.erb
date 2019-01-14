@@ -17,7 +17,7 @@
           <select name="filterrific[with_category]" id="filterrific_with_category" class="form-control">
             <option value>Todas categorias</option>
             <%= inside_layout "categories/category_select",
-                              {categ: Category.where(source: :from_call),
+                              {categ: Category.from_call,
                                selected: params[:filterrific] &&
                                          params[:filterrific][:with_category].to_i != 0 &&
                                          Category.find(params[:filterrific][:with_category].to_i)} do %>
