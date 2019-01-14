@@ -15,6 +15,38 @@ def seed_systems
   System.new(name: 'Solução de Controvérsias').save!
 end
 
+# Create the alteration types
+def seed_alteration_types
+  %w[
+    open_call
+    close_call
+    reopen_call
+    link_call
+    unlink_call
+    open_controversy
+    close_controversy
+    freeze_controversy
+    unfreeze_controversy
+    to_ministry_controversy
+    from_ministry_controversy
+    link_support_controversy
+    unlink_support_controversy
+    link_city_controversy
+    unlink_city_controversy
+    link_company_controversy
+    unlink_company_controversy
+    link_unity_controversy
+    unlink_unity_controversy
+    link_extra_support_controversy
+    unlink_extra_support_controversy
+  ].each { |name| AlterationType.new(name: name).save! }
+end
+
+def seed_event_types
+  EventType.new(name: 'alteration').save!
+  EventType.new(name: 'reply').save!
+end
+
 # Creates the users, except company_admin and company_user ones
 def seed_users
   Rails.logger.info('[START]  -- Users insertion')
@@ -31,12 +63,11 @@ def seed_users
       user = User.new(cpf: CPF.generate, name: role[0].capitalize,
                       email: email, role: role[0],
                       password: 'changeme', password_confirmation: 'changeme',
-                      system: if ['call_center_admin', 'call_center_user'].include? role[0]
+                      system: if %w[call_center_admin call_center_user].include? role[0]
                                 :both
                               else
                                 :companies
-                              end
-                      )
+                              end)
       if user.save
         Rails.logger.debug("User #{email} was created successfuly!")
       else
@@ -103,7 +134,7 @@ def seed_cities
       end
     end
 
-    counter+=1
+    counter += 1
   end
   Rails.logger.info('[FINISH] -- Cities insertion')
 end
@@ -114,7 +145,6 @@ def seed_unities
   city_ids = City.all.ids.to_a
 
   CSV.foreach('./public/csv/ubs.csv', headers: true) do |row|
-
     if city_ids.include?(row['cod_munic'].to_i)
       name = row['nom_estab'] ? row['nom_estab'].titleize : row['nom_estab']
       address = row['dsc_endereco'] ? row['dsc_endereco'].titleize : row['dsc_endereco']
@@ -185,7 +215,6 @@ def seed_categories
   category = Category.new # placeholder
 
   begin
-
     ## APOIO A EMPRESAS CATEGORIES
     ############
     category = Category.new(name: 'Orientações básicas sobre a estratégia e-SUS AB',
@@ -344,7 +373,7 @@ def seed_controversies
                                   company_user: user,
                                   category: Category.all.sample,
                                   city_user: User.from_city(city.id).sample,
-                                  unity_user: Random.rand > 0.6 ? unity.try(:users).try(:sample) : nil,)
+                                  unity_user: Random.rand > 0.6 ? unity.try(:users).try(:sample) : nil)
     if controversy.save
       Rails.logger.debug('Inserted a new controversy')
       seed_feedback(controversy) if controversy.closed?
@@ -365,10 +394,9 @@ def seed_feedback(controversy)
     Rails.logger.error('ERROR creating a FEEDBACK')
     Rails.logger.error(feedback.errors.full_messages)
   end
-
 end
 
-def seed_replies
+def seed_events
   calls = Call.all
   controversies = Controversy.all
   call_center_users = User.where(role: %w[call_center_admin call_center_user])
@@ -376,52 +404,62 @@ def seed_replies
   city_users = User.where(role: %w[city_admin])
   unity_users = User.where(role: %w[ubs_admin ubs_user])
 
-  Rails.logger.info('[START]  -- Replies (and FAQ) insertion')
+  Rails.logger.info('[START]  -- Events (and FAQ) insertion')
   (1..200).each do |_|
-    random1 = Random.rand
-    random2 = Random.rand
-    if random1 > 0.50 # Reply para call
-      user = random2 > 0.60 ? call_center_users.sample : company_users.sample
-      call = calls.sample
-      reply = Reply.new(repliable_id: call.protocol,
-                        repliable_type: 'Call',
-                        description: Faker::Lorem.sentence(25, true, 0),
-                        user: user,
-                        status: [0, 1, 2].sample,
-                        faq: random2 > 0.90)
-      if reply.save
-        Rails.logger.debug("Inserted a new reply to the call #{call.protocol}")
-        seed_faq_from_replies(call, reply) if reply.faq
+    random_user = Random.rand
+    type_id = Random.rand > 0.5 ? 1 : 2 # Alteration or Reply
+
+    if Random.rand > 0.5 # Call
+      user = random_user > 0.60 ? call_center_users.sample : company_users.sample
+      protocol = calls.sample.id
+
+      event = Event.new(
+        date: 0.seconds.from_now,
+        user: user,
+        protocol: protocol,
+        type_id: type_id,
+        system_id: 1
+      )
+
+      if event.save
+        Rails.logger.debug("Inserted a new event to Call -> #{event.protocol}")
+        type_id == 1 ? createAlteration(protocol) : createReply(protocol)
       else
-        Rails.logger.error('ERROR creating a REPLY')
-        Rails.logger.error(reply.errors.full_messages)
+        Rails.logger.error('ERROR creating an EVENT')
+        Rails.logger.error(event.errors.full_messages)
       end
-    else # Reply para Controvérsia
-      user = if random2 < 0.25
+
+    else # Controversy
+      user = if random_user < 0.25
                call_center_users.sample
-             elsif random2 < 0.5
+             elsif random_user < 0.5
                company_users.sample
-             elsif random2 < 0.75
+             elsif random_user < 0.75
                city_users.sample
              else
                unity_users.sample
              end
-      controversy = controversies.sample
-             reply = Reply.new(repliable_id: controversy.protocol,
-                               repliable_type: 'Controversy',
-                               description: Faker::Lorem.sentence(25, true, 0),
-                               user_id: user.id,
-                               status: %w[open closed].sample,
-                               faq: false)
-             if reply.save
-               Rails.logger.debug("Inserted a new reply to the controversy #{controversy.protocol}")
-             else
-               Rails.logger.error('ERROR creating a REPLY')
-               Rails.logger.error(reply.errors.full_messages)
-             end
+      protocol = controversies.sample.id
+
+      event = Event.new(
+        date: 0.seconds.from_now,
+        user: user,
+        protocol: protocol,
+        type_id: type_id,
+        system_id: 2
+      )
+
+      if event.save
+        Rails.logger.debug("Inserted a new event to Controversy -> #{event.protocol}")
+        type_id == 1 ? createAlteration(protocol) : createReply(protocol)
+      else
+        Rails.logger.error('ERROR creating an EVENT')
+        Rails.logger.error(event.errors.full_messages)
+      end
     end
   end
-  Rails.logger.info('[FINISH] -- Replies (and FAQ) insertion')
+
+  Rails.logger.info('[FINISH] -- Events insertion')
 end
 
 def seed_faq_from_replies(call, reply)
@@ -444,6 +482,7 @@ end
 def main
   Rails.logger.warn('[START]  SEED')
   seed_systems
+  seed_alteration_types
   seed_companies
   seed_users
   seed_states

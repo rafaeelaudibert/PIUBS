@@ -14,7 +14,7 @@ class CallsController < ApplicationController
   before_action :set_call, except: %i[index new create]
 
   # CanCanCan Configuration
-  load_and_authorize_resource
+  authorize_resource
   skip_authorize_resource only: %i[link_call_support_user unlink_call_support_user reopen_call]
 
   ####
@@ -64,7 +64,11 @@ class CallsController < ApplicationController
   #
   # [POST] <tt>/apoioaempresas/calls</tt>
   def create
+    puts 'im here'
     call_parameters = call_params
+
+    puts '-----------------------------------'
+    pp call_parameters
     files = retrieve_files call_parameters
     @call = create_call call_parameters
 
@@ -164,6 +168,7 @@ class CallsController < ApplicationController
   # Configures the Company instance when called by
   # the <tt>:before_action</tt> hook
   def set_company
+    puts 'company'
     @company = Company.find(current_user.sei) if current_user.sei
   end
 
@@ -172,6 +177,7 @@ class CallsController < ApplicationController
   # to the Apoio as Empresas system
   # It is called by a <tt>:before_action</tt> hook
   def restrict_system!
+    puts 'restrict'
     redirect_to denied_path unless current_user.both? || current_user.companies?
   end
 
@@ -317,6 +323,9 @@ class CallsController < ApplicationController
   # Returns the Attachment instances's ids received in the
   # request, removing it from the parameters
   def retrieve_files(call_parameters)
+    puts '--------------------------'
+    pp call_parameters
+
     call_parameters.delete(:files).split(',') if call_parameters[:files]
   end
 

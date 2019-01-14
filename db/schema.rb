@@ -135,6 +135,14 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
     t.string "NO_NOME", null: false
   end
 
+  create_table "TB_TIPO_ALTERACAO", primary_key: "CO_SEQ_ID", id: :bigint, default: -> { "nextval('\"SQ_TIPO_ALTERACAO_ID\"'::regclass)" }, force: :cascade do |t|
+    t.string "NO_NOME", null: false
+  end
+
+  create_table "TB_TIPO_EVENTO", primary_key: "CO_SEQ_ID", id: :bigint, default: -> { "nextval('\"SQ_TIPO_EVENTO_ID\"'::regclass)" }, force: :cascade do |t|
+    t.string "NO_NOME", null: false
+  end
+
   create_table "TB_UBS", primary_key: "CO_CNES", id: :bigint, default: nil, force: :cascade do |t|
     t.string "NO_NOME", null: false
     t.bigint "CO_CIDADE", null: false

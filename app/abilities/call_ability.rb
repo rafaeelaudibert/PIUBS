@@ -31,6 +31,7 @@ class CallAbility
   # Initialization telling which User instance can do what, following the rules
   # defined above
   def initializer(user)
+    can :manage, Call
     can %i[index create], Call # Every user can acess the index or create a new Call
 
     # Only the creator can destroy his own call

@@ -1,0 +1,25 @@
+# frozen_string_literal: true
+
+class CreateEventType < ActiveRecord::Migration[5.2]
+  def self.up
+    create_table :TB_TIPO_EVENTO, id: false do |t|
+      t.bigint :CO_SEQ_ID
+      t.string :NO_NOME, null: false
+    end
+
+    execute <<-SQL
+      CREATE SEQUENCE "SQ_TIPO_EVENTO_ID";
+      ALTER TABLE "TB_TIPO_EVENTO" ADD CONSTRAINT "PK_TB_TIPO_EVENTO" PRIMARY KEY ("CO_SEQ_ID");
+      ALTER TABLE "TB_TIPO_EVENTO" ALTER COLUMN "CO_SEQ_ID" SET DEFAULT nextval('"SQ_TIPO_EVENTO_ID"');
+      -- ALTER SEQUENCE TB_TIPO_EVENTO_CO_SEQ_ID_SEQ OWNED BY NONE;
+      ALTER SEQUENCE "SQ_TIPO_EVENTO_ID" OWNED BY "TB_TIPO_EVENTO"."CO_SEQ_ID";
+    SQL
+
+    add_foreign_key :TB_CATEGORIA, :TB_CATEGORIA, column: :CO_CATEGORIA_PAI, primary_key: :CO_SEQ_ID
+  end
+
+  def self.down
+    execute 'ALTER TABLE "TB_TIPO_EVENTO" DROP CONSTRAINT "PK_TB_TIPO_EVENTO";'
+    drop_table :TIPO_EVENTO
+  end
+end

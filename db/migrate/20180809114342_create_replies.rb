@@ -3,19 +3,13 @@
 class CreateReplies < ActiveRecord::Migration[5.2]
   def self.up
     create_table :TB_RESPOSTA, id: false do |t|
-      t.bigint :CO_SEQ_ID
+      t.bigint :CO_ID
       t.string :DS_DESCRICAO, null: false
       t.string :ST_FAQ, limit: 1, null: false, default: 'N'
-      t.string :repliable_type, null: false
-      t.bigint :CO_PROTOCOLO, null: false
-      t.bigint :CO_USUARIO, null: false
-      t.integer :TP_STATUS, null: false
       t.datetime :DT_CRIADO_EM
-      t.datetime :DT_REF_ATENDIMENTO_FECHADO
-      t.datetime :DT_REF_ATENDIMENTO_REABERTO
     end
 
-    add_foreign_key :TB_RESPOSTA, :TB_USUARIO, column: :CO_USUARIO
+    add_foreign_key :TB_RESPOSTA, :TB_EVENTO, column: :CO_ID, primary_key: :CO_SEQ_ID
 
     execute <<-SQL
       CREATE SEQUENCE "SQ_RESPOSTA_ID";

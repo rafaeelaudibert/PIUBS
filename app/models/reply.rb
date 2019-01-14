@@ -7,11 +7,10 @@
 # plus 'city' or 'unity'.
 class Reply < ApplicationRecord
   default_scope -> { order(DT_CRIADO_EM: :DESC) }
-  belongs_to :user, foreign_key: :CO_USUARIO
+  belongs_to :event, foreign_key: :CO_SEQ_ID
+  belongs_to :user, through: :event, foreign_key: :CO_USUARIO
   has_many :attachment_links, foreign_key: :CO_RESPOSTA
   has_many :attachments, through: :attachment_links
-  belongs_to :repliable, polymorphic: true,
-                         foreign_key: :CO_PROTOCOLO
 
   alias_attribute :status, :TP_STATUS
   enum status: %i[open closed reopened]
@@ -100,29 +99,15 @@ class Reply < ApplicationRecord
     created_at.strftime('%d %b %y - %H:%M:%S')
   end
 
-  # Configures an alias setter for the DT_REF_ATENDIMENTO_FECHADO database column
-  def last_call_ref_reply_closed_at=(value)
-    write_attribute(:DT_REF_ATENDIMENTO_FECHADO, value)
-  end
-
-  # Configures an alias getter for the DT_REF_ATENDIMENTO_FECHADO database column
-  def last_call_ref_reply_closed_at
-    read_attribute(:DT_REF_ATENDIMENTO_FECHADO)
-  end
-
-  # Configures an alias setter for the DT_REF_ATENDIMENTO_REABERTO database column
-  def last_call_ref_reply_reopened_at=(value)
-    write_attribute(:DT_REF_ATENDIMENTO_REABERTO, value)
-  end
-
-  # Configures an alias getter for the DT_REF_ATENDIMENTO_REABERTO database column
-  def last_call_ref_reply_reopened_at
-    read_attribute(:DT_REF_ATENDIMENTO_REABERTO)
+  # Get the agent (Controversy or Call)
+  # which created the Event which is parent of this Reply
+  def repliable
+    event.action
   end
 
   # Get name of border class to each user role
   def border_class
-    user.role.split('_')[0].concat('-border')
+    user.role.split('_').first.concat('-border')
   end
 
   #### FILTERRIFIC queries ####
