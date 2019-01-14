@@ -16,6 +16,10 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
                                     as: 'autocomplete_unity'
       get :autocomplete_user_support, to: 'users#autocomplete_support_users',
                                       as: 'autocomplete_support'
+      post 'update_system', to: 'users#update_system',
+                            as: 'update_system'
+      post 'update_role', to: 'users#update_role',
+      as: 'update_role'
     end
   end
 
