@@ -11,16 +11,12 @@ class ControversiesController < ApplicationController
   # GET /controversies.json
   def index
     (@filterrific = initialize_filterrific(Controversy, params[:filterrific],
-      select_options: options_for_filterrific,
-      persistence_id: false)) || return
+                                           select_options: options_for_filterrific,
+                                           persistence_id: false)) || return
     @controversies = filtered_controversies
 
     authorize! :index, Controversy
   end
-
-
-
-
 
   # GET /controversies/1
   # GET /controversies/1.json
@@ -214,7 +210,7 @@ class ControversiesController < ApplicationController
   # <tt>current_user</tt> can see, knowing he has
   # the <tt>support_user</tt> role,
   # which is handled by the calling function
-  def controversies_from_support_user
+  def controversies_from_support
     filterrific_query.from_support_user [current_user.id, nil]
   end
 
@@ -256,7 +252,7 @@ class ControversiesController < ApplicationController
 
   def filtered_controversies
     if support_user?
-      current_user.call_center_user? ? controversies_from_support_user : controversies_from_support_admin
+      current_user.call_center_user? ? controversies_from_support : controversies_from_support_admin
     elsif admin?
       controversies_for_admin
     else

@@ -128,7 +128,6 @@ class Controversy < ApplicationRecord
       ['No aguardo', 'status_on_hold'],
       ['Com Ministério', 'status_on_ministry']
     ]
-    
   end
 
   def all_users
