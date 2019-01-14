@@ -30,23 +30,23 @@ class Controversy < ApplicationRecord
   end
 
   def self.from_company(sei)
-    where(CO_SEI: sei)
+    where(sei: sei)
   end
 
   def self.from_company_user(id)
-    where(CO_USUARIO_EMPRESA: id)
+    where(company_user_id: id)
   end
 
   def self.from_ubs_admin(cnes)
-    where(CO_CNES: cnes)
+    where(cnes: cnes)
   end
 
   def self.from_ubs_user(id)
-    where(CO_USUARIO_UBS: id)
+    where(unity_user_id: id)
   end
 
   def self.from_city_user(id)
-    where(CO_USUARIO_CIDADE: id)
+    where(city_user_id: id)
   end
 
   filterrific(
@@ -65,16 +65,16 @@ class Controversy < ApplicationRecord
 
   scope :search_query, lambda { |query|
     return nil if query.blank?
-    return where(CO_PROTOCOLO: query) if query.class == Integer
+    return where(protocol: query) if query.class == Integer
 
-    where('"DS_TITULO" ILIKE :search OR "DS_DESCRICAO" ILIKE :search', search: "%#{query}%")
+    where('"title" ILIKE :search OR "description" ILIKE :search', search: "%#{query}%")
   }
 
   scope :sorted_by_creation, lambda { |sort_key|
     sort = /asc$/.match?(sort_key) ? 'asc' : 'desc'
     case sort_key.to_s
     when /^creation_/
-      order(CO_PROTOCOLO: sort)
+      order(protocol: sort)
     else
       raise(ArgumentError, 'Invalid filter option')
     end
@@ -95,19 +95,19 @@ class Controversy < ApplicationRecord
 
     case filter_key.to_s
     when /^status_/
-      where(TP_STATUS: @status_i) if @status_i != 4
+      where(status: @status_i) if @status_i != 4
     else
       raise(ArgumentError, 'Opção de filtro inválida')
     end
   }
 
-  scope :with_ubs, ->(cnes) { cnes == [''] ? nil : where(CO_CNES: cnes) }
+  scope :with_ubs, ->(cnes) { cnes == [''] ? nil : where(cnes: cnes) }
 
-  scope :with_company, ->(sei) { sei == [''] ? nil : where(CO_SEI: sei) }
+  scope :with_company, ->(sei) { sei == [''] ? nil : where(sei: sei) }
 
-  scope :with_state, ->(state) { state == [''] ? nil : where(CO_UF: state) }
+  scope :with_state, ->(state) { state == [''] ? nil : where(city: State.find(state).cities) }
 
-  scope :with_city, ->(city) { city.zero? ? nil : where(CO_CIDADE: city) }
+  scope :with_city, ->(city) { city.zero? ? nil : where(city: city) }
 
   # Configures the possible filterrific sorting methods
   # to be acessed on ControversiesController
@@ -126,7 +126,7 @@ class Controversy < ApplicationRecord
       %w[Abertos status_open],
       %w[Fechados status_closed],
       ['No aguardo', 'status_on_hold'],
-      ['Com o Ministério', 'status_on_ministry']
+      ['Com Ministério', 'status_on_ministry']
     ]
     
   end
