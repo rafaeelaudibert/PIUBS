@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-class CreateAlteration < ActiveRecord::Migration[5.2]
+class CreateEvent < ActiveRecord::Migration[5.2]
   def self.up
     create_table :TB_EVENTO, id: false do |t|
       t.bigint :CO_SEQ_ID
-      t.datetime :DT_DATA
+      t.datetime :DT_CRIADO_EM
       t.bigint :CO_TIPO
       t.bigint :CO_USUARIO
       t.bigint :CO_SISTEMA_ORIGEM

@@ -31,6 +31,10 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
     t.datetime "DT_CRIADO_EM"
   end
 
+  create_table "TB_ALTERACAO", primary_key: "CO_ID", id: :bigint, default: nil, force: :cascade do |t|
+    t.bigint "CO_TIPO"
+  end
+
   create_table "TB_ANEXO", primary_key: "CO_ID", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.string "NO_NOME_ANEXO", null: false
     t.string "DS_TIPO_ANEXO", null: false
@@ -103,6 +107,14 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
     t.datetime "DT_CRIADO_EM"
   end
 
+  create_table "TB_EVENTO", primary_key: "CO_SEQ_ID", id: :bigint, default: -> { "nextval('\"SQ_ALTERACAO_ID\"'::regclass)" }, force: :cascade do |t|
+    t.datetime "DT_CRIADO_EM"
+    t.bigint "CO_TIPO"
+    t.bigint "CO_USUARIO"
+    t.bigint "CO_SISTEMA_ORIGEM"
+    t.bigint "CO_PROTOCOLO"
+  end
+
   create_table "TB_FEEDBACK", primary_key: "CO_PROTOCOLO", id: :bigint, default: nil, force: :cascade do |t|
     t.text "DS_DESCRICAO", null: false
     t.datetime "DT_CRIADO_EM"
@@ -119,23 +131,13 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
     t.datetime "DT_CRIADO_EM"
   end
 
-  create_table "TB_RESPOSTA", primary_key: "CO_SEQ_ID", id: :bigint, default: -> { "nextval('\"SQ_RESPOSTA_ID\"'::regclass)" }, force: :cascade do |t|
+  create_table "TB_RESPOSTA", primary_key: "CO_ID", id: :bigint, default: nil, force: :cascade do |t|
     t.string "DS_DESCRICAO", null: false
     t.string "ST_FAQ", limit: 1, default: "N", null: false
-    t.string "repliable_type", null: false
-    t.bigint "CO_PROTOCOLO", null: false
-    t.bigint "CO_USUARIO", null: false
-    t.integer "TP_STATUS", null: false
     t.datetime "DT_CRIADO_EM"
-    t.datetime "DT_REF_ATENDIMENTO_FECHADO"
-    t.datetime "DT_REF_ATENDIMENTO_REABERTO"
   end
 
   create_table "TB_SISTEMA", primary_key: "CO_SEQ_ID", id: :bigint, default: -> { "nextval('\"SQ_SISTEMA_ID\"'::regclass)" }, force: :cascade do |t|
-    t.string "NO_NOME", null: false
-  end
-
-  create_table "TB_TIPO_ALTERACAO", primary_key: "CO_SEQ_ID", id: :bigint, default: -> { "nextval('\"SQ_TIPO_ALTERACAO_ID\"'::regclass)" }, force: :cascade do |t|
     t.string "NO_NOME", null: false
   end
 
@@ -203,7 +205,8 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
   add_foreign_key "RT_LINK_ANEXO", "\"TB_CONTROVERSIA\"", column: "CO_CONTROVERSIA", primary_key: "CO_PROTOCOLO"
   add_foreign_key "RT_LINK_ANEXO", "\"TB_FEEDBACK\"", column: "CO_FEEDBACK", primary_key: "CO_PROTOCOLO"
   add_foreign_key "RT_LINK_ANEXO", "\"TB_QUESTAO\"", column: "CO_QUESTAO", primary_key: "CO_SEQ_ID"
-  add_foreign_key "RT_LINK_ANEXO", "\"TB_RESPOSTA\"", column: "CO_RESPOSTA", primary_key: "CO_SEQ_ID"
+  add_foreign_key "RT_LINK_ANEXO", "\"TB_RESPOSTA\"", column: "CO_RESPOSTA", primary_key: "CO_ID"
+  add_foreign_key "TB_ALTERACAO", "\"TB_EVENTO\"", column: "CO_ID", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "TB_ATENDIMENTO", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"
@@ -225,11 +228,14 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
   add_foreign_key "TB_CONTROVERSIA", "\"TB_USUARIO\"", column: "CO_USUARIO_CIDADE"
   add_foreign_key "TB_CONTROVERSIA", "\"TB_USUARIO\"", column: "CO_USUARIO_EMPRESA"
   add_foreign_key "TB_CONTROVERSIA", "\"TB_USUARIO\"", column: "CO_USUARIO_UNIDADE"
+  add_foreign_key "TB_EVENTO", "\"TB_SISTEMA\"", column: "CO_SISTEMA_ORIGEM", primary_key: "CO_SEQ_ID"
+  add_foreign_key "TB_EVENTO", "\"TB_TIPO_EVENTO\"", column: "CO_TIPO", primary_key: "CO_SEQ_ID"
+  add_foreign_key "TB_EVENTO", "\"TB_USUARIO\"", column: "CO_USUARIO"
   add_foreign_key "TB_FEEDBACK", "\"TB_CONTROVERSIA\"", column: "CO_PROTOCOLO", primary_key: "CO_PROTOCOLO"
   add_foreign_key "TB_QUESTAO", "\"TB_CATEGORIA\"", column: "CO_CATEGORIA", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_QUESTAO", "\"TB_SISTEMA\"", column: "CO_SISTEMA_ORIGEM", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_QUESTAO", "\"TB_USUARIO\"", column: "CO_USUARIO"
-  add_foreign_key "TB_RESPOSTA", "\"TB_USUARIO\"", column: "CO_USUARIO"
+  add_foreign_key "TB_RESPOSTA", "\"TB_EVENTO\"", column: "CO_ID", primary_key: "CO_SEQ_ID"
   add_foreign_key "TB_UBS", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "TB_USUARIO", "\"TB_CIDADE\"", column: "CO_CIDADE", primary_key: "CO_CODIGO"
   add_foreign_key "TB_USUARIO", "\"TB_EMPRESA\"", column: "CO_SEI", primary_key: "CO_SEI"

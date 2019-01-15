@@ -14,8 +14,6 @@ class CreateEventType < ActiveRecord::Migration[5.2]
       -- ALTER SEQUENCE TB_TIPO_EVENTO_CO_SEQ_ID_SEQ OWNED BY NONE;
       ALTER SEQUENCE "SQ_TIPO_EVENTO_ID" OWNED BY "TB_TIPO_EVENTO"."CO_SEQ_ID";
     SQL
-
-    add_foreign_key :TB_CATEGORIA, :TB_CATEGORIA, column: :CO_CATEGORIA_PAI, primary_key: :CO_SEQ_ID
   end
 
   def self.down

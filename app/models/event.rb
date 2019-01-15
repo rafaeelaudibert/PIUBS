@@ -6,7 +6,9 @@
 class Event < ApplicationRecord
   belongs_to :user, foreign_key: :CO_USUARIO
   belongs_to :system, foreign_key: :CO_SISTEMA_ORIGEM
-  belongs_to :event_type, foreign_key: :CO_TIPO
+  belongs_to :type, class_name: 'EventType', foreign_key: :CO_TIPO
+
+  CreateError = Class.new(StandardError)
 
   #### DATABASE adaptations ####
 
@@ -24,12 +26,12 @@ class Event < ApplicationRecord
   end
 
   # Configures an alias setter for the DT_DATA database column
-  def date=(value)
+  def created_at=(value)
     write_attribute(:DT_DATA, value)
   end
 
   # Configures an alias getter for the DT_DATA database column
-  def date
+  def created_at
     read_attribute(:DT_DATA)
   end
 
@@ -77,31 +79,43 @@ class Event < ApplicationRecord
   # :section Enum-like methods for EventType
   ##
 
-  # Returns the event per-se
-  def action
-    alteration? ? Alteration.find(id) : Reply.find(id)
-  end
-
   # Sets the event to be related with an Alteration
   def alteration!
-    self.event_type = 1
+    self.type = EventType.alteration
     save!
   end
 
   # Returns true if the event is related to an Alteration
   def alteration?
-    event_type == 1
+    type == EventType.alteration
+  end
+
+  # Returns the Alteration instance which this Event is related with,
+  # if he has a Alteration related to it
+  def alteration
+    Alteration.find(id) if alteration?
   end
 
   # Sets the event to be related with a Reply
   def reply!
-    self.event_type = 2
+    self.type = EventType.reply
     save!
   end
 
   # Returns true if the event is related to a Reply
   def reply?
-    event_type == 2
+    type == EventType.reply
+  end
+
+  # Returns the Reply instance which this Event is related with,
+  # if he has a Reply related to it
+  def reply
+    Reply.find(id) if reply?
+  end
+
+  # Returns the event per-se
+  def action
+    alteration? ? alteration : reply
   end
 
   ####
@@ -110,23 +124,40 @@ class Event < ApplicationRecord
 
   # Sets the event to be related with a Call
   def from_call!
-    self.system_id = 1
+    self.system = System.call
     save!
   end
 
   # Returns true if the event is related to a Call
   def from_call?
-    system_id == 1
+    system == System.call
+  end
+
+  # Returns the Call instance which this Event is related with,
+  # if he has a Call related to it
+  def call
+    Call.find(protocol) if from_call?
   end
 
   # Sets the event to be related with a Controversy
   def from_controversy!
-    self.system_id = 2
+    self.system = System.controversy
     save!
   end
 
   # Returns true if the event is related to a Controversy
   def from_controversy?
-    system_id == 2
+    system == System.controversy
+  end
+
+  # Returns the Controversy instance which this Event is related with,
+  # if he has a Controversy related to it
+  def controversy
+    Controversy.find(protocol) if from_controversy?
+  end
+
+  # Returns the event parent per-se
+  def parent
+    from_call? ? call : controversy
   end
 end

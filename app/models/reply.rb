@@ -7,8 +7,8 @@
 # plus 'city' or 'unity'.
 class Reply < ApplicationRecord
   default_scope -> { order(DT_CRIADO_EM: :DESC) }
-  belongs_to :event, foreign_key: :CO_SEQ_ID
-  belongs_to :user, through: :event, foreign_key: :CO_USUARIO
+  belongs_to :event, foreign_key: :CO_ID
+  has_one :user, through: :event, foreign_key: :CO_USUARIO
   has_many :attachment_links, foreign_key: :CO_RESPOSTA
   has_many :attachments, through: :attachment_links
 
@@ -16,17 +16,17 @@ class Reply < ApplicationRecord
   enum status: %i[open closed reopened]
 
   #### DATABASE adaptations ####
-  self.primary_key = :CO_SEQ_ID # Setting a different primary_key
+  self.primary_key = :CO_ID # Setting a different primary_key
   self.table_name = :TB_RESPOSTA # Setting a different table_name
 
   # Configures an alias setter for the CO_SEQ_ID database column
   def id=(value)
-    write_attribute(:CO_SEQ_ID, value)
+    write_attribute(:CO_ID, value)
   end
 
   # Configures an alias getter for the CO_SEQ_ID database column
   def id
-    read_attribute(:CO_SEQ_ID)
+    read_attribute(:CO_ID)
   end
 
   # Configures an alias setter for the DS_DESCRICAO database column

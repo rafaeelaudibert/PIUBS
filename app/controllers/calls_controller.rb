@@ -64,20 +64,23 @@ class CallsController < ApplicationController
   #
   # [POST] <tt>/apoioaempresas/calls</tt>
   def create
-    puts 'im here'
-    call_parameters = call_params
+    files = retrieve_files params.require(:call)
+    @call = create_call call_params
 
-    puts '-----------------------------------'
-    pp call_parameters
-    files = retrieve_files call_parameters
-    @call = create_call call_parameters
+    raise Call::CreateError, @call.errors.inspect unless @call.save
 
-    if @call.save
-      create_file_links @call, files
-      redirect_to @call, notice: 'Call was successfully created.'
-    else
-      render :new
-    end
+    create_file_links @call, files
+    configure_event :create_call
+
+    redirect_to @call, notice: 'Atendimento criado com sucesso.'
+  rescue Call::CreateError => e
+    render :new, alert: 'Erro na criação do Atendimento'
+  rescue Event::CreateError => e
+    @call.delete # Rollback
+    render :new, alert: 'Erro na criação do Atendimento por erro na criação do Evento'
+  rescue Alteration::CreateError => e
+    [@call, @event].each(&:delete) # Rollback
+    render :new, alert: 'Erro na criação do Atendimento por erro na criação de Alteração'
   end
 
   # Configures the <tt>POST</tt> request to link
@@ -89,19 +92,23 @@ class CallsController < ApplicationController
   def link_call_support_user
     authorize! :link_call, @call
 
-    if @call.support_user
-      redirect_back(fallback_location: root_path,
-                    alert: 'Você não pode pegar um atendimento de outro usuário do suporte')
-    else
-      @call.support_user = current_user
-      if @call.save
-        redirect_back(fallback_location: root_path,
-                      notice: 'Agora esse atendimento é seu')
-      else
-        redirect_back(fallback_location: root_path,
-                      notice: 'Ocorreu um erro ao tentar pegar o atendimento')
-      end
-    end
+    raise Call::AlreadyTaken, @call.errors.inspect if @call.support_user
+
+    @call.support_user = current_user
+    configure_event :link_call
+    raise Call::UpdateError, @call.errors.inspect unless @call.save
+
+    redirect_back fallback_location: :root_path, notice: 'Agora esse atendimento é seu'
+  rescue Call::AlreadyTaken => e
+    redirect_back fallback_location: :root_path, alert: e.msg
+  rescue Call::UpdateError => e
+    [@alteration, @event].each(&:delete) # Rollback
+    redirect_back fallback_location: :root_path, alert: e.msg
+  rescue Event::CreateError => e
+    redirect_back fallback_location: :root_path, alert: e.msg
+  rescue Alteration::CreateError => e
+    @event.delete
+    redirect_back fallback_location: :root_path, alert: e.msg
   end
 
   # Configures the <tt>POST</tt> request to unlink the
@@ -113,19 +120,17 @@ class CallsController < ApplicationController
   def unlink_call_support_user
     authorize! :link_call, @call
 
-    if @call.support_user == current_user
-      @call.support_user = nil
-      if @call.save
-        redirect_back(fallback_location: root_path,
-                      notice: 'Atendimento liberado')
-      else
-        redirect_back(fallback_location: root_path,
-                      notice: 'Ocorreu um erro ao tentar liberar o atendimento')
-      end
-    else
-      redirect_back(fallback_location: root_path,
-                    alert: 'Esse atendimento pertence a outro usuário do suporte')
-    end
+    raise Call::OwnerError unless @call.support_user == current_user
+
+    @call.support_user = nil
+    configure_event :unlink_call
+    raise Call::UpdateError unless @call.save
+
+    redirect_back fallback_location: :root_path, notice: 'Atendimento liberado com sucesso.'
+  rescue Call::OwnerError => e
+    redirect_back fallback_location: :root_path, alert: e.msg
+  rescue Call::UpdateError => e
+    redirect_back fallback_location: :root_path, alert: e.msg
   end
 
   # Configures the <tt>POST</tt> request to reopen a once closed Call
@@ -168,7 +173,6 @@ class CallsController < ApplicationController
   # Configures the Company instance when called by
   # the <tt>:before_action</tt> hook
   def set_company
-    puts 'company'
     @company = Company.find(current_user.sei) if current_user.sei
   end
 
@@ -177,7 +181,6 @@ class CallsController < ApplicationController
   # to the Apoio as Empresas system
   # It is called by a <tt>:before_action</tt> hook
   def restrict_system!
-    puts 'restrict'
     redirect_to denied_path unless current_user.both? || current_user.companies?
   end
 
@@ -281,7 +284,7 @@ class CallsController < ApplicationController
                                  :access_profile, :feature_detail,
                                  :answer_summary, :severity, :protocol,
                                  :city_id, :category_id,
-                                 :company_id, :cnes, :files)
+                                 :company_id, :cnes)
   end
 
   # Method called by #reopen_call function,
@@ -294,6 +297,22 @@ class CallsController < ApplicationController
     Reply.find(params[:reply_id]).update(last_call_ref_reply_reopened_at: 0.seconds.from_now)
 
     call
+  end
+
+  # Called by #create, configures the event creation of a :open_call Alteration
+  # Returns true if the Event and the Alteration instance were successfully created
+  def configure_event(event)
+    # Create event
+    @event = Event.new(type: EventType.alteration,
+                       user: @call.user,
+                       system: System.call,
+                       protocol: @call.protocol)
+
+    raise Event::CreateError, @event.errors.inspect unless @event.save
+
+    # After we correctly saved the event
+    @alteration = Alteration.new(id: @event.id, type: event)
+    raise Alteration::CreateError, @alteration.errors.inspect unless @alteration.save
   end
 
   # Checks which are the calls which can be seen by this user
@@ -323,9 +342,6 @@ class CallsController < ApplicationController
   # Returns the Attachment instances's ids received in the
   # request, removing it from the parameters
   def retrieve_files(call_parameters)
-    puts '--------------------------'
-    pp call_parameters
-
     call_parameters.delete(:files).split(',') if call_parameters[:files]
   end
 

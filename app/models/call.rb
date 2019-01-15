@@ -16,12 +16,36 @@ class Call < ApplicationRecord
   belongs_to :unity, foreign_key: :CO_CNES
   belongs_to :user, foreign_key: :CO_USUARIO_EMPRESA
   belongs_to :support_user, optional: true, class_name: 'User', foreign_key: :CO_USUARIO_SUPORTE
-  has_many :replies, -> { order(CO_SEQ_ID: :DESC) }, as: :repliable, foreign_key: :CO_PROTOCOLO
+  has_many :events, -> { order(CO_SEQ_ID: :DESC) }, foreign_key: :CO_PROTOCOLO
   has_many :attachment_links, foreign_key: :CO_ATENDIMENTO
   has_many :attachments, through: :attachment_links
 
-  ### Se for adicionado ou alterado algum estado ou severidade,
-  ### adicionar tambem na tabela de traducao (config/locales/en.yml)
+  class CreateError < StandardError
+    def initialize(msg = 'Erro ao criar o atendimento.')
+      super
+    end
+  end
+
+  class UpdateError < StandardError
+    def initialize(msg = 'Erro ao atualizar o atendimento.')
+      super
+    end
+  end
+
+  class OwnerError < StandardError
+    def initialize(msg = 'Esse atendimento pertence a outro usuário do suporte.')
+      super
+    end
+  end
+
+  class AlreadyTakenError < StandardError
+    def initialize(msg = 'Esse atendimento já percence a um usuário do suporte.')
+      super
+    end
+  end
+
+  # If some status or severity is changed or added
+  # update the translation table as well (config/locales/en.yml)
   alias_attribute :status, :TP_STATUS
   enum status: %i[open closed reopened]
 
@@ -272,6 +296,7 @@ class Call < ApplicationRecord
 
   scope :sorted_by_creation, lambda { |sort_key|
     sort = /asc$/.match?(sort_key) ? 'asc' : 'desc'
+
     case sort_key.to_s
     when /^creation_/
       order(CO_PROTOCOLO: sort)

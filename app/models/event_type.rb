@@ -29,4 +29,19 @@ class EventType < ApplicationRecord
   def name
     read_attribute(:NO_NOME)
   end
+
+  ####
+  # Configures a enum-like for the instances on this table, which can
+  # only be Alteration or Reply
+  ##
+
+  # Returns the EventType instance which represents an Alteration
+  def self.alteration
+    find_by(NO_NOME: 'ALTERATION')
+  end
+
+  # Returns the EventType instance which represents a Reply
+  def self.reply
+    find_by(NO_NOME: 'REPLY')
+  end
 end

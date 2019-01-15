@@ -31,4 +31,16 @@ class System < ApplicationRecord
   def name
     read_attribute(:NO_NOME)
   end
+
+  # Configure an alias to find the 'Apoio a
+  # Empresas' system
+  def self.call
+    find_by(NO_NOME: 'APOIO_A_EMPRESAS')
+  end
+
+  # Configure an alias to find the 'Solucao de
+  # Controversias' system
+  def self.controversy
+    find_by(NO_NOME: 'SOLUCAO_DE_CONTROVERSIAS')
+  end
 end
