@@ -80,6 +80,11 @@ class Event < ApplicationRecord
     read_attribute(:CO_SISTEMA_ORIGEM)
   end
 
+  # Get name of border class to each user role
+  def border_class
+    user.role.split('_').first.concat('-border')
+  end
+
   ####
   # :section Enum-like methods for EventType
   ##

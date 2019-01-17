@@ -77,11 +77,6 @@ class Reply < ApplicationRecord
     event.parent
   end
 
-  # Get name of border class to each user role
-  def border_class
-    user.role.split('_').first.concat('-border')
-  end
-
   #### FILTERRIFIC queries ####
   filterrific available_filters: %i[search_query]
 

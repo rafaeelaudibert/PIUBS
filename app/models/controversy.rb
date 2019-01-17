@@ -34,6 +34,12 @@ class Controversy < ApplicationRecord
   self.primary_key = :CO_PROTOCOLO # Setting a different primary_key
   self.table_name = :TB_CONTROVERSIA # Setting a different table_name
 
+  class CreateError < StandardError; end
+  class UpdateError < StandardError; end
+  class RoleError < StandardError; end
+  class AlreadyTaken < StandardError; end
+  class OwnerError < StandardError; end
+
   # Configures an alias setter for the CO_PROTOCOLO database column
   def protocol=(value)
     write_attribute(:CO_PROTOCOLO, value)
