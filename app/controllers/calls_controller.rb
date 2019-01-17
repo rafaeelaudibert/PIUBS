@@ -98,17 +98,17 @@ class CallsController < ApplicationController
     raise Call::UpdateError, @call.errors.inspect unless @call.save
     configure_event :link_call, current_user
 
-    redirect_back fallback_location: :root_path, notice: 'Agora esse atendimento é seu'
+    redirect_back fallback_location: root_path, notice: 'Agora esse atendimento é seu'
   rescue Call::AlreadyTaken => e
-    redirect_back fallback_location: :root_path, alert: e.msg
+    redirect_back fallback_location: root_path, alert: e.msg
   rescue Call::UpdateError => e
     [@alteration, @event].each(&:delete) # Rollback
-    redirect_back fallback_location: :root_path, alert: e.msg
+    redirect_back fallback_location: root_path, alert: e.msg
   rescue Event::CreateError => e
-    redirect_back fallback_location: :root_path, alert: e.msg
+    redirect_back fallback_location: root_path, alert: e.msg
   rescue Alteration::CreateError => e
     @event.delete
-    redirect_back fallback_location: :root_path, alert: e.msg
+    redirect_back fallback_location: root_path, alert: e.msg
   end
 
   # Configures the <tt>POST</tt> request to unlink the
@@ -126,16 +126,16 @@ class CallsController < ApplicationController
     raise Call::UpdateError unless @call.save
     configure_event :unlink_call, current_user
 
-    redirect_back fallback_location: :root_path, notice: 'Atendimento liberado com sucesso.'
+    redirect_back fallback_location: root_path, notice: 'Atendimento liberado com sucesso.'
   rescue Call::OwnerError => e
-    redirect_back fallback_location: :root_path, alert: e.msg
+    redirect_back fallback_location: root_path, alert: e.msg
   rescue Call::UpdateError => e
-    redirect_back fallback_location: :root_path, alert: e.msg
+    redirect_back fallback_location: root_path, alert: e.msg
   rescue Event::CreateError => e
-    redirect_back fallback_location: :root_path, alert: e.msg
+    redirect_back fallback_location: root_path, alert: e.msg
   rescue Alteration::CreateError => e
     @event.delete
-    redirect_back fallback_location: :root_path, alert: e.msg
+    redirect_back fallback_location: root_path, alert: e.msg
   end
 
   # Configures the <tt>POST</tt> request to reopen a once closed Call
@@ -154,14 +154,14 @@ class CallsController < ApplicationController
     delete_final_answer @answer unless @answer.try(:faq) == true
     configure_event :reopen_call, current_user
 
-    redirect_back fallback_location: :root_path, notice: 'Atendimento reaberto'
+    redirect_back fallback_location: root_path, notice: 'Atendimento reaberto'
   rescue Call::UpdateError => e
-    redirect_back fallback_location: :root_path, alert: e.msg
+    redirect_back fallback_location: root_path, alert: e.msg
   rescue Event::CreateError => e
-    redirect_back fallback_location: :root_path, alert: e.msg
+    redirect_back fallback_location: root_path, alert: e.msg
   rescue Alteration::CreateError => e
     @event.delete
-    redirect_back fallback_location: :root_path, alert: e.msg
+    redirect_back fallback_location: root_path, alert: e.msg
   end
 
   private

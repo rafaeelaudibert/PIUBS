@@ -64,9 +64,9 @@ class RepliesController < ApplicationController
     redirect_to create_path(@reply), notice: 'Resposta adicionada com sucesso.'
   rescue Reply::CreateError => e
     @event.delete
-    redirect_back fallback_location: :root_path, alert: 'Erro na criação da Resposta'
+    redirect_back fallback_location: root_path, alert: 'Erro na criação da Resposta'
   rescue Event::CreateError => e
-    redirect_back fallback_location: :root_path, alert: 'Erro na criação da Resposta por erro na criação do Evento'
+    redirect_back fallback_location: root_path, alert: 'Erro na criação da Resposta por erro na criação do Evento'
   end
 
   # Configures the <tt>attachments</tt> request for the
