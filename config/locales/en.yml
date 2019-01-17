@@ -38,148 +38,193 @@ en:
             cpf:
               invalid_cpf: 'no formato inválido. Por favor, insira seus dados corretamente'
     enums:
+      alteration:
+        type:
+          open_call: 'abriou o Atendimento'
+          close_call: 'fechou o Atendimento'
+          reopen_call: 'reabriu o Atendimento'
+          link_call: '(Suporte) pegou o Atendimento'
+          unlink_call: '(Suporte) deixou o Atendimento'
+          open_controversy: 'abriu a Controvérsia'
+          close_controversy: 'finalizou a Controvérsia'
+          freeze_controversy: 'colocou a Controvérsia em aguardo'
+          unfreeze_controversy: 'reativou a Controvérsia'
+          to_ministry_controversy: 'enviou a Controvérsia para o MS'
+          from_ministry_controversy: 'reativou a Controvérsia'
+          link_support_controversy: '(Suporte) pegou a Controvérsia'
+          unlink_support_controversy: '(Suporte) deixou a Controvérsia'
+          link_city_controversy: '(Cidade) foi adicionado na Controvérsia'
+          unlink_city_controversy: '(Cidade) foi removido da Controvérsia'
+          link_company_controversy: '(Empresa) foi adicionado na Controvérsia'
+          unlink_company_controversy: '(Empresa) foi removido da Controvérsia'
+          link_unity_controversy: '(UBS) foi adicionado na Controvérsia'
+          unlink_unity_controversy: '(UBS) foi removido da Controvérsia'
+          link_extra_support_controversy: '(Suporte) foi adicionado como suporte auxiliar na  Controvérsia'
+          unlink_extra_support_controversy: '(Suporte) foi removido de suporte auxiliar da Controvérsia'
+          style:
+            open_call: 'success'
+            close_call: 'danger'
+            reopen_call: 'warning'
+            link_call: 'success'
+            unlink_call: 'danger'
+            open_controversy: 'success'
+            close_controversy: 'danger'
+            freeze_controversy: 'primary'
+            unfreeze_controversy: 'warning'
+            to_ministry_controversy: 'primary'
+            from_ministry_controversy: 'warning'
+            link_support_controversy: 'success'
+            unlink_support_controversy: 'danger'
+            link_city_controversy: 'success'
+            unlink_city_controversy: 'danger'
+            link_company_controversy: 'success'
+            unlink_company_controversy: 'danger'
+            link_unity_controversy: 'success'
+            unlink_unity_controversy: 'danger'
+            link_extra_support_controversy: 'success'
+            unlink_extra_support_controversy: 'danger'
       call:
         status:
-          open: "Aberto"
-          reopened: "Reaberto"
-          closed: "Fechado"
+          open: 'Aberto'
+          reopened: 'Reaberto'
+          closed: 'Fechado'
           style:
-            open: "success"
-            reopened: "warning"
-            closed: "danger"
+            open: 'success'
+            reopened: 'warning'
+            closed: 'danger'
         severity:
-          low: "Baixa"
-          normal: "Normal"
-          high: "Alta"
-          huge: "Muito alta"
+          low: 'Baixa'
+          normal: 'Normal'
+          high: 'Alta'
+          huge: 'Muito alta'
       controversy:
         status:
-          open: "Aberto"
-          closed: "Fechado"
-          on_hold: "No aguardo"
-          on_ministry: "Com Ministério"
+          open: 'Aberto'
+          closed: 'Fechado'
+          on_hold: 'No aguardo'
+          on_ministry: 'Com Ministério'
         creator:
-          company: "Empresa"
-          unity: "UBS"
-          city: "Cidade"
-          support: "Suporte PIUBS"
+          company: 'Empresa'
+          unity: 'UBS'
+          city: 'Cidade'
+          support: 'Suporte PIUBS'
       category:
         severity:
-          low: "Baixa"
-          medium: "Normal"
-          high: "Alta"
+          low: 'Baixa'
+          medium: 'Normal'
+          high: 'Alta'
       user:
         role:
-          admin: "Administrador"
-          city_admin: "Município"
-          faq_inserter: "Insersor do FAQ"
-          ubs_admin: "Administrador de UBS"
-          ubs_user: "Usuário de UBS"
-          company_admin: "Administrador de Empresa"
-          company_user: "Usuário de Empresa"
-          call_center_admin: "Administrador da Equipe de Suporte"
-          call_center_user: "Suporte"
+          admin: 'Administrador'
+          city_admin: 'Município'
+          faq_inserter: 'Insersor do FAQ'
+          ubs_admin: 'Administrador de UBS'
+          ubs_user: 'Usuário de UBS'
+          company_admin: 'Administrador de Empresa'
+          company_user: 'Usuário de Empresa'
+          call_center_admin: 'Administrador da Equipe de Suporte'
+          call_center_user: 'Suporte'
           min:
-            admin: "Administrador"
-            city_admin: "Município"
-            faq_inserter: "Insersor do FAQ"
-            ubs_admin: "UBS[Adm]"
-            ubs_user: "UBS[Usu]"
-            company_admin: "Empresa[Adm]"
-            company_user: "Empresa[Usu]"
-            call_center_admin: "Suporte[Adm]"
-            call_center_user: "Suporte[Usu]"
+            admin: 'Administrador'
+            city_admin: 'Município'
+            faq_inserter: 'Insersor do FAQ'
+            ubs_admin: 'UBS[Adm]'
+            ubs_user: 'UBS[Usu]'
+            company_admin: 'Empresa[Adm]'
+            company_user: 'Empresa[Usu]'
+            call_center_admin: 'Suporte[Adm]'
+            call_center_user: 'Suporte[Usu]'
         system:
-          companies: "Apoio à Empresas"
-          controversies: "Solução de Controvérsias"
-          both: "Apoio à Empresas e Solução de Controvérsias"
+          companies: 'Apoio à Empresas'
+          controversies: 'Solução de Controvérsias'
+          both: 'Apoio à Empresas e Solução de Controvérsias'
     general:
-      ubs: "UBS"
-      city: "Cidade"
-      uf: "UF"
-      company: "Empresa"
+      ubs: 'UBS'
+      city: 'Cidade'
+      uf: 'UF'
+      company: 'Empresa'
     models:
       city:
-        zero: "cidades"
-        one: "cidade"
-        few: "as cidades"
-        other: "cidades"
+        zero: 'cidades'
+        one: 'cidade'
+        few: 'as cidades'
+        other: 'cidades'
       answer:
-        zero: "respostas finais"
-        one: "resposta final"
-        few: "as respostas finais"
-        other: "respostas finais"
+        zero: 'respostas finais'
+        one: 'resposta final'
+        few: 'as respostas finais'
+        other: 'respostas finais'
       attachment:
-        zero: "anexos"
-        one: "anexo"
-        few: "os anexos"
-        other: "anexos"
+        zero: 'anexos'
+        one: 'anexo'
+        few: 'os anexos'
+        other: 'anexos'
       call:
-        zero: "atendimentos"
-        one: "Atendimento"
-        few: "os atendimentos"
-        other: "atendimentos"
-        description: "Descrição"
-        access_profile: "Perfil de acesso"
-        version: "Versão"
-        functional_detail: "Detalhe da funcionalidade"
-        severity: "Severidade"
-        category: "Categoria"
+        zero: 'atendimentos'
+        one: 'Atendimento'
+        few: 'os atendimentos'
+        other: 'atendimentos'
+        description: 'Descrição'
+        access_profile: 'Perfil de acesso'
+        version: 'Versão'
+        functional_detail: 'Detalhe da funcionalidade'
+        severity: 'Severidade'
+        category: 'Categoria'
       feedback:
-        zero: "pareceres"
-        one: "parecer"
-        few: "os pareceres"
-        other: "pareceres"
+        zero: 'pareceres'
+        one: 'parecer'
+        few: 'os pareceres'
+        other: 'pareceres'
       controversy:
-        zero: "controvérsias"
-        one: "controvérsia"
-        few: "as controvérsias"
-        other: "controvérsias"
+        zero: 'controvérsias'
+        one: 'controvérsia'
+        few: 'as controvérsias'
+        other: 'controvérsias'
       category:
-        zero: "categorias"
-        one: "categoria"
-        few: "as categorias"
-        other: "categorias"
+        zero: 'categorias'
+        one: 'categoria'
+        few: 'as categorias'
+        other: 'categorias'
       company:
-        zero: "empresas"
-        one: "empresa"
-        few: "as empresas"
-        other: "empresas"
+        zero: 'empresas'
+        one: 'empresa'
+        few: 'as empresas'
+        other: 'empresas'
       contract:
-        zero: "contratos"
-        one: "contrato"
-        few: "os contratos"
-        other: "contratos"
+        zero: 'contratos'
+        one: 'contrato'
+        few: 'os contratos'
+        other: 'contratos'
       reply:
-        zero: "respostas"
-        one: "resposta"
-        few: "as respostas"
-        other: "respostas"
+        zero: 'respostas'
+        one: 'resposta'
+        few: 'as respostas'
+        other: 'respostas'
       state:
-        zero: "estados"
-        one: "estado"
-        few: "os estados"
-        other: "estados"
+        zero: 'estados'
+        one: 'estado'
+        few: 'os estados'
+        other: 'estados'
       unity:
-        zero: "UBS"
-        one: "UBS"
-        few: "as UBS"
-        other: "UBS"
+        zero: 'UBS'
+        one: 'UBS'
+        few: 'as UBS'
+        other: 'UBS'
       user:
-        zero: "usuários"
-        one: "usuário"
-        few: "os usuários"
-        other: "usuários"
+        zero: 'usuários'
+        one: 'usuário'
+        few: 'os usuários'
+        other: 'usuários'
   will_paginate:
     page_entries_info:
       single_page:
-        zero:  "%{model} não encontrado"
-        one:   "Mostrando 1 %{model}"
-        other: "Mostrando %{count} %{model}"
+        zero: '%{model} não encontrado'
+        one: 'Mostrando 1 %{model}'
+        other: 'Mostrando %{count} %{model}'
       single_page_html:
-        zero:  "Modelo %{model} não encontrado"
-        one:   "Mostrando <b&nbsp;>1&nbsp;</b> %{model}"
-        other: "Mostrando <b>&nbsp;%{count}&nbsp;</b> %{model}"
+        zero: 'Modelo %{model} não encontrado'
+        one: 'Mostrando <b&nbsp;>1&nbsp;</b> %{model}'
+        other: 'Mostrando <b>&nbsp;%{count}&nbsp;</b> %{model}'
 
-      multi_page: "Mostrando %{model} %{from} até %{to} de %{count} no total"
-      multi_page_html: "Mostrando %{model} <b>&nbsp;%{from}&nbsp;até&nbsp;%{to}&nbsp;</b> de <b>&nbsp;%{count}&nbsp;</b> no total"
+      multi_page: 'Mostrando %{model} %{from} até %{to} de %{count} no total'
+      multi_page_html: 'Mostrando %{model} <b>&nbsp;%{from}&nbsp;até&nbsp;%{to}&nbsp;</b> de <b>&nbsp;%{count}&nbsp;</b> no total'

@@ -15,6 +15,8 @@ class Reply < ApplicationRecord
   alias_attribute :status, :TP_STATUS
   enum status: %i[open closed reopened]
 
+  class CreateError < StandardError; end
+
   #### DATABASE adaptations ####
   self.primary_key = :CO_ID # Setting a different primary_key
   self.table_name = :TB_RESPOSTA # Setting a different table_name
@@ -54,44 +56,14 @@ class Reply < ApplicationRecord
     read_attribute(:ST_FAQ)
   end
 
-  # Configures an alias setter for the CO_PROTOCOLO database column
-  def repliable_id=(value)
-    write_attribute(:CO_PROTOCOLO, value)
-  end
-
-  # Configures an alias getter for the CO_PROTOCOLO database column
-  def repliable_id
-    read_attribute(:CO_PROTOCOLO)
-  end
-
-  # Configures an alias setter for the CO_USUARIO database column
-  def user_id=(value)
-    write_attribute(:CO_USUARIO, value)
-  end
-
-  # Configures an alias getter for the CO_USUARIO database column
-  def user_id
-    read_attribute(:CO_USUARIO)
-  end
-
-  # Configures an alias setter for the TP_STATUS database column
-  def status=(value)
-    write_attribute(:TP_STATUS, value)
-  end
-
-  # Configures an alias getter for the TP_STATUS database column
-  def status
-    read_attribute(:TP_STATUS)
-  end
-
-  # Configures an alias setter for the DT_CRIADO_EM database column
+  # Configures an alias setter for the Event DT_CRIADO_EM database column
   def created_at=(value)
-    write_attribute(:DT_CRIADO_EM, value)
+    event.created_at = value
   end
 
-  # Configures an alias getter for the DT_CRIADO_EM database column
+  # Configures an alias setter for the Event DT_CRIADO_EM database column
   def created_at
-    read_attribute(:DT_CRIADO_EM)
+    event.created_at
   end
 
   # Formats created_at attribute
@@ -102,7 +74,7 @@ class Reply < ApplicationRecord
   # Get the agent (Controversy or Call)
   # which created the Event which is parent of this Reply
   def repliable
-    event.action
+    event.parent
   end
 
   # Get name of border class to each user role

@@ -86,16 +86,6 @@ class Call < ApplicationRecord
     read_attribute(:DS_DESCRICAO)
   end
 
-  # Configures an alias setter for the DT_FINALIZADO_EM database column
-  def finished_at=(value)
-    write_attribute(:DT_FINALIZADO_EM, value)
-  end
-
-  # Configures an alias getter for the DT_FINALIZADO_EM database column
-  def finished_at
-    read_attribute(:DT_FINALIZADO_EM)
-  end
-
   # Configures an alias setter for the TP_STATUS database column
   def status=(value)
     write_attribute(:TP_STATUS, value)
@@ -186,6 +176,41 @@ class Call < ApplicationRecord
     read_attribute(:DT_CRIADO_EM)
   end
 
+  # Configures a getter for a formatted created_at (DT_CRIADO_EM) field
+  def formatted_created_at
+    created_at.strftime('%d %b %y - %H:%M:%S')
+  end
+
+  # Configures an alias setter for the DT_REABERTO_EM database column
+  def reopened_at=(value)
+    write_attribute(:DT_REABERTO_EM, value)
+  end
+
+  # Configures an alias getter for the DT_REABERTO_EM database column
+  def reopened_at
+    read_attribute(:DT_REABERTO_EM)
+  end
+
+  # Configures a getter for a formatted created_at (DT_REABERTO_EM) field
+  def formatted_reopened_at
+    reopened_at.strftime('%d %b %y - %H:%M:%S')
+  end
+
+  # Configures an alias setter for the DT_FINALIZADO_EM database column
+  def finished_at=(value)
+    write_attribute(:DT_FINALIZADO_EM, value)
+  end
+
+  # Configures an alias getter for the DT_FINALIZADO_EM database column
+  def finished_at
+    read_attribute(:DT_FINALIZADO_EM)
+  end
+
+  # Configures a getter for a formatted finished_at (DT_FINALIZADO_EM) field
+  def formatted_finished_at
+    finished_at.strftime('%d %b %y - %H:%M:%S')
+  end
+
   # Configures an alias setter for the CO_USUARIO_EMPRESA database column
   def user_id=(value)
     write_attribute(:CO_USUARIO_EMPRESA, value)
@@ -236,20 +261,15 @@ class Call < ApplicationRecord
     read_attribute(:NU_SEVERIDADE)
   end
 
-  # Configures an alias setter for the DT_REABERTO_EM database column
-  def reopened_at=(value)
-    write_attribute(:DT_REABERTO_EM, value)
-  end
-
-  # Configures an alias getter for the DT_REABERTO_EM database column
-  def reopened_at
-    read_attribute(:DT_REABERTO_EM)
-  end
-
   # Configures an alias to get the State instance which is related to this Call
   # through the City
   def state
     city.state
+  end
+
+  # Closes a call configuring it closed_at column
+  def close!
+    update(TP_STATUS: 'closed', DT_FINALIZADO_EM: 0.seconds.from_now)
   end
 
   # Returns all Call instances which are related to

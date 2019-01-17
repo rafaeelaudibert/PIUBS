@@ -94,6 +94,11 @@ class Answer < ApplicationRecord
     read_attribute(:DT_CRIADO_EM)
   end
 
+  # Configures a getter for a formatted created_at (DT_CRIADO_EM) field
+  def formatted_created_at
+    created_at.strftime('%d %b %y - %H:%M:%S')
+  end
+
   # Configures an alias setter for the DS_PALAVRA_CHAVE database column
   def keywords=(value)
     write_attribute(:DS_PALAVRA_CHAVE, value)
@@ -106,10 +111,10 @@ class Answer < ApplicationRecord
 
   # Configures an alias setter for the ST_FAQ database column
   def faq=(value)
-    if [true, false].include? value
-      write_attribute(:ST_FAQ, value == true ? 'S' : 'N')
-    else
+    if %w[S N].include? value
       write_attribute(:ST_FAQ, value)
+    else
+      write_attribute(:ST_FAQ, value == true || !value.to_i.zero? ? 'S' : 'N')
     end
   end
 

@@ -49,18 +49,24 @@ class RepliesController < ApplicationController
   #
   # [POST] <tt>/replies</tt>
   def create
-    rep_params = reply_params
-    files = retrieve_files rep_params
-    @reply = create_reply rep_params
+    files = params[:reply][:files] != '' ? params[:reply][:files].split(',') : []
+    @event = create_event
+    @reply = Reply.new(reply_params)
     authorize! :create, @reply
 
-    if @reply.save
-      create_file_links @reply, files
-      send_mail @reply, current_user
-      redirect_to create_path(@reply), notice: 'Resposta adicionada com sucesso.'
-    else
-      render :new
-    end
+    raise Event::CreateError unless @event.save
+
+    @reply.id = @event.id
+    raise Reply::CreateError unless @reply.save
+
+    create_file_links @reply, files
+    send_mail @reply, current_user
+    redirect_to create_path(@reply), notice: 'Resposta adicionada com sucesso.'
+  rescue Reply::CreateError => e
+    @event.delete
+    redirect_back fallback_location: :root_path, alert: 'Erro na criação da Resposta'
+  rescue Event::CreateError => e
+    redirect_back fallback_location: :root_path, alert: 'Erro na criação da Resposta por erro na criação do Evento'
   end
 
   # Configures the <tt>attachments</tt> request for the
@@ -93,23 +99,14 @@ class RepliesController < ApplicationController
 
   # Makes the famous "Never trust parameters from internet, only allow the white list through."
   def reply_params
-    params.require(:reply).permit(:faq_attachments, :repliable_id, :repliable_type,
-                                  :description, :user_id, :faq, :files)
+    params.require(:reply).permit(:description, :faq)
   end
 
-  # Returns the Attachment instances's ids received in the
-  # request, removing it from the parameters
-  def retrieve_files(rep_params)
-    rep_params[:files] ? rep_params.delete(:files).split(',') : []
-  end
-
-  # Called by #create, create a Reply based in the
-  # <tt>params</tt> and setting some default values
-  def create_reply(rep_params)
-    reply = Reply.new(rep_params)
-    reply.user_id = current_user.id
-    reply.status = reply.repliable.try(:status) || 'Sem Status'
-    reply
+  def create_event
+    Event.new(type: EventType.reply,
+              user: current_user,
+              system: params[:reply][:repliable_type] == 'Call' ? System.call : System.controversy,
+              protocol: params[:reply][:repliable_id])
   end
 
   # For each Attachment instance id received in the
@@ -132,7 +129,7 @@ class RepliesController < ApplicationController
   def retrieve_file_bytes(attachment)
     Reply.connection
          .select_all(Reply.sanitize_sql_array([
-                                                'SELECT octet_length(file_contents) FROM '\
+                                                'SELECT octet_length("BL_CONTEUDO") FROM '\
                                                 '"TB_ANEXO" WHERE "TB_ANEXO"."CO_ID" = ?',
                                                 attachment.id
                                               ]))[0]['octet_length']
@@ -155,8 +152,8 @@ class RepliesController < ApplicationController
   # based if the Reply was created for a Call or a
   # Controversy instance
   def create_path(reply)
-    id = reply.repliable_id
-    reply.repliable_type == 'Call' ? call_path(id) : controversy_path(id)
+    id = reply.repliable.id
+    params[:reply][:repliable_type] == 'Call' ? call_path(id) : controversy_path(id)
   end
 
   ####

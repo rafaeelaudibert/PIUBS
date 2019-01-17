@@ -119,12 +119,11 @@ class AnswersController < ApplicationController
   #
   # [POST] <tt>/answers</tt>
   def create
-    puts '------------------------'
-    pp params
-    files = retrieve_files(params) || []
-
+    files = params[:answer][:files] != '' ? params[:answer][:files].split(',') : []
+    puts '----------------------------------------------'
+    pp answer_params
     @answer = Answer.new(answer_params)
-    pp @answer
+
     if @answer.save
       mark_as_final_answer @answer if params[:call_id]
       create_file_links @answer, files
@@ -134,6 +133,12 @@ class AnswersController < ApplicationController
     else
       render :new
     end
+  rescue Event::CreateError => e
+    @answer.delete
+    render :new, alert: 'Erro na criação do Atendimento por erro na criação do Evento'
+  rescue Alteration::CreateError => e
+    [@answer, @event].each(&:delete) # Rollback
+    render :new, alert: 'Erro na criação do Atendimento por erro na criação de Alteração'
   end
 
   # Configures the <tt>PATCH/PUT</tt> request to update
@@ -254,29 +259,16 @@ class AnswersController < ApplicationController
 
   # Makes the famous "Never trust parameters from internet, only allow the white list through."
   def answer_params
-    normalize_params
+    params[:answer][:keywords] = params[:answer][:keywords].split(',').join(' ; ')
     params.require(:answer).permit(:keywords, :question, :answer, :category_id,
                                    :user_id, :faq, :call_id, :system_id, :reply_attachments)
-  end
-
-  # Called by #answer_params to normalize the <tt>keywords</tt>
-  # and the <tt>faq</tt> fields
-  def normalize_params
-    params[:answer][:keywords] = params[:answer][:keywords].split(',').join(' ; ')
-    params[:answer][:faq] = params[:answer][:faq].to_i == 1 ? 'S' : 'N'
-  end
-
-  # Returns the Attachment instances's ids received in the
-  # request, removing it from the parameters
-  def retrieve_files(ans_params)
-    ans_params.delete(:files).split(',') if ans_params[:files]
   end
 
   # When called by #create, handles the possible change
   # of Final Answer in the possible Call parent instance
   # as well as removing the old Answer which occupied that place
   def mark_as_final_answer(answer)
-    update_call_reply @call
+    update_call @call
 
     # Removes the old answer if he is not in the FAQ and
     # remove its AttachmentLink instances
@@ -294,9 +286,20 @@ class AnswersController < ApplicationController
   # Called by #mark_as_final_answer, handles the need to close
   # the Answer's Call parent instance, as well as handling the
   # timeline of it
-  def update_call_reply(call)
-    call.update(TP_STATUS: 'closed', DT_FINALIZADO_EM: 0.seconds.from_now)
-    call.replies.first.update(DT_REF_ATENDIMENTO_FECHADO: 0.seconds.from_now)
+  def update_call(call)
+    # Create event
+    @event = Event.new(type: EventType.alteration,
+                       user: current_user,
+                       system: System.call,
+                       protocol: call.protocol)
+
+    raise Event::CreateError, @event.errors.inspect unless @event.save
+
+    # After we correctly saved the event
+    @alteration = Alteration.new(id: @event.id, type: :close_call)
+    raise Alteration::CreateError, @alteration.errors.inspect unless @alteration.save
+
+    call.close!
   end
 
   # Called by #mark_as_final_answer, updates the <tt>answer</tt>
@@ -330,7 +333,7 @@ class AnswersController < ApplicationController
   def retrieve_file_bytes(attachment)
     Answer.connection
           .select_all(Answer.sanitize_sql_array([
-                                                  'SELECT octet_length(file_contents) FROM '\
+                                                  'SELECT octet_length("BL_CONTEUDO") FROM '\
                                                   '"TB_ANEXO" WHERE "TB_ANEXO"."CO_ID" = ?',
                                                   attachment.id
                                                 ]))[0]['octet_length']

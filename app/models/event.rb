@@ -25,14 +25,19 @@ class Event < ApplicationRecord
     read_attribute(:CO_SEQ_ID)
   end
 
-  # Configures an alias setter for the DT_DATA database column
+  # Configures an alias setter for the DT_CRIADO_EM database column
   def created_at=(value)
-    write_attribute(:DT_DATA, value)
+    write_attribute(:DT_CRIADO_EM, value)
   end
 
-  # Configures an alias getter for the DT_DATA database column
+  # Configures an alias getter for the DT_CRIADO_EM database column
   def created_at
-    read_attribute(:DT_DATA)
+    read_attribute(:DT_CRIADO_EM)
+  end
+
+  # Configures a getter for a formatted created_at (DT_CRIADO_EM) field
+  def formatted_created_at
+    created_at.strftime('%d %b %y - %H:%M:%S')
   end
 
   # Configures an alias setter for the CO_USUARIO database column

@@ -70,7 +70,7 @@ class CallsController < ApplicationController
     raise Call::CreateError, @call.errors.inspect unless @call.save
 
     create_file_links @call, files
-    configure_event :create_call
+    configure_event :open_call, @call.user
 
     redirect_to @call, notice: 'Atendimento criado com sucesso.'
   rescue Call::CreateError => e
@@ -95,8 +95,8 @@ class CallsController < ApplicationController
     raise Call::AlreadyTaken, @call.errors.inspect if @call.support_user
 
     @call.support_user = current_user
-    configure_event :link_call
     raise Call::UpdateError, @call.errors.inspect unless @call.save
+    configure_event :link_call, current_user
 
     redirect_back fallback_location: :root_path, notice: 'Agora esse atendimento é seu'
   rescue Call::AlreadyTaken => e
@@ -123,13 +123,18 @@ class CallsController < ApplicationController
     raise Call::OwnerError unless @call.support_user == current_user
 
     @call.support_user = nil
-    configure_event :unlink_call
     raise Call::UpdateError unless @call.save
+    configure_event :unlink_call, current_user
 
     redirect_back fallback_location: :root_path, notice: 'Atendimento liberado com sucesso.'
   rescue Call::OwnerError => e
     redirect_back fallback_location: :root_path, alert: e.msg
   rescue Call::UpdateError => e
+    redirect_back fallback_location: :root_path, alert: e.msg
+  rescue Event::CreateError => e
+    redirect_back fallback_location: :root_path, alert: e.msg
+  rescue Alteration::CreateError => e
+    @event.delete
     redirect_back fallback_location: :root_path, alert: e.msg
   end
 
@@ -142,18 +147,21 @@ class CallsController < ApplicationController
     authorize! :reopen_call, @call
 
     @answer = @call.answer
-    @call = update_call @call, params
+    @call = update_call @call
 
-    if @call.save
-      # Retira a ultima answer caso ela nao esteja no FAQ,
-      # e exclui seus attachment_links
-      delete_final_answer @answer unless @answer.try(:faq) == true
+    raise Call::UpdateError unless @call.save
 
-      redirect_back(fallback_location: root_path, notice: 'Atendimento reaberto')
-    else
-      redirect_back(fallback_location: root_path,
-                    alert: 'Ocorreu um erro ao tentar reabrir o atendimento')
-    end
+    delete_final_answer @answer unless @answer.try(:faq) == true
+    configure_event :reopen_call, current_user
+
+    redirect_back fallback_location: :root_path, notice: 'Atendimento reaberto'
+  rescue Call::UpdateError => e
+    redirect_back fallback_location: :root_path, alert: e.msg
+  rescue Event::CreateError => e
+    redirect_back fallback_location: :root_path, alert: e.msg
+  rescue Alteration::CreateError => e
+    @event.delete
+    redirect_back fallback_location: :root_path, alert: e.msg
   end
 
   private
@@ -289,22 +297,19 @@ class CallsController < ApplicationController
 
   # Method called by #reopen_call function,
   # used to reopen a call and re-configure the timeline
-  def update_call(call, params)
+  def update_call(call)
     call.reopened!
     call.update(reopened_at: 0.seconds.from_now)
     call.answer_id = nil
-
-    Reply.find(params[:reply_id]).update(last_call_ref_reply_reopened_at: 0.seconds.from_now)
-
     call
   end
 
-  # Called by #create, configures the event creation of a :open_call Alteration
+  # Called by #create, configures the event creation of a :creat Alteration
   # Returns true if the Event and the Alteration instance were successfully created
-  def configure_event(event)
+  def configure_event(event, user)
     # Create event
     @event = Event.new(type: EventType.alteration,
-                       user: @call.user,
+                       user: user,
                        system: System.call,
                        protocol: @call.protocol)
 
