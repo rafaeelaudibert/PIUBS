@@ -45,7 +45,7 @@ class FeedbacksController < ApplicationController
   #
   # [POST] <tt>/controversias/feedback</tt>
   def create
-    files = retrieve_files(params) || []
+    files = retrieve_files_from(params) || []
 
     @feedback = Feedback.new(feedback_params)
     authorize! :create, @feedback
@@ -90,7 +90,7 @@ class FeedbacksController < ApplicationController
 
   # Returns the Attachment instances's ids received in the
   # request, removing it from the parameters
-  def retrieve_files(parameters)
+  def retrieve_files_from(parameters)
     parameters[:feedback].delete(:files).split(',') if parameters[:feedback][:files]
   end
 

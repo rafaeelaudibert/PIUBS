@@ -148,7 +148,7 @@ class AnswersController < ApplicationController
   #
   # [PATCH/PUT] <tt>/answers/:id</tt>
   def update
-    files = retrieve_files(params) || []
+    files = params[:answer][:files] != '' ? params[:answer][:files].split(',') : []
 
     if @answer.update(answer_params)
 

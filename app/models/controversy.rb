@@ -36,7 +36,6 @@ class Controversy < ApplicationRecord
 
   class CreateError < StandardError; end
   class UpdateError < StandardError; end
-  class RoleError < StandardError; end
   class AlreadyTaken < StandardError; end
   class OwnerError < StandardError; end
 

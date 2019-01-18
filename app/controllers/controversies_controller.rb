@@ -11,7 +11,8 @@ class ControversiesController < ApplicationController
   before_action :authenticate_user!
   before_action :restrict_system!
   before_action :set_controversy, except: %i[index new create]
-  before_action :set_user, only: %i[link_company_user link_city_user
+  before_action :set_user, only: %i[unlink_controversy link_controversy
+                                    link_company_user link_city_user
                                     link_unity_user link_support_user]
   before_action :authorize_alter_user, only: %i[link_company_user link_city_user
                                                 link_unity_user link_support_user]
@@ -78,20 +79,12 @@ class ControversiesController < ApplicationController
   #
   # [POST] <tt>/controversias/controversies</tt>
   def create
-    controversy_parameters = controversy_params
-
-    files = retrieve_files controversy_parameters
-    user_creator = retrieve_user_creator controversy_parameters
-    @controversy = create_controversy controversy_parameters, user_creator
-    authorize! :create, @controversy
+    files = prepare_to_create(controversy_params)
 
     raise Controversy::CreateError unless @controversy.save
 
-    create_file_links @controversy, files
-    configure_event :open_call, @controversy.creator
-    configure_event :link_support_controversy, @user
+    post_creation_stuff(files)
 
-    ControversyMailer.new_controversy(@controversy.protocol, current_user.id).deliver_later
     redirect_to @controversy, notice: 'Controvérsia criada com sucesso.'
   rescue Controversy::CreateError => e
     render :new, alert: 'Erro na criação da Controvérsia'
@@ -110,35 +103,20 @@ class ControversiesController < ApplicationController
   #
   # [POST] <tt>/controversias/controversies/:id/link_controversy/:user_id</tt>
   def link_controversy
-    authorize! :link, @controversy
-
-    raise Controversy::AlreadyTaken unless @controversy.support_1.nil?
-
-    @user = User.find(params[:user_id])
-    raise Controversy::RoleError unless support_like?(@user)
-
-    raise Controversy::CreateError unless @controversy.update(support_1: @user)
-
-    configure_event :link_support_controversy, @user
-
+    configure_link_controversy
     redirect_back(fallback_location: root_path, notice: 'Agora essa controvérsia é sua')
   rescue Controversy::AlreadyTaken => e
     redirect_back(fallback_location: root_path,
                   alert: 'Você não pode pegar uma controvérsia de outro usuário do suporte')
-  rescue Controversy::RoleError => e
-    redirect_back(fallback_location: root_path,
-                  alert: 'O usuário selecionado não pode ser adicionado')
   rescue Controversy::CreateError
     redirect_back(fallback_location: root_path,
                   alert: 'Ocorreu um erro ao tentar pegar a controvérsia')
   rescue Event::CreateError => e
-    @controversy.support_1 = nil
-    @controversy.save
+    @controversy.update(support_1: nil)
     redirect_back(fallback_location: root_path,
                   alert: 'Erro ao pegar a Controvérsia por erro na criação do Evento')
   rescue Alteration::CreateError => e
-    @controversy.support_1 = nil
-    @controversy.save
+    @controversy.update(support_1: nil)
     @event.delete # Rollback
     redirect_back(fallback_location: root_path,
                   alert: 'Erro ao pegar a Controvérsia por erro na criação da Alteração')
@@ -151,14 +129,7 @@ class ControversiesController < ApplicationController
   #
   # [POST] <tt>/controversias/controversies/:id/unlink_controversy/:user_id</tt>
   def unlink_controversy
-    authorize! :link, @controversy
-    @user = User.find(params[:user_id])
-    raise Controversy::OwnerError unless @controversy.support_1 == @user
-
-    raise Controversy::UpdateError unless @controversy.update(support_1: nil)
-
-    configure_event :unlink_support_controversy, @user
-
+    configure_unlink_controversy
     redirect_back(fallback_location: root_path, notice: 'A Controvérsia foi liberada')
   rescue Controversy::OwnerError => e
     redirect_back(fallback_location: root_path,
@@ -184,24 +155,8 @@ class ControversiesController < ApplicationController
   #
   # [POST] <tt>/controversias/controversies/:id/link_company_user/:user_id</tt>
   def link_company_user
-    if !@controversy.company_user.nil? # Unlinking Company user
-      configure_event :unlink_company_controversy, @controversy.company_user
-
-      raise Controversy::UpdateError unless @controversy.update(company_user: nil)
-
-      redirect_back(fallback_location: root_path, notice: 'Usuário da Empresa removido com sucesso')
-    elsif @user.sei == @controversy.sei # Linking Company user
-      configure_event :link_company_controversy, @user
-
-      raise Controversy::UpdateError unless @controversy.update(company_user: @user)
-
-      ControversyMailer.user_added(@controversy.id, @user.id).deliver_later
-      redirect_back(fallback_location: root_path,
-                    notice: 'Usuário da Empresa adicionado com sucesso')
-    else
-      redirect_back(fallback_location: root_path,
-                    alert: 'Usuário sem permissão para ser adicionado')
-    end
+    handle_link_user(!@controversy.company_user.nil?, @user.sei == @controversy.sei,
+                     @controversy.company_user, 'company_user', 'Usuário da Empresa')
   rescue Controversy::UpdateError => e
     [@event, @alteration].each(&:delete) # Rollback
     redirect_back(fallback_location: root_path,
@@ -222,24 +177,8 @@ class ControversiesController < ApplicationController
   #
   # [POST] <tt>/controversias/controversies/:id/link_city_user/:user_id</tt>
   def link_city_user
-    if !@controversy.city_user.nil? # Unlinking City user
-      configure_event :unlink_city_controversy, @controversy.city_user
-
-      raise Controversy::UpdateError unless @controversy.update(city_user: nil)
-
-      redirect_back(fallback_location: root_path, notice: 'Usuário da Cidade removido com sucesso')
-    elsif city_user_elegible? # Linking City user
-      configure_event :link_city_controversy, @user
-
-      raise Controversy::UpdateError unless @controversy.update(city_user: @user)
-
-      ControversyMailer.user_added(@controversy.id, @user.id).deliver_later
-      redirect_back(fallback_location: root_path,
-                    notice: 'Usuário da Cidade adicionado com sucesso')
-    else
-      redirect_back(fallback_location: root_path,
-                    alert: 'Usuário sem permissão para ser adicionado')
-    end
+    handle_link_user(!@controversy.city_user.nil?, city_user_elegible?,
+                     @controversy.city_user, 'city_user', 'Usuário da Cidade')
   rescue Controversy::UpdateError => e
     [@event, @alteration].each(&:delete) # Rollback
     redirect_back(fallback_location: root_path,
@@ -260,23 +199,8 @@ class ControversiesController < ApplicationController
   #
   # [POST] <tt>/controversias/controversies/:id/link_unity_user/:user_id</tt>
   def link_unity_user
-    if !@controversy.unity_user.nil? # Unlinking Unity user
-      configure_event :unlink_unity_controversy, @controversy.unity_user
-
-      raise Controversy::UpdateError unless @controversy.update(unity_user: nil)
-
-      redirect_back(fallback_location: root_path, notice: 'Usuário da UBS removido com sucesso')
-    elsif unity_user_elegible? # Linking Unity user
-      configure_event :link_unity_controversy, @user
-
-      raise Controversy::UpdateError unless @controversy.update(unity_user: @user)
-
-      ControversyMailer.user_added(@controversy.id, @user.id).deliver_later
-      redirect_back(fallback_location: root_path, notice: 'Usuário da UBS adicionado com sucesso')
-    else
-      redirect_back(fallback_location: root_path,
-                    alert: 'Usuário sem permissão para ser adicionado')
-    end
+    handle_link_user(!@controversy.unity_user.nil?, unity_user_elegible?,
+                     @controversy.unity_user, 'unity_user', 'Usuário da UBS')
   rescue Controversy::UpdateError => e
     [@event, @alteration].each(&:delete) # Rollback
     redirect_back(fallback_location: root_path,
@@ -297,25 +221,8 @@ class ControversiesController < ApplicationController
   #
   # [POST] <tt>/controversias/controversies/:id/link_support_user/:user_id</tt>
   def link_support_user
-    if !@controversy.support_2.nil? # Unlinking extra support user
-      configure_event :unlink_extra_support_controversy, @controversy.support_2
-
-      raise Controversy::UpdateError unless @controversy.update(support_2: nil)
-
-      redirect_back(fallback_location: root_path,
-                    notice: 'Usuário extra do Suporte removido com sucesso')
-    elsif support_like?(@user) # Linking extra support user
-      configure_event :link_extra_support_controversy, @user
-
-      raise Controversy::UpdateError unless @controversy.update(support_2: @user)
-
-      ControversyMailer.user_added(@controversy.id, @user.id).deliver_later
-      redirect_back(fallback_location: root_path,
-                    notice: 'Usuário extra do Suporte adicionado com sucesso')
-    else
-      redirect_back(fallback_location: root_path,
-                    alert: 'Usuário sem permissão para ser adicionado')
-    end
+    handle_link_user(!@controversy.support_2.nil?, support_like?(@user),
+                     @controversy.support_2, 'support_2', 'Usuário extra do Suporte')
   rescue Controversy::UpdateError => e
     [@event, @alteration].each(&:delete) # Rollback
     redirect_back(fallback_location: root_path,
@@ -396,7 +303,7 @@ class ControversiesController < ApplicationController
 
   # Returns the Attachment instances's ids received in the
   # request, removing it from the parameters
-  def retrieve_files(parameters)
+  def retrieve_files_from(parameters)
     parameters.delete(:files).split(',') if parameters[:files]
   end
 
@@ -404,6 +311,16 @@ class ControversiesController < ApplicationController
   # request, removing it from the parameters
   def retrieve_user_creator(parameters)
     parameters.delete(:user_creator) if parameters[:user_creator]
+  end
+
+  # Called by #create, configures the Controversy creation
+  def prepare_to_create(parameters)
+    files = retrieve_files_from(parameters)
+    user_creator = retrieve_user_creator(parameters)
+    @controversy = create_controversy(parameters, user_creator)
+    authorize! :create, @controversy
+
+    files
   end
 
   # Returns a Call with the <tt>parameters</tt>
@@ -420,6 +337,15 @@ class ControversiesController < ApplicationController
     controversy.support_1_user_id = current_user.id if support_user?
 
     controversy
+  end
+
+  # Called by #create, handles all the Controversy action to be executed
+  # after the Controversy creation
+  def post_creation_stuff(files)
+    create_file_links @controversy, files
+    configure_event :open_call, @controversy.creator
+    configure_event :link_support_controversy, current_user
+    ControversyMailer.new_controversy(@controversy.protocol, @controversy.creator.id).deliver_later
   end
 
   # Called by #link_city_user verifies if the User trying to
@@ -439,6 +365,61 @@ class ControversiesController < ApplicationController
   def unity_user_elegible?
     (@controversy.cnes.nil? && @user.city_id == @controversy.city_id) ||
       @user.cnes == @controversy.cnes
+  end
+
+  # Method called by #link_controversy which makes the link between
+  # the User instance with a <tt>support_like</tt> role to the Controversy
+  def configure_link_controversy
+    authorize! :link, @controversy
+
+    raise Controversy::AlreadyTaken unless @controversy.support_1.nil?
+    raise Controversy::CreateError unless support_like?(@user)
+    raise Controversy::CreateError unless @controversy.update(support_1: @user)
+
+    configure_event :link_support_controversy, @user
+  end
+
+  # Method called by #unlink_controversy which destroys the link between
+  # the User instance located in the <tt>support_1</tt> field to the Controversy
+  def configure_unlink_controversy
+    authorize! :link, @controversy
+
+    raise Controversy::OwnerError unless @controversy.support_1 == @user
+    raise Controversy::UpdateError unless @controversy.update(support_1: nil)
+
+    configure_event :unlink_support_controversy, @user
+  end
+
+  # Function called by the methods which handle Controversy links for
+  # User instances which can belong to a City, Unity, Company or the support
+  def handle_link_user(unlink_bool, link_bool, actual_user, role, msg)
+    if unlink_bool # Unlinking Company user
+      unlink_user_function(actual_user, role, msg)
+    elsif link_bool # Linking Company user
+      link_user_function(role, msg)
+    else
+      redirect_back(fallback_location: root_path,
+                    alert: 'Usuário sem permissão para ser adicionado')
+    end
+  end
+
+  # Function called by #handle_link_user to handle the unlink part of the job
+  def unlink_user_function(actual_user, role, msg)
+    configure_event "unlink_#{role}_controversy".to_sym, actual_user
+
+    raise Controversy::UpdateError unless @controversy.send('update', "#{role}": nil)
+
+    redirect_back(fallback_location: root_path, notice: "#{msg} removido com sucesso")
+  end
+
+  # Function called by #handle_link_user to handle the link part of the job
+  def link_user_function(role, msg)
+    configure_event "link_#{role}_controversy".to_sym, @user
+
+    raise Controversy::UpdateError unless @controversy.send('update', "#{role}": @user)
+
+    ControversyMailer.user_added(@controversy.id, @user.id).deliver_later
+    redirect_back(fallback_location: root_path, notice: "#{msg} adicionado com sucesso")
   end
 
   # For each Attachment instance id received in the

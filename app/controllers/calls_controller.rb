@@ -64,7 +64,7 @@ class CallsController < ApplicationController
   #
   # [POST] <tt>/apoioaempresas/calls</tt>
   def create
-    files = retrieve_files params.require(:call)
+    files = retrieve_files_from params.require(:call)
     @call = create_call call_params
 
     raise Call::CreateError, @call.errors.inspect unless @call.save
@@ -95,7 +95,7 @@ class CallsController < ApplicationController
     raise Call::AlreadyTaken, @call.errors.inspect if @call.support_user
 
     @call.support_user = current_user
-    raise Call::UpdateError, @call.errors.inspect unless @call.save
+
     configure_event :link_call, current_user
 
     redirect_back fallback_location: root_path, notice: 'Agora esse atendimento é seu'
@@ -124,6 +124,7 @@ class CallsController < ApplicationController
 
     @call.support_user = nil
     raise Call::UpdateError unless @call.save
+
     configure_event :unlink_call, current_user
 
     redirect_back fallback_location: root_path, notice: 'Atendimento liberado com sucesso.'
@@ -346,7 +347,7 @@ class CallsController < ApplicationController
 
   # Returns the Attachment instances's ids received in the
   # request, removing it from the parameters
-  def retrieve_files(call_parameters)
+  def retrieve_files_from(call_parameters)
     call_parameters.delete(:files).split(',') if call_parameters[:files]
   end
 
