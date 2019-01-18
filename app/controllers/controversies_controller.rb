@@ -63,6 +63,8 @@ class ControversiesController < ApplicationController
   def new
     @controversy = Controversy.new
     authorize! :new, @controversy
+
+    # rubocop:disable Style/GuardClause
     if (city_user? || ubs_user?) && current_user.city.contract_id.nil?
       redirect_back(fallback_location: controversies_path,
                     notice: 'A sua cidade não possui contratos')
@@ -115,8 +117,7 @@ class ControversiesController < ApplicationController
     @user = User.find(params[:user_id])
     raise Controversy::RoleError unless support_like?(@user)
 
-    @controversy.support_1 = @user
-    raise Controversy::CreateError unless @controversy.save
+    raise Controversy::CreateError unless @controversy.update(support_1: @user)
 
     configure_event :link_support_controversy, @user
 
@@ -154,12 +155,11 @@ class ControversiesController < ApplicationController
     @user = User.find(params[:user_id])
     raise Controversy::OwnerError unless @controversy.support_1 == @user
 
-    @controversy.support_1 = nil
-    raise Controversy::UpdateError unless @controversy.save
+    raise Controversy::UpdateError unless @controversy.update(support_1: nil)
 
     configure_event :unlink_support_controversy, @user
 
-    redirect_back(fallback_location: root_path, alert: 'A Controvérsia foi liberada')
+    redirect_back(fallback_location: root_path, notice: 'A Controvérsia foi liberada')
   rescue Controversy::OwnerError => e
     redirect_back(fallback_location: root_path,
                   alert: 'Essa controvérsia pertence a outro usuário do suporte.')
@@ -167,100 +167,166 @@ class ControversiesController < ApplicationController
     redirect_back(fallback_location: root_path,
                   alert: 'Ocorreu um erro ao tentar deixar a controvérsia.')
   rescue Event::CreateError => e
-    @controversy.support_1 = @user
-    @controversy.save
+    @controversy.update(support_1: @user)
     redirect_back(fallback_location: root_path,
                   alert: 'Erro ao pegar a Controvérsia por erro na criação do Evento')
   rescue Alteration::CreateError => e
-    @controversy.support_1 = @user
-    @controversy.save
+    @controversy.update(support_1: @user)
     @event.delete # Rollback
     redirect_back(fallback_location: root_path,
                   alert: 'Erro ao pegar a Controvérsia por erro na criação da Alteração')
   end
 
-  # Configures the <tt>POST</tt> request to link
+  # Configures the <tt>POST</tt> request to link or unlink
   # a <tt>company user</tt> to the Controversy
   #
   # <b>ROUTES</b>
   #
   # [POST] <tt>/controversias/controversies/:id/link_company_user/:user_id</tt>
   def link_company_user
-    if !@controversy.company_user.nil?
-      @controversy.company_user_id = nil
-      redirect_to @controversy,
-                  notice: (@controversy.save ? 'Usuário removido' : 'Erro na remoção de usuário')
-    elsif @user.sei == @controversy.sei
-      @controversy.company_user = @user
+    if !@controversy.company_user.nil? # Unlinking Company user
+      configure_event :unlink_company_controversy, @controversy.company_user
+
+      raise Controversy::UpdateError unless @controversy.update(company_user: nil)
+
+      redirect_back(fallback_location: root_path, notice: 'Usuário da Empresa removido com sucesso')
+    elsif @user.sei == @controversy.sei # Linking Company user
+      configure_event :link_company_controversy, @user
+
+      raise Controversy::UpdateError unless @controversy.update(company_user: @user)
+
       ControversyMailer.user_added(@controversy.id, @user.id).deliver_later
-      redirect_to @controversy,
-                  notice: (@controversy.save ? 'Usuário adicionado' : 'Erro na adição de usuário')
+      redirect_back(fallback_location: root_path,
+                    notice: 'Usuário da Empresa adicionado com sucesso')
     else
-      redirect_to @controversy, alert: 'Usuário sem permissão para ser adicionado'
+      redirect_back(fallback_location: root_path,
+                    alert: 'Usuário sem permissão para ser adicionado')
     end
+  rescue Controversy::UpdateError => e
+    [@event, @alteration].each(&:delete) # Rollback
+    redirect_back(fallback_location: root_path,
+                  alert: 'Ocorreu um erro ao tentar realizar a alteração de usuário.')
+  rescue Event::CreateError => e
+    redirect_back(fallback_location: root_path,
+                  alert: 'Erro ao alterar usuário da Empresa por erro na criação do Evento')
+  rescue Alteration::CreateError => e
+    @event.delete # Rollback
+    redirect_back(fallback_location: root_path,
+                  alert: 'Erro ao alterar usuário da Empresa por erro na criação da Alteração')
   end
 
-  # Configures the <tt>POST</tt> request to link
+  # Configures the <tt>POST</tt> request to link or unlink
   # a <tt>city user</tt> to the Controversy
   #
   # <b>ROUTES</b>
   #
   # [POST] <tt>/controversias/controversies/:id/link_city_user/:user_id</tt>
   def link_city_user
-    if !@controversy.city_user.nil?
-      @controversy.city_user_id = nil
-      redirect_to @controversy,
-                  notice: (@controversy.save ? 'Usuário removido' : 'Erro na remoção de usuário')
-    elsif city_user_elegible?
-      @controversy.city_user = @user
+    if !@controversy.city_user.nil? # Unlinking City user
+      configure_event :unlink_city_controversy, @controversy.city_user
+
+      raise Controversy::UpdateError unless @controversy.update(city_user: nil)
+
+      redirect_back(fallback_location: root_path, notice: 'Usuário da Cidade removido com sucesso')
+    elsif city_user_elegible? # Linking City user
+      configure_event :link_city_controversy, @user
+
+      raise Controversy::UpdateError unless @controversy.update(city_user: @user)
+
       ControversyMailer.user_added(@controversy.id, @user.id).deliver_later
-      redirect_to @controversy,
-                  notice: (@controversy.save ? 'Usuário adicionado' : 'Erro na adição de usuário')
+      redirect_back(fallback_location: root_path,
+                    notice: 'Usuário da Cidade adicionado com sucesso')
     else
-      redirect_to @controversy, alert: 'Usuário sem permissão para ser adicionado'
+      redirect_back(fallback_location: root_path,
+                    alert: 'Usuário sem permissão para ser adicionado')
     end
+  rescue Controversy::UpdateError => e
+    [@event, @alteration].each(&:delete) # Rollback
+    redirect_back(fallback_location: root_path,
+                  alert: 'Ocorreu um erro ao tentar realizar a alteração de usuário.')
+  rescue Event::CreateError => e
+    redirect_back(fallback_location: root_path,
+                  alert: 'Erro ao alterar usuário da Cidade por erro na criação do Evento')
+  rescue Alteration::CreateError => e
+    @event.delete # Rollback
+    redirect_back(fallback_location: root_path,
+                  alert: 'Erro ao alterar usuário da Cidade por erro na criação da Alteração')
   end
 
-  # Configures the <tt>POST</tt> request to link
+  # Configures the <tt>POST</tt> request to link or unlink
   # a <tt>unity user</tt> to the Controversy
   #
   # <b>ROUTES</b>
   #
   # [POST] <tt>/controversias/controversies/:id/link_unity_user/:user_id</tt>
   def link_unity_user
-    if !@controversy.unity_user.nil?
-      @controversy.unity_user_id = nil
-      redirect_to @controversy,
-                  notice: (@controversy.save ? 'Usuário removido' : 'Erro na remoção de usuário')
-    elsif unity_user_elegible?
-      @controversy.unity_user = @user
+    if !@controversy.unity_user.nil? # Unlinking Unity user
+      configure_event :unlink_unity_controversy, @controversy.unity_user
+
+      raise Controversy::UpdateError unless @controversy.update(unity_user: nil)
+
+      redirect_back(fallback_location: root_path, notice: 'Usuário da UBS removido com sucesso')
+    elsif unity_user_elegible? # Linking Unity user
+      configure_event :link_unity_controversy, @user
+
+      raise Controversy::UpdateError unless @controversy.update(unity_user: @user)
+
       ControversyMailer.user_added(@controversy.id, @user.id).deliver_later
-      redirect_to @controversy,
-                  notice: (@controversy.save ? 'Usuário adicionado' : 'Erro na adição de usuário')
+      redirect_back(fallback_location: root_path, notice: 'Usuário da UBS adicionado com sucesso')
     else
-      redirect_to @controversy, alert: 'Usuário sem permissão para ser adicionado'
+      redirect_back(fallback_location: root_path,
+                    alert: 'Usuário sem permissão para ser adicionado')
     end
+  rescue Controversy::UpdateError => e
+    [@event, @alteration].each(&:delete) # Rollback
+    redirect_back(fallback_location: root_path,
+                  alert: 'Ocorreu um erro ao tentar realizar a alteração de usuário.')
+  rescue Event::CreateError => e
+    redirect_back(fallback_location: root_path,
+                  alert: 'Erro ao alterar usuário da UBS por erro na criação do Evento')
+  rescue Alteration::CreateError => e
+    @event.delete # Rollback
+    redirect_back(fallback_location: root_path,
+                  alert: 'Erro ao alterar usuário da UBS por erro na criação da Alteração')
   end
 
-  # Configures the <tt>POST</tt> request to link
+  # Configures the <tt>POST</tt> request to link or unlink
   # a extra <tt>support user</tt> to the Controversy
   #
   # <b>ROUTES</b>
   #
   # [POST] <tt>/controversias/controversies/:id/link_support_user/:user_id</tt>
   def link_support_user
-    if !@controversy.support_2.nil?
-      @controversy.support_2_user_id = nil
-      redirect_to @controversy,
-                  notice: (@controversy.save ? 'Usuário removido' : 'Erro na remoção de usuário')
-    elsif support_like?(@user)
-      @controversy.support_2 = @user
+    if !@controversy.support_2.nil? # Unlinking extra support user
+      configure_event :unlink_extra_support_controversy, @controversy.support_2
+
+      raise Controversy::UpdateError unless @controversy.update(support_2: nil)
+
+      redirect_back(fallback_location: root_path,
+                    notice: 'Usuário extra do Suporte removido com sucesso')
+    elsif support_like?(@user) # Linking extra support user
+      configure_event :link_extra_support_controversy, @user
+
+      raise Controversy::UpdateError unless @controversy.update(support_2: @user)
+
       ControversyMailer.user_added(@controversy.id, @user.id).deliver_later
-      redirect_to @controversy,
-                  notice: (@controversy.save ? 'Usuário adicionado' : 'Erro na adição de usuário')
+      redirect_back(fallback_location: root_path,
+                    notice: 'Usuário extra do Suporte adicionado com sucesso')
     else
-      redirect_to @controversy, alert: 'Usuário sem permissão para ser adicionado'
+      redirect_back(fallback_location: root_path,
+                    alert: 'Usuário sem permissão para ser adicionado')
     end
+  rescue Controversy::UpdateError => e
+    [@event, @alteration].each(&:delete) # Rollback
+    redirect_back(fallback_location: root_path,
+                  alert: 'Ocorreu um erro ao tentar realizar a alteração de usuário.')
+  rescue Event::CreateError => e
+    redirect_back(fallback_location: root_path,
+                  alert: 'Erro ao alterar usuário extra do Suporte durante criação do Evento')
+  rescue Alteration::CreateError => e
+    @event.delete # Rollback
+    redirect_back(fallback_location: root_path,
+                  alert: 'Erro ao alterar usuário extra do Suporte durante criação da Alteração')
   end
 
   private
