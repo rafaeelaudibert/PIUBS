@@ -113,8 +113,10 @@ class Answer < ApplicationRecord
   def faq=(value)
     if %w[S N].include? value
       write_attribute(:ST_FAQ, value)
+    elsif [true, false].include? value
+      write_attribute(:ST_FAQ, value == true ? 'S' : 'N')
     else
-      write_attribute(:ST_FAQ, value == true || !value.to_i.zero? ? 'S' : 'N')
+      write_attribute(:ST_FAQ, !value.to_i.zero? ? 'S' : 'N')
     end
   end
 
