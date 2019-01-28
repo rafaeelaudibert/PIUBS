@@ -74,12 +74,14 @@
 
 
     <% if @controversy.open? %>
-        <% if @controversy.support_1 && current_user != @controversy.support_1 && !admin?%>
-          <% if current_user.call_center_admin? %>
-            <div style="color: red; font-weight: 400; margin:1em 0; background-color:#CCC; padding:20px;">Esta controvérsia pertence ao usuário <%= "#{@controversy.support_1.name} #{@controversy.support_1.last_name}" %></div>
-          <% else %>
-            <div style="color: red; font-weight: 400; margin:1em 0; background-color:#CCC; padding:20px;">Esta controvérsia já pertence a outro usuário do suporte.</div>
-          <% end %>
+        <% if support_like? && @controversy.support_1 && current_user != @controversy.support_1 %>
+          <div style="color: red; font-weight: 400; margin:1em 0; background-color:#CCC; padding:20px;">
+            <% if current_user.call_center_admin? %>
+              Esta controvérsia pertence ao usuário <%= @controversy.support_1.fullname %>
+            <% else %>
+              Esta controvérsia já pertence a outro usuário do suporte.
+            <% end %>
+          </div>
         <% end %>
     <% else %> <!-- Chamado fechado -->
       <div class="closed-call" style="margin-top: 1rem">

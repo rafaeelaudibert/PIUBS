@@ -313,6 +313,11 @@ class User < ApplicationRecord
     where(invited_by_id: id)
   end
 
+  # Returns the user fullname concatenating his first and last name
+  def fullname
+    "#{name} #{last_name}"
+  end
+
   # Overrides Devise function
   #
   # This way we can manipulate the devise e-mails layout properly, as well as
