@@ -2,12 +2,8 @@
   <% flash.each do |name, msg| %>
     <% if msg.is_a?(String) %>
       <script>
-        const animation = {
-          "in": "bounceIn",
-          "out": "fadeOutUpBig"
-        };
         const heart = "/assets/icons/logo-ffea90fdc94f5f4a6d88ec21782b2433fe67e0a8883a9950c468a55cf8d53e00.png";
-        Notification.create("<%= name.to_s == 'notice' ? 'Success' : 'Danger' %>", '<%= msg %>', heart, animation, 2, 5);
+        Notification.create("<%= name.to_s == 'notice' ? 'Sucesso' : 'Erro' %>", '<%= msg %>', heart, {in: "bounceIn", out: "fadeOutUpBig"}, 2, 5);
       </script>
     <% end %>
   <% end %>
