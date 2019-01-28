@@ -226,8 +226,42 @@
 
         <% if event.reply? %>
           <% if company_user? event.user %>
+            <div class="card card-default mb-3">
+              <div class="card-header">
+                <em class="fa fa-comment-o m-2"></em>
+                <span class="badge badge-pill badge-dark m-1" style="display: none"><%= '#' << event.id.to_s %></span>
+                <span class="badge badge-pill badge-dark m-1">
+                  <%= event.user.name %>
+                </span>
+                <% if event.created_at %>
+                  Adicionou uma resposta em <%= event.formatted_created_at %>
+                <% end %>
+              </div>
+              <div class="card-block">
+                <span>
+                  <%= event.reply.description.html_safe %>
+                </span>
 
+                <% if event.reply.attachments.length > 0 %>
+                  <hr/>
+                  <strong class='m-2'>
+                    Attachments
+                  </strong>
+                  <br/>
+                  <div>
+                    <% event.reply.attachments.each do |attachment| %>
+                      <%= link_to download_attachments_path("#{attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{attachment.filename}"} do %>
+                        <i class="fa fa-file-text mr-1"></i>
+                        <%= truncate(attachment.filename, length: 10, omission: '...')%>
+                      <%end%>
+                    <% end %>
+                  </div>
+                <% end %>
 
+                <hr/>
+
+              </div>
+            </div>
           <% elsif support_user? event.user %>
             <div class="card card-default mb-3" style="border-left: 5px solid #85CE36; box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
               <div class="card-header">
