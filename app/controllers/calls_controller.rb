@@ -97,7 +97,8 @@ class CallsController < ApplicationController
     @call.support_user = current_user
 
     configure_event :link_call, current_user
-
+    raise Call::UpdateError unless @call.save
+    
     redirect_back fallback_location: root_path, notice: 'Agora esse atendimento é seu'
   rescue Call::AlreadyTaken => e
     redirect_back fallback_location: root_path, alert: e.msg
