@@ -13,7 +13,7 @@
 # FIXME: Use NFS to store the contracts instead of a BLOB field
 #++
 class Attachment < ApplicationRecord
-  has_many :attachment_links, foreign_key: :CO_ID
+  has_many :attachment_links, foreign_key: :CO_ANEXO
   has_many :calls, through: :attachment_links
   has_many :replies, through: :attachment_links
   has_many :answers, through: :attachment_links
