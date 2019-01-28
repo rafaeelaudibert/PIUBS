@@ -297,7 +297,7 @@ class AnswersController < ApplicationController
 
     # After we correctly saved the event
     @alteration = Alteration.new(id: @event.id, type: :close_call)
-    raise Alteration::CreateError, @alteration.errors.inspect unless @alteration.save
+    raise Alteration::CreateError, event: @event unless @alteration.save
 
     call.close!
   end

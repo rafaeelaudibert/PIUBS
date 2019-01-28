@@ -18,9 +18,9 @@ class Alteration < ApplicationRecord
   belongs_to :event, foreign_key: :CO_ID
 
   class CreateError < StandardError
-    def initialize(msg = 'Erro na criação da Alteração ')
-      @event.delete if @event
-      super
+    def initialize(msg = 'Erro na criação da Alteração ', event: nil)
+      event.delete if event
+      super(msg)
     end
   end
 

@@ -58,20 +58,22 @@ class FeedbacksController < ApplicationController
       redirect_to controversy_path(@feedback.controversy),
                   notice: 'Controvérsia encerrada com sucesso.'
     else
-      render :new,
-             alert: 'A controvérsia não pode ser fechada. Tente novamente ou contate os devs'
+      redirect_back fallback_location: root_path,
+                    alert: 'A controvérsia não pode ser fechada. Tente novamente ou contate os devs'
     end
   rescue AttachmentLink::CreateError => e
     @feedback.delete # Rollback
     @feedback.controversy.open!
     @feedback.controversy.update!(closed_at: nil)
-    render :new, alert: e.msg.concat('a esse Parecer final')
+    redirect_back fallback_location: root_path, alert: e.message + 'a esse Parecer final'
   rescue Event::CreateError => e
     @feedback.delete
-    render :new, alert: e.msg.concat('durante a criação do Parecer Final da Controvérsia')
+    redirect_back fallback_location: root_path,
+                  alert: e.message + 'durante a criação do Parecer Final da Controvérsia'
   rescue Alteration::CreateError => e
     @feedback.delete
-    render :new, alert: e.msg.concat('durante a criação do Parecer Final da Controvérsia')
+    redirect_back fallback_location: root_path,
+                  alert: e.message + 'durante a criação do Parecer Final da Controvérsia'
   end
 
   private
@@ -109,15 +111,16 @@ class FeedbacksController < ApplicationController
   # <tt>files</tt> parameter, creates the AttachmentLink
   # between the Feedback instance and the Attachment instance.
   def create_file_links(files)
-    @links = []
+    links = []
 
     files.each do |file_uuid|
-      @link = AttachmentLink.new(attachment_id: file_uuid, feedback_id: @feedback.id,
-                                 source: 'feedback')
+      link = AttachmentLink.new(attachment_id: file_uuid,
+                                feedback_id: @feedback.id,
+                                source: 'feedback')
 
-      raise AttachmentLink::CreateError unless @link.save
+      raise AttachmentLink::CreateError, links: links unless link.save
 
-      @links.push(@link) # To handle the rollback
+      links.push(link) # To handle the rollback
     end
   end
 
@@ -138,11 +141,12 @@ class FeedbacksController < ApplicationController
                        system: System.controversy,
                        protocol: @feedback.controversy.protocol)
 
+    raise Event::CreateError
     raise Event::CreateError unless @event.save
 
     # After we correctly saved the event
     @alteration = Alteration.new(id: @event.id, type: event)
-    raise Alteration::CreateError unless @alteration.save
+    raise Alteration::CreateError, event: @event unless @alteration.save
   end
 
   # Called by #create, it is the responsible for sending

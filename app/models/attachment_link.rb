@@ -23,9 +23,9 @@ class AttachmentLink < ApplicationRecord
   # Error Classes
   ##
   class CreateError < StandardError
-    def initialize(msg = 'Erro ao tentar associas os anexos ')
-      @links.each(&:delete) if @links.is_a? Array
-      super
+    def initialize(msg = 'Erro ao tentar associas os anexos ', links: [])
+      links.each(&:delete)
+      super(msg)
     end
   end
 

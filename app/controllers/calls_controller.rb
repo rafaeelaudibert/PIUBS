@@ -69,21 +69,21 @@ class CallsController < ApplicationController
 
     raise Call::CreateError unless @call.save
 
-    create_file_links @call, files
     configure_event :open_call, @call.user
+    create_file_links files
 
     redirect_to @call, notice: 'Atendimento criado com sucesso.'
   rescue Call::CreateError => e
-    render :new, alert: e.msg
+    render :new, alert: e.message
   rescue AttachmentLink::CreateError => e
-    @call.delete # Rollback
-    render :new, alert: e.msg.concat('a esse Atendimento')
+    [@alteration, @event, @call].each(&:delete) # Rollback
+    render :new, alert: e.message + 'a esse Atendimento'
   rescue Event::CreateError => e
     @call.delete # Rollback
-    render :new, alert: e.msg.concat('durante a criação do Atendimento')
+    render :new, alert: e.message + 'durante a criação do Atendimento'
   rescue Alteration::CreateError => e
     @call.delete # Rollback
-    render :new, alert: e.msg.concat('durante a criação do Atendimento')
+    render :new, alert: e.message + 'durante a criação do Atendimento'
   end
 
   # Configures the <tt>POST</tt> request to link
@@ -95,25 +95,23 @@ class CallsController < ApplicationController
   def link_call_support_user
     authorize! :link_call, @call
 
-    raise Call::AlreadyTaken if @call.support_user
-
-    @call.support_user = current_user
+    raise Call::AlreadyTakenError if @call.support_user
 
     configure_event :link_call, current_user
-    raise Call::UpdateError unless @call.save
+    raise Call::UpdateError unless @call.update(support_user: current_user)
 
     redirect_back fallback_location: root_path, notice: 'Agora esse Atendimento é seu'
-  rescue Call::AlreadyTaken => e
-    redirect_back fallback_location: root_path, alert: e.msg
+  rescue Call::AlreadyTakenError => e
+    redirect_back fallback_location: root_path, alert: e.message
   rescue Call::UpdateError => e
     [@alteration, @event].each(&:delete) # Rollback
-    redirect_back fallback_location: root_path, alert: e.msg
+    redirect_back fallback_location: root_path, alert: e.message
   rescue Event::CreateError => e
     redirect_back fallback_location: root_path,
-                  alert: e.msg.concat('durante a associação do suporte ao Atendimento')
+                  alert: e.message + 'durante a associação do suporte ao Atendimento'
   rescue Alteration::CreateError => e
     redirect_back fallback_location: root_path,
-                  alert: e.msg.concat('durante a associação do suporte ao Atendimento')
+                  alert: e.message + 'durante a associação do suporte ao Atendimento'
   end
 
   # Configures the <tt>POST</tt> request to unlink the
@@ -127,22 +125,21 @@ class CallsController < ApplicationController
 
     raise Call::OwnerError unless @call.support_user == current_user
 
-    @call.support_user = nil
-    raise Call::UpdateError unless @call.save
-
     configure_event :unlink_call, current_user
+    raise Call::UpdateError unless @call.update(support_user: nil)
 
     redirect_back fallback_location: root_path, notice: 'Atendimento liberado com sucesso.'
   rescue Call::OwnerError => e
-    redirect_back fallback_location: root_path, alert: e.msg
+    redirect_back fallback_location: root_path, alert: e.message
   rescue Call::UpdateError => e
-    redirect_back fallback_location: root_path, alert: e.msg
+    [@alteration, @event].each(&:delete) # Rollback
+    redirect_back fallback_location: root_path, alert: e.message
   rescue Event::CreateError => e
     redirect_back fallback_location: root_path,
-                  alert: e.msg.concat('durante a desassociação do suporte ao Atendimento')
+                  alert: e.message + 'durante a desassociação do suporte ao Atendimento'
   rescue Alteration::CreateError => e
     redirect_back fallback_location: root_path,
-                  alert: e.msg.concat('durante a desassociação do suporte ao Atendimento')
+                  alert: e.message + 'durante a desassociação do suporte ao Atendimento'
   end
 
   # Configures the <tt>POST</tt> request to reopen a once closed Call
@@ -154,23 +151,24 @@ class CallsController < ApplicationController
     authorize! :reopen_call, @call
 
     @answer = @call.answer
-    @call = update_call @call
+    @call = update_call
 
+    configure_event :reopen_call, current_user
     raise Call::UpdateError unless @call.save
 
-    delete_final_answer @answer unless @answer.try(:faq) == true
-    configure_event :reopen_call, current_user
+    delete_final_answer unless @answer.try(:faq) == true
 
     redirect_back fallback_location: root_path, notice: 'Atendimento reaberto'
   rescue Call::UpdateError => e
+    [@alteration, @event].each(&:delete) # Rollback
     redirect_back fallback_location: root_path,
                   alert: 'Ocorreu um erro ao tentar reabrir esse Atendimento'
   rescue Event::CreateError => e
     redirect_back fallback_location: root_path,
-                  alert: e.msg.concat('durante a reabertura do Atendimento')
+                  alert: e.message + 'durante a reabertura do Atendimento'
   rescue Alteration::CreateError => e
     redirect_back fallback_location: root_path,
-                  alert: e.msg.concat('durante a reabertura do Atendimento')
+                  alert: e.message + 'durante a reabertura do Atendimento'
   end
 
   private
@@ -306,10 +304,10 @@ class CallsController < ApplicationController
 
   # Method called by #reopen_call function,
   # used to reopen a call and re-configure the timeline
-  def update_call(call)
-    call.reopened!
-    call.update(reopened_at: 0.seconds.from_now, answer_id: nil)
-    call
+  def update_call
+    @call.reopened!
+    @call.update(reopened_at: 0.seconds.from_now, answer_id: nil)
+    @call
   end
 
   # Configures a Event and an Alteration creation
@@ -324,7 +322,7 @@ class CallsController < ApplicationController
 
     # After we correctly saved the event
     @alteration = Alteration.new(id: @event.id, type: event)
-    raise Alteration::CreateError unless @alteration.save
+    raise Alteration::CreateError, event: @event unless @alteration.save
   end
 
   # Checks which are the calls which can be seen by this user
@@ -360,26 +358,26 @@ class CallsController < ApplicationController
   # For each Attachment instance id received in the
   # <tt>files</tt> parameter, creates the AttachmentLink
   # between the Call instance and the Attachment instance.
-  def create_file_links(call, files)
-    @links = []
+  def create_file_links(files)
+    links = []
 
     files.each do |file_uuid|
-      @link = AttachmentLink.new(attachment_id: file_uuid,
-                                 call_id: call.id,
-                                 source: 'call')
+      link = AttachmentLink.new(attachment_id: file_uuid,
+                                call_id: @call.id,
+                                source: 'call')
 
-      raise AttachmentLink::CreateError unless @link.save
+      raise AttachmentLink::CreateError, links: links unless link.save
 
-      @links.push(@link) # To handle the rollback
+      links.push(link) # To handle the rollback
     end
   end
 
   # Delete each AttachmentLink for the Answer passed
   # in the <tt>answer</tt> parameter, as well as the
   # own Answer
-  def delete_final_answer(answer)
-    answer.attachment_links.each(&:destroy)
-    answer.destroy # Destroi a resposta final anterior
+  def delete_final_answer
+    @answer.attachment_links.each(&:destroy)
+    @answer.destroy # Destroi a resposta final anterior
   end
 
   ####
