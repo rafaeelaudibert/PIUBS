@@ -19,6 +19,16 @@ class AttachmentLink < ApplicationRecord
   alias_attribute :source, :TP_ENTIDADE_ORIGEM
   enum source: %i[answer call reply controversy feedback]
 
+  ####
+  # Error Classes
+  ##
+  class CreateError < StandardError
+    def initialize(msg = 'Erro ao tentar associas os anexos ')
+      @links.each(&:delete) if @links.is_a? Array
+      super
+    end
+  end
+
   #### DATABASE adaptations ####
   self.primary_key = :CO_ID # Setting a different primary_key
   self.table_name = :RT_LINK_ANEXO # Setting a different table_name

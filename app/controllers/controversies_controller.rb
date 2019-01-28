@@ -48,11 +48,7 @@ class ControversiesController < ApplicationController
   def show
     @reply = Reply.new
     @feedback = Feedback.new
-    @user_creator = begin
-                      @controversy.creator.name
-                    rescue StandardError
-                      'Sem usuário criador (Relate ao suporte)'
-                    end
+    @user_creator = @controversy&.creator&.name || 'Sem usuário criador (Relate ao suporte)'
     authorize! :show, @controversy
   end
 
@@ -64,13 +60,10 @@ class ControversiesController < ApplicationController
   def new
     @controversy = Controversy.new
     authorize! :new, @controversy
-
-    # rubocop:disable Style/GuardClause
     if (city_user? || ubs_user?) && current_user.city.contract_id.nil?
       redirect_back(fallback_location: controversies_path,
                     notice: 'A sua cidade não possui contratos')
     end
-    # rubocop:enable Style/GuardClause
   end
 
   # Configures the <tt>POST</tt> request to create a new Controversy
@@ -87,13 +80,16 @@ class ControversiesController < ApplicationController
 
     redirect_to @controversy, notice: 'Controvérsia criada com sucesso.'
   rescue Controversy::CreateError => e
-    render :new, alert: 'Erro na criação da Controvérsia'
+    render :new, alert: e.msg
+  rescue AttachmentLink::CreateError => e
+    @controversy.delete # Rollback
+    render :new, alert: e.msg.concat('a essa Controvérsia')
   rescue Event::CreateError => e
     @controversy.delete # Rollback
-    render :new, alert: 'Erro na criação do Controvérsia por erro na criação do Evento'
+    render :new, alert: e.msg.concat('durante a criação da Controvérsia')
   rescue Alteration::CreateError => e
-    [@controversy, @event].each(&:delete) # Rollback
-    render :new, alert: 'Erro na criação do Controvérsia por erro na criação de Alteração'
+    @controversy.delete # Rollback
+    render :new, alert: e.msg.concat('durante a criação da Controvérsia')
   end
 
   # Configures the <tt>POST</tt> request to link
@@ -106,20 +102,17 @@ class ControversiesController < ApplicationController
     configure_link_controversy
     redirect_back(fallback_location: root_path, notice: 'Agora essa controvérsia é sua')
   rescue Controversy::AlreadyTaken => e
-    redirect_back(fallback_location: root_path,
-                  alert: 'Você não pode pegar uma controvérsia de outro usuário do suporte')
-  rescue Controversy::CreateError
-    redirect_back(fallback_location: root_path,
-                  alert: 'Ocorreu um erro ao tentar pegar a controvérsia')
+    redirect_back(fallback_location: root_path, alert: e.msg)
+  rescue Controversy::UpdateError
+    redirect_back(fallback_location: root_path, alert: e.msg)
   rescue Event::CreateError => e
     @controversy.update(support_1: nil)
     redirect_back(fallback_location: root_path,
-                  alert: 'Erro ao pegar a Controvérsia por erro na criação do Evento')
+                  alert: e.msg.concat('durante a associação do suporte à Controvérsia'))
   rescue Alteration::CreateError => e
     @controversy.update(support_1: nil)
-    @event.delete # Rollback
     redirect_back(fallback_location: root_path,
-                  alert: 'Erro ao pegar a Controvérsia por erro na criação da Alteração')
+                  alert: e.msg.concat('durante a associação do suporte à Controvérsia'))
   end
 
   # Configures the <tt>POST</tt> request to unlink
@@ -132,20 +125,17 @@ class ControversiesController < ApplicationController
     configure_unlink_controversy
     redirect_back(fallback_location: root_path, notice: 'A Controvérsia foi liberada')
   rescue Controversy::OwnerError => e
-    redirect_back(fallback_location: root_path,
-                  alert: 'Essa controvérsia pertence a outro usuário do suporte.')
+    redirect_back(fallback_location: root_path, alert: e.msg)
   rescue Controversy::UpdateError => e
-    redirect_back(fallback_location: root_path,
-                  alert: 'Ocorreu um erro ao tentar deixar a controvérsia.')
+    redirect_back(fallback_location: root_path, alert: e.msg)
   rescue Event::CreateError => e
     @controversy.update(support_1: @user)
     redirect_back(fallback_location: root_path,
-                  alert: 'Erro ao pegar a Controvérsia por erro na criação do Evento')
+                  alert: e.msg.concat('durante a desassociação do suporte à Controvérsia'))
   rescue Alteration::CreateError => e
     @controversy.update(support_1: @user)
-    @event.delete # Rollback
     redirect_back(fallback_location: root_path,
-                  alert: 'Erro ao pegar a Controvérsia por erro na criação da Alteração')
+                  alert: e.msg.concat('durante a desassociação do suporte à Controvérsia'))
   end
 
   # Configures the <tt>POST</tt> request to link or unlink
@@ -157,17 +147,15 @@ class ControversiesController < ApplicationController
   def link_company_user
     handle_link_user(!@controversy.company_user.nil?, @user.sei == @controversy.sei,
                      @controversy.company_user, 'company_user', 'Usuário da Empresa')
-  rescue Controversy::UpdateError => e
+  rescue Controversy::UserUpdateError => e
     [@event, @alteration].each(&:delete) # Rollback
-    redirect_back(fallback_location: root_path,
-                  alert: 'Ocorreu um erro ao tentar realizar a alteração de usuário.')
+    redirect_back(fallback_location: root_path, alert: e.msg)
   rescue Event::CreateError => e
     redirect_back(fallback_location: root_path,
-                  alert: 'Erro ao alterar usuário da Empresa por erro na criação do Evento')
+                  alert: e.msg.concat('durante a remoção do usuário da Empresa à Controvérsia'))
   rescue Alteration::CreateError => e
-    @event.delete # Rollback
     redirect_back(fallback_location: root_path,
-                  alert: 'Erro ao alterar usuário da Empresa por erro na criação da Alteração')
+                  alert: e.msg.concat('durante a remoção do usuário da Empresa à Controvérsia'))
   end
 
   # Configures the <tt>POST</tt> request to link or unlink
@@ -179,17 +167,17 @@ class ControversiesController < ApplicationController
   def link_city_user
     handle_link_user(!@controversy.city_user.nil?, city_user_elegible?,
                      @controversy.city_user, 'city_user', 'Usuário da Cidade')
-  rescue Controversy::UpdateError => e
+  rescue Controversy::UserUpdateError => e
     [@event, @alteration].each(&:delete) # Rollback
-    redirect_back(fallback_location: root_path,
-                  alert: 'Ocorreu um erro ao tentar realizar a alteração de usuário.')
+    redirect_back(fallback_location: root_path, alert: e.msg)
   rescue Event::CreateError => e
     redirect_back(fallback_location: root_path,
-                  alert: 'Erro ao alterar usuário da Cidade por erro na criação do Evento')
+                  alert: e.msg.concat('durante a desassociação do usuário da Cidade à Controvérsia')
+                 )
   rescue Alteration::CreateError => e
-    @event.delete # Rollback
     redirect_back(fallback_location: root_path,
-                  alert: 'Erro ao alterar usuário da Cidade por erro na criação da Alteração')
+                  alert: e.msg.concat('durante a desassociação do usuário da Cidade à Controvérsia')
+                 )
   end
 
   # Configures the <tt>POST</tt> request to link or unlink
@@ -201,17 +189,16 @@ class ControversiesController < ApplicationController
   def link_unity_user
     handle_link_user(!@controversy.unity_user.nil?, unity_user_elegible?,
                      @controversy.unity_user, 'unity_user', 'Usuário da UBS')
-  rescue Controversy::UpdateError => e
+  rescue Controversy::UserUpdateError => e
     [@event, @alteration].each(&:delete) # Rollback
-    redirect_back(fallback_location: root_path,
-                  alert: 'Ocorreu um erro ao tentar realizar a alteração de usuário.')
+    redirect_back(fallback_location: root_path, alert: e.msg)
   rescue Event::CreateError => e
     redirect_back(fallback_location: root_path,
-                  alert: 'Erro ao alterar usuário da UBS por erro na criação do Evento')
+                  alert: e.msg.concat('durante a desassociação do usuário da UBS à Controvérsia'))
   rescue Alteration::CreateError => e
     @event.delete # Rollback
     redirect_back(fallback_location: root_path,
-                  alert: 'Erro ao alterar usuário da UBS por erro na criação da Alteração')
+                  alert: e.msg.concat('durante a desassociação do usuário da UBS à Controvérsia'))
   end
 
   # Configures the <tt>POST</tt> request to link or unlink
@@ -223,17 +210,16 @@ class ControversiesController < ApplicationController
   def link_support_user
     handle_link_user(!@controversy.support_2.nil?, support_like?(@user),
                      @controversy.support_2, 'support_2', 'Usuário extra do Suporte')
-  rescue Controversy::UpdateError => e
+  rescue Controversy::UserUpdateError => e
     [@event, @alteration].each(&:delete) # Rollback
-    redirect_back(fallback_location: root_path,
-                  alert: 'Ocorreu um erro ao tentar realizar a alteração de usuário.')
+    redirect_back(fallback_location: root_path, alert: e.msg)
   rescue Event::CreateError => e
     redirect_back(fallback_location: root_path,
-                  alert: 'Erro ao alterar usuário extra do Suporte durante criação do Evento')
+                  alert: e.msg.concat('durante a desassociação do suporte extra à Controvérsia'))
   rescue Alteration::CreateError => e
     @event.delete # Rollback
     redirect_back(fallback_location: root_path,
-                  alert: 'Erro ao alterar usuário extra do Suporte durante criação da Alteração')
+                  alert: e.msg.concat('durante a desassociação do suporte extra à Controvérsia'))
   end
 
   private
@@ -244,8 +230,7 @@ class ControversiesController < ApplicationController
   # the top of the file
   ##
 
-  # Called by #create, configures the event creation of a :creat Alteration
-  # Returns true if the Event and the Alteration instance were successfully created
+  # Configures a Event and an Alteration creation
   def configure_event(event, user)
     # Create event
     @event = Event.new(type: EventType.alteration,
@@ -253,11 +238,11 @@ class ControversiesController < ApplicationController
                        system: System.controversy,
                        protocol: @controversy.protocol)
 
-    raise Event::CreateError, @event.errors.inspect unless @event.save
+    raise Event::CreateError unless @event.save
 
     # After we correctly saved the event
     @alteration = Alteration.new(id: @event.id, type: event)
-    raise Alteration::CreateError, @alteration.errors.inspect unless @alteration.save
+    raise Alteration::CreateError unless @alteration.save
   end
 
   # Configures the Controversy instance when called by
@@ -373,8 +358,8 @@ class ControversiesController < ApplicationController
     authorize! :link, @controversy
 
     raise Controversy::AlreadyTaken unless @controversy.support_1.nil?
-    raise Controversy::CreateError unless support_like?(@user)
-    raise Controversy::CreateError unless @controversy.update(support_1: @user)
+    raise Controversy::UpdateError unless support_like?(@user)
+    raise Controversy::UpdateError unless @controversy.update(support_1: @user)
 
     configure_event :link_support_controversy, @user
   end
@@ -407,7 +392,7 @@ class ControversiesController < ApplicationController
   def unlink_user_function(actual_user, role, msg)
     configure_event "unlink_#{role}_controversy".to_sym, actual_user
 
-    raise Controversy::UpdateError unless @controversy.send('update', "#{role}": nil)
+    raise Controversy::UserUpdateError unless @controversy.send('update', "#{role}": nil)
 
     redirect_back(fallback_location: root_path, notice: "#{msg} removido com sucesso")
   end
@@ -416,7 +401,7 @@ class ControversiesController < ApplicationController
   def link_user_function(role, msg)
     configure_event "link_#{role}_controversy".to_sym, @user
 
-    raise Controversy::UpdateError unless @controversy.send('update', "#{role}": @user)
+    raise Controversy::UserUpdateError unless @controversy.send('update', "#{role}": @user)
 
     ControversyMailer.user_added(@controversy.id, @user.id).deliver_later
     redirect_back(fallback_location: root_path, notice: "#{msg} adicionado com sucesso")
@@ -426,13 +411,16 @@ class ControversiesController < ApplicationController
   # <tt>files</tt> parameter, creates the AttachmentLink
   # between the Controversy instance and the Attachment instance.
   def create_file_links(controversy, files)
+    @links = []
+
     files.each do |file_uuid|
-      @link = AttachmentLink.new(attachment_id: file_uuid, controversy_id: controversy.protocol,
+      @link = AttachmentLink.new(attachment_id: file_uuid,
+                                 controversy_id: controversy.protocol,
                                  source: 'controversy')
-      unless @link.save
-        raise 'Não consegui criar o link entre arquivo e a Controvérsia.'\
-              ' Por favor tente mais tarde'
-      end
+
+      raise AttachmentLink::CreateError unless @link.save
+
+      @links.push(@link)  # To handle the rollback
     end
   end
 

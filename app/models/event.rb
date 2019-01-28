@@ -8,7 +8,11 @@ class Event < ApplicationRecord
   belongs_to :system, foreign_key: :CO_SISTEMA_ORIGEM
   belongs_to :type, class_name: 'EventType', foreign_key: :CO_TIPO
 
-  CreateError = Class.new(StandardError)
+  class CreateError < StandardError
+    def initialize(msg = 'Erro na criação do Evento ')
+      super
+    end
+  end
 
   #### DATABASE adaptations ####
 

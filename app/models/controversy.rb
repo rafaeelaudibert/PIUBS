@@ -34,10 +34,35 @@ class Controversy < ApplicationRecord
   self.primary_key = :CO_PROTOCOLO # Setting a different primary_key
   self.table_name = :TB_CONTROVERSIA # Setting a different table_name
 
-  class CreateError < StandardError; end
-  class UpdateError < StandardError; end
-  class AlreadyTaken < StandardError; end
-  class OwnerError < StandardError; end
+  class CreateError < StandardError
+    def initialize(msg = 'Erro na criação da Controvérsia ')
+      super
+    end
+  end
+
+  class UpdateError < StandardError
+    def initialize(msg = 'Erro ao tentar atualizar a Controvérsia ')
+      super
+    end
+  end
+
+  class UserUpdateError < StandardError
+    def initialize(msg = 'Erro ao tentar atualizar o usuário relacionado à Controvérsia ')
+      super
+    end
+  end
+
+  class AlreadyTaken < StandardError
+    def initialize(msg = 'Você não pode pegar uma controvérsia de outro usuário do suporte')
+      super
+    end
+  end
+
+  class OwnerError < StandardError
+    def initialize(msg = 'Essa controvérsia pertence a outro usuário do suporte ')
+      super
+    end
+  end
 
   # Configures an alias setter for the CO_PROTOCOLO database column
   def protocol=(value)

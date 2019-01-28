@@ -67,20 +67,23 @@ class CallsController < ApplicationController
     files = retrieve_files_from params.require(:call)
     @call = create_call call_params
 
-    raise Call::CreateError, @call.errors.inspect unless @call.save
+    raise Call::CreateError unless @call.save
 
     create_file_links @call, files
     configure_event :open_call, @call.user
 
     redirect_to @call, notice: 'Atendimento criado com sucesso.'
   rescue Call::CreateError => e
-    render :new, alert: 'Erro na criação do Atendimento'
+    render :new, alert: e.msg
+  rescue AttachmentLink::CreateError => e
+    @call.delete # Rollback
+    render :new, alert: e.msg.concat('a esse Atendimento')
   rescue Event::CreateError => e
     @call.delete # Rollback
-    render :new, alert: 'Erro na criação do Atendimento por erro na criação do Evento'
+    render :new, alert: e.msg.concat('durante a criação do Atendimento')
   rescue Alteration::CreateError => e
-    [@call, @event].each(&:delete) # Rollback
-    render :new, alert: 'Erro na criação do Atendimento por erro na criação de Alteração'
+    @call.delete # Rollback
+    render :new, alert: e.msg.concat('durante a criação do Atendimento')
   end
 
   # Configures the <tt>POST</tt> request to link
@@ -92,24 +95,25 @@ class CallsController < ApplicationController
   def link_call_support_user
     authorize! :link_call, @call
 
-    raise Call::AlreadyTaken, @call.errors.inspect if @call.support_user
+    raise Call::AlreadyTaken if @call.support_user
 
     @call.support_user = current_user
 
     configure_event :link_call, current_user
     raise Call::UpdateError unless @call.save
-    
-    redirect_back fallback_location: root_path, notice: 'Agora esse atendimento é seu'
+
+    redirect_back fallback_location: root_path, notice: 'Agora esse Atendimento é seu'
   rescue Call::AlreadyTaken => e
     redirect_back fallback_location: root_path, alert: e.msg
   rescue Call::UpdateError => e
     [@alteration, @event].each(&:delete) # Rollback
     redirect_back fallback_location: root_path, alert: e.msg
   rescue Event::CreateError => e
-    redirect_back fallback_location: root_path, alert: e.msg
+    redirect_back fallback_location: root_path,
+                  alert: e.msg.concat('durante a associação do suporte ao Atendimento')
   rescue Alteration::CreateError => e
-    @event.delete
-    redirect_back fallback_location: root_path, alert: e.msg
+    redirect_back fallback_location: root_path,
+                  alert: e.msg.concat('durante a associação do suporte ao Atendimento')
   end
 
   # Configures the <tt>POST</tt> request to unlink the
@@ -134,10 +138,11 @@ class CallsController < ApplicationController
   rescue Call::UpdateError => e
     redirect_back fallback_location: root_path, alert: e.msg
   rescue Event::CreateError => e
-    redirect_back fallback_location: root_path, alert: e.msg
+    redirect_back fallback_location: root_path,
+                  alert: e.msg.concat('durante a desassociação do suporte ao Atendimento')
   rescue Alteration::CreateError => e
-    @event.delete
-    redirect_back fallback_location: root_path, alert: e.msg
+    redirect_back fallback_location: root_path,
+                  alert: e.msg.concat('durante a desassociação do suporte ao Atendimento')
   end
 
   # Configures the <tt>POST</tt> request to reopen a once closed Call
@@ -158,12 +163,14 @@ class CallsController < ApplicationController
 
     redirect_back fallback_location: root_path, notice: 'Atendimento reaberto'
   rescue Call::UpdateError => e
-    redirect_back fallback_location: root_path, alert: e.msg
+    redirect_back fallback_location: root_path,
+                  alert: 'Ocorreu um erro ao tentar reabrir esse Atendimento'
   rescue Event::CreateError => e
-    redirect_back fallback_location: root_path, alert: e.msg
+    redirect_back fallback_location: root_path,
+                  alert: e.msg.concat('durante a reabertura do Atendimento')
   rescue Alteration::CreateError => e
-    @event.delete
-    redirect_back fallback_location: root_path, alert: e.msg
+    redirect_back fallback_location: root_path,
+                  alert: e.msg.concat('durante a reabertura do Atendimento')
   end
 
   private
@@ -301,13 +308,11 @@ class CallsController < ApplicationController
   # used to reopen a call and re-configure the timeline
   def update_call(call)
     call.reopened!
-    call.update(reopened_at: 0.seconds.from_now)
-    call.answer_id = nil
+    call.update(reopened_at: 0.seconds.from_now, answer_id: nil)
     call
   end
 
-  # Called by #create, configures the event creation of a :creat Alteration
-  # Returns true if the Event and the Alteration instance were successfully created
+  # Configures a Event and an Alteration creation
   def configure_event(event, user)
     # Create event
     @event = Event.new(type: EventType.alteration,
@@ -315,11 +320,11 @@ class CallsController < ApplicationController
                        system: System.call,
                        protocol: @call.protocol)
 
-    raise Event::CreateError, @event.errors.inspect unless @event.save
+    raise Event::CreateError unless @event.save
 
     # After we correctly saved the event
     @alteration = Alteration.new(id: @event.id, type: event)
-    raise Alteration::CreateError, @alteration.errors.inspect unless @alteration.save
+    raise Alteration::CreateError unless @alteration.save
   end
 
   # Checks which are the calls which can be seen by this user
@@ -356,14 +361,16 @@ class CallsController < ApplicationController
   # <tt>files</tt> parameter, creates the AttachmentLink
   # between the Call instance and the Attachment instance.
   def create_file_links(call, files)
+    @links = []
+
     files.each do |file_uuid|
       @link = AttachmentLink.new(attachment_id: file_uuid,
                                  call_id: call.id,
                                  source: 'call')
-      unless @link.save
-        raise 'Não consegui criar o link entre arquivo e o atendimento.'\
-              ' Por favor tente mais tarde'
-      end
+
+      raise AttachmentLink::CreateError unless @link.save
+
+      @links.push(@link) # To handle the rollback
     end
   end
 

@@ -51,16 +51,27 @@ class FeedbacksController < ApplicationController
     authorize! :create, @feedback
 
     if @feedback.save && @feedback.controversy.save
-      create_file_links @feedback, files
-      update_controversy @feedback
-      send_mails @feedback
+      update_controversy
+      create_file_links files
+      send_mails
 
       redirect_to controversy_path(@feedback.controversy),
                   notice: 'Controvérsia encerrada com sucesso.'
     else
       render :new,
-             warn: 'A controvérsia não pode ser fechada. Tente novamente ou contate os devs'
+             alert: 'A controvérsia não pode ser fechada. Tente novamente ou contate os devs'
     end
+  rescue AttachmentLink::CreateError => e
+    @feedback.delete # Rollback
+    @feedback.controversy.open!
+    @feedback.controversy.update!(closed_at: nil)
+    render :new, alert: e.msg.concat('a esse Parecer final')
+  rescue Event::CreateError => e
+    @feedback.delete
+    render :new, alert: e.msg.concat('durante a criação do Parecer Final da Controvérsia')
+  rescue Alteration::CreateError => e
+    @feedback.delete
+    render :new, alert: e.msg.concat('durante a criação do Parecer Final da Controvérsia')
   end
 
   private
@@ -97,31 +108,49 @@ class FeedbacksController < ApplicationController
   # For each Attachment instance id received in the
   # <tt>files</tt> parameter, creates the AttachmentLink
   # between the Feedback instance and the Attachment instance.
-  def create_file_links(feedback, files)
+  def create_file_links(files)
+    @links = []
+
     files.each do |file_uuid|
-      @link = AttachmentLink.new(attachment_id: file_uuid, feedback_id: feedback.id,
+      @link = AttachmentLink.new(attachment_id: file_uuid, feedback_id: @feedback.id,
                                  source: 'feedback')
-      unless @link.save
-        raise 'Não consegui criar o link entre arquivo e o Feedback.'\
-              ' Por favor tente mais tarde'
-      end
+
+      raise AttachmentLink::CreateError unless @link.save
+
+      @links.push(@link) # To handle the rollback
     end
   end
 
   # Called by #create, configures the Feedback's Controversy
   # parent instance, closing it
-  def update_controversy(feedback)
-    feedback.controversy.closed!
-    feedback.controversy.closed_at = 0.seconds.from_now
-    feedback.controversy.save!
+  def update_controversy
+    configure_event :close_controversy, @feedback.controversy.support_1
+
+    @feedback.controversy.closed!
+    @feedback.controversy.update!(closed_at: 0.seconds.from_now)
+  end
+
+  # Configures a Event and an Alteration creation, when called by #update_controversy
+  def configure_event(event, user)
+    # Create event
+    @event = Event.new(type: EventType.alteration,
+                       user: user,
+                       system: System.controversy,
+                       protocol: @feedback.controversy.protocol)
+
+    raise Event::CreateError unless @event.save
+
+    # After we correctly saved the event
+    @alteration = Alteration.new(id: @event.id, type: event)
+    raise Alteration::CreateError unless @alteration.save
   end
 
   # Called by #create, it is the responsible for sending
   # emails to all the users involved in the Feedback's
   # Controversy parent instance
-  def send_mails(feedback)
-    feedback.controversy.involved_users.each do |user|
-      FeedbackMailer.notify(feedback.id, user.id).deliver_later
+  def send_mails
+    @feedback.controversy.involved_users.each do |user|
+      FeedbackMailer.notify(@feedback.id, user.id).deliver_later
     end
   end
 

@@ -20,26 +20,27 @@ class Call < ApplicationRecord
   has_many :attachment_links, foreign_key: :CO_ATENDIMENTO
   has_many :attachments, through: :attachment_links
 
+  ####
+  # Error Classes
+  ##
   class CreateError < StandardError
-    def initialize(msg = 'Erro ao criar o atendimento.')
+    def initialize(msg = 'Erro na criação do Atendimento ')
       super
     end
   end
 
   class UpdateError < StandardError
-    def initialize(msg = 'Erro ao atualizar o atendimento.')
+    def initialize(msg = 'Ocorreu um erro ao tentar atualizar o Atendimento ')
       super
     end
   end
-
   class OwnerError < StandardError
-    def initialize(msg = 'Esse atendimento pertence a outro usuário do suporte.')
+    def initialize(msg = 'Você não é o usuário responsável por esse Atendimento')
       super
     end
   end
-
   class AlreadyTakenError < StandardError
-    def initialize(msg = 'Esse atendimento já percence a um usuário do suporte.')
+    def initialize(msg = 'Esse Atendimento já pertence a outro usuário do suporte')
       super
     end
   end
