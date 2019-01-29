@@ -7,15 +7,16 @@
 
 require 'logger'
 require 'csv'
+require 'cpf_cnpj'
 
 # Options for logger.level DEBUG < INFO < WARN < ERROR < FATAL < UNKNOWN
 Rails.logger = Logger.new(STDOUT)
 Rails.logger.level = Logger::INFO
 
 def seed_users
-  return unless Company.new(sei: 0).save
+  return unless Company.new(sei: 0, name: 'Suporte - CallCenter', cnpj: CNPJ.generate(true)).save
 
-  admin = User.new(cpf: CPF.generate, name: 'Admin Master',
+  admin = User.new(cpf: CPF.generate(true), name: 'Admin Master',
                    email: 'admin@piubs.com', role: 'admin', sei: 0,
                    password: '19550410', password_confirmation: '19550410',
                    system: :both)
@@ -24,7 +25,7 @@ def seed_users
   else
     Rails.logger.fatal('[ERROR]  -- Error creating ADMIN MASTER USER!')
     Rails.logger.error(admin.errors)
-    raise
+    raise 'Error creating ADMIN MASTER USER!'
   end
 end
 
@@ -63,9 +64,9 @@ end
 def seed_unities
   Rails.logger.info('[START]  -- Unities insertion')
   CSV.foreach('./public/csv/ubs.csv', headers: true) do |row|
-    name = row['nom_estab'] ? row['nom_estab'].titleize : row['nom_estab']
-    address = row['dsc_endereco'] ? row['dsc_endereco'].titleize : row['dsc_endereco']
-    neighborhood = row['dsc_bairro'] ? row['dsc_bairro'].titleize : row['dsc_bairro']
+    name = row['nom_estab']&.titleize
+    address = row['dsc_endereco']&.titleize
+    neighborhood =row['dsc_bairro']&.titleize
     phone = row['dsc_telefone'] == 'Não se aplica' ? '' : row['dsc_telefone']
     unity = Unity.new(cnes: row['cod_cnes'],
                       name: name,
@@ -88,66 +89,81 @@ def seed_categories
   category = Category.new # placeholder
 
   begin
-    category = Category.new(name: 'Orientações básicas sobre a estratégia e-SUS AB',
-                            severity: :low, source: 0).save!
-    category = Category.new(name: 'Orientações básicas sobre a utilização do sistema',
-                            severity: :low, source: 0).save!
-    category = Category.new(name: 'Instalação do Sistema',
-                            severity: :low, source: 0).save!
-    category = Category.new(name: 'Gerenciamento do cadastro do cidadão',
-                            severity: :medium, source: 0).save!
+    ####
+    # APOIO A EMPRESAS CATEGORIES
+    ##
 
-    #########
+    category = Category.new(name: 'Orientações básicas sobre a estratégia e-SUS AB',
+                            severity: :low, system: :from_call).save!
+    category = Category.new(name: 'Orientações básicas sobre a utilização do sistema',
+                            severity: :low, system: :from_call).save!
+    category = Category.new(name: 'Instalação do Sistema',
+                            severity: :low, system: :from_call).save!
+    category = Category.new(name: 'Gerenciamento do cadastro do cidadão',
+                            severity: :medium, system: :from_call).save!
+
+    ### Sub-categorias para 'Fichas do e-SUS AB'
     c_fichas = Category.new(name: 'Fichas do e-SUS AB',
-                            severity: :medium, source: 0)
+                            severity: :medium, system: :from_call)
     c_fichas.save!
+
     category = Category.new(name: 'Ficha Domiciliar',
                             severity: :medium,
                             parent: c_fichas,
                             parent_depth: 1 + c_fichas.parent_depth,
-                            source: 0).save!
+                            system: :from_call).save!
     category = Category.new(name: 'Ficha de Cadastro Individual',
                             severity: :medium,
                             parent: c_fichas,
                             parent_depth: 1 + c_fichas.parent_depth,
-                            source: 0).save!
+                            system: :from_call).save!
     category = Category.new(name: 'Ficha de Atendimento Odontológico Individual',
                             severity: :medium,
                             parent: c_fichas,
                             parent_depth: 1 + c_fichas.parent_depth,
-                            source: 0).save!
+                            system: :from_call).save!
     category = Category.new(name: 'Ficha de Atividade Coletiva',
                             severity: :medium,
                             parent: c_fichas,
                             parent_depth: 1 + c_fichas.parent_depth,
-                            source: 0).save!
+                            system: :from_call).save!
     category = Category.new(name: 'Ficha de Procedimentos',
                             severity: :medium,
                             parent: c_fichas,
                             parent_depth: 1 + c_fichas.parent_depth,
-                            source: 0).save!
+                            system: :from_call).save!
 
     category = Category.new(name: 'Coleta de Dados Simplificada (CDS)',
-                            severity: :high, source: 0).save!
+                            severity: :high, system: :from_call).save!
     category = Category.new(name: 'Relatório',
-                            severity: :high, source: 0).save!
+                            severity: :high, system: :from_call).save!
     category = Category.new(name: 'Transmissão dos Dados',
-                            severity: :high, source: 0).save!
+                            severity: :high, system: :from_call).save!
 
-    ###############
+    ### Sub-categorias para 'PEC'
     catg_pec = Category.new(name: 'PEC',
-                            severity: :low, source: 0)
+                            severity: :low, system: :from_call)
     catg_pec.save!
     category = Category.new(name: 'Agenda dos Profissionais',
                             severity: :low,
                             parent: catg_pec,
                             parent_depth: 1 + catg_pec.parent_depth,
-                            source: 0).save!
+                            system: :from_call).save!
     category = Category.new(name: 'Atendimentos',
                             severity: :low,
                             parent: catg_pec,
                             parent_depth: 1 + catg_pec.parent_depth,
-                            source: 0).save!
+                            system: :from_call).save!
+
+    ####
+    # SOLUCAO DE CONTROVERSIAS CATEGORIES
+    ##
+
+    category = Category.new(name: 'Hardware',
+                            severity: :low, system: :from_controversy).save!
+    category = Category.new(name: 'Software',
+                            severity: :low, system: :from_controversy).save!
+
   rescue StandardError
     Rails.logger.error('ERROR creating a CATEGORY')
     Rails.logger.error(category.errors.full_messages)

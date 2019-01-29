@@ -119,9 +119,9 @@ def seed_unities
 
   CSV.foreach('./public/csv/ubs.csv', headers: true) do |row|
     if city_ids.include?(row['cod_munic'].to_i)
-      name = row['nom_estab'] ? row['nom_estab'].titleize : row['nom_estab']
-      address = row['dsc_endereco'] ? row['dsc_endereco'].titleize : row['dsc_endereco']
-      neighborhood = row['dsc_bairro'] ? row['dsc_bairro'].titleize : row['dsc_bairro']
+      name = row['nom_estab']&.titleize
+      address = row['dsc_endereco']&.titleize
+      neighborhood =row['dsc_bairro']&.titleize
       phone = row['dsc_telefone'] == 'Não se aplica' ? '' : row['dsc_telefone']
       unity = Unity.new(cnes: row['cod_cnes'],
                         name: name,
@@ -190,8 +190,10 @@ def seed_categories
   category = Category.new # placeholder
 
   begin
-    ## APOIO A EMPRESAS CATEGORIES
-    ############
+    ####
+    # APOIO A EMPRESAS CATEGORIES
+    ##
+
     category = Category.new(name: 'Orientações básicas sobre a estratégia e-SUS AB',
                             severity: :low, system: :from_call).save!
     category = Category.new(name: 'Orientações básicas sobre a utilização do sistema',
@@ -201,10 +203,11 @@ def seed_categories
     category = Category.new(name: 'Gerenciamento do cadastro do cidadão',
                             severity: :medium, system: :from_call).save!
 
-    #########
+    ### Sub-categorias para 'Fichas do e-SUS AB'
     c_fichas = Category.new(name: 'Fichas do e-SUS AB',
                             severity: :medium, system: :from_call)
     c_fichas.save!
+
     category = Category.new(name: 'Ficha Domiciliar',
                             severity: :medium,
                             parent: c_fichas,
@@ -238,7 +241,7 @@ def seed_categories
     category = Category.new(name: 'Transmissão dos Dados',
                             severity: :high, system: :from_call).save!
 
-    ###############
+    ### Sub-categorias para 'PEC'
     catg_pec = Category.new(name: 'PEC',
                             severity: :low, system: :from_call)
     catg_pec.save!
@@ -253,8 +256,10 @@ def seed_categories
                             parent_depth: 1 + catg_pec.parent_depth,
                             system: :from_call).save!
 
-    ## SOLUCAO DE CONTROVERSIAS CATEGORIES
-    ##################
+    ####
+    # SOLUCAO DE CONTROVERSIAS CATEGORIES
+    ##
+
     category = Category.new(name: 'Hardware',
                             severity: :low, system: :from_controversy).save!
     category = Category.new(name: 'Software',
