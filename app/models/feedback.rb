@@ -11,6 +11,20 @@ class Feedback < ApplicationRecord
   has_many :attachments, through: :attachment_links
   belongs_to :controversy, foreign_key: :CO_PROTOCOLO
 
+  ####
+  # Error Classes
+  ##
+
+  ##
+  # Error meant to be reaised when there is an error during
+  # the creation of a Feedback
+  class CreateError < StandardError
+    # Feedback::CreateError class initialization method
+    def initialize(msg = 'Erro na criação da Resposta Final ')
+      super
+    end
+  end
+
   #### DATABASE adaptations ####
   self.primary_key = :CO_PROTOCOLO # Setting a different primary_key
   self.table_name = :TB_FEEDBACK # Setting a different table_name

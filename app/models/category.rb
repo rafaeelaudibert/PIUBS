@@ -89,6 +89,12 @@ class Category < ApplicationRecord
     read_attribute(:CO_SISTEMA_ORIGEM) == 'from_call' ? 'Call' : 'Controversy'
   end
 
+  # According to the source which is 'call' or 'controversy' returns the corresponding
+  # Category instances
+  def self.from(source)
+    source == 'call' ? from_call : from_controversy
+  end
+
   #### FILTERRIFIC queries ####
   filterrific available_filters: %i[search_query]
 

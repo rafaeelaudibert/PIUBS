@@ -64,15 +64,7 @@ class CallsController < ApplicationController
   #
   # [POST] <tt>/apoioaempresas/calls</tt>
   def create
-    files = retrieve_files_from params.require(:call)
-    @call = create_call call_params
-
-    raise Call::CreateError unless @call.save
-
-    configure_event :open_call, @call.user
-    create_file_links files
-
-    redirect_to @call, notice: 'Atendimento criado com sucesso.'
+    handle_call_creation
   rescue Call::CreateError => e
     render :new, alert: e.message
   rescue AttachmentLink::CreateError => e
@@ -93,14 +85,7 @@ class CallsController < ApplicationController
   #
   # [POST] <tt>/apoioaempresas/calls/:id/link_call_support_user</tt>
   def link_call_support_user
-    authorize! :link_call, @call
-
-    raise Call::AlreadyTakenError if @call.support_user
-
-    configure_event :link_call, current_user
-    raise Call::UpdateError unless @call.update(support_user: current_user)
-
-    redirect_back fallback_location: root_path, notice: 'Agora esse Atendimento é seu'
+    handle_link_call_support_user
   rescue Call::AlreadyTakenError => e
     redirect_back fallback_location: root_path, alert: e.message
   rescue Call::UpdateError => e
@@ -121,14 +106,7 @@ class CallsController < ApplicationController
   #
   # [POST] <tt>/apoioaempresas/calls/:id/unlink_call_support_user</tt>
   def unlink_call_support_user
-    authorize! :link_call, @call
-
-    raise Call::OwnerError unless @call.support_user == current_user
-
-    configure_event :unlink_call, current_user
-    raise Call::UpdateError unless @call.update(support_user: nil)
-
-    redirect_back fallback_location: root_path, notice: 'Atendimento liberado com sucesso.'
+    handle_unlink_call_support_user
   rescue Call::OwnerError => e
     redirect_back fallback_location: root_path, alert: e.message
   rescue Call::UpdateError => e
@@ -150,16 +128,8 @@ class CallsController < ApplicationController
   def reopen_call
     authorize! :reopen_call, @call
 
-    @answer = @call.answer
-    @call = update_call
-
-    configure_event :reopen_call, current_user
-    raise Call::UpdateError unless @call.save
-
-    delete_final_answer unless @answer.try(:faq) == true
-
-    redirect_back fallback_location: root_path, notice: 'Atendimento reaberto'
-  rescue Call::UpdateError => e
+    handle_reopen_call
+  rescue Call::UpdateError
     [@alteration, @event].each(&:delete) # Rollback
     redirect_back fallback_location: root_path,
                   alert: 'Ocorreu um erro ao tentar reabrir esse Atendimento'
@@ -287,6 +257,56 @@ class CallsController < ApplicationController
                                  :answer_summary, :severity, :protocol,
                                  :city_id, :category_id,
                                  :company_id, :cnes)
+  end
+
+  # Called by #create, handles all the Call instance creation proccess
+  def handle_call_creation
+    files = retrieve_files_from params.require(:call)
+    @call = create_call call_params
+
+    raise Call::CreateError unless @call.save
+
+    configure_event :open_call, @call.user
+    create_file_links files
+
+    redirect_to @call, notice: 'Atendimento criado com sucesso.'
+  end
+
+  # Called by #link_call_support_user, handles all the proccess to link
+  # a User instance to a Call
+  def handle_link_call_support_user
+    authorize! :link_call, @call
+
+    raise Call::AlreadyTakenError if @call.support_user
+
+    configure_event :link_call, current_user
+    raise Call::UpdateError unless @call.update(support_user: current_user)
+
+    redirect_back fallback_location: root_path, notice: 'Agora esse Atendimento é seu'
+  end
+
+  # Called by #unlink_call_support_user, handles all the proccess to unlink
+  # a User instance to a Call
+  def handle_unlink_call_support_user
+    raise Call::OwnerError unless @call.support_user == current_user
+
+    configure_event :unlink_call, current_user
+    raise Call::UpdateError unless @call.update(support_user: nil)
+
+    redirect_back fallback_location: root_path, notice: 'Atendimento liberado com sucesso.'
+  end
+
+  # Called by #reopen_call, handles all the proccess to reopen a Call instance
+  def handle_reopen_call
+    @answer = @call.answer
+    @call = update_call
+
+    configure_event :reopen_call, current_user
+    raise Call::UpdateError unless @call.save
+
+    delete_final_answer unless @answer.try(:faq) == true
+
+    redirect_back fallback_location: root_path, notice: 'Atendimento reaberto'
   end
 
   # Method called by #reopen_call function,

@@ -49,24 +49,15 @@ class RepliesController < ApplicationController
   #
   # [POST] <tt>/replies</tt>
   def create
-    files = params[:reply][:files] != '' ? params[:reply][:files].split(',') : []
-    @event = create_event
-    @reply = Reply.new(reply_params)
-    authorize! :create, @reply
-
-    raise Event::CreateError unless @event.save
-
-    @reply.id = @event.id
-    raise Reply::CreateError unless @reply.save
-
-    create_file_links @reply, files
-    send_mail @reply, current_user
-    redirect_to create_path(@reply), notice: 'Resposta adicionada com sucesso.'
+    process_reply_creation
+  rescue AttachmentLink::CreateError => e
+    [@reply, @event].each(&:delete) # Rollback
+    render :new, alert: e.message + 'a essa Resposta'
   rescue Reply::CreateError => e
     @event.delete
-    redirect_back fallback_location: root_path, alert: 'Erro na criação da Resposta'
+    redirect_back fallback_location: root_path, alert: e.message
   rescue Event::CreateError => e
-    redirect_back fallback_location: root_path, alert: 'Erro na criação da Resposta por erro na criação do Evento'
+    redirect_back fallback_location: root_path, alert: e.message + 'durante a criação da Resposta'
   end
 
   # Configures the <tt>attachments</tt> request for the
@@ -102,6 +93,7 @@ class RepliesController < ApplicationController
     params.require(:reply).permit(:description, :faq)
   end
 
+  # Called by #process_reply_creation, handles the Event instance which is the father of this Reply
   def create_event
     Event.new(type: EventType.reply,
               user: current_user,
@@ -109,17 +101,43 @@ class RepliesController < ApplicationController
               protocol: params[:reply][:repliable_id])
   end
 
+  # Called by #create, handles all the Reply creation process
+  def process_reply_creation
+    @files = params[:reply][:files] != '' ? params[:reply][:files].split(',') : []
+    @event = create_event
+    @reply = Reply.new(reply_params)
+    authorize! :create, @reply
+
+    configure_reply
+    redirect_to create_path(@reply), notice: 'Resposta adicionada com sucesso.'
+  end
+
+  # Called by #process_reply_creation is the responsible for the main part
+  # of the Reply creation.
+  # In this method, some errors might be raised which will be rescued on
+  # #create method
+  def configure_reply
+    raise Event::CreateError unless @event.save
+
+    @reply.id = @event.id
+    raise Reply::CreateError unless @reply.save
+
+    create_file_links @files
+    send_mail @reply, current_user
+  end
+
   # For each Attachment instance id received in the
   # <tt>files</tt> parameter, creates the AttachmentLink
   # between the REply instance and the Attachment instance.
-  def create_file_links(reply, files)
-    files.each do |file_uuid|
-      @link = AttachmentLink.new(attachment_id: file_uuid, reply_id: reply.id, source: 'reply')
+  def create_file_links(files)
+    links = []
 
-      unless @link.save
-        raise 'Não consegui criar o link entre arquivo e a resposta.'\
-              ' Por favor tente mais tarde'
-      end
+    files.each do |file_uuid|
+      link = AttachmentLink.new(attachment_id: file_uuid, reply_id: @reply.id, source: 'reply')
+
+      raise AttachmentLink::CreateError, links: links unless link.save
+
+      links.push(link) # To handle the rollback
     end
   end
 

@@ -45,26 +45,15 @@ class FeedbacksController < ApplicationController
   #
   # [POST] <tt>/controversias/feedback</tt>
   def create
-    files = retrieve_files_from(params) || []
-
-    @feedback = Feedback.new(feedback_params)
-    authorize! :create, @feedback
-
-    if @feedback.save && @feedback.controversy.save
-      update_controversy
-      create_file_links files
-      send_mails
-
-      redirect_to controversy_path(@feedback.controversy),
-                  notice: 'Controvérsia encerrada com sucesso.'
-    else
-      redirect_back fallback_location: root_path,
-                    alert: 'A controvérsia não pode ser fechada. Tente novamente ou contate os devs'
-    end
+    handle_feedback_creation
+  rescue Feedback::CreateError => e
+    redirect_back fallback_location: root_path, alert: e.message
+  rescue Controversy::UpdateError => e
+    @feedback.delete
+    redirect_back fallback_location: root_path,
+                  alert: e.message + 'durante a criação do Parecer Final'
   rescue AttachmentLink::CreateError => e
-    @feedback.delete # Rollback
-    @feedback.controversy.open!
-    @feedback.controversy.update!(closed_at: nil)
+    feedback_rollback
     redirect_back fallback_location: root_path, alert: e.message + 'a esse Parecer final'
   rescue Event::CreateError => e
     @feedback.delete
@@ -99,6 +88,31 @@ class FeedbacksController < ApplicationController
   # Makes the famous "Never trust parameters from internet, only allow the white list through."
   def feedback_params
     params.require(:feedback).permit(:description, :controversy_id)
+  end
+
+  # Called by #create, handles all the Feedback creation proccess
+  def handle_feedback_creation
+    files = retrieve_files_from(params) || []
+
+    @feedback = Feedback.new(feedback_params)
+    authorize! :create, @feedback
+
+    raise Feedback::CreateError unless @feedback.save
+    raise Controversy::UpdateError unless @feedback.controversy.save
+
+    update_controversy
+    create_file_links files
+    send_mails
+
+    redirect_to controversy_path(@feedback.controversy),
+                notice: 'Controvérsia encerrada com sucesso.'
+  end
+
+  # Called when a AttachmentLink::CreateError is raised, rollbacks all the changes occurred
+  def feedback_rollback
+    @feedback.delete # Rollback
+    @feedback.controversy.open!
+    @feedback.controversy.update!(closed_at: nil)
   end
 
   # Returns the Attachment instances's ids received in the
@@ -141,7 +155,6 @@ class FeedbacksController < ApplicationController
                        system: System.controversy,
                        protocol: @feedback.controversy.protocol)
 
-    raise Event::CreateError
     raise Event::CreateError unless @event.save
 
     # After we correctly saved the event

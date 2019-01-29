@@ -17,9 +17,20 @@
 class Alteration < ApplicationRecord
   belongs_to :event, foreign_key: :CO_ID
 
+  ####
+  # Error Classes
+  ##
+
+  ##
+  # Error meant to be reaised when there is an error during
+  # the creation of an Alteration
+  #
+  # It also handles the Event deletion, which this Alteration
+  # belongs to
   class CreateError < StandardError
+    # Alteration::CreateError class initialization method
     def initialize(msg = 'Erro na criação da Alteração ', event: nil)
-      event.delete if event
+      event&.delete
       super(msg)
     end
   end

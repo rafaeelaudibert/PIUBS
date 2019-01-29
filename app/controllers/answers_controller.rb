@@ -101,7 +101,7 @@ class AnswersController < ApplicationController
     @answer = Answer.new
     @reply = Reply.find(params[:reply]) if params[:reply]
     @question = Call.find(params[:question]) if params[:question]
-    @categories = params[:source] == 'call' ? Category.from_call : Category.from_controversy
+    @categories = Category.from params[:source]
   end
 
   # Configures the <tt>edit</tt> page for the Answer model
@@ -119,26 +119,15 @@ class AnswersController < ApplicationController
   #
   # [POST] <tt>/answers</tt>
   def create
-    files = params[:answer][:files] != '' ? params[:answer][:files].split(',') : []
-    puts '----------------------------------------------'
-    pp answer_params
-    @answer = Answer.new(answer_params)
-
-    if @answer.save
-      mark_as_final_answer @answer if params[:call_id]
-      create_file_links @answer, files
-
-      # Answer created from a call or from the FAQ
-      check_create_redirect
-    else
-      render :new
-    end
+    handle_answer_creation
+  rescue Answer::CreateError
+    render :new, alert: e.message
   rescue Event::CreateError => e
     @answer.delete
-    render :new, alert: 'Erro na criação do Atendimento por erro na criação do Evento'
+    render :new, alert: e.message + 'durante a criação da Resposta Final'
   rescue Alteration::CreateError => e
-    [@answer, @event].each(&:delete) # Rollback
-    render :new, alert: 'Erro na criação do Atendimento por erro na criação de Alteração'
+    @answer.delete # Rollback
+    render :new, alert: e.message + 'durante a criação da Resposta Final'
   end
 
   # Configures the <tt>PATCH/PUT</tt> request to update
@@ -148,7 +137,7 @@ class AnswersController < ApplicationController
   #
   # [PATCH/PUT] <tt>/answers/:id</tt>
   def update
-    files = params[:answer][:files] != '' ? params[:answer][:files].split(',') : []
+    files = retrieve_files_from params[:answer][:files]
 
     if @answer.update(answer_params)
 
@@ -281,6 +270,27 @@ class AnswersController < ApplicationController
     else
       update_answer_id @call, answer
     end
+  end
+
+  # Called by #handle_answer_creation, parses the String passed as
+  # parameter to the Answer creation, to be able to create
+  # the AttachmentLinks later
+  def retrieve_files_from(files)
+    files != '' ? files.split(',') : []
+  end
+
+  # Called by #create, handles all the Answer creation proccess
+  def handle_answer_creation
+    files = retrieve_files_from params[:answer][:files]
+    @answer = Answer.new(answer_params)
+
+    raise Answer::CreateError unless @answer.save
+
+    mark_as_final_answer @answer if params[:call_id]
+    create_file_links @answer, files
+
+    # Answer created from a call or from the FAQ
+    check_create_redirect
   end
 
   # Called by #mark_as_final_answer, handles the need to close

@@ -30,6 +30,20 @@ class Answer < ApplicationRecord
   alias_attribute :system, :CO_SISTEMA_ORIGEM
   enum system: { from_call: 1, from_controversy: 2 }
 
+  ####
+  # Error Classes
+  ##
+
+  ##
+  # Error meant to be reaised when there is an error during
+  # the creation of an Answer
+  class CreateError < StandardError
+    # Answer::CreateError class initialization method
+    def initialize(msg = 'Erro na criação da Resposta Final ')
+      super
+    end
+  end
+
   #### DATABASE adaptations ####
   self.primary_key = :CO_SEQ_ID # Setting a different primary_key
   self.table_name = '"TB_QUESTAO"' # Setting a different table_name

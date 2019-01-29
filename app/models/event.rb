@@ -8,7 +8,15 @@ class Event < ApplicationRecord
   belongs_to :system, foreign_key: :CO_SISTEMA_ORIGEM
   belongs_to :type, class_name: 'EventType', foreign_key: :CO_TIPO
 
+  ####
+  # Error Classes
+  ##
+
+  ##
+  # Error meant to be reaised when there is an error during
+  # the creation of an Event
   class CreateError < StandardError
+    # Event::CreateError class initialization method
     def initialize(msg = 'Erro na criação do Evento ')
       super
     end

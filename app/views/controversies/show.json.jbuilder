@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 json.extract! @controversy, :id, :title, :description, :creator,
               :sei, :city_id, :cnes, :status, :created_at,
               :company_user_id, :city_user_id, :unity_user_id,

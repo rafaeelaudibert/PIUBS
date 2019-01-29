@@ -34,31 +34,59 @@ class Controversy < ApplicationRecord
   self.primary_key = :CO_PROTOCOLO # Setting a different primary_key
   self.table_name = :TB_CONTROVERSIA # Setting a different table_name
 
+  ####
+  # Error Classes
+  ##
+
+  ##
+  # Error meant to be reaised when there is an error during
+  # the creation of a Controversy
   class CreateError < StandardError
+    # Controversy::CreateError class initialization method
     def initialize(msg = 'Erro na criação da Controvérsia ')
       super
     end
   end
 
+  ##
+  # Error meant to be reaised when there is an error during
+  # the update of a Controversy
   class UpdateError < StandardError
+    # Controversy::UpdateError class initialization method
     def initialize(msg = 'Erro ao tentar atualizar a Controvérsia ')
       super
     end
   end
 
+  ##
+  # Error meant to be reaised when there is an error during
+  # the update of a User instance related to a Controversy
   class UserUpdateError < StandardError
+    # Controversy::UserUpdateError class initialization method
     def initialize(msg = 'Erro ao tentar atualizar o usuário relacionado à Controvérsia ')
       super
     end
   end
 
-  class AlreadyTaken < StandardError
+  ##
+  # Error meant to be reaised when there is an error during
+  # the alteration of the <tt>support_1</tt> field, trying to
+  # reference a User instance, when there is already a User
+  # referenced.
+  class AlreadyTakenError < StandardError
+    # Controversy::AlreadyTakenError class initialization method
     def initialize(msg = 'Você não pode pegar uma controvérsia de outro usuário do suporte')
       super
     end
   end
 
+  ##
+  # Error meant to be reaised when there is an error during
+  # the alteration of the <tt>support_1</tt> field, if a
+  # User instance which is not referenced in the former field,
+  # tries to make that column <tt>nil</tt>
   class OwnerError < StandardError
+    # Controversy::OwnerError class initialization method
     def initialize(msg = 'Essa controvérsia pertence a outro usuário do suporte ')
       super
     end
