@@ -72,13 +72,7 @@ class ControversiesController < ApplicationController
   #
   # [POST] <tt>/controversias/controversies</tt>
   def create
-    files = prepare_to_create(controversy_params)
-
-    raise Controversy::CreateError unless @controversy.save
-
-    post_creation_stuff(files)
-
-    redirect_to @controversy, notice: 'Controvérsia criada com sucesso.'
+    handle_controversy_creation
   rescue Controversy::CreateError => e
     render :new, alert: e.message
   rescue AttachmentLink::CreateError => e
@@ -106,13 +100,9 @@ class ControversiesController < ApplicationController
   rescue Controversy::UpdateError
     redirect_back(fallback_location: root_path, alert: e.message)
   rescue Event::CreateError => e
-    @controversy.update(support_1: nil)
-    redirect_back(fallback_location: root_path,
-                  alert: e.message + 'durante a associação do suporte da Controvérsia')
+    support_rollback(e, nil)
   rescue Alteration::CreateError => e
-    @controversy.update(support_1: nil)
-    redirect_back(fallback_location: root_path,
-                  alert: e.message + 'durante a associação do suporte da Controvérsia')
+    support_rollback(e, nil)
   end
 
   # Configures the <tt>POST</tt> request to unlink
@@ -129,13 +119,9 @@ class ControversiesController < ApplicationController
   rescue Controversy::UpdateError => e
     redirect_back(fallback_location: root_path, alert: e.message)
   rescue Event::CreateError => e
-    @controversy.update(support_1: @user)
-    redirect_back(fallback_location: root_path,
-                  alert: e.message + 'durante a desassociação do suporte')
+    support_rollback(e, @user)
   rescue Alteration::CreateError => e
-    @controversy.update(support_1: @user)
-    redirect_back(fallback_location: root_path,
-                  alert: e.message + 'durante a desassociação do suporte')
+    support_rollback(e, @user)
   end
 
   # Configures the <tt>POST</tt> request to link or unlink
@@ -172,12 +158,10 @@ class ControversiesController < ApplicationController
     redirect_back(fallback_location: root_path, alert: e.message)
   rescue Event::CreateError => e
     redirect_back(fallback_location: root_path,
-                  alert: e.message + 'durante a alteração do usuário da Cidade'
-                 )
+                  alert: e.message + 'durante a alteração do usuário da Cidade')
   rescue Alteration::CreateError => e
     redirect_back(fallback_location: root_path,
-                  alert: e.message + 'durante a alteração do usuário da Cidade'
-                 )
+                  alert: e.message + 'durante a alteração do usuário da Cidade')
   end
 
   # Configures the <tt>POST</tt> request to link or unlink
@@ -285,8 +269,14 @@ class ControversiesController < ApplicationController
   # <tt>current_user</tt> can see, knowing he has
   # the <tt>support_user</tt> role,
   # which is handled by the calling function
-  def controversies_for_support_user
-    filterrific_query.from_support_user [current_user.id, nil]
+  def controversies_for_support
+    if current_user.call_center_admin?
+      filterrific_query.from_support_user [User.invited_by(current_user.id).map(&:id),
+                                           current_user.id,
+                                           nil].flatten
+    else
+      filterrific_query.from_support_user [current_user.id, nil]
+    end
   end
 
   # Filterrific method
@@ -295,11 +285,7 @@ class ControversiesController < ApplicationController
   # <tt>current_user</tt> can see, knowing he has
   # the <tt>support_admin</tt> role,
   # which is handled by the calling function
-  def controversies_for_support_admin
-    filterrific_query.from_support_user [User.invited_by(current_user.id).map(&:id),
-                                         current_user.id,
-                                         nil].flatten
-  end
+  def controversies_for_support_admin; end
 
   # Filterrific method
   #
@@ -366,7 +352,25 @@ class ControversiesController < ApplicationController
     parameters.delete(:user_creator) if parameters[:user_creator]
   end
 
-  # Called by #create, configures the Controversy creation
+  # Handles the rollback when trying to #link_controversy or #unlink_controversy
+  def link_rollback(e, support_user)
+    @controversy.update(support_1: support_user)
+    redirect_back(fallback_location: root_path,
+                  alert: e.message + 'durante a associação do suporte da Controvérsia')
+  end
+
+  # Called by #create, is the responsible for handling the Controversy creation
+  def handle_controversy_creation
+    files = prepare_to_create(controversy_params)
+
+    raise Controversy::CreateError unless @controversy.save
+
+    post_creation_stuff(files)
+
+    redirect_to @controversy, notice: 'Controvérsia criada com sucesso.'
+  end
+
+  # Called by #handle_controversy_creation, configures the Controversy creation
   def prepare_to_create(parameters)
     files = retrieve_files_from(parameters)
     user_creator = retrieve_user_creator(parameters)
@@ -478,16 +482,24 @@ class ControversiesController < ApplicationController
   # Checks which are the controversies which can be
   # seen by this user
   def filtered_controversies
-    if support_user?
-      current_user.call_center_user? ? controversies_for_support_user : controversies_for_support_admin
+    if admin?
+      filterrific_query
+    elsif support_user?
+      controversies_for_support
     elsif company_user?
       current_user.company_admin? ? controversies_for_company_admin : controversies_for_company_user
-    elsif city_user?
+    else
+      filter_controversies_for_city_or_unity
+    end
+  end
+
+  # Called by #filtered_controversies, returns the Controversy instances which can
+  # be seen by this user checking if he has a <tt>city_admin</tt> or <tt>unity_user</tt> role
+  def filter_controversies_for_city_or_unity
+    if city_user?
       controversies_for_city
     elsif unity_user?
       controversies_for_unity
-    elsif admin?
-      filterrific_query
     else
       []
     end
@@ -506,7 +518,7 @@ class ControversiesController < ApplicationController
 
       raise AttachmentLink::CreateError, links: links unless link.save
 
-      links.push(link)  # To handle the rollback
+      links.push(link) # To handle the rollback
     end
   end
 

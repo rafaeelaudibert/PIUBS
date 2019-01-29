@@ -30,7 +30,7 @@ class Alteration < ApplicationRecord
   class CreateError < StandardError
     # Alteration::CreateError class initialization method
     def initialize(msg = 'Erro na criação da Alteração ', event: nil)
-      event.delete if event
+      event&.delete
       super(msg)
     end
   end
