@@ -141,7 +141,6 @@ class FeedbacksController < ApplicationController
                        system: System.controversy,
                        protocol: @feedback.controversy.protocol)
 
-    raise Event::CreateError
     raise Event::CreateError unless @event.save
 
     # After we correctly saved the event
