@@ -35,8 +35,8 @@ class ControversiesController < ApplicationController
       persistence_id: false
     )) || return
 
-    @controversies = filterrific_query
     authorize! :index, Controversy
+    @controversies = filtered_controversies
   end
 
   # Configures the <tt>show</tt> page for the Controversy model
@@ -275,6 +275,73 @@ class ControversiesController < ApplicationController
   end
 
   ####
+  # :section: Filterrific methods
+  # Method related to the Filterrific Gem
+  ##
+
+  # Filterrific method
+  #
+  # Returns all the Controversy instances which the
+  # <tt>current_user</tt> can see, knowing he has
+  # the <tt>support_user</tt> role,
+  # which is handled by the calling function
+  def controversies_for_support_user
+    filterrific_query.from_support_user [current_user.id, nil]
+  end
+
+  # Filterrific method
+  #
+  # Returns all the Controversy instances which the
+  # <tt>current_user</tt> can see, knowing he has
+  # the <tt>support_admin</tt> role,
+  # which is handled by the calling function
+  def controversies_for_support_admin
+    filterrific_query.from_support_user [User.invited_by(current_user.id).map(&:id),
+                                         current_user.id,
+                                         nil].flatten
+  end
+
+  # Filterrific method
+  #
+  # Returns all the Controversy instances which the
+  # <tt>current_user</tt> can see, knowing he has
+  # the <tt>company_admin</tt> role,
+  # which is handled by the calling function
+  def controversies_for_company_admin
+    filterrific_query.from_company current_user.sei
+  end
+
+  # Filterrific method
+  #
+  # Returns all the Controversy instances which the
+  # <tt>current_user</tt> can see, knowing he has
+  # the <tt>company_user</tt> role,
+  # which is handled by the calling function
+  def controversies_for_company_user
+    filterrific_query.from_company_user current_user.id
+  end
+
+  # Filterrific method
+  #
+  # Returns all the Controversy instances which the
+  # <tt>current_user</tt> can see, knowing he has
+  # the <tt>city_admin</tt> role,
+  # which is handled by the calling function
+  def controversies_for_city
+    filterrific_query.from_city current_user.city_id
+  end
+
+  # Filterrific method
+  #
+  # Returns all the Controversy instances which the
+  # <tt>current_user</tt> can see, knowing he has
+  # the <tt>ubs_admin</tt> role,
+  # which is handled by the calling function
+  def controversies_for_unity
+    filterrific_query.from_unity_user current_user.id
+  end
+
+  ####
   # :section: Custom private methods
   ##
 
@@ -309,7 +376,7 @@ class ControversiesController < ApplicationController
     files
   end
 
-  # Returns a Call with the <tt>parameters</tt>
+  # Returns a Controversy with the <tt>parameters</tt>
   # received in the request filled, as well as the
   # <tt>creator</tt>, <tt>creator_user_id</tt> and
   # <tt>support_1_user_id</tt> fields filled
@@ -406,6 +473,24 @@ class ControversiesController < ApplicationController
 
     ControversyMailer.user_added(@controversy.id, @user.id).deliver_later
     redirect_back(fallback_location: root_path, notice: "#{msg} adicionado com sucesso")
+  end
+
+  # Checks which are the controversies which can be
+  # seen by this user
+  def filtered_controversies
+    if support_user?
+      current_user.call_center_user? ? controversies_for_support_user : controversies_for_support_admin
+    elsif company_user?
+      current_user.company_admin? ? controversies_for_company_admin : controversies_for_company_user
+    elsif city_user?
+      controversies_for_city
+    elsif unity_user?
+      controversies_for_unity
+    elsif admin?
+      filterrific_query
+    else
+      []
+    end
   end
 
   # For each Attachment instance id received in the

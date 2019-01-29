@@ -239,6 +239,44 @@ class Controversy < ApplicationRecord
     replies.order(DT_CRIADO_EM: :DESC)
   end
 
+  # Returns all Controversy instances which are related to
+  # the Company instance with <tt>sei</tt> equal as
+  # the one passed as a paremter
+  def self.from_company(sei)
+    where(CO_SEI: sei)
+  end
+
+  # Returns all Controversy instances which are related to
+  # the User instance with <tt>id</tt> equal as
+  # the one passed as a paremter, through the
+  # <tt>company_user</tt> relation
+  def self.from_company_user(id)
+    where(CO_USUARIO_EMPRESA: id)
+  end
+
+  # Returns all Controversy instances which are related to
+  # the User instance with <tt>id</tt> equal as
+  # the one passed as a paremter, through the
+  # <tt>support_user</tt> relation
+  def self.from_support_user(id)
+    where(CO_SUPORTE: id)
+  end
+
+  # Returns all Controversy instances which are related to
+  # the City instance with <tt>id</tt> equal as
+  # the one passed as a parameter
+  def self.from_city(id)
+    where(CO_CIDADE: id)
+  end
+
+  # Returns all Controversy instances which are related to
+  # the User instance with <tt>id</tt> equal as
+  # the one passed as a paremter, through the
+  # <tt>unity_user</tt> relation
+  def self.from_unity_user(id)
+    where(CO_USUARIO_UNIDADE: id)
+  end
+
   # Method which returns all the User instances who which participating in the Controversy
   def all_users
     [company_user,

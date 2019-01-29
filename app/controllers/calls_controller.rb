@@ -239,7 +239,7 @@ class CallsController < ApplicationController
   # <tt>current_user</tt> can see, knowing he has
   # the <tt>support_user</tt> role,
   # which is handled by the calling function
-  def calls_from_support_user
+  def calls_for_support_user
     filterrific_query.from_support_user [current_user.id, nil]
   end
 
@@ -249,8 +249,8 @@ class CallsController < ApplicationController
   # <tt>current_user</tt> can see, knowing he has
   # the <tt>support_admin</tt> role,
   # which is handled by the calling function
-  def calls_from_support_admin
-    filterrific_query.from_support_user [User.where(invited_by_id: current_user.id).map(&:id),
+  def calls_for_support_admin
+    filterrific_query.from_support_user [User.invited_by(current_user.id).map(&:id),
                                          current_user.id,
                                          nil].flatten
   end
@@ -273,19 +273,6 @@ class CallsController < ApplicationController
   # which is handled by the calling function
   def calls_for_company_user
     filterrific_query.from_company_user current_user.id
-  end
-
-  # Filterrific method
-  #
-  # Returns all the Call instances which the
-  # <tt>current_user</tt> can see, knowing he has
-  # the <tt>admin</tt> role,
-  # which is handled by the calling function
-  #
-  # OBS: This return all Call instances in the database,
-  # but paginated
-  def calls_for_admin
-    filterrific_query
   end
 
   ####
@@ -328,11 +315,11 @@ class CallsController < ApplicationController
   # Checks which are the calls which can be seen by this user
   def filtered_calls
     if support_user?
-      current_user.call_center_user? ? calls_from_support_user : calls_from_support_admin
+      current_user.call_center_user? ? calls_for_support_user : calls_for_support_admin
     elsif company_user?
       current_user.company_admin? ? calls_for_company_admin : calls_for_company_user
     elsif admin?
-      calls_for_admin
+      filterrific_query
     else
       []
     end
