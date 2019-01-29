@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # TODO: Check why :protocol return a different number than
 # the path requires
 
