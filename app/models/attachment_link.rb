@@ -22,7 +22,15 @@ class AttachmentLink < ApplicationRecord
   ####
   # Error Classes
   ##
+
+  ##
+  # Error meant to be reaised when there is an error during
+  # the creation of an AttachmentLink
+  #
+  # It also handles the deletion of links created previously,
+  # which refer to the same Attachment
   class CreateError < StandardError
+    # AttachmentLink::CreateError class initialization method
     def initialize(msg = 'Erro ao tentar associas os anexos ', links: [])
       links.each(&:delete)
       super(msg)

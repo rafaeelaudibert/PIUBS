@@ -15,7 +15,19 @@ class Reply < ApplicationRecord
   alias_attribute :status, :TP_STATUS
   enum status: %i[open closed reopened]
 
-  class CreateError < StandardError; end
+  ####
+  # Error Classes
+  ##
+
+  ##
+  # Error meant to be reaised when there is an error during
+  # the creation of a Reply
+  class CreateError < StandardError
+    # Reply::CreateError class initialization method
+    def initialize(msg = 'Erro na criação da Resposta ')
+      super
+    end
+  end
 
   #### DATABASE adaptations ####
   self.primary_key = :CO_ID # Setting a different primary_key

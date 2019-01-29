@@ -23,23 +23,46 @@ class Call < ApplicationRecord
   ####
   # Error Classes
   ##
+
+  ##
+  # Error meant to be reaised when there is an error during
+  # the creation of a Call
   class CreateError < StandardError
+    # Call::CreateError class initialization method
     def initialize(msg = 'Erro na criação do Atendimento ')
       super
     end
   end
 
+  ##
+  # Error meant to be reaised when there is an error during
+  # the update of a Call
   class UpdateError < StandardError
+    # Call::UpdateError class initialization method
     def initialize(msg = 'Ocorreu um erro ao tentar atualizar o Atendimento ')
       super
     end
   end
+
+  ##
+  # Error meant to be reaised when there is an error during
+  # the alteration of the <tt>support_user</tt> field, if a
+  # User instance which is not referenced in the former field,
+  # tries to make that column <tt>nil</tt>
   class OwnerError < StandardError
+    # Call::OwnerError class initialization method
     def initialize(msg = 'Você não é o usuário responsável por esse Atendimento')
       super
     end
   end
+
+  ##
+  # Error meant to be reaised when there is an error during
+  # the alteration of the <tt>support_user</tt> field, trying to
+  # reference a User instance, when there is already a User
+  # referenced.
   class AlreadyTakenError < StandardError
+    # Call::AlreadyTakenError class initialization method
     def initialize(msg = 'Esse Atendimento já pertence a outro usuário do suporte')
       super
     end

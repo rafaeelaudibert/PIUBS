@@ -101,7 +101,7 @@ class ControversiesController < ApplicationController
   def link_controversy
     configure_link_controversy
     redirect_back(fallback_location: root_path, notice: 'Agora essa controvérsia é sua')
-  rescue Controversy::AlreadyTaken => e
+  rescue Controversy::AlreadyTakenError => e
     redirect_back(fallback_location: root_path, alert: e.message)
   rescue Controversy::UpdateError
     redirect_back(fallback_location: root_path, alert: e.message)
@@ -425,7 +425,7 @@ class ControversiesController < ApplicationController
   def configure_link_controversy
     authorize! :link, @controversy
 
-    raise Controversy::AlreadyTaken unless @controversy.support_1.nil?
+    raise Controversy::AlreadyTakenError unless @controversy.support_1.nil?
     raise Controversy::UpdateError unless support_like?(@user)
     raise Controversy::UpdateError unless @controversy.update(support_1: @user)
 
