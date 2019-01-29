@@ -1,1 +1,1 @@
-json.array! @companies, :sei
+json.array! @companies, :sei, :name, :cnpj

@@ -14,6 +14,8 @@ class Company < ApplicationRecord
   has_many :call, foreign_key: :CO_SEI
   has_many :cities, -> { order('name ASC') }, through: :contracts
   validates :CO_SEI, presence: true, uniqueness: true
+  validates :NU_CNPJ, presence: true, uniqueness: true
+  validates_cnpj_format_of :NU_CNPJ, options: { allow_blank: true, allow_nil: true }
 
   #### DATABASE adaptations ####
   self.primary_key = :CO_SEI # Setting a different primary_key
@@ -27,6 +29,26 @@ class Company < ApplicationRecord
   # Configures an alias getter for the CO_SEI database column
   def sei
     read_attribute(:CO_SEI)
+  end
+
+  # Configures an alias setter for the NO_NOME database column
+  def name=(value)
+    write_attribute(:NO_NOME, value)
+  end
+
+  # Configures an alias getter for the NO_NOME database column
+  def name
+    read_attribute(:NO_NOME)
+  end
+
+  # Configures an alias setter for the NU_CNPJ database column
+  def cnpj=(value)
+    write_attribute(:NU_CNPJ, value)
+  end
+
+  # Configures an alias getter for the NU_CNPJ database column
+  def cnpj
+    read_attribute(:NU_CNPJ)
   end
 
   # Configures an alias setter for the DT_CRIADO_EM database column

@@ -40,6 +40,8 @@
       <thead class="thead-dark">
         <tr>
           <th>Sei</th>
+          <th>Nome</th>
+          <th>CNPJ</th>
           <th colspan="3">Ações</th>
         </tr>
       </thead>
@@ -48,6 +50,8 @@
         <% @companies.each do |company| %>
           <tr>
             <td><%= company.sei %></td>
+            <td><%= company.name %></td>
+            <td><%= company.cnpj %></td>
             <td><%= link_to 'Mostrar', company , class: 'btn btn-primary btn-sm' %>
               <%= link_to(company, method: :delete, data: { confirm: 'Tens certeza?', verify: company.sei, verify_text: 'Caso tenha, por favor digite o número do SEI dessa empresa para continuar' }, class: 'btn btn-danger btn-sm') do %>
               <i class="fa fa-trash-o"></i>

@@ -24,7 +24,7 @@ end
 def seed_users
   Rails.logger.info('[START]  -- Users insertion')
 
-  if User.new(cpf: CPF.generate, name: 'Admin Master',
+  if User.new(cpf: CPF.generate(true), name: 'Admin Master',
               email: 'admin@piubs.com', role: 'admin', sei: 0,
               password: 'changeme', password_confirmation: 'changeme',
               system: :both).save
@@ -33,7 +33,7 @@ def seed_users
       next if %w[admin company_admin company_user].include? role[0]
 
       email = role[0] + '@piubs.com'
-      user = User.new(cpf: CPF.generate, name: role[0].capitalize,
+      user = User.new(cpf: CPF.generate(true), name: role[0].capitalize,
                       email: email, role: role[0],
                       password: 'changeme', password_confirmation: 'changeme',
                       system: if %w[call_center_admin call_center_user].include? role[0]
@@ -58,7 +58,7 @@ end
 def seed_company_user(company, role_name)
   email = "#{role_name}_#{company.sei}@piubs.com"
   user = User.new(sei: company.sei,
-                  cpf: CPF.generate,
+                  cpf: CPF.generate(true),
                   name: role_name,
                   email: email,
                   password: 'changeme',
@@ -164,9 +164,10 @@ end
 
 def seed_companies
   Rails.logger.info('[START]  -- Companies insertion')
-  if Company.new(sei: 0).save
+  main_company = Company.new(sei: 0, name: 'Empresa 0 - Default', cnpj: CNPJ.generate(true))
+  if main_company.save
     (1..5).each do |sei|
-      company = Company.new(sei: sei)
+      company = Company.new(sei: sei, name: "Empresa #{sei}", cnpj: CNPJ.generate(true))
       if company.save
         Rails.logger.debug("INSERTED a COMPANY in the database: #{sei}")
         seed_company_user company, 'company_admin'
@@ -178,7 +179,8 @@ def seed_companies
     end
   else
     Rails.logger.fatal('ERROR inserting MAIN COMPANY')
-    raise
+    Rails.logger.fatal(main_company.errors.full_messages)
+    raise 'ERROR inserting MAIN COMPANY'
   end
   Rails.logger.info('[FINISH] -- Companies insertion')
 end

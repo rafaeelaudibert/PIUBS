@@ -1,6 +1,6 @@
 <%= content_for :body_title do%>
-<h4 class="display-5"><%= "Empresa #{@company.sei}" %>
-</h4>
+<h4 class="display-5"><%= @company.name %></h4>
+<h4 style="font-weight: 300">CNPJ: <%= @company.cnpj %></h4>
 <% end %>
 
 <h1 class="h3">Usuários cadastrados:</h1>
@@ -21,7 +21,7 @@
         <td><%= _user.name %></td>
         <td><%= _user.email %></td>
         <td><%= CPF.new(_user.cpf).formatted %></td>
-        <td><%= _user.last_sign_in_at ? _user.last_sign_in_at.strftime("%d %b %y - %H:%M:%S") : 'Nunca'%></td>
+        <td><%= _user.last_sign_in_at&.strftime("%d %b %y - %H:%M:%S") || 'Nunca entrou no Sistema'%></td>
         <td><%= link_to 'Mostrar', _user , class: 'btn btn-primary btn-sm' %></td>
       </tr>
     <% end %>
@@ -36,6 +36,7 @@
 </h1>
 <% end %>
 
+<br/>
 <h1 class="h3">Contratos:</h1>
 <% if @contracts.length > 0 %>
 <%= render './pagination', value: @contracts %>

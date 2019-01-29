@@ -156,7 +156,7 @@ class CompaniesController < ApplicationController
 
   # Makes the famous "Never trust parameters from internet, only allow the white list through."
   def company_params
-    params.require(:company).permit(:sei)
+    params.require(:company).permit(:sei, :name, :cnpj)
   end
 
   # Called by #cities, return the City instances which are

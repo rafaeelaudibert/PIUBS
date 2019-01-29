@@ -1,6 +1,6 @@
 <%= content_for :body_title do%>
 <% city = ' para ' << @city.name if @city %>
-  <% company = ' para a empresa ' << @company.sei.to_s if @company %>
+  <% company = ' para a empresa ' << @company.name if @company %>
     <%= 'Novo contrato' << (city || ' ') << (company || ' ')%>
   <%end%>
 

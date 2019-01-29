@@ -104,6 +104,8 @@ ActiveRecord::Schema.define(version: 2018_09_02_130000) do
   end
 
   create_table "TB_EMPRESA", primary_key: "CO_SEI", id: :bigint, default: nil, force: :cascade do |t|
+    t.string "NO_NOME", null: false
+    t.string "NU_CNPJ", limit: 18, null: false
     t.datetime "DT_CRIADO_EM"
   end
 
