@@ -9,13 +9,20 @@ class CreateReplies < ActiveRecord::Migration[5.2]
       t.datetime :DT_CRIADO_EM
     end
 
-    add_foreign_key :TB_RESPOSTA, :TB_EVENTO, column: :CO_ID, primary_key: :CO_SEQ_ID
+    execute <<-SQL
+      ALTER TABLE "TB_RESPOSTA" ADD CONSTRAINT "PK_TB_RESPOSTA" PRIMARY KEY ("CO_ID");
 
-    execute 'ALTER TABLE "TB_RESPOSTA" ADD CONSTRAINT "PK_TB_RESPOSTA" PRIMARY KEY ("CO_ID");'
+      ALTER TABLE "TB_RESPOSTA" ADD CONSTRAINT "FK_EVENTO_RESPOSTA" FOREIGN KEY ("CO_ID")
+        REFERENCES public."TB_EVENTO" ("CO_SEQ_ID") MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION;
+    SQL
   end
 
   def self.down
-    execute 'ALTER TABLE "TB_RESPOSTA" DROP CONSTRAINT "PK_TB_RESPOSTA";'
+    execute <<-SQL
+      ALTER TABLE "TB_RESPOSTA" DROP CONSTRAINT "PK_TB_RESPOSTA";
+      ALTER TABLE "TB_RESPOSTA" DROP CONSTRAINT "FK_EVENTO_RESPOSTA";
+    SQL
     drop_table :TB_RESPOSTA
   end
 end

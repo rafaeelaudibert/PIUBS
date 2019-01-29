@@ -10,11 +10,15 @@ class CreateAttachments < ActiveRecord::Migration[5.2]
       t.datetime :DT_CRIADO_EM, null: false
     end
 
-    execute 'ALTER TABLE "TB_ANEXO" ADD CONSTRAINT "PK_TB_ANEXO" PRIMARY KEY ("CO_ID");'
+    execute <<-SQL
+      ALTER TABLE "TB_ANEXO" ADD CONSTRAINT "PK_TB_ANEXO" PRIMARY KEY ("CO_ID");
+    SQL
   end
 
   def self.down
-    execute 'ALTER TABLE "TB_ANEXO" DROP CONSTRAINT "PK_TB_ANEXO";'
+    execute <<-SQL
+      ALTER TABLE "TB_ANEXO" DROP CONSTRAINT "PK_TB_ANEXO";
+    SQL
     drop_table :TB_ANEXO
   end
 end

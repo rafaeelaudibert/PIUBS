@@ -11,17 +11,20 @@ class CreateUnities < ActiveRecord::Migration[5.2]
       t.string :DS_TELEFONE, default: ''
     end
 
-    add_foreign_key :TB_UBS, :TB_CIDADE, column: :CO_CIDADE, primary_key: :CO_CODIGO
+    execute <<-SQL
+      ALTER TABLE "TB_UBS" ADD CONSTRAINT "PK_TB_UBS" PRIMARY KEY ("CO_CNES");
 
-    execute 'ALTER TABLE "TB_UBS" ADD CONSTRAINT "PK_TB_UBS" PRIMARY KEY ("CO_CNES");'
-
-    # User updates
-    add_column :TB_USUARIO, :CO_CNES, :bigint
-    add_foreign_key :TB_USUARIO, :TB_UBS, column: :CO_CNES, primary_key: :CO_CNES
+      ALTER TABLE "TB_UBS" ADD CONSTRAINT "FK_CIDADE_UBS" FOREIGN KEY ("CO_CIDADE")
+        REFERENCES "TB_CIDADE" ("CO_CODIGO") MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION;
+    SQL
   end
 
   def self.down
-    execute 'ALTER TABLE "TB_UBS" DROP CONSTRAINT "PK_TB_UBS";'
+    execute <<-SQL
+      ALTER TABLE "TB_UBS" DROP CONSTRAINT "PK_TB_UBS";
+      ALTER TABLE "TB_UBS" DROP CONSTRAINT "FK_CIDADE_UBS";
+    SQL
     drop_table :TB_UBS
   end
 end
