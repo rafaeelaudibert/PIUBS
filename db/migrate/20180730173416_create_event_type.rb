@@ -8,13 +8,13 @@ class CreateEventType < ActiveRecord::Migration[5.2]
     end
 
     execute <<-SQL
+      -- Sequence
       CREATE SEQUENCE "SQ_TIPO_EVENTO_ID";
-      
-      ALTER TABLE "TB_TIPO_EVENTO" ADD CONSTRAINT "PK_TB_TIPO_EVENTO" PRIMARY KEY ("CO_SEQ_ID");
-
       ALTER TABLE "TB_TIPO_EVENTO" ALTER COLUMN "CO_SEQ_ID" SET DEFAULT nextval('"SQ_TIPO_EVENTO_ID"');
-
       ALTER SEQUENCE "SQ_TIPO_EVENTO_ID" OWNED BY "TB_TIPO_EVENTO"."CO_SEQ_ID";
+
+      -- PK
+      ALTER TABLE "TB_TIPO_EVENTO" ADD CONSTRAINT "PK_TB_TIPO_EVENTO" PRIMARY KEY ("CO_SEQ_ID");
     SQL
   end
 
@@ -22,6 +22,7 @@ class CreateEventType < ActiveRecord::Migration[5.2]
     execute <<-SQL
       ALTER TABLE "TB_TIPO_EVENTO" DROP CONSTRAINT "PK_TB_TIPO_EVENTO";
     SQL
-    drop_table :TIPO_EVENTO
+
+    drop_table :TB_TIPO_EVENTO
   end
 end

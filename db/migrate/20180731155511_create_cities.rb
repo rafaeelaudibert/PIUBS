@@ -9,8 +9,10 @@ class CreateCities < ActiveRecord::Migration[5.2]
     end
 
     execute <<-SQL
+      -- PK
       ALTER TABLE "TB_CIDADE" ADD CONSTRAINT "PK_TB_CIDADE" PRIMARY KEY ("CO_CODIGO");
 
+      -- FK
       ALTER TABLE "TB_CIDADE" ADD CONSTRAINT "FK_UF_CIDADE" FOREIGN KEY ("CO_UF")
         REFERENCES "TB_UF" ("CO_CODIGO") MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION;
@@ -19,9 +21,10 @@ class CreateCities < ActiveRecord::Migration[5.2]
 
   def self.down
     execute <<-SQL
-      ALTER TABLE "TB_CIDADE" DROP CONSTRAINT "PK_TB_CIDADE";
       ALTER TABLE "TB_CIDADE" DROP CONSTRAINT "FK_UF_CIDADE";
+      ALTER TABLE "TB_CIDADE" DROP CONSTRAINT "PK_TB_CIDADE";
     SQL
-    drop_table :TB_UF
+
+    drop_table :TB_CIDADE
   end
 end

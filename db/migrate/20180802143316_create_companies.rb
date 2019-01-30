@@ -10,6 +10,7 @@ class CreateCompanies < ActiveRecord::Migration[5.2]
     end
 
     execute <<-SQL
+      -- PK
       ALTER TABLE "TB_EMPRESA" ADD CONSTRAINT "PK_TB_EMPRESA" PRIMARY KEY ("CO_SEI");
     SQL
   end
@@ -18,6 +19,7 @@ class CreateCompanies < ActiveRecord::Migration[5.2]
     execute <<-SQL
       ALTER TABLE "TB_EMPRESA" DROP CONSTRAINT "PK_TB_EMPRESA";
     SQL
+
     drop_table :TB_EMPRESA
   end
 end

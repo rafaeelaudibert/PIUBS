@@ -7,8 +7,9 @@ class CreateStates < ActiveRecord::Migration[5.2]
       t.string :NO_NOME, null: false
       t.string :SG_SIGLA, null: false, limit: 2
     end
-    
-    execute <<-SQL 
+
+    execute <<-SQL
+      -- PK
       ALTER TABLE "TB_UF" ADD CONSTRAINT "PK_TB_UF" PRIMARY KEY ("CO_CODIGO");
     SQL
   end
@@ -17,6 +18,7 @@ class CreateStates < ActiveRecord::Migration[5.2]
     execute <<-SQL
       ALTER TABLE "TB_UF" DROP CONSTRAINT "PK_TB_UF";
     SQL
+
     drop_table :TB_UF
   end
 end

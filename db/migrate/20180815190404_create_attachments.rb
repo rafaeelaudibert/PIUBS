@@ -11,6 +11,7 @@ class CreateAttachments < ActiveRecord::Migration[5.2]
     end
 
     execute <<-SQL
+      -- PK
       ALTER TABLE "TB_ANEXO" ADD CONSTRAINT "PK_TB_ANEXO" PRIMARY KEY ("CO_ID");
     SQL
   end
@@ -19,6 +20,7 @@ class CreateAttachments < ActiveRecord::Migration[5.2]
     execute <<-SQL
       ALTER TABLE "TB_ANEXO" DROP CONSTRAINT "PK_TB_ANEXO";
     SQL
+
     drop_table :TB_ANEXO
   end
 end
