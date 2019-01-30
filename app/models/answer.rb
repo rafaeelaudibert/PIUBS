@@ -50,62 +50,62 @@ class Answer < ApplicationRecord
 
   # Configures an alias setter for the CO_SEQ_ID database column
   def id=(value)
-    write_attribute(:CO_SEQ_ID, value)
+    self[:CO_SEQ_ID] = value
   end
 
   # Configures an alias getter for the CO_SEQ_ID database column
   def id
-    read_attribute(:CO_SEQ_ID)
+    self[:CO_SEQ_ID]
   end
 
   # Configures an alias setter for the DS_QUESTAO database column
   def question=(value)
-    write_attribute(:DS_QUESTAO, value)
+    self[:DS_QUESTAO] = value
   end
 
   # Configures an alias getter for the DS_QUESTAO database column
   def question
-    read_attribute(:DS_QUESTAO)
+    self[:DS_QUESTAO]
   end
 
   # Configures an alias setter for the DS_RESPOSTA database column
   def answer=(value)
-    write_attribute(:DS_RESPOSTA, value)
+    self[:DS_RESPOSTA] = value
   end
 
   # Configures an alias getter for the DS_RESPOSTA database column
   def answer
-    read_attribute(:DS_RESPOSTA)
+    self[:DS_RESPOSTA]
   end
 
   # Configures an alias setter for the CO_CATEGORIA database column
   def category_id=(value)
-    write_attribute(:CO_CATEGORIA, value)
+    self[:CO_CATEGORIA] = value
   end
 
   # Configures an alias getter for the CO_CATEGORIA database column
   def category_id
-    read_attribute(:CO_CATEGORIA)
+    self[:CO_CATEGORIA]
   end
 
   # Configures an alias setter for the CO_USUARIO database column
   def user_id=(value)
-    write_attribute(:CO_USUARIO, value)
+    self[:CO_USUARIO] = value
   end
 
   # Configures an alias getter for the CO_USUARIO database column
   def user_id
-    read_attribute(:CO_USUARIO)
+    self[:CO_USUARIO]
   end
 
   # Configures an alias setter for the DT_CRIADO_EM database column
   def created_at=(value)
-    write_attribute(:DT_CRIADO_EM, value)
+    self[:DT_CRIADO_EM] = value
   end
 
   # Configures an alias getter for the DT_CRIADO_EM database column
   def created_at
-    read_attribute(:DT_CRIADO_EM)
+    self[:DT_CRIADO_EM]
   end
 
   # Configures a getter for a formatted created_at (DT_CRIADO_EM) field
@@ -115,39 +115,38 @@ class Answer < ApplicationRecord
 
   # Configures an alias setter for the DS_PALAVRA_CHAVE database column
   def keywords=(value)
-    write_attribute(:DS_PALAVRA_CHAVE, value)
+    self[:DS_PALAVRA_CHAVE] = value
   end
 
   # Configures an alias getter for the DS_PALAVRA_CHAVE database column
   def keywords
-    read_attribute(:DS_PALAVRA_CHAVE)
+    self[:DS_PALAVRA_CHAVE]
   end
 
   # Configures an alias setter for the ST_FAQ database column
   def faq=(value)
-    if %w[S N].include? value
-      write_attribute(:ST_FAQ, value)
-    elsif [true, false].include? value
-      write_attribute(:ST_FAQ, value == true ? 'S' : 'N')
-    else
-      write_attribute(:ST_FAQ, !value.to_i.zero? ? 'S' : 'N')
-    end
+    self[:ST_FAQ] = if %w[S N].include? value
+                      value
+                    elsif [true, false].include? value
+                      value == true ? 'S' : 'N'
+                    else
+                      !value.to_i.zero? ? 'S' : 'N'
+                    end
   end
 
   # Configures an alias getter for the ST_FAQ database column
   def faq
-    faq = read_attribute(:ST_FAQ)
-    faq == 'S' # If the value stored in FAQ is 'S' returns true else false
+    self[:ST_FAQ] == 'S' # If the value stored in FAQ is 'S' returns true else false
   end
 
   # Configures an alias setter for the CO_SISTEMA_ORIGEM database column
   def system_id=(value)
-    write_attribute(:CO_SISTEMA_ORIGEM, value.to_i)
+    self[:CO_SISTEMA_ORIGEM] = value.to_i
   end
 
   # Configures an alias getter for the CO_SISTEMA_ORIGEM database column
   def system_id
-    read_attribute(:CO_SISTEMA_ORIGEM)
+    self[:CO_SISTEMA_ORIGEM]
   end
 
   # Returns all Answer instances which are in the FAQ, no matter

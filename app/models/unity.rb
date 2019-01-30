@@ -17,62 +17,62 @@ class Unity < ApplicationRecord
 
   # Configures an alias setter for the CO_CNES database column
   def cnes=(value)
-    write_attribute(:CO_CNES, value)
+    self[:CO_CNES] = value
   end
 
   # Configures an alias getter for the CO_CNES database column
   def cnes
-    read_attribute(:CO_CNES)
+    self[:CO_CNES]
   end
 
   # Configures an alias setter for the NO_NOME database column
   def name=(value)
-    write_attribute(:NO_NOME, value)
+    self[:NO_NOME] = value
   end
 
   # Configures an alias getter for the NO_NOME database column
   def name
-    read_attribute(:NO_NOME)
+    self[:NO_NOME]
   end
 
   # Configures an alias setter for the CO_CIDADE database column
   def city_id=(value)
-    write_attribute(:CO_CIDADE, value)
+    self[:CO_CIDADE] = value
   end
 
   # Configures an alias getter for the CO_CIDADE database column
   def city_id
-    read_attribute(:CO_CIDADE)
+    self[:CO_CIDADE]
   end
 
   # Configures an alias setter for the DS_ENDERECO database column
   def address=(value)
-    write_attribute(:DS_ENDERECO, value)
+    self[:DS_ENDERECO] = value
   end
 
   # Configures an alias getter for the DS_ENDERECO database column
   def address
-    read_attribute(:DS_ENDERECO)
+    self[:DS_ENDERECO]
   end
 
   # Configures an alias setter for the DS_BAIRRO database column
   def neighborhood=(value)
-    write_attribute(:DS_BAIRRO, value)
+    self[:DS_BAIRRO] = value
   end
 
   # Configures an alias getter for the DS_BAIRRO database column
   def neighborhood
-    read_attribute(:DS_BAIRRO)
+    self[:DS_BAIRRO]
   end
 
   # Configures an alias setter for the DS_TELEFONE database column
   def phone=(value)
-    write_attribute(:DS_TELEFONE, value)
+    self[:DS_TELEFONE] = value
   end
 
   # Configures an alias getter for the DS_TELEFONE database column
   def phone
-    read_attribute(:DS_TELEFONE)
+    self[:DS_TELEFONE]
   end
 
   #### FILTERRIFIC queries ####

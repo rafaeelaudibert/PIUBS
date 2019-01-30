@@ -20,7 +20,7 @@ class Users::InvitationsController < Devise::InvitationsController
   #
   # <b>ROUTES</b>
   #
-  # [GET] <tt>//users/invitation/new</tt>
+  # [GET] <tt>/users/invitation/new</tt>
   def new
     @role = params[:role] || (@roles_allowed[0] if @roles_allowed.length == 1)
     @sei = params[:sei].to_i if params[:sei]

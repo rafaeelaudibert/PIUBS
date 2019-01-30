@@ -30,51 +30,51 @@ class Attachment < ApplicationRecord
 
   # Configures an alias setter for the CO_ID database column
   def id=(value)
-    write_attribute(:CO_ID, value)
+    self[:CO_ID] = value
   end
 
   # Configures an alias getter for the CO_ID database column
   def id
-    read_attribute(:CO_ID)
+    self[:CO_ID]
   end
 
   # Configures an alias setter for the NO_NOME_ANEXO database column
   def filename=(value)
-    write_attribute(:NO_NOME_ANEXO, value)
+    self[:NO_NOME_ANEXO] = value
   end
 
   # Configures an alias getter for the NO_NOME_ANEXO database column
   def filename
-    read_attribute(:NO_NOME_ANEXO)
+    self[:NO_NOME_ANEXO]
   end
 
   # Configures an alias setter for the DS_TIPO_ANEXO database column
   def content_type=(value)
-    write_attribute(:DS_TIPO_ANEXO, value)
+    self[:DS_TIPO_ANEXO] = value
   end
 
   # Configures an alias getter for the DS_TIPO_ANEXO database column
   def content_type
-    read_attribute(:DS_TIPO_ANEXO)
+    self[:DS_TIPO_ANEXO]
   end
 
   # Configures an alias setter for the BL_CONTEUDO database column
   def file_contents=(value)
-    write_attribute(:BL_CONTEUDO, value)
+    self[:BL_CONTEUDO] = value
   end
 
   # Configures an alias getter for the BL_CONTEUDO database column
   def file_contents
-    read_attribute(:BL_CONTEUDO)
+    self[:BL_CONTEUDO]
   end
 
   # Configures an alias setter for the DT_CRIADO_EM database column
   def created_at=(value)
-    write_attribute(:DT_CRIADO_EM, value)
+    self[:DT_CRIADO_EM] = value
   end
 
   # Configures an alias getter for the DT_CRIADO_EM database column
   def created_at
-    read_attribute(:DT_CRIADO_EM)
+    self[:DT_CRIADO_EM]
   end
 end

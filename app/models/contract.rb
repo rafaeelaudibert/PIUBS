@@ -9,7 +9,7 @@
 # FIXME: Use NFS to store the contracts instead of a BLOB field
 # FIXME: DT_CRIADO_EM is not being saved (why though?)
 #++
-class Contract < ActiveRecord::Base
+class Contract < ApplicationRecord
   default_scope -> { order(Arel.sql('"CO_CODIGO"')) }
   belongs_to :city, foreign_key: :CO_CIDADE
   belongs_to :company, foreign_key: :CO_SEI
@@ -31,72 +31,72 @@ class Contract < ActiveRecord::Base
 
   # Configures an alias setter for the CO_CONTRATO database column
   def contract_number=(value)
-    write_attribute(:CO_CODIGO, value)
+    self[:CO_CODIGO] = value
   end
 
   # Configures an alias getter for the CO_CONTRATO database column
   def contract_number
-    read_attribute(:CO_CODIGO)
+    self[:CO_CODIGO]
   end
 
   # Configures an alias setter for the CO_CIDADE database column
   def city_id=(value)
-    write_attribute(:CO_CIDADE, value)
+    self[:CO_CIDADE] = value
   end
 
   # Configures an alias getter for the CO_CIDADE database column
   def city_id
-    read_attribute(:CO_CIDADE)
+    self[:CO_CIDADE]
   end
 
   # Configures an alias setter for the CO_SEI database column
   def sei=(value)
-    write_attribute(:CO_SEI, value)
+    self[:CO_SEI] = value
   end
 
   # Configures an alias getter for the CO_SEI database column
   def sei
-    read_attribute(:CO_SEI)
+    self[:CO_SEI]
   end
 
   # Configures an alias setter for the NO_NOME_ARQUIVO database column
   def filename=(value)
-    write_attribute(:NO_NOME_ARQUIVO, value)
+    self[:NO_NOME_ARQUIVO] = value
   end
 
   # Configures an alias getter for the NO_NOME_ARQUIVO database column
   def filename
-    read_attribute(:NO_NOME_ARQUIVO)
+    self[:NO_NOME_ARQUIVO]
   end
 
   # Configures an alias setter for the DS_TIPO_ARQUIVO database column
   def content_type=(value)
-    write_attribute(:DS_TIPO_ARQUIVO, value)
+    self[:DS_TIPO_ARQUIVO] = value
   end
 
   # Configures an alias getter for the DS_TIPO_ARQUIVO database column
   def content_type
-    read_attribute(:DS_TIPO_ARQUIVO)
+    self[:DS_TIPO_ARQUIVO]
   end
 
   # Configures an alias setter for the BL_CONTEUDO database column
   def file_contents=(value)
-    write_attribute(:BL_CONTEUDO, value)
+    self[:BL_CONTEUDO] = value
   end
 
   # Configures an alias getter for the BL_CONTEUDO database column
   def file_contents
-    read_attribute(:BL_CONTEUDO)
+    self[:BL_CONTEUDO]
   end
 
   # Configures an alias setter for the DT_CRIADO_EM database column
   def created_at=(value)
-    write_attribute(:DT_CRIADO_EM, value)
+    self[:DT_CRIADO_EM] = value
   end
 
   # Configures an alias getter for the DT_CRIADO_EM database column
   def created_at
-    read_attribute(:DT_CRIADO_EM)
+    self[:DT_CRIADO_EM]
   end
 
   # Returns the relative address of the link where you
@@ -111,9 +111,7 @@ class Contract < ActiveRecord::Base
   end
 
   # Return the state of the City instance related with this Contract
-  def state
-    city.state
-  end
+  delegate :state, to: :city
 
   #### FILTERRIFIC queries ####
   filterrific available_filters: %i[search_query]

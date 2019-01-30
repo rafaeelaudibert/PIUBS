@@ -82,122 +82,122 @@ class Call < ApplicationRecord
 
   # Configures an alias setter for the CO_PROTOCOLO database column
   def protocol=(value)
-    write_attribute(:CO_PROTOCOLO, value)
+    self[:CO_PROTOCOLO] = value
   end
 
   # Configures an alias getter for the CO_PROTOCOLO database column
   def protocol
-    read_attribute(:CO_PROTOCOLO)
+    self[:CO_PROTOCOLO]
   end
 
   # Configures an alias setter for the DS_TITULO database column
   def title=(value)
-    write_attribute(:DS_TITULO, value)
+    self[:DS_TITULO] = value
   end
 
   # Configures an alias getter for the DS_TITULO database column
   def title
-    read_attribute(:DS_TITULO)
+    self[:DS_TITULO]
   end
 
   # Configures an alias setter for the DS_DESCRICAO database column
   def description=(value)
-    write_attribute(:DS_DESCRICAO, value)
+    self[:DS_DESCRICAO] = value
   end
 
   # Configures an alias getter for the DS_DESCRICAO database column
   def description
-    read_attribute(:DS_DESCRICAO)
+    self[:DS_DESCRICAO]
   end
 
   # Configures an alias setter for the TP_STATUS database column
   def status=(value)
-    write_attribute(:TP_STATUS, value)
+    self[:TP_STATUS] = value
   end
 
   # Configures an alias getter for the TP_STATUS database column
   def status
-    read_attribute(:TP_STATUS)
+    self[:TP_STATUS]
   end
 
   # Configures an alias setter for the DS_VERSAO_SISTEMA database column
   def version=(value)
-    write_attribute(:DS_VERSAO_SISTEMA, value)
+    self[:DS_VERSAO_SISTEMA] = value
   end
 
   # Configures an alias getter for the DS_VERSAO_SISTEMA database column
   def version
-    read_attribute(:DS_VERSAO_SISTEMA)
+    self[:DS_VERSAO_SISTEMA]
   end
 
   # Configures an alias setter for the DS_PERFIL_ACESSO database column
   def access_profile=(value)
-    write_attribute(:DS_PERFIL_ACESSO, value)
+    self[:DS_PERFIL_ACESSO] = value
   end
 
   # Configures an alias getter for the DS_PERFIL_ACESSO database column
   def access_profile
-    read_attribute(:DS_PERFIL_ACESSO)
+    self[:DS_PERFIL_ACESSO]
   end
 
   # Configures an alias setter for the DS_DETALHE_FUNCIONALIDADE database column
   def feature_detail=(value)
-    write_attribute(:DS_DETALHE_FUNCIONALIDADE, value)
+    self[:DS_DETALHE_FUNCIONALIDADE] = value
   end
 
   # Configures an alias getter for the DS_DETALHE_FUNCIONALIDADE database column
   def feature_detail
-    read_attribute(:DS_DETALHE_FUNCIONALIDADE)
+    self[:DS_DETALHE_FUNCIONALIDADE]
   end
 
   # Configures an alias setter for the DS_SUMARIO_RESPOSTA database column
   def answer_summary=(value)
-    write_attribute(:DS_SUMARIO_RESPOSTA, value)
+    self[:DS_SUMARIO_RESPOSTA] = value
   end
 
   # Configures an alias getter for the DS_SUMARIO_RESPOSTA database column
   def answer_summary
-    read_attribute(:DS_SUMARIO_RESPOSTA)
+    self[:DS_SUMARIO_RESPOSTA]
   end
 
   # Configures an alias setter for the CO_CIDADE database column
   def city_id=(value)
-    write_attribute(:CO_CIDADE, value)
+    self[:CO_CIDADE] = value
   end
 
   # Configures an alias getter for the CO_CIDADE database column
   def city_id
-    read_attribute(:CO_CIDADE)
+    self[:CO_CIDADE]
   end
 
   # Configures an alias setter for the CO_CATEGORIA database column
   def category_id=(value)
-    write_attribute(:CO_CATEGORIA, value)
+    self[:CO_CATEGORIA] = value
   end
 
   # Configures an alias getter for the CO_CATEGORIA database column
   def category_id
-    read_attribute(:CO_CATEGORIA)
+    self[:CO_CATEGORIA]
   end
 
   # Configures an alias setter for the CO_SEI database column
   def sei=(value)
-    write_attribute(:CO_SEI, value)
+    self[:CO_SEI] = value
   end
 
   # Configures an alias getter for the CO_SEI database column
   def sei
-    read_attribute(:CO_SEI)
+    self[:CO_SEI]
   end
 
   # Configures an alias setter for the DT_CRIADO_EM database column
   def created_at=(value)
-    write_attribute(:DT_CRIADO_EM, value)
+    self[:DT_CRIADO_EM] = value
   end
 
   # Configures an alias getter for the DT_CRIADO_EM database column
   def created_at
-    read_attribute(:DT_CRIADO_EM)
+    self[:DT_CRIADO_EM]
   end
 
   # Configures a getter for a formatted created_at (DT_CRIADO_EM) field
@@ -207,12 +207,12 @@ class Call < ApplicationRecord
 
   # Configures an alias setter for the DT_REABERTO_EM database column
   def reopened_at=(value)
-    write_attribute(:DT_REABERTO_EM, value)
+    self[:DT_REABERTO_EM] = value
   end
 
   # Configures an alias getter for the DT_REABERTO_EM database column
   def reopened_at
-    read_attribute(:DT_REABERTO_EM)
+    self[:DT_REABERTO_EM]
   end
 
   # Configures a getter for a formatted created_at (DT_REABERTO_EM) field
@@ -222,12 +222,12 @@ class Call < ApplicationRecord
 
   # Configures an alias setter for the DT_FINALIZADO_EM database column
   def finished_at=(value)
-    write_attribute(:DT_FINALIZADO_EM, value)
+    self[:DT_FINALIZADO_EM] = value
   end
 
   # Configures an alias getter for the DT_FINALIZADO_EM database column
   def finished_at
-    read_attribute(:DT_FINALIZADO_EM)
+    self[:DT_FINALIZADO_EM]
   end
 
   # Configures a getter for a formatted finished_at (DT_FINALIZADO_EM) field
@@ -237,59 +237,57 @@ class Call < ApplicationRecord
 
   # Configures an alias setter for the CO_USUARIO_EMPRESA database column
   def user_id=(value)
-    write_attribute(:CO_USUARIO_EMPRESA, value)
+    self[:CO_USUARIO_EMPRESA] = value
   end
 
   # Configures an alias getter for the CO_USUARIO_EMPRESA database column
   def user_id
-    read_attribute(:CO_USUARIO_EMPRESA)
+    self[:CO_USUARIO_EMPRESA]
   end
 
   # Configures an alias setter for the CO_RESPOSTA database column
   def answer_id=(value)
-    write_attribute(:CO_RESPOSTA, value)
+    self[:CO_RESPOSTA] = value
   end
 
   # Configures an alias getter for the CO_RESPOSTA database column
   def answer_id
-    read_attribute(:CO_RESPOSTA)
+    self[:CO_RESPOSTA]
   end
 
   # Configures an alias setter for the CO_CNES database column
   def cnes=(value)
-    write_attribute(:CO_CNES, value)
+    self[:CO_CNES] = value
   end
 
   # Configures an alias getter for the CO_CNES database column
   def cnes
-    read_attribute(:CO_CNES)
+    self[:CO_CNES]
   end
 
   # Configures an alias setter for the CO_USUARIO_SUPORTE database column
   def support_user_id=(value)
-    write_attribute(:CO_USUARIO_SUPORTE, value)
+    self[:CO_USUARIO_SUPORTE] = value
   end
 
   # Configures an alias getter for the CO_USUARIO_SUPORTE database column
   def support_user_id
-    read_attribute(:CO_USUARIO_SUPORTE)
+    self[:CO_USUARIO_SUPORTE]
   end
 
   # Configures an alias setter for the NU_SEVERIDADE database column
   def severity=(value)
-    write_attribute(:NU_SEVERIDADE, value)
+    self[:NU_SEVERIDADE] = value
   end
 
   # Configures an alias getter for the NU_SEVERIDADE database column
   def severity
-    read_attribute(:NU_SEVERIDADE)
+    self[:NU_SEVERIDADE]
   end
 
   # Configures an alias to get the State instance which is related to this Call
   # through the City
-  def state
-    city.state
-  end
+  delegate :state, to: :city
 
   # Closes a call configuring it closed_at column
   def close!

@@ -9,7 +9,7 @@ class AttachmentsController < ApplicationController
   protect_from_forgery
 
   # Hooks Configuration
-  before_action :set_attachment, only: %i[show edit update destroy download]
+  before_action :set_attachment, only: %i[destroy download]
   before_action :authenticate_user!, except: %i[create destroy]
 
   # CanCanCan Configuration

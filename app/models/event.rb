@@ -29,22 +29,22 @@ class Event < ApplicationRecord
 
   # Configures an alias setter for the CO_ID database column
   def id=(value)
-    write_attribute(:CO_SEQ_ID, value)
+    self[:CO_SEQ_ID] = value
   end
 
   # Configures an alias getter for the CO_ID database column
   def id
-    read_attribute(:CO_SEQ_ID)
+    self[:CO_SEQ_ID]
   end
 
   # Configures an alias setter for the DT_CRIADO_EM database column
   def created_at=(value)
-    write_attribute(:DT_CRIADO_EM, value)
+    self[:DT_CRIADO_EM] = value
   end
 
   # Configures an alias getter for the DT_CRIADO_EM database column
   def created_at
-    read_attribute(:DT_CRIADO_EM)
+    self[:DT_CRIADO_EM]
   end
 
   # Configures a getter for a formatted created_at (DT_CRIADO_EM) field
@@ -54,42 +54,42 @@ class Event < ApplicationRecord
 
   # Configures an alias setter for the CO_USUARIO database column
   def user_id=(value)
-    write_attribute(:CO_USUARIO, value)
+    self[:CO_USUARIO] = value
   end
 
   # Configures an alias getter for the CO_USUARIO database column
   def user_id
-    read_attribute(:CO_USUARIO)
+    self[:CO_USUARIO]
   end
 
   # Configures an alias setter for the CO_PROTOCOLO database column
   def protocol=(value)
-    write_attribute(:CO_PROTOCOLO, value)
+    self[:CO_PROTOCOLO] = value
   end
 
   # Configures an alias getter for the CO_PROTOCOLO database column
   def protocol
-    read_attribute(:CO_PROTOCOLO)
+    self[:CO_PROTOCOLO]
   end
 
   # Configures an alias setter for the CO_TIPO database column
   def type_id=(value)
-    write_attribute(:CO_TIPO, value)
+    self[:CO_TIPO] = value
   end
 
   # Configures an alias getter for the CO_TIPO database column
   def type_id
-    read_attribute(:CO_TIPO)
+    self[:CO_TIPO]
   end
 
   # Configures an alias setter for the CO_SISTEMA_ORIGEM database column
   def system_id=(value)
-    write_attribute(:CO_SISTEMA_ORIGEM, value)
+    self[:CO_SISTEMA_ORIGEM] = value
   end
 
   # Configures an alias getter for the CO_SISTEMA_ORIGEM database column
   def system_id
-    read_attribute(:CO_SISTEMA_ORIGEM)
+    self[:CO_SISTEMA_ORIGEM]
   end
 
   # Get name of border class to each user role

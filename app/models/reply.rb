@@ -35,48 +35,41 @@ class Reply < ApplicationRecord
 
   # Configures an alias setter for the CO_SEQ_ID database column
   def id=(value)
-    write_attribute(:CO_ID, value)
+    self[:CO_ID] = value
   end
 
   # Configures an alias getter for the CO_SEQ_ID database column
   def id
-    read_attribute(:CO_ID)
+    self[:CO_ID]
   end
 
   # Configures an alias setter for the DS_DESCRICAO database column
   def description=(value)
-    write_attribute(:DS_DESCRICAO, value)
+    self[:DS_DESCRICAO] = value
   end
 
   # Configures an alias getter for the DS_DESCRICAO database column
   def description
-    read_attribute(:DS_DESCRICAO)
+    self[:DS_DESCRICAO]
   end
 
   # Configures an alias setter for the ST_FAQ database column,
   # which includes a boolean to string transformation
   def faq=(value)
-    if [true, false].include? value
-      write_attribute(:ST_FAQ, value == true ? 'S' : 'N')
-    else
-      write_attribute(:ST_FAQ, value)
-    end
+    self[:ST_FAQ] = if [true, false].include? value
+                      value == true ? 'S' : 'N'
+                    else
+                      value
+                    end
   end
 
   # Configures an alias getter for the ST_FAQ database column
   def faq
-    read_attribute(:ST_FAQ)
+    self[:ST_FAQ]
   end
 
-  # Configures an alias setter for the Event DT_CRIADO_EM database column
-  def created_at=(value)
-    event.created_at = value
-  end
-
-  # Configures an alias setter for the Event DT_CRIADO_EM database column
-  def created_at
-    event.created_at
-  end
+  # Configures an alias getter and setter for the Event DT_CRIADO_EM database column
+  delegate :created_at, to: :event
 
   # Formats created_at attribute
   def formatted_created_at

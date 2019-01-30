@@ -43,91 +43,91 @@ class AttachmentLink < ApplicationRecord
 
   # Configures an alias setter for the CO_ID database column
   def id=(value)
-    write_attribute(:CO_ID, value)
+    self[:CO_ID] = value
   end
 
   # Configures an alias getter for the CO_ID database column
   def id
-    read_attribute(:CO_ID)
+    self[:CO_ID]
   end
 
   # Configures an alias setter for the CO_ANEXO database column
   def attachment_id=(value)
-    write_attribute(:CO_ANEXO, value)
+    self[:CO_ANEXO] = value
   end
 
   # Configures an alias getter for the CO_ANEXO database column
   def attachment_id
-    read_attribute(:CO_ANEXO)
+    self[:CO_ANEXO]
   end
 
   # Configures an alias setter for the CO_RESPOSTA database column
   def reply_id=(value)
-    write_attribute(:CO_RESPOSTA, value)
+    self[:CO_RESPOSTA] = value
   end
 
   # Configures an alias getter for the CO_RESPOSTA database column
   def reply_id
-    read_attribute(:CO_RESPOSTA)
+    self[:CO_RESPOSTA]
   end
 
   # Configures an alias setter for the CO_ATENDIMENTO database column
   def call_id=(value)
-    write_attribute(:CO_ATENDIMENTO, value)
+    self[:CO_ATENDIMENTO] = value
   end
 
   # Configures an alias getter for the CO_ATENDIMENTO database column
   def call_id
-    read_attribute(:CO_ATENDIMENTO)
+    self[:CO_ATENDIMENTO]
   end
 
   # Configures an alias setter for the CO_QUESTAO database column
   def answer_id=(value)
-    write_attribute(:CO_QUESTAO, value)
+    self[:CO_QUESTAO] = value
   end
 
   # Configures an alias getter for the CO_QUESTAO database column
   def answer_id
-    read_attribute(:CO_QUESTAO)
+    self[:CO_QUESTAO]
   end
 
   # Configures an alias setter for the CO_CONTROVERSIA database column
   def controversy_id=(value)
-    write_attribute(:CO_CONTROVERSIA, value)
+    self[:CO_CONTROVERSIA] = value
   end
 
   # Configures an alias getter for the CO_CONTROVERSIA database column
   def controversy_id
-    read_attribute(:CO_CONTROVERSIA)
+    self[:CO_CONTROVERSIA]
   end
 
   # Configures an alias setter for the CO_FEEDBACK database column
   def feedback_id=(value)
-    write_attribute(:CO_FEEDBACK, value)
+    self[:CO_FEEDBACK] = value
   end
 
   # Configures an alias getter for the CO_FEEDBACK database column
   def feedback_id
-    read_attribute(:CO_FEEDBACK)
+    self[:CO_FEEDBACK]
   end
 
   # Configures an alias setter for the TP_ENTIDADE_ORIGEM database column
   def source=(value)
-    write_attribute(:TP_ENTIDADE_ORIGEM, value)
+    self[:TP_ENTIDADE_ORIGEM] = value
   end
 
   # Configures an alias getter for the TP_ENTIDADE_ORIGEM database column
   def source
-    read_attribute(:TP_ENTIDADE_ORIGEM)
+    self[:TP_ENTIDADE_ORIGEM]
   end
 
   # Configures an alias setter for the DT_CRIADO_EM database column
   def created_at=(value)
-    write_attribute(:DT_CRIADO_EM, value)
+    self[:DT_CRIADO_EM] = value
   end
 
   # Configures an alias getter for the DT_CRIADO_EM database column
   def created_at
-    read_attribute(:DT_CRIADO_EM)
+    self[:DT_CRIADO_EM]
   end
 end

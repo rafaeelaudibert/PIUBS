@@ -14,6 +14,12 @@ Style/MixinUsage:
   Enabled: false
 Style/ClassAndModuleChildren:
   Enabled: false
+Rails/HasManyOrHasOneDependent:
+  Enabled: false
+Rails/InverseOf:
+  Enabled: false
+Rails/FilePath:
+  Enabled: false
 
 Metrics/LineLength:
   Description: 'Limit lines to 100 characters.'

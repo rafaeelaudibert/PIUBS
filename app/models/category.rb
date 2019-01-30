@@ -26,67 +26,67 @@ class Category < ApplicationRecord
 
   # Configures an alias setter for the CO_SEQ_ID database column
   def id=(value)
-    write_attribute(:CO_SEQ_ID, value)
+    self[:CO_SEQ_ID] = value
   end
 
   # Configures an alias getter for the CO_SEQ_ID database column
   def id
-    read_attribute(:CO_SEQ_ID)
+    self[:CO_SEQ_ID]
   end
 
   # Configures an alias setter for the NO_NOME database column
   def name=(value)
-    write_attribute(:NO_NOME, value)
+    self[:NO_NOME] = value
   end
 
   # Configures an alias getter for the NO_NOME database column
   def name
-    read_attribute(:NO_NOME)
+    self[:NO_NOME]
   end
 
   # Configures an alias setter for the CO_CATEGORIA_PAI database column
   def parent_id=(value)
-    write_attribute(:CO_CATEGORIA_PAI, value)
+    self[:CO_CATEGORIA_PAI] = value
   end
 
   # Configures an alias getter for the CO_CATEGORIA_PAI database column
   def parent_id
-    read_attribute(:CO_CATEGORIA_PAI)
+    self[:CO_CATEGORIA_PAI]
   end
 
   # Configures an alias setter for the NU_PROFUNDIDADE database column
   def parent_depth=(value)
-    write_attribute(:NU_PROFUNDIDADE, value)
+    self[:NU_PROFUNDIDADE] = value
   end
 
   # Configures an alias getter for the NU_PROFUNDIDADE database column
   def parent_depth
-    read_attribute(:NU_PROFUNDIDADE)
+    self[:NU_PROFUNDIDADE]
   end
 
   # Configures an alias setter for the NU_SEVERIDADE database column
   def severity=(value)
-    write_attribute(:NU_SEVERIDADE, value)
+    self[:NU_SEVERIDADE] = value
   end
 
   # Configures an alias getter for the NU_SEVERIDADE database column
   def severity
-    read_attribute(:NU_SEVERIDADE)
+    self[:NU_SEVERIDADE]
   end
 
   # Configures an alias setter for the CO_SISTEMA_ORIGEM database column
   def system_id=(value)
-    write_attribute(:CO_SISTEMA_ORIGEM, value)
+    self[:CO_SISTEMA_ORIGEM] = value
   end
 
   # Configures an alias getter for the CO_SISTEMA_ORIGEM database column
   def system_id
-    read_attribute(:CO_SISTEMA_ORIGEM)
+    self[:CO_SISTEMA_ORIGEM]
   end
 
   # Configures a parsed alias getter for the CO_SISTEMA_ORIGEM database column
   def parsed_source
-    read_attribute(:CO_SISTEMA_ORIGEM) == 'from_call' ? 'Call' : 'Controversy'
+    self[:CO_SISTEMA_ORIGEM] == 'from_call' ? 'Call' : 'Controversy'
   end
 
   # According to the source which is 'call' or 'controversy' returns the corresponding

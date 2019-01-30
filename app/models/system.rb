@@ -14,22 +14,22 @@ class System < ApplicationRecord
 
   # Configures an alias setter for the CO_ID database column
   def id=(value)
-    write_attribute(:CO_SEQ_ID, value)
+    self[:CO_SEQ_ID] = value
   end
 
   # Configures an alias getter for the CO_ID database column
   def id
-    read_attribute(:CO_SEQ_ID)
+    self[:CO_SEQ_ID]
   end
 
   # Configures an alias setter for the NO_NOME database column
   def name=(value)
-    write_attribute(:NO_NOME, value)
+    self[:NO_NOME] = value
   end
 
   # Configures an alias getter for the NO_NOME database column
   def name
-    read_attribute(:NO_NOME)
+    self[:NO_NOME]
   end
 
   # Configure an alias to find the 'Apoio a

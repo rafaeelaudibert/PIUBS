@@ -32,82 +32,82 @@ class User < ApplicationRecord
 
   # Configures an alias setter for the NO_NOME database column
   def name=(value)
-    write_attribute(:NO_NOME, value)
+    self[:NO_NOME] = value
   end
 
   # Configures an alias getter for the NO_NOME database column
   def name
-    read_attribute(:NO_NOME)
+    self[:NO_NOME]
   end
 
   # Configures an alias setter for the TP_ROLE database column
   def role=(value)
-    write_attribute(:TP_ROLE, value)
+    self[:TP_ROLE] = value
   end
 
   # Configures an alias getter for the TP_ROLE database column
   def role
-    read_attribute(:TP_ROLE)
+    self[:TP_ROLE]
   end
 
   # Configures an alias setter for the NU_CPF database column
   def cpf=(value)
-    write_attribute(:NU_CPF, value)
+    self[:NU_CPF] = value
   end
 
   # Configures an alias getter for the NU_CPF database column
   def cpf
-    read_attribute(:NU_CPF)
+    self[:NU_CPF]
   end
 
   # Configures an alias setter for the NO_SOBRENOME database column
   def last_name=(value)
-    write_attribute(:NO_SOBRENOME, value)
+    self[:NO_SOBRENOME] = value
   end
 
   # Configures an alias getter for the NO_SOBRENOME database column
   def last_name
-    read_attribute(:NO_SOBRENOME)
+    self[:NO_SOBRENOME]
   end
 
   # Configures an alias setter for the ST_SISTEMA database column
   def system=(value)
-    write_attribute(:ST_SISTEMA, value)
+    self[:ST_SISTEMA] = value
   end
 
   # Configures an alias getter for the ST_SISTEMA database column
   def system
-    read_attribute(:ST_SISTEMA)
+    self[:ST_SISTEMA]
   end
 
   # Configures an alias setter for the CO_CIDADE database column
   def city_id=(value)
-    write_attribute(:CO_CIDADE, value)
+    self[:CO_CIDADE] = value
   end
 
   # Configures an alias getter for the CO_CIDADE database column
   def city_id
-    read_attribute(:CO_CIDADE)
+    self[:CO_CIDADE]
   end
 
   # Configures an alias setter for the CO_SEI database column
   def sei=(value)
-    write_attribute(:CO_SEI, value)
+    self[:CO_SEI] = value
   end
 
   # Configures an alias getter for the CO_SEI database column
   def sei
-    read_attribute(:CO_SEI)
+    self[:CO_SEI]
   end
 
   # Configures an alias setter for the CO_CNES database column
   def cnes=(value)
-    write_attribute(:CO_CNES, value)
+    self[:CO_CNES] = value
   end
 
   # Configures an alias getter for the CO_CNES database column
   def cnes
-    read_attribute(:CO_CNES)
+    self[:CO_CNES]
   end
 
   #### FILTERRIFIC queries ####
@@ -295,7 +295,7 @@ class User < ApplicationRecord
 
   # Returns all the users which match
   # their name or their CPF to the passed parameter
-  def self.find_by_term(terms)
+  def self.find_with_term(terms)
     where('"NO_NOME" ILIKE ? OR "NU_CPF" ILIKE ? or email ILIKE ?',
           "%#{terms}%",
           "%#{terms}%",

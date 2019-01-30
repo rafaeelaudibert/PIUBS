@@ -54,21 +54,21 @@ class Alteration < ApplicationRecord
 
   # Configures an alias setter for the CO_ID database column
   def id=(value)
-    write_attribute(:CO_ID, value)
+    self[:CO_ID] = value
   end
 
   # Configures an alias getter for the CO_ID database column
   def id
-    read_attribute(:CO_ID)
+    self[:CO_ID]
   end
 
   # Configures an alias setter for the CO_TIPO database column
   def type_id=(value)
-    write_attribute(:CO_TIPO, value)
+    self[:CO_TIPO] = value
   end
 
   # Configures an alias getter for the CO_TIPO database column
   def type_id
-    read_attribute(:CO_TIPO)
+    self[:CO_TIPO]
   end
 end

@@ -23,42 +23,42 @@ class Company < ApplicationRecord
 
   # Configures an alias setter for the CO_SEI database column
   def sei=(value)
-    write_attribute(:CO_SEI, value)
+    self[:CO_SEI] = value
   end
 
   # Configures an alias getter for the CO_SEI database column
   def sei
-    read_attribute(:CO_SEI)
+    self[:CO_SEI]
   end
 
   # Configures an alias setter for the NO_NOME database column
   def name=(value)
-    write_attribute(:NO_NOME, value)
+    self[:NO_NOME] = value
   end
 
   # Configures an alias getter for the NO_NOME database column
   def name
-    read_attribute(:NO_NOME)
+    self[:NO_NOME]
   end
 
   # Configures an alias setter for the NU_CNPJ database column
   def cnpj=(value)
-    write_attribute(:NU_CNPJ, value)
+    self[:NU_CNPJ] = value
   end
 
   # Configures an alias getter for the NU_CNPJ database column
   def cnpj
-    read_attribute(:NU_CNPJ)
+    self[:NU_CNPJ]
   end
 
   # Configures an alias setter for the DT_CRIADO_EM database column
   def created_at=(value)
-    write_attribute(:DT_CRIADO_EM, value)
+    self[:DT_CRIADO_EM] = value
   end
 
   # Configures an alias getter for the DT_CRIADO_EM database column
   def created_at
-    read_attribute(:DT_CRIADO_EM)
+    self[:DT_CRIADO_EM]
   end
 
   # Return all the State instances which are related to a City
