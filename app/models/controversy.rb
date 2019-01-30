@@ -287,7 +287,7 @@ class Controversy < ApplicationRecord
   # the one passed as a paremter, through the
   # <tt>support_user</tt> relation
   def self.from_support_user(id)
-    where('"CO_SUPORTE" = :id OR "CO_SUPORTE_ADICIONAL" = :id', id: "%#{id}%")
+    where(CO_SUPORTE: id).or(where(CO_SUPORTE_ADICIONAL: id))
   end
 
   # Returns all Controversy instances which are related to
