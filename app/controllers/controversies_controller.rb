@@ -32,10 +32,9 @@ class ControversiesController < ApplicationController
     (@filterrific = initialize_filterrific(
       Controversy,
       params[:filterrific],
+      select_options: options_for_filterrific,
       persistence_id: false
     )) || return
-
-    authorize! :index, Controversy
     @controversies = filtered_controversies
   end
 
@@ -214,22 +213,6 @@ class ControversiesController < ApplicationController
   # the top of the file
   ##
 
-  # Configures a Event and an Alteration creation
-  def configure_event(event, user)
-    # Create event
-    @event = Event.new(type: EventType.alteration,
-                       user: user,
-                       system: System.controversy,
-                       protocol: @controversy.protocol)
-
-    # raise Event::CreateError
-    raise Event::CreateError unless @event.save
-
-    # After we correctly saved the event
-    @alteration = Alteration.new(id: @event.id, type: event)
-    raise Alteration::CreateError, event: @event unless @alteration.save
-  end
-
   # Configures the Controversy instance when called by
   # the <tt>:before_action</tt> hook
   def set_controversy
@@ -263,8 +246,6 @@ class ControversiesController < ApplicationController
   # Method related to the Filterrific Gem
   ##
 
-  # Filterrific method
-  #
   # Returns all the Controversy instances which the
   # <tt>current_user</tt> can see, knowing he has
   # the <tt>support_user</tt> role,
@@ -279,52 +260,37 @@ class ControversiesController < ApplicationController
     end
   end
 
-  # Filterrific method
-  #
-  # Returns all the Controversy instances which the
-  # <tt>current_user</tt> can see, knowing he has
-  # the <tt>support_admin</tt> role,
-  # which is handled by the calling function
-  def controversies_for_support_admin; end
+  # :section: Filterrific methods
+  # Method related to the Filterrific Gem
+  ##
 
   # Filterrific method
   #
-  # Returns all the Controversy instances which the
-  # <tt>current_user</tt> can see, knowing he has
-  # the <tt>company_admin</tt> role,
-  # which is handled by the calling function
-  def controversies_for_company_admin
-    filterrific_query.from_company current_user.sei
+  # Configures the basic options for the
+  # <tt>Filterrific</tt> queries
+  def options_for_filterrific
+    {
+      sorted_by_creation: Controversy.options_for_sorted_by_creation,
+      with_status: Controversy.options_for_with_status,
+      with_state: retrieve_states_for_filterrific,
+      with_city: [],
+      with_ubs: [],
+      with_company: Company.all.map(&:sei)
+    }
   end
 
   # Filterrific method
   #
-  # Returns all the Controversy instances which the
-  # <tt>current_user</tt> can see, knowing he has
-  # the <tt>company_user</tt> role,
-  # which is handled by the calling function
-  def controversies_for_company_user
-    filterrific_query.from_company_user current_user.id
-  end
-
-  # Filterrific method
-  #
-  # Returns all the Controversy instances which the
-  # <tt>current_user</tt> can see, knowing he has
-  # the <tt>city_admin</tt> role,
-  # which is handled by the calling function
-  def controversies_for_city
-    filterrific_query.from_city current_user.city_id
-  end
-
-  # Filterrific method
-  #
-  # Returns all the Controversy instances which the
-  # <tt>current_user</tt> can see, knowing he has
-  # the <tt>ubs_admin</tt> role,
-  # which is handled by the calling function
-  def controversies_for_unity
-    filterrific_query.from_unity_user current_user.id
+  # Configures the State instances which can be
+  # used to sort the Controversy instances
+  def retrieve_states_for_filterrific
+    if current_user.cnes
+      State.find(current_user.company
+        .contracts
+        .map { |c| c.city.state_id }).map { |s| [s.name, s.id] }
+    else
+      State.all.map { |s| [s.name, s.id] }
+    end
   end
 
   ####
@@ -350,6 +316,72 @@ class ControversiesController < ApplicationController
   # request, removing it from the parameters
   def retrieve_user_creator(parameters)
     parameters.delete(:user_creator) if parameters[:user_creator]
+  end
+
+  # Configures a Event and an Alteration creation
+  def configure_event(event, user)
+    # Create event
+    @event = Event.new(type: EventType.alteration,
+                       user: user,
+                       system: System.controversy,
+                       protocol: @controversy.protocol)
+
+    # raise Event::CreateError
+    raise Event::CreateError unless @event.save
+
+    # After we correctly saved the event
+    @alteration = Alteration.new(id: @event.id, type: event)
+    raise Alteration::CreateError, event: @event unless @alteration.save
+  end
+
+  # Returns all the Call instances which the
+  # <tt>current_user</tt> can see, knowing he has
+  # the <tt>support_user</tt> role,
+  # which is handled by the calling function
+  def controversies_from_support
+    filterrific_query.from_support_user [current_user.id, nil]
+  end
+
+  # Returns all the Controversies instances which the
+  # <tt>current_user</tt> can see, knowing he has
+  # the <tt>support_admin</tt> role,
+  # which is handled by the calling function
+  def controversies_from_support_admin
+    filterrific_query.from_support_user [User.where(invited_by_id: current_user.id).map(&:id),
+                                         current_user.id,
+                                         nil].flatten
+  end
+
+  # Returns all the Controversy instances which the
+  # <tt>current_user</tt> can see, knowing he has
+  # the <tt>company_admin</tt> role,
+  # which is handled by the calling function
+  def controversies_for_company_admin
+    filterrific_query.from_company current_user.sei
+  end
+
+  # Returns all the Controversy instances which the
+  # <tt>current_user</tt> can see, knowing he has
+  # the <tt>company_user</tt> role,
+  # which is handled by the calling function
+  def controversies_for_company_user
+    filterrific_query.from_company_user current_user.id
+  end
+
+  # Returns all the Controversy instances which the
+  # <tt>current_user</tt> can see, knowing he has
+  # the <tt>city_admin</tt> role,
+  # which is handled by the calling function
+  def controversies_for_city
+    filterrific_query.from_city current_user.city_id
+  end
+
+  # Returns all the Controversy instances which the
+  # <tt>current_user</tt> can see, knowing he has
+  # the <tt>ubs_admin</tt> role,
+  # which is handled by the calling function
+  def controversies_for_unity
+    filterrific_query.from_unity_user current_user.id
   end
 
   # Handles the rollback when trying to #link_controversy or #unlink_controversy

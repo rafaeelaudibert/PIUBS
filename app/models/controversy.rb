@@ -287,7 +287,7 @@ class Controversy < ApplicationRecord
   # the one passed as a paremter, through the
   # <tt>support_user</tt> relation
   def self.from_support_user(id)
-    where(CO_SUPORTE: id)
+    where('"CO_SUPORTE" = :id OR "CO_SUPORTE_ADICIONAL" = :id', id: "%#{id}%")
   end
 
   # Returns all Controversy instances which are related to
@@ -372,14 +372,91 @@ class Controversy < ApplicationRecord
     }[role]
   end
 
+  # Filterrific method
+  #
+  # Configures the possible filterrific sorting methods
+  # to be acessed on ControversiesController
+  def self.options_for_sorted_by_creation
+    [
+      ['Mais recentes', 'creation_desc'],
+      ['Mais antigos', 'creation_asc']
+    ]
+  end
+
+  # Filterrific method
+  #
+  # Configures the possible filterrific status options
+  # to be acessed on ControversiesController
+  def self.options_for_with_status
+    [
+      ['Todos Status', 'status_any'],
+      %w[Abertos status_open],
+      %w[Fechados status_closed],
+      ['No aguardo', 'status_on_hold'],
+      ['Com Ministério', 'status_on_ministry']
+    ]
+  end
+
   #### FILTERRIFIC queries ####
-  filterrific available_filters: %i[search_query]
+  filterrific(
+    default_filter_params: { with_status: 'status_any',
+                             sorted_by_creation: 'creation_desc' },
+    available_filters: %i[
+      sorted_by_creation
+      with_status
+      with_ubs
+      with_company
+      with_state
+      with_city
+      search_query
+    ]
+  )
 
   scope :search_query, lambda { |query|
     return nil if query.blank?
 
     where('"DS_TITULO" ILIKE :search OR "DS_DESCRICAO" ILIKE :search', search: "%#{query}%")
   }
+
+  scope :sorted_by_creation, lambda { |sort_key|
+    sort = /asc$/.match?(sort_key) ? 'asc' : 'desc'
+
+    case sort_key.to_s
+    when /^creation_/
+      order(CO_PROTOCOLO: sort)
+    else
+      raise(ArgumentError, 'Opção de filtro inválida')
+    end
+  }
+
+  scope :with_status, lambda { |filter_key|
+    @status_i = if /open$/.match?(filter_key)
+                  0
+                elsif /closed$/.match?(filter_key)
+                  1
+                elsif /on_hold$/.match?(filter_key)
+                  2
+                elsif /on_ministry$/.match?(filter_key)
+                  3
+                else
+                  4
+                end
+
+    case filter_key.to_s
+    when /^status_/
+      where(status: @status_i) if @status_i != 4
+    else
+      raise(ArgumentError, 'Opção de filtro inválida')
+    end
+  }
+
+  scope :with_ubs, ->(cnes) { cnes == [''] ? nil : where(CO_CNES: cnes) }
+
+  scope :with_company, ->(sei) { sei == [''] ? nil : where(CO_SEI: sei) }
+
+  scope :with_state, ->(state) { state == [''] ? nil : where(city: State.find(state).cities) }
+
+  scope :with_city, ->(city_id) { city_id.zero? ? nil : where(city: city_id) }
 
   protected
 

@@ -29,9 +29,9 @@ class UnitiesController < ApplicationController
     (@filterrific = initialize_filterrific(
       Unity,
       params[:filterrific],
+      select_options: options_for_filterrific,
       persistence_id: false
     )) || return
-
     @unities = filterrific_query
   end
 
@@ -107,6 +107,21 @@ class UnitiesController < ApplicationController
   # the <tt>:before_action</tt> hook
   def set_unity
     @unity = Unity.find(params[:cnes])
+  end
+
+  # :section: Filterrific methods
+  # Method related to the Filterrific Gem
+  ##
+
+  # Filterrific method
+  #
+  # Configures the basic options for the
+  # <tt>Filterrific</tt> queries
+  def options_for_filterrific
+    {
+      with_state: State.all.map { |s| [s.name, s.id] },
+      with_city: []
+    }
   end
 
   ####

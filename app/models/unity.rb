@@ -76,7 +76,7 @@ class Unity < ApplicationRecord
   end
 
   #### FILTERRIFIC queries ####
-  filterrific available_filters: %i[search_query]
+  filterrific available_filters: %i[search_query with_state with_city]
 
   scope :search_query, lambda { |query|
     return nil if query.blank?
@@ -84,4 +84,8 @@ class Unity < ApplicationRecord
 
     where('"TB_UBS"."NO_NOME" ILIKE :search', search: "%#{query}%")
   }
+
+  scope :with_state, ->(state) { state == [''] ? nil : where(city: State.find(state).cities) }
+
+  scope :with_city, ->(city) { city.zero? ? nil : where(city: city) }
 end

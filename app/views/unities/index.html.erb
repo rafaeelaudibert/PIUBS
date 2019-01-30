@@ -9,6 +9,27 @@
 
 <%= form_for_filterrific @filterrific do |f| %>
   <div class="row">
+    <div class="col-md-8">
+      <div class="row">
+        <div class="form-group col-md-4">
+          <%= f.label :filterrific_with_state, 'Filtro por Estados'%>
+          <%= f.select(:with_state, @filterrific.select_options[:with_state],
+                       {multiple: true, include_blank: "Todos Estados"},
+                       class: 'form-control filterrific') %>
+        </div>
+        <div class="form-group col-md-4">
+          <%= f.label :filterrific_with_city, 'Filtro por Cidades'%>
+          <%= f.select(:with_city, @filterrific.select_options[:with_city],
+                       {multiple: true, include_blank: "Todas Cidades"},
+                       class: 'form-control filterrific') %>
+        </div>
+      </div>
+      <div class="row">
+        <%= link_to 'Desfazer filtros',
+                     reset_filterrific_url,
+                     class: 'btn btn-danger offset-md-0 col-md-4' if params[:filterrific] %>
+      </div>
+    </div>
     <div class="offset-md-8 col-md-4">
       <div class="row mt-3">
         <div class="col-md-8">
@@ -19,13 +40,13 @@
           </label>
         </div>
           <div class="col-md-4">
-           <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
+            <button class="btn btn-primary my-2 my-sm-0" type="submit">Pesquisar</button>
           </div>
-        </div>
-        <div class="row mt-2">
-          <%= link_to 'Desfazer filtros',
-                       reset_filterrific_url,
-                       class: 'btn btn-danger col-md-8' if params[:filterrific] %>
+      </div>
+      <div class="row">
+        <%= f.submit "Mostrar",
+                      id: 'mostrar-filter',
+                      class: 'btn btn-link invisible right' %>
       </div>
     </div>
   </div>
@@ -76,16 +97,57 @@
 <script>
 $('document').ready(function () {
 
-$('#filterrific_search_query').on('focusout', function () {
-  changeState($(this));
-});
+  const parseQuery = () => {
+      const queryString = decodeURIComponent((window.location.href+'').replace(/\+/g, '%20'));
+      const query = {};
+      const pairs = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&');
+      for (let piece of pairs) {
+          const pair = piece.split('=');
+          query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
+      }
 
-function changeState(form) {
-  if (form.val().length > 0) {
-    form.addClass('has-value');
-  } else {
-    form.removeClass('has-value');
+      return query;
   }
-}
+
+  const stateSelect = document.getElementById('filterrific_with_state');
+  const citySelect = document.getElementById('filterrific_with_city');
+
+  const triggeredByState = () => jQuery.ajax({url: `/companies/0/cities/${stateSelect.value}`,
+                                                type: "GET",
+                                                dataType: "json",
+                                                success: insertCitiesData,
+                                                error: console.error})
+
+  triggeredByState();
+
+  function insertCitiesData(cities) {
+    let queried_city = parseQuery()['filterrific[with_city]']
+    let innerHTML = '<option value>Todas Cidades</option>';
+    for (let city of cities) {
+      innerHTML += `<option ${queried_city == city.id ? 'selected="selected"' : ''} value=${city.id}>
+                      ${city.name}
+                    </option>`
+    }
+    citySelect.innerHTML = innerHTML;
+
+    triggeredByCity();
+  }
+
+  $('#filterrific_search_query').on('focusout', function () {
+    changeState($(this));
+  });
+
+  function changeState(form) {
+    if (form.val().length > 0) {
+      form.addClass('has-value');
+    } else {
+      form.removeClass('has-value');
+    }
+  }
+
+  $('.filterrific').on('change', () => {
+    $('#mostrar-filter').click();
+  })
+
 });
 </script>
