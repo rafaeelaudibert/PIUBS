@@ -22,10 +22,14 @@ class CompanyAbility
   # Initialization telling which User instance can do what, following the rules
   # defined above
   def initialize(user)
-    can %i[make_api_calls show], user.company if company_user?(user)
-    cannot :index, Company if company_user?(user)
+    check_company_user_permissions
 
     can %i[create destroy index], Company if user.admin?
     can %i[make_api_calls show], Company if user.admin? || support_user?(user)
+  end
+
+  def check_company_user_permission
+    can %i[make_api_calls show], user.company if company_user?(user)
+    cannot :index, Company if company_user?(user)
   end
 end

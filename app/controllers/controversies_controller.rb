@@ -353,10 +353,10 @@ class ControversiesController < ApplicationController
   end
 
   # Handles the rollback when trying to #link_controversy or #unlink_controversy
-  def link_rollback(e, support_user)
+  def link_rollback(error, support_user)
     @controversy.update(support_1: support_user)
     redirect_back(fallback_location: root_path,
-                  alert: e.message + 'durante a associação do suporte da Controvérsia')
+                  alert: error.message + 'durante a associação do suporte da Controvérsia')
   end
 
   # Called by #create, is the responsible for handling the Controversy creation
