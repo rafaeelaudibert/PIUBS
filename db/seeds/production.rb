@@ -31,7 +31,7 @@ end
 
 def seed_states
   Rails.logger.info('[START]  -- States insertion')
-  CSV.foreach('./public/csv/estados.csv', headers: true) do |row|
+  CSV.foreach('./app/assets/static/estados.csv', headers: true) do |row|
     state = State.new(name: row['Und Fed'].titleize,
                       abbr: row['UF'],
                       id: row['COD UF'])
@@ -47,7 +47,7 @@ end
 
 def seed_cities
   Rails.logger.info('[START]  -- Cities insertion')
-  CSV.foreach('./public/csv/municipios.csv', headers: true) do |row|
+  CSV.foreach('./app/assets/static/municipios.csv', headers: true) do |row|
     city = City.new(name: row['NOME MUNIC'],
                     state_id: row['COD UF'],
                     id: row['CodMun'][0...-1])
@@ -63,17 +63,13 @@ end
 
 def seed_unities
   Rails.logger.info('[START]  -- Unities insertion')
-  CSV.foreach('./public/csv/ubs.csv', headers: true) do |row|
-    name = row['nom_estab']&.titleize
-    address = row['dsc_endereco']&.titleize
-    neighborhood =row['dsc_bairro']&.titleize
-    phone = row['dsc_telefone'] == 'Não se aplica' ? '' : row['dsc_telefone']
+  CSV.foreach('./app/assets/static/ubs.csv', headers: true) do |row|
     unity = Unity.new(cnes: row['cod_cnes'],
-                      name: name,
+                      name: row['nom_estab']&.titleize,
                       city_id: row['cod_munic'],
-                      address: address,
-                      neighborhood: neighborhood,
-                      phone: phone)
+                      address: row['dsc_endereco']&.titleize,
+                      neighborhood: row['dsc_bairro']&.titleize,
+                      phone: row['dsc_telefone'] == 'Não se aplica' ? '' : row['dsc_telefone'])
     if unity.save
       Rails.logger.debug("[DEBUG]  -- INSERTED a UNITY in the database: #{unity.cnes}")
     else
@@ -163,12 +159,28 @@ def seed_categories
                             severity: :low, system: :from_controversy).save!
     category = Category.new(name: 'Software',
                             severity: :low, system: :from_controversy).save!
-
   rescue StandardError
-    Rails.logger.error('ERROR creating a CATEGORY')
+    Rails.logger.error("[ERROR]  -- ERROR creating a CATEGORY - #{category.name}")
     Rails.logger.error(category.errors.full_messages)
   end
   Rails.logger.info('[FINISH] -- Categories insertion')
+end
+
+def seed_faq
+  Rails.logger.info('[START]  -- FAQ insertion')
+
+  JSON.parse(File.read('./app/assets/static/faq.json')).each do |json_data|
+    answer = Answer.new(json_data)
+
+    if answer.save
+      Rails.logger.debug('[DEBUG]  -- INSERTED an ANSWER to the FAQ in the database')
+    else
+      Rails.logger.error('[ERROR]  -- ERROR inserting an ANSWER to the FAQ')
+      Rails.logger.error(answer.errors.full_messages)
+    end
+  end
+
+  Rails.logger.info('[FINISH] -- FAQ insertion')
 end
 
 def main
@@ -178,6 +190,7 @@ def main
   seed_cities
   seed_unities
   seed_categories
+  seed_faq
   Rails.logger.warn('[FINISH] SEED')
 end
 

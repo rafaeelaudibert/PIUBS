@@ -75,7 +75,7 @@ end
 
 def seed_states
   Rails.logger.info('[START]  -- States insertion')
-  CSV.foreach('./public/csv/estados.csv', headers: true) do |row|
+  CSV.foreach('./app/assets/static/estados.csv', headers: true) do |row|
     state = State.new(name: row['Und Fed'].titleize,
                       abbr: row['UF'],
                       id: row['COD UF'])
@@ -93,7 +93,7 @@ def seed_cities
   Rails.logger.info('[START]  -- Cities insertion')
 
   counter = 0
-  CSV.foreach('./public/csv/municipios.csv', headers: true) do |row|
+  CSV.foreach('./app/assets/static/municipios.csv', headers: true) do |row|
     if (counter % 15).zero?
       city = City.new(name: row['NOME MUNIC'],
                       state_id: row['COD UF'],
@@ -117,18 +117,13 @@ def seed_unities
 
   city_ids = City.all.ids.to_a
 
-  CSV.foreach('./public/csv/ubs.csv', headers: true) do |row|
-    if city_ids.include?(row['cod_munic'].to_i)
-      name = row['nom_estab']&.titleize
-      address = row['dsc_endereco']&.titleize
-      neighborhood =row['dsc_bairro']&.titleize
-      phone = row['dsc_telefone'] == 'Não se aplica' ? '' : row['dsc_telefone']
+  CSV.foreach('./app/assets/static/ubs.csv', headers: true) do |row|
       unity = Unity.new(cnes: row['cod_cnes'],
-                        name: name,
-                        city_id: row['cod_munic'],
-                        address: address,
-                        neighborhood: neighborhood,
-                        phone: phone)
+                      name: row['nom_estab']&.titleize,
+                      city_id: row['cod_munic'],
+                      address: row['dsc_endereco']&.titleize,
+                      neighborhood: row['dsc_bairro']&.titleize,
+                      phone: row['dsc_telefone'] == 'Não se aplica' ? '' : row['dsc_telefone'])
       if unity.save
         Rails.logger.debug("INSERTED a UNITY in the database: #{unity.cnes}")
       else
@@ -143,9 +138,9 @@ end
 def seed_contract(city)
   company = Company.all.sample
   file_content = IO.read(File.join(Rails.root,
-                                   'public',
+                                   'app',
                                    'assets',
-                                   'documents',
+                                   'static',
                                    'contrato.pdf'),
                          mode: 'rb')
   contract = Contract.new(company: company,
@@ -272,9 +267,24 @@ def seed_categories
 end
 
 def seed_answers
+  Rails.logger.info('[START]  -- Answers (and FAQ) insertion')
+
+  # FAQ questions
+  JSON.parse(File.read('./app/assets/static/faq.json')).each do |json_data|
+    answer = Answer.new(json_data)
+
+    if answer.save
+      Rails.logger.debug('Inserted a new answer on FAQ')
+    else
+      Rails.logger.error('ERROR creating an ANSWER (FAQ)')
+      Rails.logger.error(answer.errors.full_messages)
+    end
+  end
+
+  # Non-FAQ questions
   categories = Category.all
   allowed_users = User.where(role: %w[call_center_admin call_center_user])
-  Rails.logger.info('[START]  -- Answers (and FAQ) insertion')
+
   (1..50).each do |_|
     system_id = System.all.sample.id
     category = system_id.zero? ? categories.from_call.sample : categories.from_controversy.sample
@@ -282,7 +292,7 @@ def seed_answers
                         answer: Faker::Lorem.sentence(50, true, 6),
                         category: category,
                         user: allowed_users.sample,
-                        faq: Random.rand > 0.90,
+                        faq: false,
                         keywords: Faker::Lorem.sentence(1, true, 3),
                         system: system_id)
     if answer.save

@@ -1,0 +1,622 @@
+[{
+    "question": "Quais informações estão disponíveis no SISAB? ",
+    "answer": "<p>No SISAB, o gestor municipal ter&aacute; acesso a relat&oacute;rios de envio de dados por equipe de Aten&ccedil;&atilde;o B&aacute;sica, origem dos dados transmitidos por estabelecimento e tipo de fichas enviadas. Os dados est&atilde;o organizados por compet&ecirc;ncia. Tamb&eacute;m fica dispon&iacute;vel no sistema um resumo do envio por equipe, a quantidade de equipes que transmitiram e o percentual de equipes que enviaram dados nos &uacute;ltimos meses &ndash; conte&uacute;dos que ir&atilde;o auxiliar a gest&atilde;o local. Por sua vez, o gestor estadual ter&aacute; acesso &agrave;s mesmas informa&ccedil;&otilde;es, separadas por munic&iacute;pio.&nbsp;<br /><span style=\"font-size: 12pt; line-height: 107%; font-family: Times, serif;\"><br /></span></p>\r\n<p>&nbsp;</p>",
+    "category_id": 1,
+    "user_id": 9,
+    "created_at": "2018-10-16 13:20:16 -0300",
+    "faq": true,
+    "keywords": "SISAB; Informações; Gestor Municipal; Relatórios; Dados",
+    "system": "from_call"
+  },
+  {
+    "question": "Onde posso encontrar o link de download do e-SUS AB?",
+    "answer": "<p>Voc&ecirc; pode encontrar o link para instala&ccedil;&atilde;o do Sistema e-SUS AB em&nbsp;<a title=\"Download e-SUS AB\" href=\"http://dab.saude.gov.br/portaldab/esus.php?conteudo=download\" target=\"_blank\" rel=\"noopener\">Download e-SUS AB</a></p>",
+    "category_id": 1,
+    "user_id": 9,
+    "created_at": "2018-10-01 21:33:05 -0300",
+    "faq": true,
+    "keywords": "Download; e-SUS AB; Link; Orientações Básicas; Instalação",
+    "system": "from_call"
+  },
+  {
+    "question": "O e-SUS AB vai contemplar todos os instrumentos de registros (RASS, SIA - BPA-C ou BPA-I, APAC)? ",
+    "answer": "<p>O e-SUS AB contempla as a&ccedil;&otilde;es de Aten&ccedil;&atilde;o B&aacute;sica, gerando arquivo para ser exportado ao SIA (tanto BPA-I como BPA consolidado). Com o uso do aplicativo Android do e-SUS AB para as equipes do Melhor em Casa, tamb&eacute;m haver&aacute; substitui&ccedil;&atilde;o do RAAS-AD. A APAC &eacute; utilizada apenas na alta complexidade, n&atilde;o sendo contemplada pelo e-SUS AB.</p>",
+    "category_id": 1,
+    "user_id": 9,
+    "created_at": "2018-10-16 13:56:55 -0300",
+    "faq": true,
+    "keywords": "e-SUS AB; Instrumentos de Registros; SIA; RASS; APAC ",
+    "system": "from_call"
+  },
+  {
+    "question": "Quem deve alimentar o e-SUS AB/SISAB?",
+    "answer": "<p>O e-SUS AB pode ser utilizado por todos os profissionais e equipes de Aten&ccedil;&atilde;o B&aacute;sica: as equipes tradicionais, de Sa&uacute;de da Fam&iacute;lia, de N&uacute;cleos de Apoio &agrave; Sa&uacute;de da Fam&iacute;lia, de Consult&oacute;rio na Rua, do Programa Melhor em Casa, bem como as equipes que desenvolvem atividades junto ao Polo da Academia da Sa&uacute;de. Com qualquer um desses servi&ccedil;os &eacute; poss&iacute;vel come&ccedil;ar a usar esse sistema de informa&ccedil;&atilde;o.</p>",
+    "category_id": 1,
+    "user_id": 9,
+    "created_at": "2018-10-16 13:53:02 -0300",
+    "faq": true,
+    "keywords": "e-SUS AB/SISAB; Alimentar dados e-SUS; Inserir dados; Equipe Atenção Básica",
+    "system": "from_call"
+  },
+  {
+    "question": "Alguns sistemas de informação, como o Sisprenatal Web, não aceitam o cartão do SUS com início 7 e 8. O e-SUS AB apresentará algum problema em relação a isso? ",
+    "answer": "<p><span lang=\"EN-US\">N&atilde;o. Os dois sistemas fazem primeiro a valida&ccedil;&atilde;o por algoritmo para ter certeza de que &eacute; um n&uacute;mero v&aacute;lido, por&eacute;m apenas o PEC realiza a consulta na base do CadSUS para saber quem &eacute; o dono daquele cart&atilde;o, trazendo o seu n&uacute;mero principal (base 7). Esta fun&ccedil;&atilde;o s&oacute; &eacute; ativa se houver conectividade com a internet.&nbsp;</span></p>",
+    "category_id": 4,
+    "user_id": 9,
+    "created_at": "2018-10-16 14:25:38 -0300",
+    "faq": true,
+    "keywords": "Cartão do SUS; Sisprenatal Web; Algoritmo",
+    "system": "from_call"
+  },
+  {
+    "question": "As fichas do e-SUS AB são iguais às do SIAB? ",
+    "answer": "<p><span lang=\"EN-US\">N&atilde;o. O e-SUS AB &eacute; composto pelas fichas de cadastro domiciliar, cadastro individual, ficha de atividade coletiva, ficha de procedimentos, ficha de atendimento individual e ficha de atendimento odontol&oacute;gico individual, que ajudam a apoiar as equipes de Aten&ccedil;&atilde;o B&aacute;sica no mapeamento das caracter&iacute;sticas sociais, econ&ocirc;micas e de sa&uacute;de da popula&ccedil;&atilde;o adscrita ao territ&oacute;rio sob sua responsabilidade.&nbsp;</span></p>",
+    "category_id": 5,
+    "user_id": 9,
+    "created_at": "2018-10-16 14:27:25 -0300",
+    "faq": true,
+    "keywords": "Fichas do e-SUS AB; SIAB",
+    "system": "from_call"
+  },
+  {
+    "question": "Qual a diferença entre o PEC prontuário e o PEC centralizador? ",
+    "answer": "<p><span lang=\"EN-US\">Tanto o PEC prontu&aacute;rio quanto o PEC centralizador enviam dados ao SISAB. O PEC prontu&aacute;rio enviar&aacute; informa&ccedil;&otilde;es &agrave; base nacional e emitir&aacute; relat&oacute;rios apenas dos dados que forem inseridos nessa instala&ccedil;&atilde;o. J&aacute; o centralizador pode compilar informa&ccedil;&otilde;es que forem enviadas de outros PEC, o que facilita a visualiza&ccedil;&atilde;o da produ&ccedil;&atilde;o das UBS pelo gestor municipal. Para saber mais sobre os cen&aacute;rios de implanta&ccedil;&atilde;o, veja os links abaixo:</span></p>\r\n<p>Mais informa&ccedil;&otilde;es em:&nbsp;<a title=\"http://dab.saude.gov.br/portaldab/esus.php?conteudo=como_implantar. \" href=\"http://dab.saude.gov.br/portaldab/esus.php?conteudo=como_implantar.%20\" target=\"_blank\" rel=\"noopener\"><span lang=\"EN-US\">http://dab.saude.gov.br/portaldab/esus.php?conteudo=como_implantar</span><span lang=\"EN-US\">.</span></a></p>\r\n<p><span lang=\"EN-US\">Mais informa&ccedil;&otilde;es em:<a href=\"https://www.youtube.com/watch?time_continue=38&amp;v=Bt2ofV7h7Qs\" target=\"_blank\" rel=\"noopener\">&nbsp;https://www.youtube.com/watch?time_continue=38&amp;v=Bt2ofV7h7Qs</a></span></p>\r\n<p><span lang=\"EN-US\" style=\"font-size: 12pt; line-height: 107%; font-family: Times, serif;\">&nbsp;</span></p>",
+    "category_id": 3,
+    "user_id": 9,
+    "created_at": "2018-10-16 14:19:00 -0300",
+    "faq": true,
+    "keywords": "PEC prontuário; PEC centralizador; UBS; SISAB; Relatórios",
+    "system": "from_call"
+  },
+  {
+    "question": "Caso o usuário não tenha o CNS, o sistema vai permitir a digitação só da informação da data de nascimento?",
+    "answer": "<p><span lang=\"EN-US\">Caso n&atilde;o haja a informa&ccedil;&atilde;o do CNS do cidad&atilde;o, o registro de atendimento n&atilde;o ser&aacute; vinculado ao hist&oacute;rico de acompanhamento do usu&aacute;rio, mas contar&aacute; como parte da produ&ccedil;&atilde;o de a&ccedil;&otilde;es do profissional/equipe. A data de nascimento &eacute; importante quando n&atilde;o houver como identificar o cidad&atilde;o via CNS, possibilitando o acompanhamento das faixas et&aacute;rias.&nbsp;</span></p>",
+    "category_id": 4,
+    "user_id": 9,
+    "created_at": "2018-10-16 14:23:52 -0300",
+    "faq": true,
+    "keywords": "Cartão Nacional de Saúde; Data de nascimento; CNS; Cidadão",
+    "system": "from_call"
+  },
+  {
+    "question": "É possível ter acesso às informações do Cartão Nacional de Saúde (CNS) por meio do e-SUS AB? ",
+    "answer": "<p><span lang=\"EN-US\">Sim, caso esteja usando o PEC </span><span lang=\"EN-US\">on-line</span><span lang=\"EN-US\">, poder&aacute; realizar pesquisa na base de dados do CadSUS e importar as informa&ccedil;&otilde;es de cadastro para o e-SUS AB. </span></p>",
+    "category_id": 4,
+    "user_id": 9,
+    "created_at": "2018-10-16 14:22:06 -0300",
+    "faq": true,
+    "keywords": "Cartão Nacional de Saúde; CNS; Acesso à informação; Informações de cadastro",
+    "system": "from_call"
+  },
+  {
+    "question": "Onde posso obter mais informações sobre o e-SUS AB e interagir com a equipe e outros usuários do sistema? ",
+    "answer": "<p>Na p&aacute;gina do e-SUS AB no site do DAB est&atilde;o dispon&iacute;veis v&aacute;rias informa&ccedil;&otilde;es sobre o sistema. E &eacute; poss&iacute;vel interagir e trocar informa&ccedil;&otilde;es sobre o e-SUS AB em diferentes canais tais como: a Comunidade de Pr&aacute;ticas, espa&ccedil;o virtual para troca de experi&ecirc;ncias, em que &eacute; poss&iacute;vel tirar d&uacute;vidas com outros usu&aacute;rios e colocar sugest&otilde;es na comunidade dedicada ao e-SUS AB; e o Disque Sa&uacute;de 136, um servi&ccedil;o de apoio ao cidad&atilde;o, que disponibiliza informa&ccedil;&otilde;es do e-SUS AB e tamb&eacute;m funciona para receber sugest&otilde;es, reclama&ccedil;&otilde;es, elogios e solicita&ccedil;&otilde;es.</p>\r\n<p>Mais informa&ccedil;&otilde;es em:&nbsp;<a href=\"http://dab.saude.gov.br/portaldab/esus.php\" target=\"_blank\" rel=\"noopener\">dab.saude.gov.br/portaldab/esus.php</a></p>\r\n<p>Mais informa&ccedil;oes sobre Comunidade de Pr&aacute;ticas em: <a href=\"http://Comunidades%20de Pr&aacute;ticas\" target=\"_blank\" rel=\"noopener\">https://novo.atencaobasica.org.br/</a></p>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>",
+    "category_id": 2,
+    "user_id": 9,
+    "created_at": "2018-10-16 14:04:05 -0300",
+    "faq": true,
+    "keywords": "e-SUS AB; Informações sobre o sistema; DAB; Canais de informações e-SUS",
+    "system": "from_call"
+  },
+  {
+    "question": "Como fazer o cadastro da população? Como repassar as informações do atual cadastro para o e-SUS?",
+    "answer": "<p><span lang=\"EN-US\">Os cadastros domiciliar e individual podem ser realizados atrav&eacute;s das fichas de cadastro e, na sequ&ecirc;ncia, as informa&ccedil;&otilde;es podem ser exportadas para o PEC. Atrav&eacute;s do THRIFT tamb&eacute;m &eacute; poss&iacute;vel repassar as informa&ccedil;&otilde;es de cadastro do sistema pr&oacute;prio ao sistema do e-SUS AB (CDS ou PEC). </span></p>",
+    "category_id": 6,
+    "user_id": 8,
+    "created_at": "2018-10-16 14:34:18 -0300",
+    "faq": true,
+    "keywords": "Fichas de cadastro; Cadastros domiciliar e individual",
+    "system": "from_call"
+  },
+  {
+    "question": "Na ficha de atendimento individual, como preencher o campo “CNES” no caso das atividades realizadas pelo NASF? O correto é informar o CNES da unidade em que está sendo realizada a atividade ou o CNES da unidade à qual o NASF está vinculado? ",
+    "answer": "<p><span lang=\"EN-US\">O profissional do NASF deve informar o CNES da unidade &agrave; qual est&aacute; vinculado. </span></p>",
+    "category_id": 7,
+    "user_id": 8,
+    "created_at": "2018-10-16 17:06:10 -0300",
+    "faq": true,
+    "keywords": "NASF; Atividade",
+    "system": "from_call"
+  },
+  {
+    "question": "Como registrar o local de atendimento na ficha quando a equipe se desloca para a zona rural e algum usuário cede a casa para que sejam realizados os atendimentos durante determinado período, para diversos usuários, visto que se trata de um local fixo de atendimento? Deve-se a opção “UBS” ou “Outros”?",
+    "answer": "<p><span lang=\"EN-US\">Esse caso enquadra-se na op&ccedil;&atilde;o &ldquo;Outros&rdquo;, pois, apesar de ser um lugar fixo, n&atilde;o caracteriza uma unidade de sa&uacute;de.&nbsp;</span></p>",
+    "category_id": 5,
+    "user_id": 9,
+    "created_at": "2018-10-16 14:29:20 -0300",
+    "faq": true,
+    "keywords": "Local de atendimento na ficha; Zona Rural; Atendimento; Usuário",
+    "system": "from_call"
+  },
+  {
+    "question": "Como fazer para atualizar os dados na ficha de cadastro individual de uma gestante que passou a ser puérpera? ",
+    "answer": "<p><span lang=\"EN-US\">Na vers&atilde;o 2.0 do sistema, &eacute; poss&iacute;vel atualizar os dados ap&oacute;s eles serem enviados. </span></p>",
+    "category_id": 7,
+    "user_id": 8,
+    "created_at": "2018-10-16 16:59:37 -0300",
+    "faq": true,
+    "keywords": "Gestante; Puérpera",
+    "system": "from_call"
+  },
+  {
+    "question": "Normalmente, quem faz a entrega dos encaminhamentos para consultas marcadas em outros níveis de atenção é o Agente Comunitário de Saúde (ACS). Como indicar essa ação na ficha de visita domiciliar quando o usuário a quem a consulta se destina está ausente no domicílio e o ACS é recebido por um familiar? Deve-se informar o CNS do usuário da consulta ou do familiar que recebeu o aviso?",
+    "answer": "<p><span lang=\"EN-US\">Deve-se informar o CNS do familiar que recebeu o aviso e, em &ldquo;Motivo da visita&rdquo;, marcar &ldquo;Outros&rdquo;.&nbsp;</span></p>",
+    "category_id": 6,
+    "user_id": 9,
+    "created_at": "2018-10-16 16:57:00 -0300",
+    "faq": true,
+    "keywords": "Registro na Ficha de entrega dos encaminhamentos; ACS",
+    "system": "from_call"
+  },
+  {
+    "question": "Durante o preenchimento da ficha, quem pode ser indicado como responsável das pessoas em situação de abrigo, presídio ou asilo?",
+    "answer": "<p><span lang=\"EN-US\">No cadastro, o respons&aacute;vel pelas pessoas em situa&ccedil;&atilde;o de institucionaliza&ccedil;&atilde;o deve ser a pessoa de refer&ecirc;ncia do servi&ccedil;o de sa&uacute;de.&nbsp;</span></p>",
+    "category_id": 6,
+    "user_id": 9,
+    "created_at": "2018-10-16 14:36:39 -0300",
+    "faq": true,
+    "keywords": "Ficha de pessoas em situação de institucionalização; Preenchimento da Ficha; Situação de rua",
+    "system": "from_call"
+  },
+  {
+    "question": "É possível fazer alguma alteração no cadastro domiciliar ou individual?  ",
+    "answer": "<p><span lang=\"EN-US\">A vers&atilde;o 2.0 do sistema permitir&aacute; a edi&ccedil;&atilde;o/atualiza&ccedil;&atilde;o do cadastro domiciliar e individual. As demais fichas, por se tratarem do registro daquela a&ccedil;&atilde;o, n&atilde;o s&atilde;o pass&iacute;veis de altera&ccedil;&atilde;o/edi&ccedil;&atilde;o.</span></p>",
+    "category_id": 5,
+    "user_id": 8,
+    "created_at": "2018-10-16 16:54:27 -0300",
+    "faq": true,
+    "keywords": "Alteração no cadastro domiciliar ou individual",
+    "system": "from_call"
+  },
+  {
+    "question": "O acampado poderá ser cadastrado? Na ficha de cadastro domiciliar ele entra como ocupação (situação da posse da terra)? ",
+    "answer": "<p><span lang=\"EN-US\">A rotina dos munic&iacute;pios j&aacute; considera que o tempo m&iacute;nimo de resid&ecirc;ncia para cadastrar essas pessoas varia entre 3 e 6 meses. Assim, o acampado em situa&ccedil;&atilde;o de ocupa&ccedil;&atilde;o pode ser cadastrado normalmente.&nbsp;</span></p>",
+    "category_id": 6,
+    "user_id": 8,
+    "created_at": "2018-10-16 14:57:37 -0300",
+    "faq": true,
+    "keywords": "Cadastro de acampado",
+    "system": "from_call"
+  },
+  {
+    "question": "Como proceder no caso de atendimento compartilhado pela equipe de Saúde da Família e pela equipe do NASF, visto que o sistema não aceita o cadastro do profissional do NASF, que não está nesse CNES, mas em outro CNES do município? ",
+    "answer": "<p><span lang=\"EN-US\">O atual sistema n&atilde;o aceita o registro de profissionais de CNES diferentes. Portanto, o registro dos profissionais do NASF ficar&aacute; na ficha que eles estiverem utilizando, e as da ESF em outra ficha. No momento, est&aacute; em discuss&atilde;o uma forma de qualificar essa informa&ccedil;&atilde;o. </span></p>",
+    "category_id": 7,
+    "user_id": 8,
+    "created_at": "2018-10-16 17:13:02 -0300",
+    "faq": true,
+    "keywords": "NASF; CNES; Registro de profissional; Atendimento Compartilhado",
+    "system": "from_call"
+  },
+  {
+    "question": "Na ficha de atividade coletiva, as ações de saúde bucal devem ser marcadas individualmente, com uma ficha para cada ação?",
+    "answer": "<p><span lang=\"EN-US\">Nos casos de procedimentos coletivos ou atendimento em grupo, &eacute; recomendado registrar as a&ccedil;&otilde;es individualmente, evitando-se que se fa&ccedil;a confus&atilde;o em rela&ccedil;&atilde;o a quais procedimentos est&atilde;o com avalia&ccedil;&atilde;o alterada em determinados indiv&iacute;duos.</span></p>\r\n<p><span lang=\"EN-US\">Mais informa&ccedil;&otilde;es em:&nbsp;</span><a href=\"https://www.youtube.com/watch?time_continue=1253&amp;v=LEq5XmTvXQg\" target=\"_blank\" rel=\"noopener\">https://www.youtube.com/watch?time_continue=1253&amp;v=LEq5XmTvXQg</a></p>\r\n<p>&nbsp;</p>",
+    "category_id": 9,
+    "user_id": 9,
+    "created_at": "2018-10-18 11:09:32 -0300",
+    "faq": true,
+    "keywords": "Ficha de atividade coletiva; Ações de Saúde Bucal; Procedimentos coletivos; Atendimento em grupo",
+    "system": "from_call"
+  },
+  {
+    "question": "Como marcar uma primeira consulta de odontologia no domicílio, considerando que seria uma consulta agendada, mas não se enquadra nos requisitos para primeira consulta programática? ",
+    "answer": "<p><span lang=\"EN-US\">A partir da vers&atilde;o 1.3, quando o profissional marcar que &eacute; uma consulta de demanda espont&acirc;nea, n&atilde;o haver&aacute; a obrigatoriedade de marcar os outros tipos de consulta.</span></p>",
+    "category_id": 8,
+    "user_id": 9,
+    "created_at": "2018-10-18 11:03:24 -0300",
+    "faq": true,
+    "keywords": "Consulta no domicílio; Odontologia; Primeira consulta; Consulta agendada",
+    "system": "from_call"
+  },
+  {
+    "question": "Onde deve ser feito o registro do atendimento no domicílio (curativos, medicação etc..) realizado por técnico de enfermagem, quando este for acompanhado apenas pelo ACS, visto que o técnico de enfermagem tem acesso apenas à escuta inicial? ",
+    "answer": "<p><span lang=\"EN-US\">Na ficha de procedimentos, no campo &ldquo;Local de atendimento&rdquo;, deve-se: I</span><span lang=\"EN-US\">) </span><span lang=\"EN-US\">selecionar a op&ccedil;&atilde;o 04 (domic&iacute;lio); II</span><span lang=\"EN-US\">) </span><span lang=\"EN-US\">na sequ&ecirc;ncia, marcar um X no procedimento realizado ou inserir o c&oacute;digo SIGTAP para outros procedimentos n&atilde;o descritos na ficha; e III</span><span lang=\"EN-US\">) </span><span lang=\"EN-US\">anotar no prontu&aacute;rio. </span></p>",
+    "category_id": 10,
+    "user_id": 8,
+    "created_at": "2018-10-18 11:15:02 -0300",
+    "faq": true,
+    "keywords": "Registro do atendimento no domicílio; Técnico de enfermagem; ACS",
+    "system": "from_call"
+  },
+  {
+    "question": "Como instalar o PEC centralizador? ",
+    "answer": "<p><span lang=\"EN-US\">Ser&aacute; preciso duas m&aacute;quinas, pois o PEC prontu&aacute;rio n&atilde;o pode ser instalado na mesma m&aacute;quina que o centralizador. Basta fazer o </span><span lang=\"EN-US\">download </span><span lang=\"EN-US\">no </span><span lang=\"EN-US\">site </span><span lang=\"EN-US\">do e-SUS AB. No site tamb&eacute;m est&aacute; dispon&iacute;vel o </span><span lang=\"EN-US\">Guia r&aacute;pido para instala&ccedil;&atilde;o do centralizador do cidad&atilde;o</span><span lang=\"EN-US\">.&nbsp;</span></p>\r\n<p><span lang=\"EN-US\">Mais informa&ccedil;&otilde;es em:&nbsp;<a href=\"http://189.28.128.100/dab/docs/portaldab/documentos/guia_pec_centralizador.pdf\" target=\"_blank\" rel=\"noopener\">http://189.28.128.100/dab/docs/portaldab/documentos/guia_pec_centralizador.pdf</a></span></p>\r\n<p><span lang=\"EN-US\">Mais informa&ccedil;&otilde;es em: <a href=\"https://www.youtube.com/watch?time_continue=38&amp;v=Bt2ofV7h7Qs\" target=\"_blank\" rel=\"noopener\">https://www.youtube.com/watch?time_continue=38&amp;v=Bt2ofV7h7Qs</a></span></p>\r\n<p>&nbsp;</p>",
+    "category_id": 3,
+    "user_id": 9,
+    "created_at": "2018-10-16 14:11:42 -0300",
+    "faq": true,
+    "keywords": "PEC; Instalação do Centralizador do Cidadão; PEC centralizador; e-SUS AB; Download",
+    "system": "from_call"
+  },
+  {
+    "question": "Quem pode preencher a ficha de atendimento odontológico? ",
+    "answer": "<p><span lang=\"EN-US\">Qualquer profissional que fa&ccedil;a atendimento compartilhado com o dentista, incluindo ASB e TSB, pode efetuar o preenchimento da ficha.&nbsp;</span></p>",
+    "category_id": 8,
+    "user_id": 8,
+    "created_at": "2018-10-18 11:01:23 -0300",
+    "faq": true,
+    "keywords": "Ficha Atendimento Odontológico; Preenchimento da Ficha",
+    "system": "from_call"
+  },
+  {
+    "question": "Como fazer o backup de dados no módulo CDS?",
+    "answer": "<p>&Eacute; importante garantir o&nbsp;<em>backup</em>&nbsp;dos dados. Para tanto, deve-se copiar a pasta &ldquo;../bin/database/&rdquo; para um local seguro ou exportar os dados a serem enviados.<br /><span style=\"font-size: 12pt; line-height: 107%; font-family: Times, serif;\"><br /></span></p>",
+    "category_id": 11,
+    "user_id": 8,
+    "created_at": "2018-10-18 13:00:26 -0300",
+    "faq": true,
+    "keywords": "Backup; Coleta de dados Simplificada",
+    "system": "from_call"
+  },
+  {
+    "question": "Qual o período que devo informar os dados de cadastro e produção pelo e-SUS AB? ",
+    "answer": "<p>A periodicidade dos envios vai depender da organiza&ccedil;&atilde;o no munic&iacute;pio, podendo ocorrer: diariamente, semanalmente, quinzenalmente ou mensalmente.</p>\r\n<p>O prazo m&aacute;ximo recomendado para envio das informa&ccedil;&otilde;es de produ&ccedil;&atilde;o &eacute; de 30 dias, que equivale ao envio mensal.</p>\r\n<p>Para repasse de recursos, devem ser observados os prazos de acordo com a finalidade: I) compet&ecirc;ncia mensal &ndash; caso em que o PAB Vari&aacute;vel &eacute; cortado se n&atilde;o houver envio de dados por tr&ecirc;s meses consecutivos; ou II) PSE &ndash; caso de recursos e prazos espec&iacute;ficos, descritos em portarias. O sistema n&atilde;o limita o envio por compet&ecirc;ncia, ou seja, &eacute; permitido enviar dados retroativos em at&eacute; um ano, para fins epidemiol&oacute;gicos ou por conta do PSE.</p>",
+    "category_id": 11,
+    "user_id": 8,
+    "created_at": "2018-10-18 13:07:49 -0300",
+    "faq": true,
+    "keywords": "Dados de cadastro; Dados de produção; e-SUS AB",
+    "system": "from_call"
+  },
+  {
+    "question": "É possível digitar diretamente no PEC centralizador para inserir a produção de alguma unidade, por prevenção, para o caso de o computador estragar ou ser furtado? Caso contrário, como enviar essa produção?",
+    "answer": "<p>N&atilde;o &eacute; poss&iacute;vel digitar dentro de um PEC Centralizador, mas &eacute; poss&iacute;vel importar o registro de atendimento simplificado (RAS) digitado em um CDS para o centralizador. No entanto, existe a op&ccedil;&atilde;o de instala&ccedil;&atilde;o do PEC Prontu&aacute;rio, em que &eacute; poss&iacute;vel definir um perfil de digitador. Nesse caso, o digitador insere as informa&ccedil;&otilde;es do CDS dentro do pr&oacute;prio PEC e, de 0h &agrave;s 6h, os dados s&atilde;o envidados para a base nacional. &Eacute; importante ficar claro que uma instala&ccedil;&atilde;o do tipo CDS precisa de uma instala&ccedil;&atilde;o do tipo PEC ou um centralizador municipal ou multimunicipal para enviar os dados para o SISAB.<br /><span style=\"font-size: 12pt; line-height: 107%; font-family: Times, serif;\"><br /></span></p>",
+    "category_id": 11,
+    "user_id": 9,
+    "created_at": "2018-10-18 13:02:51 -0300",
+    "faq": true,
+    "keywords": "PEC centralizador; RAS; CDS",
+    "system": "from_call"
+  },
+  {
+    "question": "Como fazer para extrair os relatórios das informações compiladas em cada um dos sistemas (CDS e PEC)? ",
+    "answer": "<p>Ao fazer&nbsp;<em>login</em>&nbsp;no PEC Prontu&aacute;rio ou PEC centralizador, com o perfil de gestor ou coordenador, tem-se acesso os relat&oacute;rios por meio do &iacute;cone &ldquo;Relat&oacute;rios&rdquo;. L&aacute; est&atilde;o dispon&iacute;veis os relat&oacute;rios de: atendimento, acompanhamento, procedimento, exames, conduta, monitoramento e consolidado.</p>",
+    "category_id": 12,
+    "user_id": 8,
+    "created_at": "2018-10-18 13:11:43 -0300",
+    "faq": true,
+    "keywords": "Relatório; CDS; PEC",
+    "system": "from_call"
+  },
+  {
+    "question": "É necessário concluir todo cadastramento domiciliar e individual para iniciar a transmissão?",
+    "answer": "<p>N&atilde;o. Ser&aacute; poss&iacute;vel enviar a produ&ccedil;&atilde;o sem terminar o cadastramento. Por&eacute;m, n&atilde;o se deve deixar para fazer o cadastro na &uacute;ltima hora.</p>",
+    "category_id": 13,
+    "user_id": 8,
+    "created_at": "2018-10-18 13:21:18 -0300",
+    "faq": true,
+    "keywords": "Transmissão dos dados",
+    "system": "from_call"
+  },
+  {
+    "question": "Quando o município dispõe de apenas uma unidade, é possível usar um mesmo computador para inserir os dados do CDS e do PEC e efetuar a transmissão para o banco de dados nacional?",
+    "answer": "<p>Caso um munic&iacute;pio possua apenas uma UBS e apenas um computador dispon&iacute;vel (quer seja da UBS ou da Secretaria Municipal de Sa&uacute;de), recomenda-se instalar apenas o PEC, digitar as fichas dentro do PEC e enviar os dados por esse sistema.&nbsp;</p>\r\n<p>Mais informa&ccedil;&otilde;es sobre os cen&aacute;rios de implanta&ccedil;&atilde;o:&nbsp;<a title=\"dab.saude.gov.br/portaldab/esus.php?conteudo=como_implantar\" href=\"http://dab.saude.gov.br/portaldab/esus.php?conteudo=como_implantar\" target=\"_blank\" rel=\"noopener\">dab.saude.gov.br/portaldab/esus.php?conteudo=como_implantar</a></p>\r\n<p>&nbsp;</p>",
+    "category_id": 13,
+    "user_id": 8,
+    "created_at": "2018-10-18 13:39:16 -0300",
+    "faq": true,
+    "keywords": "CDS; PEC",
+    "system": "from_call"
+  },
+  {
+    "question": "Como ter certeza de que os dados do PEC/CDS foram transmitidos? ",
+    "answer": "<p>A partir da vers&atilde;o 1.3, no PEC Prontu&aacute;rio ou PEC Centralizador, &eacute; poss&iacute;vel gerar um &ldquo;Comprovante de Envio&rdquo; clicando no &iacute;cone &ldquo;Transmiss&atilde;o dos Dados&rdquo;.</p>",
+    "category_id": 13,
+    "user_id": 8,
+    "created_at": "2018-10-18 14:23:30 -0300",
+    "faq": true,
+    "keywords": "PEC; CDS",
+    "system": "from_call"
+  },
+  {
+    "question": "Para o envio do PEC, é preciso centralizar os dados para fazer o envio à base de dados nacional? ",
+    "answer": "<p>O envio pode ser feito diretamente pelo PEC instalado na UBS ou por meio de um PEC centralizador no munic&iacute;pio.</p>",
+    "category_id": 14,
+    "user_id": 8,
+    "created_at": "2018-10-18 14:24:47 -0300",
+    "faq": true,
+    "keywords": "Envio do PEC",
+    "system": "from_call"
+  },
+  {
+    "question": "Quais relatórios serão emitidos pelo sistema? ",
+    "answer": "<p>No PEC prontu&aacute;rio ou no PEC centralizador, est&atilde;o dispon&iacute;veis relat&oacute;rios sint&eacute;ticos sobre cadastro, atendimentos, exames, condutas/desfecho de atendimentos, monitoramento e relat&oacute;rios operacionais. Em certa medida, esses relat&oacute;rios s&atilde;o semelhantes &agrave;s fichas B (de acompanhamento do SIAB); por&eacute;m, com dados referentes aos atendimentos realizados por toda a equipe e n&atilde;o somente os dos ACS.</p>",
+    "category_id": 12,
+    "user_id": 8,
+    "created_at": "2018-10-18 13:14:51 -0300",
+    "faq": true,
+    "keywords": "Relatório; PEC prontuário; PEC centralizador",
+    "system": "from_call"
+  },
+  {
+    "question": "O que fazer quando a visita domiciliar/atendimento domiciliar realizada no período da tarde estende-se até o horário de fechamento da UBS, não sendo possível retornar para evoluir no PEC? ",
+    "answer": "<p>Nesse caso, o atendimento realizado no domic&iacute;lio poder&aacute; ser registrado no dia subsequente, com a ressalva de que, na anota&ccedil;&atilde;o, o profissional deve indicar textualmente (anotar no campo aberto do SOAP) que o atendimento foi realizado no dia anterior.&nbsp;</p>",
+    "category_id": 16,
+    "user_id": 8,
+    "created_at": "2018-10-18 14:39:55 -0300",
+    "faq": true,
+    "keywords": "Visita domiciliar; Atendimento domiciliar; PEC",
+    "system": "from_call"
+  },
+  {
+    "question": "Como transmitir os dados do CDS?",
+    "answer": "<p>O CDS n&atilde;o envia informa&ccedil;&otilde;es diretamente para base do Minist&eacute;rio da Sa&uacute;de (MS); nesse caso, os dados devem ser enviados por meio do PEC. Assim, &eacute; preciso ter instalado o PEC prontu&aacute;rio ou o PEC centralizador para intermediar o envio das informa&ccedil;&otilde;es ao MS.<br /><span style=\"font-size: 12pt; line-height: 107%; font-family: Times, serif;\"><br /></span></p>",
+    "category_id": 13,
+    "user_id": 8,
+    "created_at": "2018-10-18 13:19:59 -0300",
+    "faq": true,
+    "keywords": "CDS; Transmitir os dados",
+    "system": "from_call"
+  },
+  {
+    "question": "É possível digitar as fichas de uma competência em outra? Se não for possível digitar todas as fichas em um mês, qual é o prazo permitido para essa atividade? ",
+    "answer": "<p>No caso de fechamento de compet&ecirc;ncia para pagamento do PAB vari&aacute;vel, o envio das fichas deve ser feito em at&eacute; 90 dias. No entanto, o prazo de envio para que as informa&ccedil;&otilde;es sejam consideradas nos indicadores de sa&uacute;de do munic&iacute;pio &eacute; de at&eacute; um ano.</p>",
+    "category_id": 13,
+    "user_id": 8,
+    "created_at": "2018-10-18 13:23:14 -0300",
+    "faq": true,
+    "keywords": "Envio das fichas; Pagamento PAB variável",
+    "system": "from_call"
+  },
+  {
+    "question": "No PEC, é possível corrigir quando um registro é feito de forma equivocada no prontuário ou quando for utilizado o prontuário errado para registro? ",
+    "answer": "<p>Se o profissional perceber o erro antes de salvar/finalizar o atendimento, n&atilde;o h&aacute; problema, mas o registro n&atilde;o poder&aacute; ser alterado se o erro for detectado ap&oacute;s a finaliza&ccedil;&atilde;o do atendimento (ap&oacute;s salvar). Assim, esse tipo de equ&iacute;voco deve ser uma exce&ccedil;&atilde;o e &eacute; importante estar atento, pois, em tese, nesse momento, para acessar o registro do paciente, ou ele est&aacute; presente ele foi adicionado &agrave; lista de atendimento. Todo atendimento gera um registro de atendimento simplificado (RAS), que contempla o CID-10/CIAP-2. Para contornar, sugere-se proceder de modo similar ao que se faz no prontu&aacute;rio em papel: acessar o sistema e, na evolu&ccedil;&atilde;o, colocar um aviso de &ldquo;sem efeito&rdquo; ou &ldquo;desconsiderar o registro anterior&rdquo;.</p>",
+    "category_id": 14,
+    "user_id": 8,
+    "created_at": "2018-10-18 14:30:07 -0300",
+    "faq": true,
+    "keywords": "Registro de Atendimento Simplificado; RAS",
+    "system": "from_call"
+  },
+  {
+    "question": "Quando não for possível evoluir no prontuário em um mesmo dia, é possível continuar ou começar a evoluir no prontuário no dia seguinte?",
+    "answer": "<p>N&atilde;o, por seguran&ccedil;a e por padr&atilde;o, o sistema encerra os atendimentos que ainda estiverem em aberto &agrave;s 24h. Vale considerar que, mesmo no prontu&aacute;rio de papel, n&atilde;o &eacute; recomendado interromper o preenchimento. Compete ao profissional realizar o registro oportuno no ato do atendimento ao cidad&atilde;o.</p>",
+    "category_id": 16,
+    "user_id": 8,
+    "created_at": "2018-10-18 14:37:06 -0300",
+    "faq": true,
+    "keywords": "Evoluir Prontuário",
+    "system": "from_call"
+  },
+  {
+    "question": "Se o município utilizar o PEC, os profissionais terão de preencher a ficha de atendimento individual e de procedimentos do CDS também? Por exemplo, após atender a um cidadão, se o médico lançar as informações no PEC, ele vai ter de preencher as fichas do CDS?",
+    "answer": "<p>N&atilde;o h&aacute; necessidade de utilizar as fichas de CDS quando se faz uso do PEC. Cada atendimento por meio do PEC gera automaticamente uma ficha CDS de atendimento individual e/ou de procedimento no banco de dados do sistema.</p>\r\n<p><strong><span style=\"font-size: 12pt; line-height: 107%; font-family: Times, serif; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial;\"> <!--[endif]--></span></strong></p>",
+    "category_id": 16,
+    "user_id": 8,
+    "created_at": "2018-10-18 14:35:42 -0300",
+    "faq": true,
+    "keywords": "PEC; CDS; Atendimento",
+    "system": "from_call"
+  },
+  {
+    "question": "No prontuário de papel, o funcionário checa o procedimento realizado por meio do registro e da assinatura. No caso do PEC, onde é feito o registro?",
+    "answer": "<p>De acordo com seu perfil e CBO, ao entrar com seu login, o profissional tem acesso a determinados recursos e funcionalidades do PEC previamente configurados pelo administrador. Assim, por exemplo, um t&eacute;cnico de enfermagem pode verificar o atendimento e acessar os campos &ldquo;S&rdquo; (motivo do atendimento) e &ldquo;O&rdquo; (procedimentos realizados) do SOAP, de acordo com o que foi prescrito em &ldquo;P&rdquo; pelo profissional de n&iacute;vel superior.</p>",
+    "category_id": 14,
+    "user_id": 8,
+    "created_at": "2018-10-18 14:32:06 -0300",
+    "faq": true,
+    "keywords": "Registro; Procedimento Realizado; SOAP",
+    "system": "from_call"
+  },
+  {
+    "question": "Nos casos em que houver um centralizador estadual, o município enviará os dados diretamente para o sistema nacional e este vai repassar os dados para o estado?",
+    "answer": "<p>Nos casos em que houver centralizador estadual, o munic&iacute;pio informar&aacute; o endere&ccedil;o do centralizador do estado no link para envio de dados. No momento do envio, a informa&ccedil;&atilde;o ser&aacute; enviada simultaneamente para a base nacional e para o centralizador estadual.</p>",
+    "category_id": 14,
+    "user_id": 8,
+    "created_at": "2018-10-18 14:27:25 -0300",
+    "faq": true,
+    "keywords": "Envio dos dados; Centralizador",
+    "system": "from_call"
+  },
+  {
+    "question": "No PEC, depois de incluir os dados na agenda de atendimento dos profissionais, o/a recepcionista pode incluir o cidadão na lista de atendimento? ",
+    "answer": "<p>N&atilde;o h&aacute; necessidade de incluir os usu&aacute;rios que chegam pela demanda espont&acirc;nea na agenda do profissional. Essa inclus&atilde;o &eacute; realizada diretamente na lista de atendimento. A agenda dever&aacute; ser utilizada apenas para registro de consultas futuras. Contudo, existem situa&ccedil;&otilde;es em que o cidad&atilde;o chega solicitando um agendamento e tamb&eacute;m um acolhimento. Se for esse o caso, para evitar a oferta superestimada de agendamentos ao cidad&atilde;o, &eacute; importante que a recep&ccedil;&atilde;o marque a consulta apenas ap&oacute;s o desfecho da escuta inicial/atendimento no dia. Ou seja, deve-se inicialmente colocar o cidad&atilde;o na lista de escuta inicial/consulta no dia e, conforme o resultado do acolhimento, marcar a consulta.</p>",
+    "category_id": 15,
+    "user_id": 8,
+    "created_at": "2018-10-18 14:34:19 -0300",
+    "faq": true,
+    "keywords": "Atendimento; Agenda Profissional",
+    "system": "from_call"
+  },
+  {
+    "question": "Como funciona a escuta inicial na prática? O agendamento da escuta inicial é sempre realizado pelo recepcionista? Depois que o paciente saiu da consulta médica e é colocado novamente na lista de atendimento, é correto ele aparecer para escuta inicial? ",
+    "answer": "<p>De acordo com o fluxo-padr&atilde;o de UBS em que h&aacute; escuta inicial, os usu&aacute;rios que chegam na unidade, seja por demanda espont&acirc;nea seja para atendimentos agendados, passam pela escuta para que tenham sua demanda acolhida e melhor direcionada dentro do servi&ccedil;o. No entanto, n&atilde;o &eacute; obrigat&oacute;rio que a inclus&atilde;o do cidad&atilde;o na lista seja feita pelo recepcionista, isso pode ser realizado pelo pr&oacute;prio profissional que estiver realizando a escuta. Como cada munic&iacute;pio tem um jeito pr&oacute;prio de organizar o acolhimento/escuta inicial, gestores e trabalhadores podem decidir em comum acordo sobre seu funcionamento.</p>",
+    "category_id": 16,
+    "user_id": 8,
+    "created_at": "2018-10-18 16:14:46 -0300",
+    "faq": true,
+    "keywords": "Escuta inicial; Lista de atendimento",
+    "system": "from_call"
+  },
+  {
+    "question": "Em alguns municípios, após a consulta, o usuário é atendido pelo técnico de enfermagem. Como realizar o registro desse atendimento no prontuário?",
+    "answer": "<p>Ao finalizar a consulta, o profissional respons&aacute;vel tem a op&ccedil;&atilde;o de agendar o retorno e tamb&eacute;m de realizar o encaminhamento interno para procedimentos ou para outro profissional. Por exemplo, o m&eacute;dico pode encaminhar o usu&aacute;rio para o t&eacute;cnico de enfermagem e este registrar seu atendimento no &ldquo;S&rdquo; de Subjetivo e &ldquo;O&rdquo; de Objetivo, conforme descrito na pergunta anterior.&nbsp;</p>",
+    "category_id": 16,
+    "user_id": 8,
+    "created_at": "2018-10-18 16:18:39 -0300",
+    "faq": true,
+    "keywords": "Atendimento; Técnico de Enfermagem; Registro",
+    "system": "from_call"
+  },
+  {
+    "question": "Quando passar da hora de atendimento, o sistema permitirá que o cidadão seja atendido pelo profissional? ",
+    "answer": "<p>O PEC &eacute; flex&iacute;vel para garantir o maior acesso do cidad&atilde;o ao servi&ccedil;o de sa&uacute;de e n&atilde;o h&aacute; nenhuma trava no sistema que inviabilize o atendimento. O objetivo do agendamento &eacute; garantir o registro de que, naquele momento, aquele hor&aacute;rio est&aacute; reservado para aquele cidad&atilde;o.</p>",
+    "category_id": 16,
+    "user_id": 8,
+    "created_at": "2018-10-18 14:41:47 -0300",
+    "faq": true,
+    "keywords": "PEC; Hora de atendimento",
+    "system": "from_call"
+  },
+  {
+    "question": "Esqueci Minha Senha, o que Faço?",
+    "answer": "<p>Quando o usu&aacute;rio, por qualquer motivo, esquecer a senha de acesso, deve solicitar ao administrador do sistema ou ao coordenador da UBS&nbsp;que a redefina. Ao redefini-la, ela voltar&aacute; a ser a senha-padr&atilde;o do sistema (CNS do profissional).</p>\r\n<p>Mais informa&ccedil;&otilde;es em: <a href=\"http://dab.saude.gov.br/portaldab/esus/manual_pec_2_2/index.php?conteudo=capitulo1/capitulo1\">http://dab.saude.gov.br/portaldab/esus/manual_pec_2_2/index.php?conteudo=capitulo1/capitulo1</a></p>",
+    "category_id": 2,
+    "user_id": 9,
+    "created_at": "2018-10-16 13:59:45 -0300",
+    "faq": true,
+    "keywords": "Senha de acesso; Esquecer senha; Usuário; Acesso ao sistema; Redefinir senha",
+    "system": "from_call"
+  },
+  {
+    "question": "Durante a escuta inicial, qual é protocolo recomendado para a realização da classificação de risco no PEC?",
+    "answer": "<p>Esse m&oacute;dulo do PEC foi desenvolvido de modo que seja poss&iacute;vel fazer uma classifica&ccedil;&atilde;o livre de regras ou predefini&ccedil;&otilde;es, ou seja, o protocolo ser&aacute; definido a crit&eacute;rio da equipe/munic&iacute;pio. O sistema n&atilde;o pretende interferir em algum processo de classifica&ccedil;&atilde;o j&aacute; estabelecido na unidade de sa&uacute;de. Entretanto, todos devem estar atentos para o fato da classifica&ccedil;&atilde;o de risco ser de uso exclusivo dos profissionais de sa&uacute;de. Para que os profissionais estejam aptos a realizar uma classifica&ccedil;&atilde;o de risco, momentos de educa&ccedil;&atilde;o permanente podem ser planejadas nas UBS, fazendo o uso das informa&ccedil;&otilde;es dispon&iacute;veis no Caderno de Aten&ccedil;&atilde;o B&aacute;sica (CAB) n&deg;28, volume II, &ldquo;Acolhimento &agrave; Demanda Espont&acirc;nea&rdquo;.&nbsp;</p>",
+    "category_id": 16,
+    "user_id": 8,
+    "created_at": "2018-10-18 16:11:08 -0300",
+    "faq": true,
+    "keywords": "Escuta inicial; PEC; Classificação de risco",
+    "system": "from_call"
+  },
+  {
+    "question": "Como corrigir a ocorrência de cadastro duplicado no sistema, por exemplo, quando a UBS faz o cadastro no PEC e, em outra oportunidade, o ACS cadastra o usuário via ficha de cadastro individual? ",
+    "answer": "<p>No momento, n&atilde;o &eacute; poss&iacute;vel fazer essa corre&ccedil;&atilde;o, mas esse problema j&aacute; est&aacute; sendo discutido pela equipe de desenvolvimento e an&aacute;lise para ser implementado nas pr&oacute;ximas vers&otilde;es do sistema. At&eacute; que seja desenvolvido um dispositivo para impedir a duplica&ccedil;&atilde;o de registros, sugere-se que as equipes se atentem para o cadastramento dos usu&aacute;rios, organizando os fluxos e mantendo apontamentos dos cadastros j&aacute; realizados, entre outras provid&ecirc;ncias.</p>",
+    "category_id": 16,
+    "user_id": 8,
+    "created_at": "2018-10-18 16:16:46 -0300",
+    "faq": true,
+    "keywords": "Cadastro Duplicado; PEC; ACS",
+    "system": "from_call"
+  },
+  {
+    "question": "Na ficha de atividade coletiva, deve-se inserir ação por ação? E no verso da ficha, deve-se listar todos ou apenas os alterados? É preciso preencher os dados das ações do PSE?",
+    "answer": "<p><span lang=\"EN-US\">Para cada atividade, deve-se preencher uma ficha correspondente. Nos itens 5 e 6, devem ser anotados todos os participantes no verso, identificando-se os que foram alterados. No caso do programa PSE, h&aacute; uma exce&ccedil;&atilde;o no caso das atividades de avalia&ccedil;&atilde;o da acuidade visual, em que s&atilde;o anotados apenas os dados alterados.</span></p>\r\n<p><span lang=\"EN-US\">Mais informa&ccedil;&otilde;es em:&nbsp;</span><a href=\"https://www.youtube.com/watch?time_continue=1253&amp;v=LEq5XmTvXQg\" target=\"_blank\" rel=\"noopener\">https://www.youtube.com/watch?time_continue=1253&amp;v=LEq5XmTvXQg</a></p>\r\n<p>&nbsp;</p>",
+    "category_id": 9,
+    "user_id": 8,
+    "created_at": "2018-10-18 11:06:48 -0300",
+    "faq": true,
+    "keywords": "Ficha de atividade coletiva; PSE; Ação",
+    "system": "from_call"
+  },
+  {
+    "question": "Quais são as fichas que compõem o sistema e-SUS AB?",
+    "answer": "<p>S&atilde;o onze fichas que comp&otilde;em o sistema e-SUS AB.</p>\r\n<p>S&atilde;o elas:</p>\r\n<p>Cadastro individual;<br />Cadastro domiciliar e territorial;<br />Ficha de atendimento individual;<br />Ficha de atendimento odontol&oacute;gico;<br />Ficha de atividade coletiva;<br />Ficha de procedimentos;<br />Ficha de visita domiciliar&nbsp;e territorial;<br />Marcadores de consumo alimentar;<br />Ficha de avalia&ccedil;&atilde;o de elegibilidade&nbsp;;<br />Ficha de atendimento domiciliar.<br />Ficha complementar - S&iacute;ndrome neurol&oacute;gica por Zika/Microcefalia</p>",
+    "category_id": 2,
+    "user_id": 8,
+    "created_at": "2018-11-06 16:07:14 -0200",
+    "faq": true,
+    "keywords": "e-SUS AB; Fichas",
+    "system": "from_call"
+  },
+  {
+    "question": "Como será o processo de implantação do e-SUS AB na unidade de Atenção Básica?",
+    "answer": "<p>O processo de implanta&ccedil;&atilde;o depende da estrutura dispon&iacute;vel nas unidades de Aten&ccedil;&atilde;o B&aacute;sica do munic&iacute;pio. A identifica&ccedil;&atilde;o dessa estrutura ir&aacute; subsidiar o que se convencionou chamar de &ldquo;cen&aacute;rio de implanta&ccedil;&atilde;o&rdquo;, condi&ccedil;&atilde;o que impacta diretamente na&nbsp;escolha da forma de transmiss&atilde;o dos dados, ou seja, se ser&aacute; feito por meio de CDS ou PEC, ou a partir de sistema pr&oacute;prio j&aacute; existente. Al&eacute;m da identifica&ccedil;&atilde;o do cen&aacute;rio, o gestor municipal e as equipes de sa&uacute;de dever&atilde;o dialogar sobre a organiza&ccedil;&atilde;o do processo de trabalho das equipes no que diz respeito &agrave; coleta de dados e digita&ccedil;&atilde;o deles no software escolhido. Esta &eacute; uma etapa importante do envio de informa&ccedil;&otilde;es ao Minist&eacute;rio da Sa&uacute;de e precisa ser considerada desde o in&iacute;cio.&nbsp;Depois dessa etapa, o gestor dever&aacute; acessar o&nbsp;Sistema de Controle de Uso do e-SUS AB&nbsp;dispon&iacute;vel no Portal do DAB, e responder ao question&aacute;rio sobre os dados de estrutura das unidades. Ao final, o sistema ir&aacute; sugerir, a partir das informa&ccedil;&otilde;es disponibilizadas, qual o software mais adequado para cada unidade.</p>",
+    "category_id": 1,
+    "user_id": 9,
+    "created_at": "2018-10-16 13:52:06 -0300",
+    "faq": true,
+    "keywords": "Implantação do e-SUS AB; Unidades de Atenção Básica; Cenário de implantação; Uso do e-SUS",
+    "system": "from_call"
+  },
+  {
+    "question": "No caso de a UBS optar pela implantação do CDS, as fichas serão as mesmas utilizadas nas unidades de Saúde da Família? Onde elas podem ser obtidas?",
+    "answer": "<p>Todos os profissionais lotados na UBS tradicional poder&atilde;o registrar sua produ&ccedil;&atilde;o no e-SUS AB; entretanto, se a atua&ccedil;&atilde;o desses profissionais gerar algum procedimento de m&eacute;dia e alta complexidade, estes dever&atilde;o ser informados diretamente no SIA. Os dados devem ser alimentados no sistema da seguinte forma:&nbsp;</p>\r\n<p>No caso da implanta&ccedil;&atilde;o do PEC, as informa&ccedil;&otilde;es devem ser fornecidas pelos profissionais envolvidos no processo. Cada profissional participante tem sua fun&ccedil;&atilde;o, o que facilita o lan&ccedil;amento das informa&ccedil;&otilde;es. A vers&atilde;o PEC n&atilde;o necessita de internet, seus dados podem ser exportados por meio de um pen drive, por exemplo. Ela contempla gest&atilde;o do cuidado, registro cl&iacute;nico orientado por problemas, SOAP, lista de problemas, CIAP-2, al&eacute;m de folha de rosto com alguns alertas para o profissional, tais como &eacute;poca dos exames para rastreamento, necessidade de verificar os resultados de exames, hist&oacute;rico cl&iacute;nico, entre outras funcionalidades.</p>\r\n<p>No caso da implanta&ccedil;&atilde;o do CDS, as a&ccedil;&otilde;es dos profissionais (pediatra, oftalmologistas etc.) dever&atilde;o ser lan&ccedil;adas na &ldquo;Ficha de atendimento individual&rdquo; e na &ldquo;Ficha de procedimentos&rdquo;</p>\r\n<p>Mais informa&ccedil;&otilde;es em: <a href=\"http://dab.saude.gov.br/portaldab/esus.php?conteudo=documentos&amp;id=fichas\" target=\"_blank\" rel=\"noopener\">dab.saude.gov.br/portaldab/esus.php?conteudo=documentos&amp;id=fichas</a></p>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>",
+    "category_id": 11,
+    "user_id": 8,
+    "created_at": "2018-10-18 11:26:44 -0300",
+    "faq": true,
+    "keywords": "Registro da produção",
+    "system": "from_call"
+  },
+  {
+    "question": "Está previsto algum relatório que contenha um diagnóstico do território, em especial, referente aos diabéticos e hipertensos cadastrados? ",
+    "answer": "<p>A partir da vers&atilde;o 1.3 do sistema, os trabalhadores t&ecirc;m acesso aos relat&oacute;rios operacionais para acompanhamento de gestantes, crian&ccedil;as, hipertensos e diab&eacute;ticos. Esses relat&oacute;rios possuem a identifica&ccedil;&atilde;o dos indiv&iacute;duos e as informa&ccedil;&otilde;es registradas posteriormente atrav&eacute;s do CDS e/ou do PEC.</p>",
+    "category_id": 12,
+    "user_id": 8,
+    "created_at": "2018-10-18 13:17:08 -0300",
+    "faq": true,
+    "keywords": "Relatório; Diagnóstico do Território",
+    "system": "from_call"
+  },
+  {
+    "question": "Como ocorre o processamento e transmissão das fichas?",
+    "answer": "<p>Ao digitar as fichas CDS no PEC, as informa&ccedil;&otilde;es ficam armazenadas no sistema aguardando o processamento e a transmiss&atilde;o. Esse processo pode se dar de duas formas, conforme detalhado a seguir.</p>\r\n<p>Processamento e envio autom&aacute;tico: os dados s&atilde;o digitados ou importados (quando digitados no CDS) e, a partir da meia-noite, o sistema inicia o processamento e a transmiss&atilde;o autom&aacute;tica dos dados para o SISAB. Para isso, o computador deve ser mantido ligado e online (com conectividade).</p>\r\n<p>Processamento e envio manual: os dados s&atilde;o digitados ou importados (quando digitados no CDS) e, nesse caso, o administrador ou coordenador ordena manualmente o processamento e o envio. Para tanto, deve acessar a &aacute;rea de Administra&ccedil;&atilde;o e, em &ldquo;Importar CDS/RAS&rdquo;, selecionar a op&ccedil;&atilde;o &ldquo;Clique aqui para processar&rdquo;. Em seguida, deve retornar no menu de Administra&ccedil;&atilde;o e, em &ldquo;Exportar CDS/RAS&rdquo;, selecionar a op&ccedil;&atilde;o &ldquo;Iniciar envio&nbsp;on-line&rdquo;.</p>",
+    "category_id": 11,
+    "user_id": 8,
+    "created_at": "2018-10-18 13:10:04 -0300",
+    "faq": true,
+    "keywords": "Processamento das fichas; Transmissão das fichas",
+    "system": "from_call"
+  },
+  {
+    "question": "Como elaborar o perfil de cada profissional no PEC?",
+    "answer": "<p>O usu&aacute;rio com perfil de administrador &eacute; respons&aacute;vel por todas as fun&ccedil;&otilde;es de administra&ccedil;&atilde;o e configura&ccedil;&atilde;o do sistema. Ao acessar o sistema e clicar em &ldquo;Administra&ccedil;&atilde;o&rdquo;, na tela principal ou no menu superior, ser&atilde;o apresentadas as funcionalidades (unidade de sa&uacute;de, profissional, CBO, perfil, exportar BPA, importar CNES, importar CDS e configura&ccedil;&otilde;es). A seguir, ser&aacute; detalhado o fluxo de trabalho do perfil de administrador no sistema e-SUS AB com PEC. Cada categoria profissional j&aacute; tem um &ldquo;pacote padr&atilde;o&rdquo; de funcionalidades. Algumas funcionalidades podem ser inclu&iacute;das ou exclu&iacute;das pelo administrador na instala&ccedil;&atilde;o.</p>",
+    "category_id": 14,
+    "user_id": 9,
+    "created_at": "2018-10-18 14:26:11 -0300",
+    "faq": true,
+    "keywords": "Perfil Profissional; PEC",
+    "system": "from_call"
+  },
+  {
+    "question": "Como deve ser realizado o preenchimento da ficha de visita domiciliar?",
+    "answer": "<p>A Ficha de Visita Domiciliar tem como objetivo principal registrar as&nbsp;atividades&nbsp;de visitas&nbsp;domiciliares&nbsp;do&nbsp;Agente Comunit&aacute;rio de Sa&uacute;de&nbsp;(ACS) ou&nbsp;do&nbsp;Agente de Combate &agrave; Endemias&nbsp;(ACE), realizadas&nbsp;no territ&oacute;rio adstrito&nbsp;&agrave;&nbsp;equipe da UBS. Na tela principal, clique no &iacute;cone &ldquo;Ficha de Visita Domiciliar &rdquo;. A janela da lista de &ldquo;Visita domiciliar&rdquo; ser&aacute; mostrada. Preencha os campos do cabe&ccedil;alho com&nbsp;o CNS do&nbsp;profissional e&nbsp;a&nbsp;data. O sistema automaticamente preencher&aacute; os campos CBO e CNES. Na sequ&ecirc;ncia, digite as informa&ccedil;&otilde;es de identifica&ccedil;&atilde;o do usu&aacute;rio e alguns detalhes sobre o servi&ccedil;o de sa&uacute;de. Marque, conforme preenchido na ficha, o motivo da visita. Na sequ&ecirc;ncia, marque a op&ccedil;&atilde;o de desfecho da visita; e para finalizar, clique no bot&atilde;o salvar.</p>\r\n<p>Mais informa&ccedil;&otilde;es em:&nbsp;<a title=\"Visita Domiciliar\" href=\"https://youtu.be/TE9sEGTy_Po\" target=\"_blank\" rel=\"noopener\">https://youtu.be/TE9sEGTy_Po</a></p>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>",
+    "category_id": 6,
+    "user_id": 9,
+    "created_at": "2018-11-06 15:52:02 -0200",
+    "faq": true,
+    "keywords": "Visita Domiciliar; Ficha; Agente Comunitário de Saúde; Agente de Combate à Endemias ",
+    "system": "from_call"
+  },
+  {
+    "question": "A partir de quando se deve iniciar o uso dos sistemas e-SUS AB? Seu uso é obrigatório? ",
+    "answer": "<p>O e-SUS AB foi criado atrav&eacute;s da&nbsp;<a href=\"http://bvsms.saude.gov.br/bvs/saudelegis/gm/2013/prt1412_10_07_2013.html\" target=\"_blank\" rel=\"noopener\">Portaria GM/MS n&deg; 1.412, de 10 de julho de 2013</a>, que prev&ecirc; a substitui&ccedil;&atilde;o completa do SIAB. Desde ent&atilde;o, deu-se in&iacute;cio ao envio de informa&ccedil;&otilde;es atrav&eacute;s desse sistema.&nbsp;<a href=\"http://bvsms.saude.gov.br/bvs/saudelegis/gm/2014/prt1976_12_09_2014.html\" target=\"_blank\" rel=\"noopener\">A Portaria n&ordm; 1.976, de 12 de setembro de 2014</a>&nbsp;estabeleceu o prazo m&aacute;ximo de envio de informa&ccedil;&otilde;es pelo SIAB at&eacute; a compet&ecirc;ncia maio/2015, ou seja, os dados referentes a esta compet&ecirc;ncia podem ser inseridos no SIAB at&eacute; o dia 20 de junho de 2015.&nbsp;At&eacute; esta data fica mantida a obrigatoriedade de alimenta&ccedil;&atilde;o de um dos sistemas: SIAB ou e-SUS AB/SISAB. E, a partir da compet&ecirc;ncia junho/2015, os dados de produ&ccedil;&atilde;o e demais a&ccedil;&otilde;es realizadas na AB dever&atilde;o ser enviados apenas ao SISAB, sob o risco de corte de recursos federais do PAB Vari&aacute;vel aos entes que n&atilde;o efetuarem a alimenta&ccedil;&atilde;o de base de dados por tr&ecirc;s compet&ecirc;ncias seguidas.</p>",
+    "category_id": 1,
+    "user_id": 9,
+    "created_at": "2018-10-16 13:49:45 -0300",
+    "faq": true,
+    "keywords": "Sistemas e-SUS AB; Uso e-SUS AB; Orientações Básicas; Inicio E-sus",
+    "system": "from_call"
+  },
+  {
+    "question": "Como lançar a produção do NASF no sistema? Existe algum manual com orientações? ",
+    "answer": "<p><span lang=\"EN-US\">A utiliza&ccedil;&atilde;o do e-SUS AB pelas equipes de NASF &eacute; um grande passo no sentido da consolida&ccedil;&atilde;o da pr&aacute;tica de registro, monitoramento e avalia&ccedil;&atilde;o das a&ccedil;&otilde;es realizadas, e para o acompanhamento qualificado das a&ccedil;&otilde;es desenvolvidas pelas equipes, e a qualifica&ccedil;&atilde;o do pr&oacute;prio cuidado em sa&uacute;de. Para tanto, os profissionais dever&atilde;o registrar suas a&ccedil;&otilde;es nas fichas do e-SUS AB: ficha de atendimento individual, de procedimentos e de atividade coletiva. Al&eacute;m disso, h&aacute; um bloco de preenchimento exclusivo para que o profissional do NASF aponte suas a&ccedil;&otilde;es na equipe. </span><span lang=\"EN-US\">&nbsp;</span></p>\r\n<p><span lang=\"EN-US\">Mais informa&ccedil;&otilde;es em: <a href=\"http://bvsms.saude.gov.br/bvs/publicacoes/nucleo_apoio_saude_familia_cab39.pdf\" target=\"_blank\" rel=\"noopener\">http://bvsms.saude.gov.br/bvs/publicacoes/nucleo_apoio_saude_familia_cab39.pdf&nbsp;</a></span></p>\r\n<p class=\"MsoNormal\" style=\"margin-bottom: 12.0pt; text-align: justify; line-height: 115%; mso-pagination: none; mso-layout-grid-align: none; text-autospace: none;\">&nbsp;</p>",
+    "category_id": 7,
+    "user_id": 9,
+    "created_at": "2018-10-16 17:02:25 -0300",
+    "faq": true,
+    "keywords": "NASF; Produção; Manual; Orientações",
+    "system": "from_call"
+  },
+  {
+    "question": "Ao iniciar o envio dos dados para o SISAB o estado/município já pode parar de utilizar definitivamente o SIAB?",
+    "answer": "<p>Durante o per&iacute;odo de transi&ccedil;&atilde;o dos sistemas, &eacute; poss&iacute;vel alimentar qualquer um deles. Dessa forma, as equipes dever&atilde;o alimentar apenas um sistema, SIAB ou e-SUS AB/SISAB. Respeitado o prazo limite para esta transi&ccedil;&atilde;o (junho de 2015), &eacute; poss&iacute;vel que parte das equipes de um munic&iacute;pio utilize o SIAB e outra parte utilize o SISAB, enquanto &eacute; feita a substitui&ccedil;&atilde;o paulatina de sistemas, at&eacute; que todas as equipes finalizem a transi&ccedil;&atilde;o e n&atilde;o haja mais nenhuma informa&ccedil;&atilde;o a ser enviada via SIAB.&nbsp;<br />A equipe que come&ccedil;ou a usar o e-SUS AB n&atilde;o precisa mais alimentar o SIAB e deve incorporar todas as fichas cab&iacute;veis a seu processo de trabalho o quanto antes. &Eacute; importante garantir que a digita&ccedil;&atilde;o e transmiss&atilde;o dos dados coletados pelas equipes sejam feitas em tempo h&aacute;bil, algo essencial para que os indicadores da Aten&ccedil;&atilde;o B&aacute;sica n&atilde;o fiquem fragilizados.</p>",
+    "category_id": 1,
+    "user_id": 9,
+    "created_at": "2018-10-16 13:55:30 -0300",
+    "faq": true,
+    "keywords": "SIAB; SISAB; e-Sus AB; e-SUS AB/SISAB; Município",
+    "system": "from_call"
+  },
+  {
+    "question": "CDS e PEC, o que são? Para que servem? ",
+    "answer": "<p>S&atilde;o dois sistemas de&nbsp;software&nbsp;para a capta&ccedil;&atilde;o de dados, disponibilizados gratuitamente pelo Minist&eacute;rio da Sa&uacute;de (MS), conforme detalhado a seguir: </p>\r\n<p><!-- [if !supportLists]-->&middot;Coleta de dados simplificada (CDS): composto por fichas para o registro de informa&ccedil;&otilde;es das a&ccedil;&otilde;es realizadas pelas equipes de Aten&ccedil;&atilde;o B&aacute;sica. Esse sistema &eacute; utilizado principalmente nos servi&ccedil;os de sa&uacute;de que n&atilde;o disp&otilde;em de sistema informatizado para utiliza&ccedil;&atilde;o rotineira no trabalho. Seu principal diferencial em rela&ccedil;&atilde;o ao SIAB &eacute; a individualiza&ccedil;&atilde;o dos dados por cidad&atilde;o.</p>\r\n<p><!-- [if !supportLists]-->&middot;Prontu&aacute;rio eletr&ocirc;nico do cidad&atilde;o (PEC): formulado para atender &agrave;s equipes de AB lotadas em UBS parcialmente ou totalmente informatizadas, esse sistema &eacute; usado para inserir os registros cl&iacute;nicos dos atendimentos e tamb&eacute;m as fichas de CDS preenchidas pela equipe em seu processo de trabalho. Funciona em cen&aacute;rios com ou sem conex&atilde;o com internet, e realiza suporte cl&iacute;nico com uma tecnologia avan&ccedil;ada.</p>",
+    "category_id": 1,
+    "user_id": 9,
+    "created_at": "2018-10-16 13:32:25 -0300",
+    "faq": true,
+    "keywords": "CDS; PEC; Coleta de dados simplificada; Prontuário eletrônico do cidadão",
+    "system": "from_call"
+  },
+  {
+    "question": "O que é o SISAB? ",
+    "answer": "<p>&Eacute; o Sistema de Informa&ccedil;&atilde;o em Sa&uacute;de para a Aten&ccedil;&atilde;o B&aacute;sica que ir&aacute; substituir totalmente o Sistema de Informa&ccedil;&atilde;o da Aten&ccedil;&atilde;o B&aacute;sica (SIAB). Para atender aos diversos cen&aacute;rios de informatiza&ccedil;&atilde;o e conectividade nos servi&ccedil;os de sa&uacute;de, o SISAB oferece dois sistemas de software que podem operar tanto em unidades b&aacute;sicas de sa&uacute;de (UBS) que n&atilde;o possuem computador quanto em UBS que disp&otilde;em de computador nos consult&oacute;rios e salas de atendimento. As UBS que n&atilde;o fazem uso de computador podem utilizar o sistema de Coleta de Dados Simplificada (CDS), com o uso de fichas; por sua vez, as UBS que t&ecirc;m computador podem usar o sistema com Prontu&aacute;rio Eletr&ocirc;nico do Cidad&atilde;o (PEC).&nbsp;Tamb&eacute;m &eacute; poss&iacute;vel enviar dados ao SISAB por meio dos sistemas pr&oacute;prios, utilizados pelos trabalhadores da AB para registrar as a&ccedil;&otilde;es realizadas no cotidiano do trabalho. Para isso, &eacute; necess&aacute;rio que a equipe respons&aacute;vel pelo desenvolvimento desse sistema pr&oacute;prio fa&ccedil;a a customiza&ccedil;&atilde;o, por meio da ferramenta THRIFT, viabilizando o envio dos dados desses sistemas ao SISAB.&nbsp;</p>\r\n<p>Esses sistemas est&atilde;o dispon&iacute;veis gratuitamente para todos os munic&iacute;pios, basta fazer o&nbsp;download&nbsp;na &ldquo;&Aacute;rea de Download&rdquo; no site:<a href=\"http://dab.saude.gov.br/esus\">http://dab.saude.gov.br/esus.</a>&nbsp;</p>\r\n<p>Mais informa&ccedil;&otilde;es sobre o SISAB em:&nbsp;<a href=\"http://SISAB\" target=\"_blank\" rel=\"noopener\">https://sisab.saude.gov.br/</a></p>\r\n<p>&nbsp;</p>",
+    "category_id": 1,
+    "user_id": 9,
+    "created_at": "2018-10-16 11:38:48 -0300",
+    "faq": true,
+    "keywords": "SISAB; SIstema de informação; Orientações Básicas; PEC; CDS",
+    "system": "from_call"
+  },
+  {
+    "question": "O que é o e-SUS AB?",
+    "answer": "<p>O e-SUS Aten&ccedil;&atilde;o B&aacute;sica (e-SUS AB) &eacute; uma estrat&eacute;gia do Departamento de Aten&ccedil;&atilde;o B&aacute;sica para reestruturar o registro de informa&ccedil;&otilde;es das a&ccedil;&otilde;es realizadas na Aten&ccedil;&atilde;o B&aacute;sica (AB) em n&iacute;vel nacional. O e-SUS AB faz parte da estrat&eacute;gia de informatiza&ccedil;&atilde;o do processo de trabalho e da qualifica&ccedil;&atilde;o da informa&ccedil;&atilde;o. Ele ser&aacute; utilizado pelos profissionais de sa&uacute;de das equipes da AB com foco no atendimento, permitindo coletar informa&ccedil;&otilde;es individualizadas e n&atilde;o mais no preenchimento de formul&aacute;rios consolidados.</p>\r\n<p>Mais detalhes em: <a href=\"https://www.youtube.com/watch?v=KH7ujj8iqCo\" target=\"_blank\" rel=\"noopener\">https://www.youtube.com/watch?v=KH7ujj8iqCo</a></p>",
+    "category_id": 1,
+    "user_id": 1,
+    "created_at": "2018-11-17 13:06:17 -0200",
+
+    "faq": true,
+    "keywords": "e-SUS AB; PIUBS; Informatização",
+    "system": "from_call"
+  }
+]
