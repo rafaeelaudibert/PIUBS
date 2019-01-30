@@ -9,13 +9,13 @@ class ReplyMailer < ApplicationMailer
   # Reply in his Call
   def call_reply(reply, current_user)
     @reply = reply
-    @call = Call.find(@reply.repliable_id)
+    @call = Call.find(@reply.repliable.id)
     @call_user = User.find(@call.user_id)
     @current_user = current_user
     @link = "#{root_url}calls/#{@call.protocol}"
 
     mail to: @call_user.email,
-         subject: "[PIUBS] - Nova resposta ao atendimento #{@reply.repliable_id}"
+         subject: "[PIUBS] - Nova resposta ao atendimento #{@reply.repliable.id}"
   end
 
   # Sends an e-mail to the User passed as a parameter,
@@ -24,12 +24,12 @@ class ReplyMailer < ApplicationMailer
   # Reply in the Controversy
   def controversy_reply(reply, current_user, user)
     @reply = reply
-    @controversy = Controversy.find(@reply.repliable_id)
+    @controversy = Controversy.find(@reply.repliable.id)
     @current_user = current_user
     @link = "#{root_url}controversies/#{@controversy.protocol}"
     @user = user
 
     mail to: @user.email,
-         subject: "[PIUBS] - Nova resposta à controvérsia #{@reply.repliable_id}"
+         subject: "[PIUBS] - Nova resposta à controvérsia #{@reply.repliable.id}"
   end
 end
