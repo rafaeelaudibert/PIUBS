@@ -8,23 +8,14 @@ class CreateCities < ActiveRecord::Migration[5.2]
       t.bigint :CO_UF, null: false
     end
 
-    execute <<-SQL
-      -- PK
-      ALTER TABLE "TB_CIDADE" ADD CONSTRAINT "PK_TB_CIDADE" PRIMARY KEY ("CO_CODIGO");
-
-      -- FK
-      ALTER TABLE "TB_CIDADE" ADD CONSTRAINT "FK_UF_CIDADE" FOREIGN KEY ("CO_UF")
-        REFERENCES "TB_UF" ("CO_CODIGO") MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION;
-    SQL
+    execute 'ALTER TABLE "TB_CIDADE" ADD CONSTRAINT "PK_TB_CIDADE" PRIMARY KEY ("CO_CODIGO");'
+    add_foreign_key :TB_CIDADE, :TB_UF, column: :CO_UF, primary_key: :CO_CODIGO, name: 'FK_UF_CIDADE'
+    add_index :TB_CIDADE, :CO_UF, name: "IN_FKCIDADE_COUF"
   end
 
   def self.down
-    execute <<-SQL
-      ALTER TABLE "TB_CIDADE" DROP CONSTRAINT "FK_UF_CIDADE";
-      ALTER TABLE "TB_CIDADE" DROP CONSTRAINT "PK_TB_CIDADE";
-    SQL
-
+    remove_index :TB_CIDADE, name: "IN_FKCIDADE_COUF"
+    remove_foreign_key :TB_CIDADE, name: 'FK_UF_CIDADE'
     drop_table :TB_CIDADE
   end
 end

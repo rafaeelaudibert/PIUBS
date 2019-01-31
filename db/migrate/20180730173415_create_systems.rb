@@ -19,10 +19,6 @@ class CreateSystems < ActiveRecord::Migration[5.2]
   end
 
   def self.down
-    execute <<-SQL
-      ALTER TABLE "TB_SISTEMA" DROP CONSTRAINT "PK_TB_SISTEMA";
-    SQL
-
     drop_table :TB_SISTEMA
   end
 end

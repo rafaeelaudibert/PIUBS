@@ -19,10 +19,6 @@ class CreateEventType < ActiveRecord::Migration[5.2]
   end
 
   def self.down
-    execute <<-SQL
-      ALTER TABLE "TB_TIPO_EVENTO" DROP CONSTRAINT "PK_TB_TIPO_EVENTO";
-    SQL
-
     drop_table :TB_TIPO_EVENTO
   end
 end
