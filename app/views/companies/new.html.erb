@@ -20,8 +20,104 @@
     <%= form.number_field :sei, class: 'form-control', required: true%>
   </div>
 
+  <div class="form-group">
+    <%= form.label :name, 'Nome', class: 'required' %>
+    <%= form.text_field :name, class: 'form-control', required: true%>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :cnpj, 'CNPJ', class: 'required' %>
+    <%= form.text_field :cnpj, class: 'form-control', required: true%>
+    <label class="hidden" style="color: #CC2222;font-weight:300;">CNPJ INVÁLIDO</label>
+  </div>
+
   <%= form.submit 'Salvar', :class => 'btn btn-primary btn-sm' %>
   <%= link_to 'Cancelar', companies_path, :class => 'btn btn-danger btn-sm' %>
   <br>
 </div>
 <% end %>
+
+<script>
+
+// CNPJ VALIDATION
+const fMasc = (obj, masc) => {
+  setTimeout(() => obj.value = masc(obj.value), 1)
+}
+
+function CNPJmask(cnpj) {
+  cnpj = cnpj.replace(/\D/g, "")
+  cnpj = cnpj.substring(0, 14);
+  cnpj = cnpj.replace(/(\d{2})(\d)/, "$1.$2")
+  cnpj = cnpj.replace(/(\d{3})(\d)/, "$1.$2")
+  cnpj = cnpj.replace(/(\d{3})(\d)/, "$1/$2")
+  cnpj = cnpj.replace(/(\d{4})(\d{1,2})$/, "$1-$2")
+  return cnpj
+}
+
+function validateCNPJ(cnpj) {
+
+    cnpj = cnpj.replace(/[^\d]+/g,'');
+
+    if(cnpj == '' || cnpj.length != 14) return false;
+
+    // Elimina CNPJs invalidos conhecidos
+    if (cnpj == "00000000000000" ||
+        cnpj == "11111111111111" ||
+        cnpj == "22222222222222" ||
+        cnpj == "33333333333333" ||
+        cnpj == "44444444444444" ||
+        cnpj == "55555555555555" ||
+        cnpj == "66666666666666" ||
+        cnpj == "77777777777777" ||
+        cnpj == "88888888888888" ||
+        cnpj == "99999999999999")
+        return false;
+
+    // Validação dos DVs
+
+    // Primeiro DV
+    let tamanho = cnpj.length - 2 // 14 - 2
+    let numeros = cnpj.substring(0,tamanho);
+    const digitos = cnpj.substring(tamanho);
+    let soma = 0;
+    let pos = tamanho - 7;
+
+    for (i = tamanho; i >= 1; i--) {
+      soma += numeros.charAt(tamanho - i) * pos--;
+      if (pos < 2)
+            pos = 9;
+    }
+    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+    if (resultado != digitos.charAt(0)) return false;
+
+    // Segundo DV
+    tamanho = tamanho + 1;
+    numeros = cnpj.substring(0,tamanho);
+    soma = 0;
+    pos = tamanho - 7;
+    for (i = tamanho; i >= 1; i--) {
+      soma += numeros.charAt(tamanho - i) * pos--;
+      if (pos < 2)
+            pos = 9;
+    }
+    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+    if (resultado != digitos.charAt(1)) return false;
+
+    return true;
+
+}
+
+$('#company_cnpj').keypress(e => {
+  fMasc(e.target, CNPJmask);
+})
+
+$('#company_cnpj').focusout(e => {
+  if (e.target.value.length >= 18 && validateCNPJ(e.target.value.split(/[.//-]/).join(''))) {
+    e.target.classList.remove('underlined-danger');
+    e.target.nextElementSibling.classList.add('hidden')
+  } else {
+    e.target.classList.add('underlined-danger');
+    e.target.nextElementSibling.classList.remove('hidden')
+  }
+});
+</script>

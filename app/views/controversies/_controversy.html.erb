@@ -9,7 +9,7 @@
     </div>
     <div class="requirer">
       <span>Requisitante:
-        <b><%= t "activerecord.enums.controversy.creator.#{controversy.creator}" %></b></span>
+        <b><%= t "activerecord.enums.controversy.creator.#{Controversy.map_role_to_creator(controversy.creator_id)}" %></b></span>
     </div>
 
     <div class="company">

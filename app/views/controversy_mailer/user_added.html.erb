@@ -4,7 +4,7 @@
   </div>
   <p>
     <span style="font-size: 2rem">Olá,
-      <b style="color: #007bff"><%= @current_user.name %>!</b>
+      <b style="color: #007bff"><%= @user.name %>!</b>
     </span>
     <br/>
     Você foi adicionado a uma Controvérsia no sistema PIUBS!
@@ -17,8 +17,8 @@
   </p>
 
   <p>
-    Parte e Usuário requerente:
-    <b><%= @controversy.creator.titleize %> - <%= @user_creator %></b>
+    Usuário requerente:
+    <b><%= @creator.name %></b>
   </p>
 
   <p>

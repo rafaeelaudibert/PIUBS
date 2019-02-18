@@ -1,49 +1,133 @@
 # frozen_string_literal: true
 
+##
+# User class which is controlled principally by Devise
 class User < ApplicationRecord
-  belongs_to :company, class_name: 'Company', foreign_key: :sei, optional: true
-  belongs_to :unity, class_name: 'Unity', foreign_key: :cnes, optional: true
-  belongs_to :city, class_name: 'City', foreign_key: :id, optional: true
-  has_many :calls
-  has_many :answer
+  belongs_to :company, foreign_key: :CO_SEI, optional: true
+  belongs_to :unity, foreign_key: :CO_CNES, optional: true
+  belongs_to :city, foreign_key: :CO_CIDADE, optional: true
+  has_many :calls, foreign_key: :CO_USUARIO
+  has_many :answer, foreign_key: :CO_USUARIO
+  validates_cpf_format_of :NU_CPF, options: { allow_blank: true, allow_nil: true }
+  validates :NU_CPF, presence: true, uniqueness: true
 
   # If update here, update to en.yml
+  alias_attribute :role, :TP_ROLE
   enum role: %i[admin city_admin faq_inserter
                 ubs_admin ubs_user
                 company_admin company_user
                 call_center_admin call_center_user]
 
   # If update here, update to en.yml
+  alias_attribute :system, :ST_SISTEMA
   enum system: %i[companies controversies both]
-
-  validates_cpf_format_of :cpf, options: { allow_blank: true, allow_nil: true }
-  validates :cpf, presence: true, uniqueness: true
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :invitable, :database_authenticatable, :registerable, :recoverable,
          :rememberable, :trackable, :validatable, :async
 
-  filterrific(
-    default_filter_params: { sorted_by_name: 'name_asc' },
-    available_filters: %i[
-      sorted_by_name
-      with_role
-      with_status_adm
-      with_status
-      with_company
-      with_state
-      with_city
-      search_query
-    ]
-  )
+  #### DATABASE adaptations ####
+  self.table_name = :TB_USUARIO # Setting a different table_name
+
+  # Configures an alias setter for the NO_NOME database column
+  def name=(value)
+    self[:NO_NOME] = value
+  end
+
+  # Configures an alias getter for the NO_NOME database column
+  def name
+    self[:NO_NOME]
+  end
+
+  # Configures an alias setter for the TP_ROLE database column
+  def role=(value)
+    self[:TP_ROLE] = value
+  end
+
+  # Configures an alias getter for the TP_ROLE database column
+  def role
+    self[:TP_ROLE]
+  end
+
+  # Configures an alias setter for the NU_CPF database column
+  def cpf=(value)
+    self[:NU_CPF] = value
+  end
+
+  # Configures an alias getter for the NU_CPF database column
+  def cpf
+    self[:NU_CPF]
+  end
+
+  # Configures an alias setter for the NO_SOBRENOME database column
+  def last_name=(value)
+    self[:NO_SOBRENOME] = value
+  end
+
+  # Configures an alias getter for the NO_SOBRENOME database column
+  def last_name
+    self[:NO_SOBRENOME]
+  end
+
+  # Configures an alias setter for the ST_SISTEMA database column
+  def system=(value)
+    self[:ST_SISTEMA] = value
+  end
+
+  # Configures an alias getter for the ST_SISTEMA database column
+  def system
+    self[:ST_SISTEMA]
+  end
+
+  # Configures an alias setter for the CO_CIDADE database column
+  def city_id=(value)
+    self[:CO_CIDADE] = value
+  end
+
+  # Configures an alias getter for the CO_CIDADE database column
+  def city_id
+    self[:CO_CIDADE]
+  end
+
+  # Configures an alias setter for the CO_SEI database column
+  def sei=(value)
+    self[:CO_SEI] = value
+  end
+
+  # Configures an alias getter for the CO_SEI database column
+  def sei
+    self[:CO_SEI]
+  end
+
+  # Configures an alias setter for the CO_CNES database column
+  def cnes=(value)
+    self[:CO_CNES] = value
+  end
+
+  # Configures an alias getter for the CO_CNES database column
+  def cnes
+    self[:CO_CNES]
+  end
+
+  #### FILTERRIFIC queries ####
+  filterrific default_filter_params: { sorted_by_name: 'name_asc' },
+              available_filters: %i[
+                sorted_by_name
+                with_role
+                with_status_adm
+                with_status
+                with_company
+                with_state
+                with_city
+                search_query
+              ]
 
   scope :search_query, lambda { |query|
     return nil if query.blank?
 
-    query_search = "%#{query}%"
-    where('name ILIKE :search OR last_name ILIKE :search OR email ILIKE :search',
-          search: query_search)
+    where('"NO_NOME" ILIKE :search OR "NO_SOBRENOME" ILIKE :search OR email ILIKE :search',
+          search: "%#{query}%")
   }
 
   scope :sorted_by_name, lambda { |sort_key|
@@ -51,17 +135,13 @@ class User < ApplicationRecord
 
     case sort_key.to_s
     when /^name_/
-      order(name: sort)
+      order(NO_NOME: sort)
     else
       raise(ArgumentError, 'Invalid filter option')
     end
   }
 
-  scope :with_role, lambda { |role|
-    return nil if role == ['']
-
-    where(role: role)
-  }
+  scope :with_role, ->(role) { role == [''] ? nil : where(TP_ROLE: role) }
 
   scope :with_status_adm, lambda { |status|
     return nil if ['', 'all'].include? status
@@ -86,25 +166,22 @@ class User < ApplicationRecord
   }
 
   scope :with_state, lambda { |state|
-    @cities = City.where(state_id: state).map(&:id)
-    @unities = Unity.where(city_id: @cities).map(&:cnes)
-    @contracts = Contract.where(city_id: @cities).map(&:sei)
-    @companies = Company.where(sei: @contracts).map(&:sei)
+    cities = City.where(CO_UF: state).map(&:CO_CODIGO)
+    unities = Unity.where(CO_CIDADE: cities).map(&:CO_CNES)
+    companies = Contract.where(CO_CIDADE: cities).map(&:CO_SEI).uniq!
     return [] if state == ['']
 
-    where('cnes IN (?) OR sei IN (?)', @unities, @companies) if state != ['']
+    where('"CO_CNES" IN (?) OR "CO_SEI" IN (?)', unities, companies)
   }
 
   scope :with_city, lambda { |city|
-    @contracts = Contract.where(city_id: city).map(&:sei)
-    @companies = Company.where(sei: @contracts).map(&:sei)
-    where('city_id = ? OR sei IN (?)', city, @companies) unless city.zero?
+    sei = Contract.where(CO_CIDADE: city).map(&:CO_SEI).uniq!
+    where('"CO_CIDADE" = ? OR "CO_SEI" IN (?)', city, sei) unless city.zero?
   }
 
-  scope :with_company, lambda { |sei|
-    where(sei: sei) unless sei == ''
-  }
+  scope :with_company, ->(sei) { sei == '' ? nil : where(CO_SEI: sei) }
 
+  # Filterrific options when sorting by status
   def self.options_for_with_status
     [
       %w[Cadastrados registered],
@@ -112,6 +189,7 @@ class User < ApplicationRecord
     ]
   end
 
+  # Filterrific options when sorting by status in an admin view
   def self.options_for_with_status_adm
     [
       %w[Cadastrados registered],
@@ -120,6 +198,7 @@ class User < ApplicationRecord
     ]
   end
 
+  # Filterrific options when sorting by name
   def self.options_for_sorted_by_name
     [
       ['Nome [A-Z]', 'name_asc'],
@@ -127,61 +206,122 @@ class User < ApplicationRecord
     ]
   end
 
+  # Filterrific options when sorting by role
   def self.options_for_with_role
     [
       ['Administradores', 0],
-      ['FAQ', 2],
-      ['Empresa [Usu]', 6],
-      ['Empresa [Adm]', 5],
-      ['Suporte [Usu]', 8],
-      ['Suporte [Adm]', 7],
       ['Município', 1],
+      ['FAQ', 2],
+      ['UBS [Adm]', 3],
       ['UBS [Usu]', 4],
-      ['UBS [Adm]', 3]
+      ['Empresa [Adm]', 5],
+      ['Empresa [Usu]', 6],
+      ['Suporte [Adm]', 7],
+      ['Suporte [Usu]', 8]
     ]
   end
 
+  # Filterrific options when sorting by city
   def self.options_for_with_city
     [
       ['Cidade', 0]
     ]
   end
 
+  # Returns all the users which have the role :admin
   def self.admins
-    User.where(role: :admin).order(:id)
+    User.where(role: :admin)
   end
 
+  # Returns all the users which belong to a company,
+  # this is, have a role which is :company_admin or :company_user
   def self.company_accounts
-    User.where(role: %i[company_admin company_user]).order(:id)
+    User.where(role: %i[company_admin company_user])
   end
 
+  # Returns all the users which belong to the support,
+  # this is, have a role which is :call_center_admin or :call_center_user
   def self.support_accounts
-    User.where(role: %i[call_center_admin call_center_user]).order(:id)
+    User.where(role: %i[call_center_admin call_center_user])
   end
 
+  # Returns all the users which have the role :faq_inserter
   def self.faq_inserters
-    User.where(role: :faq_inserter).order(:id)
+    User.where(role: :faq_inserter)
   end
 
+  # Returns all the users which belong to a city,
+  # this is, have a role :city_admin
   def self.city_accounts
-    User.where(role: :city_admin).order(:id)
+    User.where(role: :city_admin)
   end
 
+  # Returns all the users which belong to the unities,
+  # this is, have a role which is :ubs_admin or :ubs_user
   def self.unity_accounts
-    User.where(role: %i[ubs_admin ubs_user]).order(:id)
+    User.where(role: %i[ubs_admin ubs_user])
   end
 
+  # Returns all the users from the database,
+  # but ordered in a hash according to its role
   def self.by_role
     {
-      'Admin'     => User.admins,
-      'Company'   => User.company_accounts,
-      'Support'   => User.support_accounts,
-      'FAQ'       => User.faq_inserters,
-      'City'      => User.city_accounts,
-      'UBS'       => User.unity_accounts
+      'Admin' => User.admins,
+      'Company' => User.company_accounts,
+      'Support' => User.support_accounts,
+      'FAQ' => User.faq_inserters,
+      'City' => User.city_accounts,
+      'UBS' => User.unity_accounts
     }
   end
 
+  # Returns all the users which belongs
+  # to the City passed in the parameter
+  def self.from_city(city_id)
+    User.where(CO_CIDADE: city_id, CO_CNES: nil)
+  end
+
+  # Returns all the users which belongs
+  # to the Unity passed in the parameter
+  def self.from_ubs(cnes)
+    User.where(CO_CNES: cnes)
+  end
+
+  # Returns all the users which belongs
+  # to the Company passed in the parameter
+  def self.from_company(sei)
+    User.where(CO_SEI: sei)
+  end
+
+  # Returns all the users which match
+  # their name or their CPF to the passed parameter
+  def self.find_with_term(terms)
+    where('"NO_NOME" ILIKE ? OR "NU_CPF" ILIKE ? or email ILIKE ?',
+          "%#{terms}%",
+          "%#{terms}%",
+          "%#{terms}%")
+  end
+
+  # Returns all the users except the one passed as parameter
+  def self.except(id)
+    where.not(id: id)
+  end
+
+  # Returns all the users which were invited by the User
+  # with the id passed as parameter
+  def self.invited_by(id)
+    where(invited_by_id: id)
+  end
+
+  # Returns the user fullname concatenating his first and last name
+  def fullname
+    "#{name} #{last_name}"
+  end
+
+  # Overrides Devise function
+  #
+  # This way we can manipulate the devise e-mails layout properly, as well as
+  # making it asynchronous
   def self.send_devise_notification(notification, *args)
     DeviseWorker.perform_async(devise_mailer, notification, id, *args)
   end

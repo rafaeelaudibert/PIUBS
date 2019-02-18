@@ -8,18 +8,16 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
                                     registrations: 'users/registrations' }
   resources :users do
     collection do
-      get :autocomplete_user_company, to: 'users#autocomplete_company_users',
-                                      as: 'autocomplete_company'
-      get :autocomplete_user_city, to: 'users#autocomplete_city_users',
-                                   as: 'autocomplete_city'
-      get :autocomplete_user_unity, to: 'users#autocomplete_unity_users',
-                                    as: 'autocomplete_unity'
-      get :autocomplete_user_support, to: 'users#autocomplete_support_users',
-                                      as: 'autocomplete_support'
-      post 'update_system', to: 'users#update_system',
-                            as: 'update_system'
-      post 'update_role', to: 'users#update_role',
-      as: 'update_role'
+      get :autocomplete_company_users, to: 'users#autocomplete_company_users',
+                                       as: 'autocomplete_company'
+      get :autocomplete_city_users, to: 'users#autocomplete_city_users',
+                                    as: 'autocomplete_city'
+      get :autocomplete_unity_users, to: 'users#autocomplete_unity_users',
+                                     as: 'autocomplete_unity'
+      get :autocomplete_support_users, to: 'users#autocomplete_support_users',
+                                       as: 'autocomplete_support'
+      post ':id/update_system', to: 'users#update_system', as: 'update_system'
+      post ':id/update_role', to: 'users#update_role', as: 'update_role'
     end
   end
 
@@ -38,9 +36,9 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   # /answers
   resources :answers, except: :destroy do
     collection do
+      get ':id/attachments', to: 'answers#attachments'
       get 'query_call/:search', to: 'answers#search_call'
       get 'query_controversy/:search', to: 'answers#search_controversy'
-      get 'attachments/:id', to: 'answers#attachments'
       get 'new/:source', to: 'answers#new'
     end
   end
@@ -48,7 +46,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   # /replies
   resources :replies, only: %i[create index show] do
     collection do
-      get 'attachments/:id', to: 'replies#attachments'
+      get ':id/attachments', to: 'replies#attachments'
     end
   end
 
@@ -59,10 +57,8 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
                          as: 'company_states'
       get ':sei/users', to: 'companies#users',
                         as: 'company_users'
-      get ':sei/cities/:state_id', to: 'companies#cities',
-                                   as: 'company_cities'
-      get ':sei/unities/:city_id', to: 'companies#unities',
-                                   as: 'company_unities'
+      get ':id/states/:state_id/cities', to: 'companies#cities',
+                                         as: 'company_cities'
     end
   end
 
@@ -114,9 +110,10 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     # /apoioaempresas/calls
     resources :calls, except: %i[edit update destroy] do
       collection do
-        post 'link_call_support_user'
-        post 'unlink_call_support_user'
-        post 'reopen_call'
+        post ':id/link_call_support_user', to: 'calls#link_call_support_user',
+                                           as: 'link_call_support_user'
+        post ':id/unlink_call_support_user', to: 'calls#unlink_call_support_user'
+        post ':id/reopen_call', to: 'calls#reopen_call', as: 'reopen_call'
       end
     end
   end
@@ -130,18 +127,18 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
 
     resources :controversies, except: %i[edit update destroy] do
       collection do
-        post 'link_controversy', to: 'controversies#link_controversy',
-                                 as: 'link'
-        post 'unlink_controversy', to: 'controversies#unlink_controversy',
-                                   as: 'unlink'
-        post ':id/company_user/:user_id', to: 'controversies#company_user',
-                                          as: 'company_user'
-        post ':id/city_user/:user_id', to: 'controversies#city_user',
-                                       as: 'city_user'
-        post ':id/unity_user/:user_id', to: 'controversies#unity_user',
-                                        as: 'unity_user'
-        post ':id/support_user/:user_id', to: 'controversies#support_user',
-                                          as: 'support_user'
+        post ':id/link_controversy/:user_id', to: 'controversies#link_controversy',
+                                              as: 'link'
+        post ':id/unlink_controversy/:user_id', to: 'controversies#unlink_controversy',
+                                                as: 'unlink'
+        post ':id/link_company_user/:user_id', to: 'controversies#link_company_user',
+                                               as: 'company_user'
+        post ':id/link_city_user/:user_id', to: 'controversies#link_city_user',
+                                            as: 'city_user'
+        post ':id/link_unity_user/:user_id', to: 'controversies#link_unity_user',
+                                             as: 'unity_user'
+        post ':id/link_support_user/:user_id', to: 'controversies#link_support_user',
+                                               as: 'support_user'
       end
     end
 

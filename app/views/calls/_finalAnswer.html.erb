@@ -1,7 +1,7 @@
 <hr/>
 <%= tinymce language: 'pt_BR' %>
 <div class="required_info"></div><br/>
-<%= form_with(model: answer, local: true, :html => { :id => "finalAnswerForm" }) do |form| %>
+<%= form_with(model: answer, local: true, :html => { id: "finalAnswerForm" }) do |form| %>
 <% if answer.errors.any? %>
   <div id="error_explanation">
     <h2><%= pluralize(answer.errors.count, "error") %>
@@ -14,11 +14,11 @@
   </div>
 <% end %>
 
-<% @question = Call.find(params[:id]) %>
+
   <div class="form" style="max-width: 650px">
     <div class="field">
       <%= form.label :question, 'Questão', class: 'required' %>
-      <%= form.text_field :question, value: @question.title, class: 'form-control boxed', required: true %>
+      <%= form.text_field :question, value: @call.title, class: 'form-control boxed', required: true %>
     </div>
 
     <div class="field">
@@ -37,13 +37,13 @@
     </div>
 
     <div class="field">
-      <%= form.label :keywords, 'Palavras-chave (separadas por vírgula ou ponto-e-vírgula)', class: 'required' %>
+      <%= form.label :keywords, 'Palavras-chave (separadas por vírgula ou ponto-e-vírgula)' %>
       <%= form.text_field :keywords, 'data-role': 'tagsinput', placeholder: ' ' %>
     </div>
 
     <div class="field" style="display: none">
       <%= form.label :category_id, 'Categoria' %>
-      <%= form.text_field :category_id, value: @question.category.id, required: true %>
+      <%= form.text_field :category_id, value: @call.category.id, required: true %>
     </div>
 
     <div class="field" style="display: none">
@@ -51,13 +51,19 @@
       <%= form.text_field :user_id, value: current_user.id, required: true %>
     </div>
 
+    <div class="field" style="display: none">
+      <%= form.label :system_id, 'Sistema Origem', class: 'required' %>
+      <%= form.text_field :system_id, value: Answer.systems[:from_call], required: true %>
+    </div>
+
     <div id='faq-form' class="form-check form-check-inline">
       <%= form.check_box :faq, class: "form-check-input" %>
       <%= form.label :faq, 'Adicionar ao FAQ?', class: 'form-check-label' %>
     </div>
 
-    <%= hidden_field_tag :question_id, @question.id, required: true %>
-    <%= hidden_field_tag :reply_id, @reply.id, required: true %>
+
+    <%= hidden_field_tag :call_id, @call.id, required: true %>
+    <%= hidden_field_tag :reply_id, @reply.id %>
     <%= hidden_field_tag :reply_attachments, '' %>
     <br/><br/>
 

@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+# Controller inherited from Devise::SessionsController,
+# to handle locally the views for the Session feature
+# of Devise.
+#
+# <b>OBS.:</b> This feature is not handled by our application,
+# with Devise having total control over it
 class Users::SessionsController < Devise::SessionsController
   # before_action :configure_sign_in_params, only: [:create]
 

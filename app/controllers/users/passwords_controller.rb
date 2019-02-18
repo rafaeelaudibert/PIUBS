@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+# Controller inherited from Devise::PasswordsController,
+# to handle locally the views for the Password feature
+# of Devise.
+#
+# <b>OBS.:</b> Our application doesn't handle these controllers
+# by ourselves, so we don't override Devise controllers
 class Users::PasswordsController < Devise::PasswordsController
   # GET /resource/password/new
   # def new

@@ -1,6 +1,6 @@
 <td class="user">
   <% if (user.invitation_accepted_at != nil) %>
-    <span class='user-name'><%= link_to user.name + " #{user.last_name}", user %></span>
+    <span class='user-name'><%= link_to user.fullname, user %></span>
   <% elsif user.invitation_sent_at != nil %>
     <span class='user-name'></span>
   <% else %>

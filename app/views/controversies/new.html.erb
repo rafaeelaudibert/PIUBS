@@ -66,8 +66,8 @@
         const citySelect = document.getElementById('controversy_city_id');
         const ubsSelect = document.getElementById('controversy_cnes');
 
-        stateSelect.addEventListener('change', () => jQuery.ajax({url: `/companies/${companySelect.value}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData}));
-        citySelect.addEventListener('change', () => jQuery.ajax({url: `/companies/${companySelect.value}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData}));
+        stateSelect.addEventListener('change', () => jQuery.ajax({url: `/companies/${companySelect.value}/states/${stateSelect.value}/cities`, type: "GET", dataType: "json", success: insertCitiesData}));
+        citySelect.addEventListener('change', () => jQuery.ajax({url: `/cities/${citySelect.value}/unities`, type: "GET", dataType: "json", success: insertUBSData}));
 
         function insertCitiesData(cities) {
           let innerHTML = '<option value> Selecione a cidade </option>';
@@ -151,8 +151,8 @@
               const userSelect = document.getElementById('controversy_user_creator');
 
               const triggeredByCompany = () => jQuery.ajax({url: `/companies/${companySelect.value}/states`, type: "GET", dataType: "json", success: insertStatesData});
-              const triggeredByState = () => jQuery.ajax({url: `/companies/${companySelect.value}/cities/${stateSelect.value}`, type: "GET", dataType: "json", success: insertCitiesData})
-              const triggeredByCity = () => jQuery.ajax({url: `/companies/${companySelect.value}/unities/${citySelect.value}`, type: "GET", dataType: "json", success: insertUBSData})
+              const triggeredByState = () => jQuery.ajax({url: `/companies/${companySelect.value}/states/${stateSelect.value}/cities`, type: "GET", dataType: "json", success: insertCitiesData})
+              const triggeredByCity = () => jQuery.ajax({url: `/cities/${citySelect.value}/unities`, type: "GET", dataType: "json", success: insertUBSData})
               const fetchUsers = () => {
                 switch (creatorSelect.value) {
                   case 'company':
@@ -217,7 +217,7 @@
           <div class="field">
             <%= form.label :category_id, 'Categoria', class: 'required' %>
             <%= form.select :category_id,
-                            Category.where(source: :from_controversy).map { |c| [c.name, c.id] },
+                            Category.from_controversy.map { |c| [c.name, c.id] },
                             { include_blank: 'Selecione uma categoria' },
                             {class: 'form-control boxed', required: true } %>
           </div>

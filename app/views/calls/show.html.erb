@@ -15,23 +15,23 @@
   <em class="fa fa-bullhorn m-2"></em>
   Requerente :
   <span class="badge badge-pill badge-dark m-2">
-    <a><%= User.find(@call.user_id).email %></a>
+    <a><%= @call.user.email %></a>
   </span>
 
   <% if @call.open? %>
     Data de criação :
     <span class="badge badge-pill badge-dark m-2">
-      <%= @call.created_at.strftime("%d %b %y - %H:%M:%S") if @call.created_at %>
+      <%= @call.formatted_created_at if @call.created_at %>
     </span>
   <%elsif @call.reopened?%>
     Data de reabertura :
     <span class="badge badge-pill badge-dark m-2">
-      <%= @call.reopened_at.strftime("%d %b %y - %H:%M:%S") if @call.reopened_at %>
+      <%= @call.formatted_reopened_at if @call.reopened_at %>
     </span>
   <%elsif @call.closed?%>
     Data de fechamento :
     <span class="badge badge-pill badge-dark m-2">
-      <%= @call.finished_at.strftime("%d %b %y - %H:%M:%S") if @call.finished_at %>
+      <%= @call.formatted_finished_at if @call.finished_at %>
     </span>
   <%end%>
 
@@ -97,21 +97,21 @@
       <% if @my_call %>
         <button type="button" id="reply" class="btn btn-primary">Nova Resposta</button>
         <button type="button" id="faq-reply" class="btn btn-primary">Resposta do FAQ</button>
-        <a data-confirm="Tens certeza?" class="btn btn-danger right" rel="nofollow" data-method="post" href="/apoioaempresas/calls/unlink_call_support_user?call_options_id=<%= @call.id %>">
+        <a data-confirm="Tens certeza?" class="btn btn-danger right" rel="nofollow" data-method="post" href="/apoioaempresas/calls/<%= @call.id %>/unlink_call_support_user">
           Soltar Atendimento
         </a>
       <% else %>
         <% unless admin? %>
           <% unless current_user.try(:call_center_admin?) %>
-            <div style="color: red; font-weight: 400; margin-bottom:1em; background-color:#CCC; padding:20px;">Este atendimento já pertence a outro usuário do suporte.</div>
+            <div style="color: red; font-weight: 400; margin-bottom:1em; background-color:#CCC; padding:20px;">Este Atendimento já pertence a outro usuário do suporte.</div>
           <% else %>
-            <div style="color: red; font-weight: 400; margin-bottom:1em; background-color:#CCC; padding:20px;">Este atendimento pertence ao usuário <%= "#{@user.name} #{@user.last_name}" %></div>
+            <div style="color: red; font-weight: 400; margin-bottom:1em; background-color:#CCC; padding:20px;">Este Atendimento pertence ao usuário <%= "#{@user.name} #{@user.last_name}" %></div>
           <% end %>
         <% end %>
       <% end %>
     <% else %>
       <% unless admin? %>
-        <%= button_to 'Pegar atendimento', link_call_support_user_calls_path(:call_options_id => @call.id, :user_option_id => current_user.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este atendimento' }, method: :post, class: "btn
+        <%= button_to 'Pegar Atendimento', link_call_support_user_calls_path(id: @call.id), data: { confirm: 'Tens certeza?', commit: 'Sim', title: 'Pegar este Atendimento' }, method: :post, class: "btn
       right", :style => "color:#FFF; background-color: #084B8A; margin-bottom: 1em;" %>
       <% end %>
     <% end %>
@@ -119,29 +119,27 @@
     <button type="button" id="reply" class="btn btn-primary">Nova resposta</button>
   <% end %>
 <% else %>
-  <!-- Chamado fechado -->
+  <!-- Atendimento fechado -->
   <div class="closed-call">
-    <% if admin? || support_user? %>
-      <p>Chamado fechado <br>
+    <% if support_like? %>
+      <p>Atendimento fechado <br>
         <% if @call.finished_at %>
           <span style="font-size: 1rem;">
-          (<%= @call.finished_at.strftime("%d %b %y - %H:%M:%S") %>)
+          (<%= @call.formatted_finished_at %>)
           </span>
         <% end %>
       </p>
     <% else %>
       <% if @call.finished_at %>
         <p>
-          Chamado fechado em <%= @call.finished_at.strftime("%d %b %y - %H:%M:%S") %>.
+          Atendimento fechado em <%= @call.formatted_finished_at %>.
           <br>
-          Somente reabra caso a solução oferecida pelo atendente não tenha resolvido o seu problema.</br>
+          Somente reabra caso a solução oferecida pelo atendente não tenha resolvido o seu problema.<br/>
         </p>
       <% end %>
-      <% if @call.replies.order(:id).last %>
-        <a data-confirm="Tens certeza?" class="btn btn-danger btn-lg" rel="nofollow" data-method="post" href="/apoioaempresas/calls/reopen_call?call=<%= @call.id %>&reply_id=<%= @call.replies.order(:id).last.id %>">
-          Reabrir chamado
+        <a data-confirm="Tens certeza?" class="btn btn-danger btn-lg" rel="nofollow" data-method="post" href="/apoioaempresas/calls/<%= @call.id %>/reopen_call">
+          Reabrir Atendimento
         </a>
-      <% end %>
   <% end %>
 </div>
 <% end %>
@@ -152,7 +150,7 @@
 <div class="card-header pl-2">
 <div class="header-block">
 <p class="title" style="color: white;">
-  <i class="fa fa-mail-forward mr-2"></i>Resposta ao atendimento</p>
+  <i class="fa fa-mail-forward mr-2"></i>Resposta ao Atendimento</p>
 </div>
 </div>
 <div class="card-body">
@@ -172,185 +170,169 @@
 <%= render 'answer', categories: @categories %>
 </div>
 </div>
-<br/><br/><br/>
+<br/><br/>
 
-<% if @call.replies.length > 0 %>
-<div class="card card-primary">
-<div class="card-header" id="headingTwo">
-<div class="header-block">
-  <p class="title" style="color: white">
-    <i class="fa fa-comment-o mr-2"></i>
-    Respostas</p>
-</div>
-</div>
-<div class="card-block">
-
-<% @call.replies.order(id: :desc).each do |reply| %>
-
-  <% if reply.category == 'company' %>
-    <div class="card card-default mb-3" style="box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
-      <div class="card-header">
-        <em class="fa fa-comment-o m-2"></em>
-        <span class="badge badge-pill badge-dark m-1" style="display: none"><%= '#' << reply.id.to_s %></span>
-        -
-        <strong class="m-2">
-          <%= User.find(reply.user_id).name %>
-        </strong>
-        <% if reply.created_at %>
-          Adicionou uma resposta em <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
-        <% end %>
-
+<% if @call.answer_id %>
+  <div class="card card-primary">
+    <div class="card-header" id="headingTwo">
+      <div class="header-block">
+        <p class="title" style="color: white">
+        <i class="fa fa-envelope mr-2"></i>
+        Resposta final</p>
       </div>
-      <div class="card-body" style="padding: 5px 30px 15px">
-        <p class="card-text">
-          <span class="description">
-            <%= reply.description.html_safe %>
-          </span>
-
-          <% if reply.attachments.length > 0 %>
-            <hr/>
-            <strong class='m-2'>
-              Attachments
-            </strong>
-            <br/>
-            <div>
-              <% reply.attachments.each do |_attachment| %>
-                <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
-                  <i class="fa fa-file-text mr-1"></i>
-                  <%= truncate(_attachment.filename, length: 10, omission: '...')%>
-                <%end%>
-              <% end %>
-            </div>
+    </div>
+    <div class="card-block">
+      <% answer = Answer.find(@call.answer_id) %>
+      <span class="badge badge-pill badge-dark m-1">suporte</span>
+      <span class="badge badge-pill badge-dark m-1">
+      <%= User.find(answer.user_id).name %></span>
+      <% if answer.created_at %>
+        Marcada como resposta final em <%= answer.formatted_created_at %>
+      <% end %>
+      <hr/>
+      <%= answer.answer.html_safe %>
+      <% if answer.attachments.length > 0 %>
+      <hr/>
+      <strong class='m-2'>Attachments</strong><br/>
+      <div class='mt-2'>
+        <% answer.attachments.each do |_attachment| %>
+          <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
+            <i class="fa fa-file-text mr-1"></i>
+            <%= truncate(_attachment.filename, length: 10, omission: '...')%>
           <% end %>
+        <% end %>
+      </div>
+      <% end %>
+    </div>
+  </div>
+  <br/><br/>
+<% end %>
+
+<% if @call.events.length > 0 %>
+
+  <div class="card card-primary">
+
+    <div class="card-header" id="headingTwo">
+      <div class="header-block">
+        <p class="title" style="color: white">
+          <i class="fa fa-clock-o mr-2"></i>
+          Timeline
         </p>
       </div>
     </div>
 
-  <% end  %>
+    <div class="card-block">
+      <% @call.events.each do |event| %>
 
-  <% if reply.category == 'support' %>
-    <div class="card card-default mb-3" style="border-left: 5px solid #85CE36; box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
-      <div class="card-header">
-        <em class="fa fa-comment-o m-2"></em>
-        <span class="badge badge-pill badge-dark m-1" style="display: none"><%= '#' << reply.id.to_s %></span>
-        <span class="badge badge-pill badge-dark m-1">suporte</span>
-        <span class="badge badge-pill badge-dark m-1">
-          <%= User.find(reply.user_id).name %>
-        </span>
-        <% if reply.created_at %>
-          Adicionou uma resposta em <%= reply.created_at.strftime("%d %b %y - %H:%M:%S") %>
-        <% end %>
-      </div>
-      <div class="card-block">
-          <span>
-            <%= reply.description.html_safe %>
-          </span>
+        <% if event.reply? %>
+          <% if company_user? event.user %>
+            <div class="card card-default mb-3">
+              <div class="card-header">
+                <em class="fa fa-comment-o m-2"></em>
+                <span class="badge badge-pill badge-dark m-1" style="display: none"><%= '#' << event.id.to_s %></span>
+                <span class="badge badge-pill badge-dark m-1">
+                  <%= event.user.name %>
+                </span>
+                <% if event.created_at %>
+                  Adicionou uma resposta em <%= event.formatted_created_at %>
+                <% end %>
+              </div>
+              <div class="card-block">
+                <span>
+                  <%= event.reply.description.html_safe %>
+                </span>
 
-          <% if reply.attachments.length > 0 %>
-            <hr/>
-            <strong class='m-2'>
-              Attachments
-            </strong>
-            <br/>
-            <div>
-              <% reply.attachments.each do |_attachment| %>
-                <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
-                  <i class="fa fa-file-text mr-1"></i>
-                  <%= truncate(_attachment.filename, length: 10, omission: '...')%>
-                <%end%>
-              <% end %>
+                <% if event.reply.attachments.length > 0 %>
+                  <hr/>
+                  <strong class='m-2'>
+                    Attachments
+                  </strong>
+                  <br/>
+                  <div>
+                    <% event.reply.attachments.each do |attachment| %>
+                      <%= link_to download_attachments_path("#{attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{attachment.filename}"} do %>
+                        <i class="fa fa-file-text mr-1"></i>
+                        <%= truncate(attachment.filename, length: 10, omission: '...')%>
+                      <%end%>
+                    <% end %>
+                  </div>
+                <% end %>
+
+                <hr/>
+
+              </div>
+            </div>
+          <% elsif support_user? event.user %>
+            <div class="card card-default mb-3" style="border-left: 5px solid #85CE36; box-shadow: .0725rem .125rem .25rem rgba(0,0,0,.125)!important">
+              <div class="card-header">
+                <em class="fa fa-comment-o m-2"></em>
+                <span class="badge badge-pill badge-dark m-1" style="display: none"><%= '#' << event.id.to_s %></span>
+                <span class="badge badge-pill badge-dark m-1">suporte</span>
+                <span class="badge badge-pill badge-dark m-1">
+                  <%= event.user.name %>
+                </span>
+                <% if event.created_at %>
+                  Adicionou uma resposta em <%= event.formatted_created_at %>
+                <% end %>
+              </div>
+              <div class="card-block">
+                <span>
+                  <%= event.reply.description.html_safe %>
+                </span>
+
+                <% if event.reply.attachments.length > 0 %>
+                  <hr/>
+                  <strong class='m-2'>
+                    Attachments
+                  </strong>
+                  <br/>
+                  <div>
+                    <% event.reply.attachments.each do |attachment| %>
+                      <%= link_to download_attachments_path("#{attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{attachment.filename}"} do %>
+                        <i class="fa fa-file-text mr-1"></i>
+                        <%= truncate(attachment.filename, length: 10, omission: '...')%>
+                      <%end%>
+                    <% end %>
+                  </div>
+                <% end %>
+
+                <hr/>
+                <% if current_user.try(:admin?) ||
+                      current_user.try(:call_center_user?) ||
+                      current_user.try(:call_center_admin?) %>
+                  <% if @my_call && !@call.closed? %>
+                    <a style="color: white" onclick="toggleFinalAnswer(this)" class="btn btn-primary btn-sm">Marcar como resposta final</a>
+                  <% end %>
+                <% end %>
+                <div style="float: right">
+                  <% if event.reply.faq == true %>
+                    <span id="faq-<%= event.id %>" class="badge badge-pill badge-dark">
+                      Resposta no FAQ
+                    </span>
+                  <% end %>
+                </div>
+              </div>
             </div>
           <% end %>
-
-          <hr/>
-          <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-            <% if @my_call %>
-              <a style="color: white" onclick="toggleFinalAnswer(this)" class="btn btn-primary btn-sm">Marcar como resposta final</a>
-            <% end %>
-          <% end %>
-          <div style="float: right">
-            <% if reply.faq == true %>
-              <span id="faq-<%= reply.id %>" class="badge badge-pill badge-dark">
-                Resposta no FAQ
-              </span>
-            <% end %>
-          </div>
-      </div>
-    </div>
-  <% end  %>
-
-  <% if reply.last_call_ref_reply_reopened_at && reply.last_call_ref_reply_reopened_at > reply.last_call_ref_reply_closed_at %>
-    <!-- REOPENED AT -->
-    <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.reopened" %>">
-      <%= t "activerecord.enums.call.status.reopened"%> em <%= reply.last_call_ref_reply_reopened_at.strftime("%d %b %y - %H:%M:%S") %>
-    </span>
-  <% end %>
-
-  <% if reply.last_call_ref_reply_closed_at %>
-   <!-- CLOSED AT -->
-    <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.closed" %>">
-      <%= t "activerecord.enums.call.status.closed"%> em <%= reply.last_call_ref_reply_closed_at.strftime("%d %b %y - %H:%M:%S") %>
-    </span>
-  <% end %>
-
-<% end  %>
-
-<% if @call.replies.order(id: :desc).last %>
-  <span style="width:100%; opacity: 0.8; margin:1em 0em;" class="badge badge-pill badge-<%=t "activerecord.enums.call.status.style.#{@call.replies.order(id: :desc).last.status}" %>">
-    <%= t "activerecord.enums.call.status.#{@call.replies.order(id: :desc).last.status}" if @call.replies.order(id: :desc).last.status%>
-    em
-    <%= @call.created_at.strftime("%d %b %y - %H:%M:%S") if @call.created_at %>
-  </span>
-<% end %>
-
-  <% if @call.open? || @call.reopened? %>
-    <% if @my_call %>
-      <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
-        <button type="button" id="reply-2" class="btn btn-primary">Nova Resposta</button>
-        <button type="button" id="faq-reply-2" class="btn btn-primary">Resposta do FAQ</button>
-      <% end %>
-    <% elsif @call.user_id == current_user.id %>
-      <button type="button" id="reply-2" class="btn btn-primary">Nova Resposta</button>
-    <% end %>
-  <% end %>
-
-</div>
-</div>
-<% end %>
-
-<% if @call.answer_id %>
-<div class="card card-primary">
-  <div class="card-header" id="headingTwo">
-    <div class="header-block">
-      <p class="title" style="color: white">
-      <i class="fa fa-envelope mr-2"></i>
-      Resposta final</p>
-    </div>
-  </div>
-  <div class="card-block">
-    <% answer = Answer.find(@call.answer_id) %>
-    <span class="badge badge-pill badge-dark m-1">suporte</span>
-    <span class="badge badge-pill badge-dark m-1">
-    <%= User.find(answer.user_id).name %></span>
-    <% if answer.created_at %>
-      Marcada como resposta final em <%= answer.created_at.strftime("%d %b %y - %H:%M:%S") %>
-    <% end %>
-    <hr/>
-    <%= answer.answer.html_safe %>
-    <% if answer.attachments.length > 0 %>
-    <hr/>
-    <strong class='m-2'>Attachments</strong><br/>
-    <div class='mt-2'>
-      <% answer.attachments.each do |_attachment| %>
-        <%= link_to download_attachments_path("#{_attachment.id}"), html_options = {class: 'btn btn-oval btn-secondary', title: "#{_attachment.filename}"} do %>
-          <i class="fa fa-file-text mr-1"></i>
-          <%= truncate(_attachment.filename, length: 10, omission: '...')%>
+        <% elsif event.alteration? %>
+          <span style="width:100%; opacity:0.9; margin:1em 0em;" class="badge badge-pill badge-<%= t "activerecord.enums.alteration.type.style." << event.alteration.type %>">
+            <%= event.user.name %> <%= t "activerecord.enums.alteration.type." << event.alteration.type %> em <%= event.formatted_created_at %>
+          </span>
         <% end %>
       <% end %>
+
+      <% if @call.open? || @call.reopened? %>
+          <% if @my_call %>
+            <% if current_user.try(:admin?) || current_user.try(:call_center_user?) || current_user.try(:call_center_admin?) %>
+              <button type="button" id="reply-2" class="btn btn-primary">Nova Resposta</button>
+              <button type="button" id="faq-reply-2" class="btn btn-primary">Resposta do FAQ</button>
+            <% end %>
+          <% elsif @call.user_id == current_user.id %>
+            <button type="button" id="reply-2" class="btn btn-primary">Nova Resposta</button>
+          <% end %>
+        <% end %>
     </div>
-    <% end %>
   </div>
-</div>
 <% end %>
 
 <div id="final-answer" style="display: none">
@@ -445,10 +427,10 @@
       const faqField = $('#faq-form')[0];
 
       // Show/hide the faq field
-      faqField.style.display = float ? 'none' : 'inline-flex'
+      faqField.style.display = float.length > 0 ? 'none' : 'inline-flex'
 
       $.ajax({
-        url: '/replies/attachments/' + replyID,
+        url: `/replies/${replyID}/attachments`,
         type: "GET",
         dataType: "json",
         success: data => {

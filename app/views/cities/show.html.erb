@@ -69,5 +69,5 @@
 
 <br>
 <%= link_to 'Adicionar nova UBS', new_unity_path(city: @city.id), class: 'btn btn-primary btn-sm' if current_user.try(:admin?) %>
-<%= link_to 'Adicionar Contrato', new_contract_path(city: @city.id), class: 'btn btn-primary btn-sm' if current_user.try(:admin?) && Contract.where('city_id = ?', @city.id).length==0 %>
+<%= link_to 'Adicionar Contrato', new_contract_path(city: @city.id), class: 'btn btn-primary btn-sm' if current_user.try(:admin?) && @city.contract.nil? %>
 <br/><br/>

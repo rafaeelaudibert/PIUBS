@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# Controller inherited from Devise::OmniauthCallbacksController,
+# to handle locally the views for the
+# OmniauthAuthentication feature of Devise.
+#
+# <b>OBS.:</b> This feature is not used in our application
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   # You should configure your model like this:
   # devise :omniauthable, omniauth_providers: [:twitter]

@@ -1,10 +1,10 @@
 PIUBS
 
-Olá, <%= @current_user.name %>, você foi adicionado a uma Controvérsia no sistema PIUBS.
+Olá, <%= @user.name %>, você foi adicionado a uma Controvérsia no sistema PIUBS.
 
 Protocolo: <%= @controversy.protocol %>
 
-Parte e Usuário requerente: <%= @controversy.creator.titleize %> - <%= @user_creator %>
+Usuário requerente: <%= @creator.name %>
 
 Título da Controvérsia: <%= @controversy.title %>
 

@@ -1,111 +1,145 @@
 # frozen_string_literal: true
 
+##
+# This is the controller for the Answer model
+#
+# It is responsible for handling the views for any Answer
 class AnswersController < ApplicationController
+  include ApplicationHelper
+
+  # Hooks Configuration
   before_action :authenticate_user!
   before_action :restrict_system!
   before_action :set_answer, only: %i[show edit update]
+  before_action :set_call, only: :create
   before_action :verify_source, only: :new
-  include ApplicationHelper
 
+  # CanCanCan Configuration
   load_and_authorize_resource
-  skip_authorize_resource only: %i[faq faq_controversy search_call search_controversy]
+  skip_authorize_resource only: %i[faq faq_controversy search_call search_controversy attachments]
 
-  # GET /answers
-  # GET /answers.json
+  ####
+  # :section: View methods
+  # Method related to generating views
+  ##
+
+  # Configures the <tt>index</tt> page for the Answer model
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/answers</tt>
+  # [GET] <tt>/answers.json</tt>
   def index
     (@filterrific = initialize_filterrific(
       Answer,
       params[:filterrific],
-      select_options: { # em breve
-      },
       persistence_id: false
     )) || return
-    @answers = @filterrific.find
-                           .joins(:category)
-                           .order('categories.name', :question, :answer)
-                           .page(params[:page])
+    @answers = filterrific_query
   end
 
-  # get /faq
+  # Configures the <tt>faq</tt> page for the Answer model
+  #
+  # This FAQ is related to the Apoio as Empresas system
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/apoioaempresas/faq</tt>
+  # [GET] <tt>/apoioaempresas/faq.json</tt>
   def faq
     (@filterrific = initialize_filterrific(
       Answer,
       params[:filterrific],
-      select_options: {
-        with_category: Category.where(source: :from_call).map { |a| [a.name, a.id] }
-      },
+      select_options: { with_category: Category.from_call.map { |a| [a.name, a.id] } },
       persistence_id: false
     )) || return
 
-    @answers = Answer.where(faq: true, source: :from_call)
-                     .filterrific_find(@filterrific)
-                     .joins(:category)
-                     .order('categories.name', :question, :answer)
-                     .page(params[:page])
+    @answers = @filterrific.find
+                           .faq_from_call
+                           .page(params[:page])
+
     authorize_faq
   end
 
-  # get /faq_controversy
+  # Configures the <tt>faq</tt> page for the Answer model
+  #
+  # This FAQ is related to the Solucao de Controversias system
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/controversias/faq</tt>
+  # [GET] <tt>/controversias/faq.json</tt>
   def faq_controversy
     (@filterrific = initialize_filterrific(
       Answer,
       params[:filterrific],
-      select_options: {
-        with_category: Category.where(source: :from_controversy).map { |a| [a.name, a.id] }
-      },
+      select_options: { with_category: Category.from_controversy.map { |a| [a.name, a.id] } },
       persistence_id: false
     )) || return
 
-    @answers = Answer.where(faq: true, source: :from_controversy)
-                     .filterrific_find(@filterrific)
-                     .joins(:category)
-                     .order('categories.name', :question, :answer)
-                     .page(params[:page])
+    @answers = @filterrific.find
+                           .faq_from_controversy
+                           .page(params[:page])
+
     authorize_faq
   end
 
-  # GET /answers/1
+  # Configures the <tt>show</tt> page for the Answer model
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/answers/:id</tt>
+  # [GET] <tt>/answers/:id.json</tt>
   def show; end
 
-  # GET /answers/new
+  # Configures the <tt>new</tt> page for the Answer model
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/answers/new</tt>
   def new
     @answer = Answer.new
     @reply = Reply.find(params[:reply]) if params[:reply]
     @question = Call.find(params[:question]) if params[:question]
-    @categories = Category.where(source: params[:source] == 'call' ? :from_call : :from_controversy)
+    @categories = Category.from params[:source]
   end
 
-  # GET /answers/1/edit
+  # Configures the <tt>edit</tt> page for the Answer model
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/answers/:id/edit</tt>
   def edit
-    @categories = Category.where(source: (@answer.from_call? ? :from_call : :from_controversy))
+    @categories = @answer.from_call? ? Category.from_call : Category.from_controversy
   end
 
-  # POST /answers
+  # Configures the <tt>POST</tt> request to create a new Answer
+  #
+  # <b>ROUTES</b>
+  #
+  # [POST] <tt>/answers</tt>
   def create
-    ans_params = answer_params
-
-    files = retrieve_files ans_params
-    @answer = Answer.new(ans_params)
-
-    if @answer.save
-      mark_as_final_answer @answer if params[:question_id]
-      create_file_links @answer, files
-
-      # Answer created from a call or from the FAQ
-      redirect_to @call, notice: 'Resposta final marcada com sucesso' if @call
-      redirect_to @answer || root_path, notice: 'Questão criada com sucesso.'
-    else
-      render :new
-    end
+    handle_answer_creation
+  rescue Answer::CreateError
+    render :new, alert: e.message
+  rescue Event::CreateError => e
+    @answer.delete
+    render :new, alert: e.message + 'durante a criação da Resposta Final'
+  rescue Alteration::CreateError => e
+    @answer.delete # Rollback
+    render :new, alert: e.message + 'durante a criação da Resposta Final'
   end
 
-  # PATCH/PUT /answers/1
-  # PATCH/PUT /answers/1.json
+  # Configures the <tt>PATCH/PUT</tt> request to update
+  # a Answer
+  #
+  # <b>ROUTES</b>
+  #
+  # [PATCH/PUT] <tt>/answers/:id</tt>
   def update
-    ans_params = answer_params
-    files = retrieve_files ans_params
+    files = retrieve_files_from params[:answer][:files]
 
-    if @answer.update(ans_params)
+    if @answer.update(answer_params)
 
       # Remove do DB os links que foram removidos do front_end
       @answer.attachment_links.each { |link| remove_link(link, files) unless files.include?(link) }
@@ -117,88 +151,170 @@ class AnswersController < ApplicationController
     end
   end
 
-  # GET /answers/query_call/:search
+  # Configures the <tt>query_call</tt> page for
+  # the Answer model. This makes a PG_SEARCH in the database
+  # returning the result ordered from the "best" to the "worst"
+  # in the Answer instances which are in the FAQ for
+  # the Call model
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/answers/query_call/:search</tt>
+  # [GET] <tt>/answers/query_call/:search.json</tt>
   def search_call
+    @answers = Answer.search_query_faq_call(params[:search])
+                     .with_pg_search_rank
+                     .limit(15)
     authorize! :query_faq, Answer
-
-    respond_to do |format|
-      format.js do
-        render json: Answer.where(faq: true, source: :from_call)
-                           .search_for(params[:search]).with_pg_search_rank.limit(15)
-      end
-    end
   end
 
-  # GET /answers/query_controversy/:search
+  # Configures the <tt>query_controversy</tt> page for
+  # the Answer model. This makes a PG_SEARCH in the database
+  # returning the result ordered from the "best" to the "worst"
+  # in the Answer instances which are in the FAQ for
+  # the Controversy model
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/answers/query_controversy/:search</tt>
+  # [GET] <tt>/answers/query_controversy/:search.json</tt>
   def search_controversy
+    @answers = Answer.search_query_faq_controversy(params[:search])
+                     .with_pg_search_rank
+                     .limit(15)
     authorize! :query_faq, Answer
-
-    respond_to do |format|
-      format.js do
-        render json: Answer.where(faq: true, source: :from_controversy)
-                           .search_for(params[:search]).with_pg_search_rank.limit(15)
-      end
-    end
   end
 
-  # GET /answers/attachments/:id
+  # Configures the <tt>attachments</tt> request for the
+  # Answer model. It returns all Attachment instances which
+  # belongs to the queried Answer
+  #
+  # <b>OBS.:</b> This view only exist in a JSON format
+  #
+  # <b>ROUTES</b>
+  #
+  # [GET] <tt>/answers/:id/attachments.json</tt>
   def attachments
     @answer = Answer.find(params[:id])
     authorize! :show, @answer
 
-    respond_to do |format|
-      format.js do
-        render(json: @answer.attachments
-                            .map do |attachment|
-                       { filename: attachment.filename,
-                         type: attachment.content_type,
-                         id: attachment.id,
-                         bytes: retrieve_file_bytes(attachment) }
-                     end)
-      end
+    @attachments = @answer.attachments
+                          .map do |attachment|
+      { filename: attachment.filename,
+        type: attachment.content_type,
+        id: attachment.id,
+        bytes: retrieve_file_bytes(attachment) }
     end
   end
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
+  ####
+  # :section: Hooks methods
+  # Methods which are called by the hooks on
+  # the top of the file
+  ##
+
+  # Configures the Answer instance when called by
+  # the <tt>:before_action</tt> hook
   def set_answer
     @answer = Answer.find(params[:id])
   end
 
-  # Never trust parameters from internet, only allow the white list through.
+  # Configures the Call instance when called by
+  # the <tt>:before_action</tt> hook for #create method
+  def set_call
+    @call = Call.find(params[:call_id]) if params[:call_id]
+  end
+
+  # Restrict the access to the views according to the
+  # <tt>current_user system</tt>, as some views can only be
+  # acessed by some <tt>system</tt> allowed users.
+  # This method is called by a <tt>:before_action</tt> hook
+  def restrict_system!
+    redirect_to denied_path if params[:action] == 'faq' && current_user.controversies?
+    redirect_to denied_path if params[:action] == 'faq_controversy' && current_user.companies?
+  end
+
+  # Verifies if the required params <tt>:source</tt> was
+  # passed when calling the #new method.
+  # This method is called by a <tt>:before_action</tt> hook
+  def verify_source
+    redirect_to not_found_path unless %w[call controversy].include?(params[:source])
+  end
+
+  ##########################
+  # :section: Custom private methods
+
+  # Makes the famous "Never trust parameters from internet, only allow the white list through."
   def answer_params
     params[:answer][:keywords] = params[:answer][:keywords].split(',').join(' ; ')
     params.require(:answer).permit(:keywords, :question, :answer, :category_id,
-                                   :user_id, :faq, :question_id, :source,
-                                   :reply_attachments, :files)
+                                   :user_id, :faq, :call_id, :system_id, :reply_attachments)
   end
 
-  def retrieve_files(ans_params)
-    ans_params.delete(:files).split(',') if ans_params[:files]
-  end
-
+  # When called by #create, handles the possible change
+  # of Final Answer in the possible Call parent instance
+  # as well as removing the old Answer which occupied that place
   def mark_as_final_answer(answer)
-    @call = Call.find(params[:question_id])
-    update_call_reply @call
+    update_call @call
 
-    # Retira a answer caso ela nao esteja no FAQ + attach_links
+    # Removes the old answer if he is not in the FAQ and
+    # remove its AttachmentLink instances
     if @call.answer.try(:faq) == false
-      @old_answer = Answer.find(@call.answer_id)
-      @old_answer.attachment_links.each(&:destroy)
+      old_answer = Answer.find(@call.answer_id)
+      old_answer.attachment_links.each(&:destroy)
 
       update_answer_id @call, answer
-      @old_answer.destroy
+      old_answer.destroy
     else
       update_answer_id @call, answer
     end
   end
 
-  def update_call_reply(call)
-    call.update(status: 'closed', finished_at: 0.seconds.from_now)
-    Reply.find(params[:reply_id]).update(last_call_ref_reply_closed_at: 0.seconds.from_now)
+  # Called by #handle_answer_creation, parses the String passed as
+  # parameter to the Answer creation, to be able to create
+  # the AttachmentLinks later
+  def retrieve_files_from(files)
+    files != '' ? files.split(',') : []
   end
 
+  # Called by #create, handles all the Answer creation proccess
+  def handle_answer_creation
+    files = retrieve_files_from params[:answer][:files]
+    @answer = Answer.new(answer_params)
+
+    raise Answer::CreateError unless @answer.save
+
+    mark_as_final_answer @answer if params[:call_id]
+    create_file_links @answer, files
+
+    # Answer created from a call or from the FAQ
+    check_create_redirect
+  end
+
+  # Called by #mark_as_final_answer, handles the need to close
+  # the Answer's Call parent instance, as well as handling the
+  # timeline of it
+  def update_call(call)
+    # Create event
+    @event = Event.new(type: EventType.alteration,
+                       user: current_user,
+                       system: System.call,
+                       protocol: call.protocol)
+
+    raise Event::CreateError, @event.errors.inspect unless @event.save
+
+    # After we correctly saved the event
+    @alteration = Alteration.new(id: @event.id, type: :close_call)
+    raise Alteration::CreateError, event: @event unless @alteration.save
+
+    call.close!
+  end
+
+  # Called by #mark_as_final_answer, updates the <tt>answer</tt>
+  # field in the Answer's Call parent instance to reference it,
+  # as well as sending an e-mail telling about the Call close.
   def update_answer_id(call, answer)
     call.answer_id = answer.id
     raise 'Não conseguimos salvar a answer de maneira correta.' unless call.save
@@ -206,6 +322,9 @@ class AnswersController < ApplicationController
     AnswerMailer.new_answer(call, answer, current_user).deliver_later
   end
 
+  # For each Attachment instance id received in the
+  # <tt>files</tt> parameter, creates the AttachmentLink
+  # between the Answer instance and the Attachment instance.
   def create_file_links(answer, files)
     files.each do |file_uuid|
       @link = AttachmentLink.new(attachment_id: file_uuid,
@@ -218,34 +337,45 @@ class AnswersController < ApplicationController
     end
   end
 
-  def remove_links(link, files)
-    link.destroy
-    files.delete(link)
-  end
-
+  # Called by #attachments, query the database to know
+  # what is the size in bytes of the Attachment instance
+  # passed as parameter
   def retrieve_file_bytes(attachment)
     Answer.connection
           .select_all(Answer.sanitize_sql_array([
-                                                  'SELECT octet_length(file_contents) FROM '\
-                                                  'attachments WHERE attachments.id = ?',
+                                                  'SELECT octet_length("BL_CONTEUDO") FROM '\
+                                                  '"TB_ANEXO" WHERE "TB_ANEXO"."CO_ID" = ?',
                                                   attachment.id
                                                 ]))[0]['octet_length']
   end
 
-  def authorize_faq
-    authorize! :read, @answers.first # We use the first, to bypass the CanCan problems
+  # Called after #create, verifies if we should redirect to a
+  # Call instance view or to the own Answer instance view
+  def check_create_redirect
+    if @call
+      redirect_to @call, notice: 'Resposta final marcada com sucesso' if @call
+    else
+      redirect_to @answer || root_path, notice: 'Questão criada com sucesso.'
+    end
   end
 
-  def restrict_system!
-    redirect_to denied_path if params[:action] == 'faq' && current_user.controversies?
-    redirect_to denied_path if params[:action] == 'faq_controversy' && current_user.companies?
-  end
+  ####
+  # :section: CanCanCan methods
+  # Methods which are related to the CanCanCan gem
+  ##
 
-  def verify_source
-    redirect_to not_found_path unless %w[call controversy].include?(params[:source])
-  end
-
+  # CanCanCan Method
+  #
+  # Default CanCanCan Method, declaring the AnswerAbility
   def current_ability
     @current_ability ||= AnswerAbility.new(current_user)
+  end
+
+  # CanCanCan Method
+  #
+  # Method called by the FAQ-like views, to authorize which Answers can be seen
+  def authorize_faq
+    # We use the first, to bypass CanCanCan problems
+    authorize! :read, @answers.first unless @answers.empty?
   end
 end

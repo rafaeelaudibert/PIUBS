@@ -119,12 +119,12 @@
     const citySelect = document.getElementById('filterrific_with_city');
     const unitySelect = document.getElementById('filterrific_with_ubs');
     const sei = <%= current_user.sei || 0 %>;
-    const triggeredByState = () => jQuery.ajax({url: `/companies/${sei}/cities/${stateSelect.value}`,
+    const triggeredByState = () => jQuery.ajax({url: `/companies/${sei}/states/${stateSelect.value}/cities`,
                                                 type: "GET",
                                                 dataType: "json",
                                                 success: insertCitiesData,
                                                 error: console.error})
-    const triggeredByCity = () => jQuery.ajax({url: `/companies/${sei}/unities/${citySelect.value}`,
+    const triggeredByCity = () => jQuery.ajax({url: `/cities/${citySelect.value}/unities/`,
                                                type: "GET",
                                                dataType: "json",
                                                success: insertUnitiesData,
