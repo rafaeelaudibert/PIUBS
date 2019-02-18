@@ -130,10 +130,10 @@ def seed_unities
         Rails.logger.error("ERROR inserting UNITY #{unity[:name]}")
         Rails.logger.error(unity.errors.full_messages)
       end
+
     end
   end
   Rails.logger.info('[FINISH] -- Unities insertion')
-end
 
 def seed_contract(city)
   company = Company.all.sample
