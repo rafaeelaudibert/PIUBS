@@ -62,8 +62,8 @@
       <div class="field">
         <%= form.label :category_id, 'Categoria', class: 'required' %>
 
-        <select skip_default_ids="false" allow_method_names_outside_object="true" name="answer[category_id]" id="answer_category_id" class="form-control" required="required">
-          <option value="0">Selecione uma categoria:</option>
+        <select skip_default_ids="false" allow_method_names_outside_object="true" name="answer[category_id]" id="answer_category_id" class="form-control">
+          <option value="default">Selecione uma categoria:</option>
           <%= inside_layout "categories/category_select", {categ: @categories, selected: @answer.category} do %>
             <%= yield %>
           <% end %>
@@ -78,9 +78,9 @@
 
     <div class="field">
       <% if params[:source] == 'controversy' && !@reply && params[:action] == 'new' %>
-        <%= form.text_field :source, value: :from_controversy, required: true, class: 'hidden' %>
+        <%= form.text_field :system_id, value: Answer.systems[:from_controversy], required: true, class: 'hidden' %>
       <% elsif params[:source] == 'call' && !@reply && params[:action] == 'new'  %>
-        <%= form.text_field :source, value: :from_call, required: true, class: 'hidden' %>
+        <%= form.text_field :system_id, value: Answer.systems[:from_call], required: true, class: 'hidden' %>
       <% end %>
     </div>
 
