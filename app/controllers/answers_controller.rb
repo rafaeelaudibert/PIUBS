@@ -120,7 +120,7 @@ class AnswersController < ApplicationController
   # [POST] <tt>/answers</tt>
   def create
     handle_answer_creation
-  rescue Answer::CreateError
+  rescue Answer::CreateError => e
     render :new, alert: e.message
   rescue Event::CreateError => e
     @answer.delete
