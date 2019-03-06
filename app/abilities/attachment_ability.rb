@@ -28,7 +28,7 @@ class AttachmentAbility
     can :create, Attachment # Every logged user can create an attachment
     can %i[manage download], Attachment if user.admin?
     can :download, Attachment if support_user?(user)
-
+    can :download, Attachment if faq_inserter?(user)
     can :download, Attachment if attachment && downloadable?(user, attachment)
   end
 
