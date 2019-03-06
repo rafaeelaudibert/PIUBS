@@ -140,15 +140,23 @@ class AnswersController < ApplicationController
     files = retrieve_files_from params[:answer][:files]
 
     if @answer.update(answer_params)
-
       # Remove do DB os links que foram removidos do front_end
-      @answer.attachment_links.each { |link| remove_link(link, files) unless files.include?(link) }
+      @answer.attachment_links.each { |link| remove_link(link) unless files.include?(link) }
 
       create_file_links @answer, files
       redirect_to @answer, notice: 'Resposta atualizada com sucesso.'
     else
       render :edit
     end
+
+  end
+
+  def remove_link(link) # Não precisa daquele files
+    attachment_link = AttachmentLink.find(link.id)
+    attachment = attachment_link.attachment
+
+    attachment_link.delete
+    attachment.delete if attachment.attachment_links.length == 0
   end
 
   # Configures the <tt>query_call</tt> page for
