@@ -6,8 +6,13 @@ $(document).ready(function() {
   $("#faqForm").submit(function(){
     tinyMCE.triggerSave();
   });
+
+  jQuery.validator.addMethod("valueNotEquals", function(value, element, arg){
+    return arg !== value;
+  }, "Value must not equal arg.");
+
   jQuery.validator.setDefaults({
-      ignore: ":hidden:not('textarea, input, select')"
+    ignore: ":hidden:not('textarea, input, select')"
   });
 
   var validator = $('#faqForm').validate({
@@ -19,7 +24,7 @@ $(document).ready(function() {
             required: true
           },
           "answer[category_id]": {
-            required: true
+            valueNotEquals: 'default'
           }
       },
       messages :{
@@ -33,7 +38,7 @@ $(document).ready(function() {
             required: 'O campo Questão é obrigatório.'
           },
           "answer[category_id]": {
-            required: 'O campo Categoria é obrigatório.'
+            valueNotEquals: 'O campo Categoria é obrigatório.'
           }
       }
   });
