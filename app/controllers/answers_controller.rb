@@ -136,26 +136,46 @@ class AnswersController < ApplicationController
   # <b>ROUTES</b>
   #
   # [PATCH/PUT] <tt>/answers/:id</tt>
+
+  # Check which Links has been removed from Front End by User, returning
+  # an Array of Links to be excluded from the database
+  def check_removed_links(files)
+    links_to_remove = []
+    @answer.attachment_links.each do |link|
+      unless files.include?(link.attachment_id)
+        links_to_remove.push(link)
+      end
+    end
+    links_to_remove
+  end
+
+  # Given a Array of Links removes all Links from current answers
+  def delete_removed_links(links)
+    links.each do |link|
+      remove_link(link)
+    end
+  end
+
+  # Updates current answer with a given list of parameters
   def update
     files = retrieve_files_from params[:answer][:files]
-
+    links_to_remove = check_removed_links(files)
     if @answer.update(answer_params)
-      # Remove do DB os links que foram removidos do front_end
-      @answer.attachment_links.each { |link| remove_link(link) unless files.include?(link) }
-
+      delete_removed_links(links_to_remove)
       create_file_links @answer, files
       redirect_to @answer, notice: 'Resposta atualizada com sucesso.'
     else
       render :edit
     end
-
   end
 
-  def remove_link(link) # Não precisa daquele files
+  # Given a single Link, removes Link reference from current answer
+  def remove_link(link)
     attachment_link = AttachmentLink.find(link.id)
     attachment = attachment_link.attachment
-
-    attachment_link.delete
+    if attachment_link.delete
+      @answer.attachment_links.delete(link)
+    end
     attachment.delete if attachment.attachment_links.length == 0
   end
 
@@ -291,9 +311,7 @@ class AnswersController < ApplicationController
   def handle_answer_creation
     files = retrieve_files_from params[:answer][:files]
     @answer = Answer.new(answer_params)
-
     raise Answer::CreateError unless @answer.save
-
     mark_as_final_answer @answer if params[:call_id]
     create_file_links @answer, files
 
@@ -330,19 +348,30 @@ class AnswersController < ApplicationController
     AnswerMailer.new_answer(call, answer, current_user).deliver_later
   end
 
+  def current_attachments
+    @current_attachments = []
+    @answer.attachment_links.each do |link|
+      @current_attachments.push(link.attachment_id)
+    end
+    @current_attachments
+  end
+
   # For each Attachment instance id received in the
   # <tt>files</tt> parameter, creates the AttachmentLink
   # between the Answer instance and the Attachment instance.
   def create_file_links(answer, files)
-    files.each do |file_uuid|
-      @link = AttachmentLink.new(attachment_id: file_uuid,
-                                 answer_id: answer.id,
-                                 source: 'answer')
-      unless @link.save
-        raise 'Não consegui criar o link entre arquivo e resposta final.'\
-              ' Por favor tente mais tarde'
+      current_attachments
+      files.each do |file_uuid|
+        unless @current_attachments.include?(file_uuid)
+          @link = AttachmentLink.new(attachment_id: file_uuid,
+                                     answer_id: answer.id,
+                                     source: 'answer')
+          unless @link.save
+            raise 'Não consegui criar o link entre arquivo e resposta final.'\
+                  ' Por favor tente mais tarde'
+          end
+        end
       end
-    end
   end
 
   # Called by #attachments, query the database to know
