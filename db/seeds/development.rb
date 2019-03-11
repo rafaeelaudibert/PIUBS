@@ -7,12 +7,13 @@ require 'csv'
 
 # Options for logger.level DEBUG < INFO < WARN < ERROR < FATAL < UNKNOWN
 Rails.logger = Logger.new(STDOUT)
-Rails.logger.level = Logger::INFO
+Rails.logger.level = Logger::DEBUG
 
-# Create the 2 basyc sistems in the database
+# Create the 3 basyc sistems in the database
 def seed_systems
   System.new(name: 'APOIO_A_EMPRESAS').save!
   System.new(name: 'SOLUCAO_DE_CONTROVERSIAS').save!
+  System.new(name: 'TODOS_SISTEMAS').save!
 end
 
 def seed_event_types
@@ -36,7 +37,7 @@ def seed_users
       user = User.new(cpf: CPF.generate(true), name: role[0].capitalize,
                       email: email, role: role[0],
                       password: 'changeme', password_confirmation: 'changeme',
-                      system: if %w[call_center_admin call_center_user].include? role[0]
+                      system: if %w[call_center_admin call_center_user faq_inserter].include? role[0]
                                 :both
                               else
                                 :companies
@@ -269,7 +270,7 @@ end
 def seed_answers
   Rails.logger.info('[START]  -- Answers (and FAQ) insertion')
 
-  # FAQ questions
+  #FAQ questions
   JSON.parse(File.read('./app/assets/static/faq.json')).each do |json_data|
     answer = Answer.new(json_data)
 
@@ -286,7 +287,7 @@ def seed_answers
   allowed_users = User.where(role: %w[call_center_admin call_center_user])
 
   (1..50).each do |_|
-    system_id = System.all.sample.id
+    system_id = rand(1..2)
     category = system_id.zero? ? categories.from_call.sample : categories.from_controversy.sample
     answer = Answer.new(question: Faker::Lorem.sentence(50, true, 6),
                         answer: Faker::Lorem.sentence(50, true, 6),

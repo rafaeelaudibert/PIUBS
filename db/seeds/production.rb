@@ -13,6 +13,13 @@ require 'cpf_cnpj'
 Rails.logger = Logger.new(STDOUT)
 Rails.logger.level = Logger::INFO
 
+# Create the 3 basyc sistems in the database
+def seed_systems
+  System.new(id: 0, name: 'APOIO_A_EMPRESAS').save!
+  System.new(id: 1, name: 'SOLUCAO_DE_CONTROVERSIAS').save!
+  System.new(id: 2, name: 'TODOS_SISTEMAS').save!
+end
+
 def seed_users
   return unless Company.new(sei: 0, name: 'Suporte - CallCenter', cnpj: CNPJ.generate(true)).save
 
