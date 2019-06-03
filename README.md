@@ -89,3 +89,6 @@ The live version of this project is available at https://piubs.inf.ufrgs.br
 
 ## :page_facing_up: License
 This project is licensed under the GNU AGPL 3.0 License - see the [LICENSE.md](LICENSE) file for details
+
+## :warning: Disclaimer
+This project is not being maintained anymore, and the current version doesn't completely implements the final product which this should have been, nor implements the security measures should have been taken to fullfill the requirements. Use it at you own risk.
