@@ -33,14 +33,19 @@ class System < ApplicationRecord
   end
 
   # Configure an alias to find the 'Apoio a
-  # Empresas' system
+  # Empresas' system role
   def self.call
     find_by(NO_NOME: 'APOIO_A_EMPRESAS')
   end
 
   # Configure an alias to find the 'Solucao de
-  # Controversias' system
+  # Controversias' system role
   def self.controversy
     find_by(NO_NOME: 'SOLUCAO_DE_CONTROVERSIAS')
+  end
+
+  # Configure an alias to find the 'Todos os sistemas' system role
+  def self.both
+    find_by(NO_NOME: 'TODOS_SISTEMAS')
   end
 end
