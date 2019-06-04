@@ -80,12 +80,13 @@ We use [Gitmoji](https://gitmoji.carloscuesta.me/) :tada: in our commits, so ple
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
 
 ## :construction_worker: Authors
-* **Felipe Comerlato** - *Initial work* - [felipefcomerlato](https://github.com/felipefcomerlato)
-* **Mario Figueiró** - *Initial work* - [mgfzemor](https://github.com/mgfzemor)
-* **Rafael Baldasso Audibert** - *Initial work* - [rafaeelaudibert](https://github.com/rafaeelaudibert)
+All authors have commits related to the project backend, but we highlight the more specific features for each below:
+* **Felipe Comerlato** - *Filter tables feature, Database modeling and software documentation* - [felipefcomerlato](https://github.com/felipefcomerlato)
+* **Mario Figueiró** - *Database modeling and management, and front-end* - [mgfzemor](https://github.com/mgfzemor)
+* **Rafa Audibert** - *JavaScript related code, security/permissions configuration and Docker implementation* - [rafaeelaudibert](https://github.com/rafaeelaudibert)
 
 ## :globe_with_meridians: Website
-The live version of this project is available at https://piubs.inf.ufrgs.br
+The live version of this project WAS available at https://piubs.inf.ufrgs.br (currently not hosted anywhere)
 
 ## :page_facing_up: License
 This project is licensed under the GNU AGPL 3.0 License - see the [LICENSE.md](LICENSE) file for details
