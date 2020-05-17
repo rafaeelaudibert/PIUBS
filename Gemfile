@@ -7,7 +7,7 @@ ruby '2.6.0'
 # Development only gems
 group :development do
   gem 'any_login', '>= 1.3.1'
-  gem 'better_errors'
+  gem 'better_errors', '>= 2.5.0'
   gem 'binding_of_caller'
   gem 'brakeman'
   gem 'github_changelog_generator'
@@ -21,7 +21,7 @@ end
 
 # Tests only gems
 group :test do
-  gem 'capybara', '>= 2.15', '< 4.0'
+  gem 'capybara', '>= 3.12.0', '< 4.0'
   gem 'chromedriver-helper'
   gem 'database_cleaner'
   gem 'launchy'
@@ -66,7 +66,7 @@ gem 'puma', '~> 3.12'
 gem 'rails', '~> 5.2.4', '>= 5.2.4.2'
 gem 'rambulance', '>= 0.6.0'
 gem 'sass-rails', '~> 5.0', '>= 5.0.7'
-gem 'sidekiq'
+gem 'sidekiq', '>= 5.2.3'
 gem 'sqlite3'
 gem 'turbolinks', '~> 5.2.0'
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
