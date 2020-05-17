@@ -247,8 +247,8 @@ GEM
       binding_of_caller (>= 0.7)
       pry (>= 0.9.11)
     public_suffix (3.0.3)
-    puma (3.12.2)
-    puma (3.12.2-java)
+    puma (3.12.4)
+    puma (3.12.4-java)
     rack (2.0.8)
     rack-protection (2.0.5)
       rack
