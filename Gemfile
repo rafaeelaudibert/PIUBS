@@ -22,7 +22,7 @@ end
 # Tests only gems
 group :test do
   gem 'capybara', '>= 3.12.0', '< 4.0'
-  gem 'chromedriver-helper'
+  gem 'chromedriver-helper', '>= 2.1.0'
   gem 'database_cleaner'
   gem 'launchy'
   gem 'selenium-webdriver'
@@ -63,7 +63,7 @@ gem 'logging'
 gem 'pg'
 gem 'popper_js', '~> 1.14.3'
 gem 'puma', '~> 3.12', '>= 3.12.6'
-gem 'rails', '~> 5.2.4', '>= 5.2.4.4'
+gem 'rails', '~> 5.2.2'
 gem 'rambulance', '>= 0.6.0'
 gem 'sass-rails', '~> 5.0', '>= 5.0.7'
 gem 'sidekiq', '>= 5.2.3'
