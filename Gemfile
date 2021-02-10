@@ -49,7 +49,7 @@ end
 # Default gems
 gem 'bootsnap', '>= 1.1.0', require: false
 gem 'bootstrap', '>= 4.3.1'
-gem 'carrierwave', '>= 1.3.1'
+gem 'carrierwave', '>= 1.3.2'
 gem 'coffee-rails', '~> 4.2', '>= 4.2.2'
 gem 'devise', '>= 4.7.1'
 gem 'devise-async', '>= 1.0.0'
