@@ -63,9 +63,9 @@ gem 'logging'
 gem 'pg'
 gem 'popper_js', '~> 1.14.3'
 gem 'puma', '~> 3.12', '>= 3.12.6'
-gem 'rails', '~> 5.2.4', '>= 5.2.4.4'
+gem 'rails', '~> 6.0.3', '>= 6.0.3.5'
 gem 'rambulance', '>= 0.6.0'
-gem 'sass-rails', '~> 5.0', '>= 5.0.7'
+gem 'sass-rails', '~> 5.0', '>= 5.0.8'
 gem 'sidekiq', '>= 5.2.3'
 gem 'sqlite3'
 gem 'turbolinks', '~> 5.2.0'
@@ -79,8 +79,8 @@ gem 'cpf_cnpj'                              # CPF/CNPJ validations/management
 gem 'data-confirm-modal', '>= 1.6.2' # Modals for confimations
 gem 'dropzonejs-rails', '>= 0.8.4' # Attachments drag n'drop functionality
 gem 'filterrific', '~> 5.1.0'               # Filtering
-gem 'font-awesome-rails', '>= 4.7.0.4' # Icons
-gem 'mail_form', '>= 1.7.1' # Mailer gem
+gem 'font-awesome-rails', '>= 4.7.0.5' # Icons
+gem 'mail_form', '>= 1.8.0' # Mailer gem
 gem 'mini_racer'                            # Fix "Autoprefixer doesn't support Node v4.2.6"
 gem 'pg_search'                             , '>= 2.1.3' # Full-text search gem
 gem 'rails-jquery-autocomplete', '>= 1.0.5' # Auto complete
