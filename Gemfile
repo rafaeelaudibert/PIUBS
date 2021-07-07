@@ -24,7 +24,7 @@ group :test do
   gem 'capybara', '>= 3.12.0', '< 4.0'
   gem 'chromedriver-helper', '>= 2.1.0'
   gem 'database_cleaner'
-  gem 'launchy'
+  gem 'launchy', '>= 2.4.3'
   gem 'selenium-webdriver'
 end
 
