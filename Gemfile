@@ -66,7 +66,7 @@ gem 'puma', '~> 3.12', '>= 3.12.6'
 gem 'rails', '~> 5.2.2'
 gem 'rambulance', '>= 0.6.0'
 gem 'sass-rails', '~> 5.0', '>= 5.0.7'
-gem 'sidekiq', '>= 5.2.3'
+gem 'sidekiq', '>= 6.2.1'
 gem 'sqlite3'
 gem 'turbolinks', '~> 5.2.0'
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
