@@ -7,7 +7,7 @@ ruby '2.6.0'
 # Development only gems
 group :development do
   gem 'any_login', '>= 1.3.1'
-  gem 'better_errors', '>= 2.5.0'
+  gem 'better_errors', '>= 2.8.0'
   gem 'binding_of_caller'
   gem 'brakeman'
   gem 'github_changelog_generator', '>= 1.14.3'
