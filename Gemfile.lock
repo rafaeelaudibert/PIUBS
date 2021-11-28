@@ -257,7 +257,9 @@ GEM
       nio4r (~> 2.0)
     puma (4.3.9-java)
       nio4r (~> 2.0)
-    rack (2.0.8)
+    racc (1.6.0)
+    racc (1.6.0-java)
+    rack (2.2.3)
     rack-protection (2.0.5)
       rack
     rack-test (1.1.0)
