@@ -253,11 +253,11 @@ GEM
       binding_of_caller (>= 0.7)
       pry (>= 0.9.11)
     public_suffix (4.0.6)
-    puma (3.12.6)
-    puma (3.12.6-java)
-    racc (1.6.0)
-    racc (1.6.0-java)
-    rack (2.2.3)
+    puma (4.3.9)
+      nio4r (~> 2.0)
+    puma (4.3.9-java)
+      nio4r (~> 2.0)
+    rack (2.0.8)
     rack-protection (2.0.5)
       rack
     rack-test (1.1.0)
@@ -454,7 +454,7 @@ DEPENDENCIES
   popper_js (~> 1.14.3)
   pry-byebug
   pry-stack_explorer
-  puma (~> 3.12, >= 3.12.6)
+  puma (~> 4.3)
   rails (~> 5.2.2)
   rails-jquery-autocomplete (>= 1.0.5)
   rails_layout
